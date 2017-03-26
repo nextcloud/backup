@@ -108,6 +108,14 @@ class Create {
 	}
 
 	/**
+	 * @param string $path
+	 */
+	private function writemeta($path) {
+		$meta = array('date' => date('c'), 'instanceid' => \OCP\Config::getSystemValue('instanceid'), 'dbtype' => \OCP\Config::getSystemValue('dbtype'));
+		file_put_contents($path.'/backup.json', json_encode($meta));
+	}
+
+	/**
 	 */
 	public function create() {
 		\OC::$server->getLogger()->warning('Create backup! Path:'.$this->path.' Password:'.$this->password,['app' => 'backup',]);
@@ -135,6 +143,9 @@ class Create {
 
 		// syncing data directory
 		$this->copydata($this->path);
+
+		// write meta file
+		$this->writemeta($this->path);
 
 		\OCP\Config::setSystemValue('maintenance',$maintainance);
 
