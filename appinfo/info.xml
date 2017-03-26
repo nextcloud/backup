@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<info>
+	<id>backup</id>
+	<name>Backup</name>
+	<description><![CDATA[Allows admins to generate a backup of an Nextclod instance and restore it. Possible via occ or REST]]></description>
+	<licence>AGPL</licence>
+	<author>Frank Karlitschek</author>
+	<version>1.0.0</version>
+	<namespace>Backup</namespace>
+
+	<dependencies>
+		<nextcloud min-version="12" max-version="12" />
+	</dependencies>
+
+	<commands>
+		<command>OCA\Backup\Command\Generate</command>
+	</commands>
+</info>
