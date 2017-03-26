@@ -21,49 +21,69 @@
  *
  */
 
-namespace OCA\Backup\Controller;
+namespace OCA\Backup\Backup;
 
 use OCA\Backup\AppInfo\Application;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 
-class APIController extends OCSController {
+class Restore {
+
+	/** @var path */
+	protected $path;
+
+	/** @var password */
+	protected $password;
 
 	/**
-	 * @param string $appName
-	 * @param IRequest $request
+	 * @param string $path
 	 */
-	public function __construct($appName, IRequest $request) {
-		parent::__construct($appName, $request);
+	public function __construct($path) {
+		$this->path = $path;
+	}
+
+	/**
+	 * @param string $password
+	 */
+	public function password($password) {
+		$this->password = $password;
+	}
+
+	/**
+	 * @param string $dbtype
+	 * @param string $dbname
+	 * @param string $dbuser
+ 	 * @param string $dbpassword
+	 * @param string $dbhost
+	 * @param string $path
+	 */
+	private function restoreDump($dbtype,$dbname,$dbuser,$dbpassword,$dbhost,$path) {
 	}
 
 	/**
 	 * @param string $path
-	 * @param string $password
-	 * @return DataResponse
 	 */
-	public function createBackup($path, $password) {
-		$backup = new \OCA\Backup\Backup\Create($path);
-		$backup -> password($password);
-		$backup -> create();
-
-		return new DataResponse();
+	private function copydata($path) {
 	}
 
 	/**
 	 * @param string $path
-	 * @param string $password
-	 * @return DataResponse
 	 */
-	public function restoreBackup($path, $password) {
-		$backup = new \OCA\Backup\Backup\Restore($path);
-		$backup -> password($password);
-		$backup -> restore();
-
-		return new DataResponse();
+	private function copyconfig($path) {
 	}
 
+	/**
+	 * @param string $path
+	 */
+	private function readmeta($path) {
+	}
 
+	/**
+	 */
+	public function restore() {
+		\OC::$server->getLogger()->warning('Restore backup! Path:'.$this->path.' Password:'.$this->password,['app' => 'backup',]);
+	}
 }

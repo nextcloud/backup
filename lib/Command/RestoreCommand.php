@@ -23,7 +23,7 @@
 
 namespace OCA\Backup\Command;
 
-use OCA\Backup\Backup\Create;
+use OCA\Backup\Backup\Restore;
 use OCA\Backup\AppInfo\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,7 +31,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Generate extends Command {
+class RestoreCommand extends Command {
 
 	/**
 	 */
@@ -41,12 +41,12 @@ class Generate extends Command {
 
 	protected function configure() {
 		$this
-			->setName('backup:create')
-			->setDescription('Generate a backup of the instance')
+			->setName('backup:restore')
+			->setDescription('Restore a backup of the instance')
 			->addArgument(
 				'path',
 				InputArgument::REQUIRED,
-				'The path where the backup should be created'
+				'The path where the backup should be restored from'
 			)
 			->addOption(
 				'password',
@@ -78,9 +78,9 @@ class Generate extends Command {
 			return 1;
 		}
 
-		$backup = new \OCA\Backup\Backup\Create($path);
+		$backup = new \OCA\Backup\Backup\Restore($path);
 		$backup -> password($password);
-		$backup -> create();
+		$backup -> restore();
 
 		return 0;
 	}

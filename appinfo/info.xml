@@ -13,6 +13,7 @@
 	</dependencies>
 
 	<commands>
-		<command>OCA\Backup\Command\Generate</command>
+		<command>OCA\Backup\Command\CreateCommand</command>
+		<command>OCA\Backup\Command\RestoreCommand</command>
 	</commands>
 </info>

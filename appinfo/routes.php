@@ -24,5 +24,6 @@
 return [
 	'ocs' => [
 		['name' => 'API#createBackup', 'url' => '/api/v1/create', 'verb' => 'POST'],
+		['name' => 'API#restoreBackup', 'url' => '/api/v1/restore', 'verb' => 'POST'],
 	],
 ];
