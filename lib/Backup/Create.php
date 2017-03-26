@@ -117,6 +117,9 @@ class Create {
 			exit;
 		}
 
+		$maintainance = \OCP\Config::getSystemValue('maintenance');
+		\OCP\Config::setSystemValue('maintenance',true);
+
 		// create DB dump
 		$this->createDump(
 			\OCP\Config::getSystemValue('dbtype'),
@@ -132,6 +135,8 @@ class Create {
 
 		// syncing data directory
 		$this->copydata($this->path);
+
+		\OCP\Config::setSystemValue('maintenance',$maintainance);
 
 	}
 }
