@@ -71,7 +71,7 @@ class Create {
 				$cmd = 'mysqldump --password='.$dbpassword.' --user='.$dbuser.' --host='.$dbhost.' '.$dbname.' >'.$path.'/mysql.dmp';
 				shell_exec($cmd);
 			} else {
-				\OC::$server->getLogger()->error('rsync is not installed',['app' => 'backup',]);
+				\OC::$server->getLogger()->error('mysqldump is not installed',['app' => 'backup',]);
 			}
         	break;
     	case 'pqsql':
