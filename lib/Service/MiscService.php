@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUndefinedClassInspection */
 declare(strict_types=1);
 
 
@@ -8,7 +9,6 @@ declare(strict_types=1);
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
- * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
@@ -29,30 +29,46 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\AppInfo;
+namespace OCA\Backup\Service;
 
 
-use OCP\AppFramework\App;
+use OCA\Backup\AppInfo\Application;
+use OCP\ILogger;
 
 
 /**
- * Class Application
+ * Class MiscService
  *
- * @package OCA\Backup\AppInfo
+ * @package OCA\Backup\Service
  */
-class Application extends App {
+class MiscService {
 
 
-	const APP_ID = 'backup';
+	/** @var ILogger */
+	private $logger;
 
 
 	/**
-	 * Application constructor.
+	 * MiscService constructor.
 	 *
-	 * @param array $params
+	 * @param ILogger $logger
 	 */
-	public function __construct(array $params = []) {
-		parent::__construct(self::APP_ID, $params);
+	public function __construct(ILogger $logger) {
+		$this->logger = $logger;
+	}
+
+
+	/**
+	 * @param $message
+	 * @param int $level
+	 */
+	public function log($message, $level = 2) {
+		$data = array(
+			'app'   => Application::APP_ID,
+			'level' => $level
+		);
+
+		$this->logger->log($level, $message, $data);
 	}
 
 }

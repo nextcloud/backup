@@ -8,7 +8,6 @@ declare(strict_types=1);
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
- * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
@@ -29,30 +28,43 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\AppInfo;
+namespace OCA\Backup\Service;
 
 
-use OCP\AppFramework\App;
-
+use OCA\Backup\Model\Backup;
 
 /**
- * Class Application
+ * Class ExtractService
  *
- * @package OCA\Backup\AppInfo
+ * @package OCA\Backup\Service
  */
-class Application extends App {
+class ExtractService {
 
 
-	const APP_ID = 'backup';
+	const BLOCK_SIZE = 500;
+
+
+	/** @var MiscService */
+	private $miscService;
 
 
 	/**
-	 * Application constructor.
+	 * ExtractService constructor.
 	 *
-	 * @param array $params
+	 * @param MiscService $miscService
 	 */
-	public function __construct(array $params = []) {
-		parent::__construct(self::APP_ID, $params);
+	public function __construct(MiscService $miscService) {
+		$this->miscService = $miscService;
+	}
+
+
+	/**
+	 * @param $backup
+	 */
+	public function extract(Backup $backup) {
+
+		echo 'EXTRACT !';
+		echo 'EXTRACT !';
 	}
 
 }
