@@ -8,7 +8,6 @@ declare(strict_types=1);
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
- * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
@@ -29,30 +28,53 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\AppInfo;
+namespace OCA\Backup\Db;
 
 
-use OCP\AppFramework\App;
+use OCA\Backup\Model\Backup;
 
 
 /**
- * Class Application
+ * Class BackupsRequest
  *
- * @package OCA\Backup\AppInfo
+ * @package OCA\Backup\Db
  */
-class Application extends App {
-
-
-	const APP_ID = 'backup';
+class BackupsRequest extends BackupsRequestBuilder {
 
 
 	/**
-	 * Application constructor.
+	 * create a new Person in the database.
 	 *
-	 * @param array $params
+	 * @param Backup $backup
+	 *
+	 * @return int
 	 */
-	public function __construct(array $params = []) {
-		parent::__construct(self::APP_ID, $params);
+	public function create(Backup $backup): int {
+
+		$qb = $this->getBackupsInsertSql();
+
+//		$qb->setValue('id', $qb->createNamedParameter($id))
+////			   ->setValue('type', $qb->createNamedParameter($actor->getType()))
+//		   ->setValue('user_id', $qb->createNamedParameter($actor->getUserId()))
+//		   ->setValue('name', $qb->createNamedParameter($actor->getName()))
+//		   ->setValue('summary', $qb->createNamedParameter($actor->getSummary()))
+//		   ->setValue(
+//			   'creation',
+//			   $qb->createNamedParameter(new DateTime('now'), IQueryBuilder::PARAM_DATE)
+//		   );
+
+		return $qb->execute();
+	}
+
+
+	/**
+	 * @param Backup $backup
+	 */
+	public function update(Backup $backup) {
+		$qb = $this->getBackupsUpdateSql();
+		$this->limitToId($qb, $backup->getId());
+
+		$qb->execute();
 	}
 
 }

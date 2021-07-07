@@ -1,19 +1,31 @@
 <?xml version="1.0"?>
-<info>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>backup</id>
 	<name>Backup</name>
-	<description><![CDATA[Allows admins to generate a backup of an Nextclod instance and restore it. Possible via occ or REST]]></description>
-	<licence>AGPL</licence>
+	<description><![CDATA[Allows admins to generate a backup of a Nextcloud instance and restore it. Possible via occ or REST]]></description>
+	<licence>agpl</licence>
+	<author mail="maxence@artificial-owl.com">Maxence Lange</author>
 	<author>Frank Karlitschek</author>
-	<version>1.0.0</version>
+	<version>0.1.0</version>
 	<namespace>Backup</namespace>
-
+	<category>tools</category>
+	<website>https://github.com/nextcloud/backup</website>
+	<bugs>https://github.com/nextcloud/backup/issues</bugs>
+	<repository type="git">https://github.com/nextcloud/backup.git</repository>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/backup/master/img/screenshot.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="12" max-version="12" />
+		<nextcloud min-version="16" max-version="17"/>
 	</dependencies>
 
+	<background-jobs>
+		<job>OCA\Backup\Cron\Backup</job>
+	</background-jobs>
+
 	<commands>
-		<command>OCA\Backup\Command\CreateCommand</command>
-		<command>OCA\Backup\Command\RestoreCommand</command>
+		<command>OCA\Backup\Command\Create</command>
+		<command>OCA\Backup\Command\Listing</command>
+		<command>OCA\Backup\Command\Details</command>
+		<command>OCA\Backup\Command\Restore</command>
 	</commands>
 </info>
