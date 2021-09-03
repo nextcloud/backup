@@ -8,7 +8,6 @@ declare(strict_types=1);
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
- * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
@@ -29,31 +28,10 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\AppInfo;
+namespace OCA\Backup\Exceptions;
 
 
-use OCP\AppFramework\App;
-
-
-/**
- * Class Application
- *
- * @package OCA\Backup\AppInfo
- */
-class Application extends App {
-
-
-	const APP_ID = 'backup';
-
-
-	/**
-	 * Application constructor.
-	 *
-	 * @param array $params
-	 */
-	public function __construct(array $params = []) {
-		parent::__construct(self::APP_ID, $params);
-	}
+class VersionException extends \Exception {
 
 }
 

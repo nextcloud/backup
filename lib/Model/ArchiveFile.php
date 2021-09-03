@@ -8,7 +8,6 @@ declare(strict_types=1);
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
- * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
@@ -29,31 +28,79 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\AppInfo;
+namespace OCA\Backup\Model;
 
 
-use OCP\AppFramework\App;
+use daita\MySmallPhpTools\Traits\TArrayTools;
+use JsonSerializable;
 
 
 /**
- * Class Application
+ * Class ArchiveFile
  *
- * @package OCA\Backup\AppInfo
+ * @package OCA\Backup\Model
  */
-class Application extends App {
+class ArchiveFile implements JsonSerializable {
 
 
-	const APP_ID = 'backup';
+	use TArrayTools;
+
+
+	/** @var string */
+	private $name = '';
 
 
 	/**
-	 * Application constructor.
+	 * ArchiveFile constructor.
 	 *
-	 * @param array $params
+	 * @param string $name
 	 */
-	public function __construct(array $params = []) {
-		parent::__construct(self::APP_ID, $params);
+	public function __construct(string $name = '') {
+		$this->name = $name;
 	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getName(): string {
+		return $this->name;
+	}
+
+	/**
+	 * @param string $name
+	 *
+	 * @return ArchiveFile
+	 */
+	public function setName(string $name): ArchiveFile {
+		$this->name = $name;
+
+		return $this;
+	}
+
+
+	/**
+	 * @param array $data
+	 *
+	 * @return ArchiveFile
+	 */
+	public function import(array $data): ArchiveFile {
+		$this->setName($this->get('name', $data, ''));
+
+		return $this;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function jsonSerialize() {
+		return
+			[
+				'name' => $this->getName()
+			];
+	}
+
 
 }
 

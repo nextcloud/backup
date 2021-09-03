@@ -8,7 +8,6 @@ declare(strict_types=1);
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
- * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
@@ -29,30 +28,39 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\AppInfo;
+namespace OCA\Backup\Model;
 
 
-use OCP\AppFramework\App;
+use JsonSerializable;
 
 
 /**
- * Class Application
+ * Class BackupError
  *
- * @package OCA\Backup\AppInfo
+ * @package OCA\Backup\Model
  */
-class Application extends App {
+class RemoteStorage implements JsonSerializable {
 
 
-	const APP_ID = 'backup';
+	public function __construct() {
+	}
 
 
 	/**
-	 * Application constructor.
+	 * @param array $data
 	 *
-	 * @param array $params
+	 * @return RemoteStorage
 	 */
-	public function __construct(array $params = []) {
-		parent::__construct(self::APP_ID, $params);
+	public function import(array $data): RemoteStorage {
+		return $this;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function jsonSerialize() {
+		return [];
 	}
 
 }

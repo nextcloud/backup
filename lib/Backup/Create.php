@@ -23,13 +23,6 @@
 
 namespace OCA\Backup\Backup;
 
-use OCA\Backup\AppInfo\Application;
-use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\OCSController;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IRequest;
-
 class Create {
 
 	/** @var path */
