@@ -86,6 +86,16 @@ class RemoteRequest extends RemoteRequestBuilder {
 
 
 	/**
+	 * @return RemoteInstance[]
+	 */
+	public function getAll(): array {
+		$qb = $this->getRemoteSelectSql();
+
+		return $this->getItemsFromRequest($qb);
+	}
+
+
+	/**
 	 * @param int $dbId
 	 *
 	 * @return RemoteInstance
@@ -136,7 +146,6 @@ class RemoteRequest extends RemoteRequestBuilder {
 			$this->save($remoteInstance);
 		}
 	}
-
 
 }
 

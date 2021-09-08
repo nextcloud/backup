@@ -43,7 +43,7 @@ use OCA\Backup\Exceptions\RemoteInstanceUidException;
 /**
  * Class AppService
  *
- * @package OCA\Circles\Model
+ * @package OCA\Backup\Model
  */
 class RemoteInstance extends NC23Signatory implements INC22QueryRow, JsonSerializable {
 

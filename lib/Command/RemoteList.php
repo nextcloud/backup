@@ -32,8 +32,15 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use OC\Core\Command\Base;
+use OCA\Backup\Db\RemoteRequest;
+use OCA\Backup\Model\RemoteInstance;
+use OCA\Backup\Service\RemoteStreamService;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
@@ -45,7 +52,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RemoteList extends Base {
 
 
-	public function __construct() {
+	/** @var RemoteRequest */
+	private $remoteRequest;
+
+	/** @var RemoteStreamService */
+	private $remoteStreamService;
+
+
+	public function __construct(RemoteRequest $remoteRequest, RemoteStreamService $remoteStreamService) {
+		$this->remoteRequest = $remoteRequest;
+		$this->remoteStreamService = $remoteStreamService;
 
 		parent::__construct();
 	}
@@ -67,10 +83,39 @@ class RemoteList extends Base {
 	 * @return int
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$output = new ConsoleOutput();
+		$output = $output->section();
+		$table = new Table($output);
+		$table->setHeaders(
+			['Address', 'Stored Uid', 'Current Uid', 'Href', 'Incoming data', 'Outgoing data']
+		);
+		$table->render();
 
+		foreach ($this->remoteRequest->getAll() as $remoteInstance) {
+
+			$color = 'error';
+			/** @var RemoteInstance $current */
+			try {
+				$current = $this->remoteStreamService->retrieveSignatory($remoteInstance->getId());
+				if ($remoteInstance->getUid(true) === $current->getUid(true)) {
+					$color = 'info';
+				}
+			} catch (SignatoryException | SignatureException $e) {
+			}
+
+			$table->appendRow(
+				[
+					$remoteInstance->getInstance(),
+					$remoteInstance->getUid(true),
+					'<' . $color . '>' . $current->getUid(true) . '</' . $color . '>',
+					$remoteInstance->getId(),
+					($remoteInstance->isIncoming() ? '<info>yes</info>' : '<comment>no</comment'),
+					($remoteInstance->isOutgoing() ? '<info>yes</info>' : '<comment>no</comment')
+				]
+			);
+		}
 
 		return 0;
 	}
 
 }
-

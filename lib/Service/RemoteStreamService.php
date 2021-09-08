@@ -122,7 +122,7 @@ class RemoteStreamService extends NC23Signature {
 
 
 	/**
-	 * Reset the Signatory (and the Identity) for the Circles app.
+	 *
 	 */
 	public function resetAppSignatory(): void {
 		try {

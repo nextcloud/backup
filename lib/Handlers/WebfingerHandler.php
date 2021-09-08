@@ -48,7 +48,7 @@ use OCP\IURLGenerator;
 /**
  * Class WebfingerHandler
  *
- * @package OCA\Circles\Handlers
+ * @package OCA\Backup\Handlers
  */
 class WebfingerHandler implements IHandler {
 
