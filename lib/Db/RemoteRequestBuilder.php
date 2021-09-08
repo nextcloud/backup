@@ -36,7 +36,6 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Model\RemoteInstance;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 
 
 /**
@@ -88,9 +87,9 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 
 
 	/**
-	 * @return IQueryBuilder
+	 * @return CoreQueryBuilder
 	 */
-	protected function getRemoteDeleteSql(): IQueryBuilder {
+	protected function getRemoteDeleteSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
 		$qb->delete(self::TABLE_REMOTE);
 

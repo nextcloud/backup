@@ -17,17 +17,17 @@
 		<nextcloud min-version="22" max-version="23"/>
 	</dependencies>
 
-<!--	<background-jobs>-->
-<!--		<job>OCA\Backup\Cron\Backup</job>-->
-<!--	</background-jobs>-->
+	<!--	<background-jobs>-->
+	<!--		<job>OCA\Backup\Cron\Backup</job>-->
+	<!--	</background-jobs>-->
 
 	<commands>
 		<command>OCA\Backup\Command\RemoteAdd</command>
 		<command>OCA\Backup\Command\RemoteList</command>
-<!--		<command>OCA\Backup\Command\Remote</command>-->
-<!--		<command>OCA\Backup\Command\Create</command>-->
-<!--		<command>OCA\Backup\Command\Listing</command>-->
-<!--		<command>OCA\Backup\Command\Details</command>-->
-<!--		<command>OCA\Backup\Command\Restore</command>-->
+		<command>OCA\Backup\Command\RemoteRemove</command>
+		<!--		<command>OCA\Backup\Command\Create</command>-->
+		<!--		<command>OCA\Backup\Command\Listing</command>-->
+		<!--		<command>OCA\Backup\Command\Details</command>-->
+		<!--		<command>OCA\Backup\Command\Restore</command>-->
 	</commands>
 </info>

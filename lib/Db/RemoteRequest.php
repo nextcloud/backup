@@ -147,5 +147,16 @@ class RemoteRequest extends RemoteRequestBuilder {
 		}
 	}
 
+
+	/**
+	 * @param string $address
+	 */
+	public function remove(string $address): void {
+		$qb = $this->getRemoteDeleteSql();
+		$qb->limit('instance', $address, '', false);
+
+		$qb->execute();
+	}
+
 }
 
