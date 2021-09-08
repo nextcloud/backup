@@ -15,9 +15,8 @@
     }
   },
   "require": {
-    "daita/my-small-php-tools": "dev-master",
+    "artificial-owl/my-small-php-tools": "~23",
     "ifsnop/mysqldump-php": "2.0.0",
-    "symfony/console": "^4.2",
     "pimple/pimple": "~3.0"
   }
 }

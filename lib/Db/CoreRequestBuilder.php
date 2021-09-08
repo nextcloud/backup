@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -9,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,11 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
-use daita\MySmallPhpTools\Db\RequestBuilder;
-use OCA\Backup\Service\MiscService;
-use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\IDBConnection;
+use Exception;
+use OC\DB\Connection;
+use OC\DB\SchemaWrapper;
+use OCA\Backup\Service\ConfigService;
 
 
 /**
@@ -42,68 +42,117 @@ use OCP\IDBConnection;
  *
  * @package OCA\Backup\Db
  */
-class CoreRequestBuilder extends RequestBuilder {
+class CoreRequestBuilder {
 
 
-	const SQL_TABLES = [
-		'BACKUPS' => 'backups'
+	public const TABLE_RESTORING_POINT = 'backup_point';
+	public const TABLE_REMOTE = 'backup_remote';
+
+
+	/** @var array */
+	public static $tables = [
+		self::TABLE_REMOTE => [
+			'id',
+			'uid',
+			'instance',
+			'href',
+			'exchange',
+			'item'
+		],
+		self::TABLE_RESTORING_POINT => [
+			'id',
+			'user_id',
+			'preferred_username',
+			'name',
+			'summary',
+			'sa.public_key',
+			'avatar_version',
+			'private_key',
+			'creation'
+		]
 	];
 
 
-	/** @var IDBConnection */
-	protected $dbConnection;
-
-	/** @var MiscService */
-	protected $miscService;
-
-
-	/** @var string */
-	protected $defaultSelectAlias;
+	/** @var ConfigService */
+	protected $configService;
 
 
 	/**
-	 * CoreRequestBuilder constructor.
+	 * CoreQueryBuilder constructor.
 	 *
-	 * @param IDBConnection $connection
-	 * @param MiscService $miscService
+	 * @param ConfigService $configService
 	 */
-	public function __construct(IDBConnection $connection, MiscService $miscService) {
-		$this->dbConnection = $connection;
-		$this->miscService = $miscService;
+	public function __construct(ConfigService $configService) {
+		$this->configService = $configService;
 	}
 
 
 	/**
-	 * Limit the request to the Id
-	 *
-	 * @param IQueryBuilder $qb
-	 * @param int $id
+	 * @return CoreQueryBuilder
 	 */
-	protected function limitToId(IQueryBuilder &$qb, int $id) {
-		$this->limitToDBFieldInt($qb, 'id', $id);
+	public function getQueryBuilder(): CoreQueryBuilder {
+		return new CoreQueryBuilder();
 	}
 
 
 	/**
-	 * Limit the request to the status
-	 *
-	 * @param IQueryBuilder $qb
-	 * @param int $status
+	 * @param bool $shares
 	 */
-	protected function limitToStatus(IQueryBuilder &$qb, int $status) {
-		$this->limitToDBFieldInt($qb, 'status', $status);
+	public function cleanDatabase(bool $shares = false): void {
+		foreach (array_keys(self::$tables) as $table) {
+			$qb = $this->getQueryBuilder();
+			try {
+				$qb->delete($table);
+				$qb->execute();
+			} catch (Exception $e) {
+			}
+		}
+	}
+
+
+	public function uninstall(): void {
+		$this->uninstallAppTables();
+		$this->uninstallFromMigrations();
+		$this->uninstallFromJobs();
+		$this->configService->unsetAppConfig();
+	}
+
+	/**
+	 * this just empty all tables from the app.
+	 */
+	public function uninstallAppTables() {
+		$dbConn = \OC::$server->get(Connection::class);
+		$schema = new SchemaWrapper($dbConn);
+
+		foreach (array_keys(self::$tables) as $table) {
+			if ($schema->hasTable($table)) {
+				$schema->dropTable($table);
+			}
+		}
+
+		$schema->performDropTableCalls();
 	}
 
 
 	/**
-	 * Limit the request to the instance
 	 *
-	 * @param IQueryBuilder $qb
-	 * @param bool $local
 	 */
-	protected function limitToLocal(IQueryBuilder &$qb, bool $local) {
-		$this->limitToDBField($qb, 'local', ($local) ? '1' : '0');
+	public function uninstallFromMigrations() {
+		$qb = $this->getQueryBuilder();
+		$qb->delete('migrations');
+		$qb->limit('app', 'backup');
+		$qb->unlike('version', '001%');
+
+		$qb->execute();
 	}
 
+	/**
+	 *
+	 */
+	public function uninstallFromJobs() {
+		$qb = $this->getQueryBuilder();
+//		$qb->delete('jobs');
+//		$qb->where($this->exprLimitToDBField($qb, 'class', 'OCA\Backup\', true, true));
+//		$qb->execute();
+	}
 }
-

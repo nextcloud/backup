@@ -10,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,42 +33,21 @@ namespace OCA\Backup\Command;
 
 
 use OC\Core\Command\Base;
-use OCA\Backup\Service\BackupService;
-use OCA\Backup\Service\MiscService;
-use OCP\Files\NotFoundException;
-use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- * Class Backup
+ * Class RemoteList
  *
  * @package OCA\Backup\Command
  */
-class Create extends Base {
+class RemoteList extends Base {
 
 
-	/** @var BackupService */
-	private $backupService;
-
-	/** @var MiscService */
-	private $miscService;
-
-
-	/**
-	 * Backup constructor.
-	 *
-	 * @param BackupService $backupService
-	 * @param MiscService $miscService
-	 */
-	public function __construct(BackupService $backupService, MiscService $miscService) {
-		$this->backupService = $backupService;
-		$this->miscService = $miscService;
+	public function __construct() {
 
 		parent::__construct();
-
-
 	}
 
 
@@ -76,8 +55,8 @@ class Create extends Base {
 	 *
 	 */
 	protected function configure() {
-		$this->setName('backup:create')
-			 ->setDescription('Generate a backup of the instance');
+		$this->setName('backup:remote:list')
+			 ->setDescription('Listing configured remote instances');
 	}
 
 
@@ -85,13 +64,12 @@ class Create extends Base {
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 *
-	 * @throws NotPermittedException
-	 * @throws NotFoundException
+	 * @return int
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output) {
-		$backup = $this->backupService->backup();
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 
-//		echo '> ' . json_encode($backup, JSON_PRETTY_PRINT);
+
+		return 0;
 	}
 
 }

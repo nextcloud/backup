@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -28,12 +29,40 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\AppInfo;
+namespace OCA\Backup\Model;
 
 
-$composerDir = __DIR__ . '/../vendor/';
+use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
+use ArtificialOwl\MySmallPhpTools\IDeserializable;
+use JsonSerializable;
 
-if (is_dir($composerDir) && file_exists($composerDir . 'autoload.php')) {
-	require_once $composerDir . 'autoload.php';
+
+/**
+ * Class RestoringPoint
+ *
+ * @package OCA\Backup\Model
+ */
+class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable {
+
+
+	/**
+	 * @return array
+	 */
+	public function jsonSerialize(): array {
+		return
+			[
+			];
+	}
+
+
+	public function importFromDatabase(array $data): INC23QueryRow {
+		return $this;
+	}
+
+
+	public function import(array $data): IDeserializable {
+		return $this;
+	}
+
 }
 

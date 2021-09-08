@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -9,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,52 +31,40 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
-use OCA\Backup\Model\Backup;
+use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc22\NC22ExtendedQueryBuilder;
 
 
 /**
- * Class BackupsRequest
+ * Class CoreQueryBuilder
  *
  * @package OCA\Backup\Db
  */
-class BackupsRequest extends BackupsRequestBuilder {
+class CoreQueryBuilder extends NC22ExtendedQueryBuilder {
 
 
 	/**
-	 * create a new Person in the database.
-	 *
-	 * @param Backup $backup
-	 *
-	 * @return int
+	 * CoreQueryBuilder constructor.
 	 */
-	public function create(Backup $backup): int {
-
-		$qb = $this->getBackupsInsertSql();
-
-//		$qb->setValue('id', $qb->createNamedParameter($id))
-////			   ->setValue('type', $qb->createNamedParameter($actor->getType()))
-//		   ->setValue('user_id', $qb->createNamedParameter($actor->getUserId()))
-//		   ->setValue('name', $qb->createNamedParameter($actor->getName()))
-//		   ->setValue('summary', $qb->createNamedParameter($actor->getSummary()))
-//		   ->setValue(
-//			   'creation',
-//			   $qb->createNamedParameter(new DateTime('now'), IQueryBuilder::PARAM_DATE)
-//		   );
-
-		return $qb->execute();
+	public function __construct() {
+		parent::__construct();
 	}
 
 
 	/**
-	 * @param Backup $backup
+	 * Limit the request to the Id
+	 *
+	 * @param int $id
 	 */
-	public function update(Backup $backup) {
-		$qb = $this->getBackupsUpdateSql();
-		$qb->limitToId($backup->getId());
+	public function limitToId(int $id): void {
+		$this->limitInt('id', $id);
+	}
 
-		$qb->execute();
+
+	/**
+	 * @param string $host
+	 */
+	public function limitToInstance(string $host): void {
+		$this->limit('instance', $host, '', false);
 	}
 
 }
-

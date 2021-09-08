@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -33,58 +34,53 @@ namespace OCA\Backup\Db;
 
 use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use OCA\Backup\Exceptions\RestoringPointNotFoundException;
-use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
+use OCA\Backup\Model\RemoteInstance;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
+
 /**
- * Class BackupRequestBuilder
+ * Class RemoteRequestBuilder
  *
  * @package OCA\Backup\Db
  */
-class BackupsRequestBuilder extends CoreRequestBuilder {
+class RemoteRequestBuilder extends CoreRequestBuilder {
 
 
 	use TArrayTools;
 
 
 	/**
-	 * Base of the Sql Insert request
-	 *
 	 * @return CoreQueryBuilder
 	 */
-	protected function getBackupsInsertSql(): CoreQueryBuilder {
+	protected function getRemoteInsertSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
-		$qb->select(self::TABLE_RESTORING_POINT);
+		$qb->insert(self::TABLE_REMOTE);
 
 		return $qb;
 	}
 
 
 	/**
-	 * Base of the Sql Update request
-	 *
-	 * @return IQueryBuilder
+	 * @return CoreQueryBuilder
 	 */
-	protected function getBackupsUpdateSql(): CoreQueryBuilder {
+	protected function getRemoteUpdateSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
-		$qb->update(self::TABLE_RESTORING_POINT);
+		$qb->update(self::TABLE_REMOTE);
 
 		return $qb;
 	}
 
 
 	/**
-	 * Base of the Sql Select request for Shares
-	 *
 	 * @return CoreQueryBuilder
 	 */
-	protected function getBackupsSelectSql(): CoreQueryBuilder {
+	protected function getRemoteSelectSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
 		$qb->generateSelect(
-			self::TABLE_RESTORING_POINT,
-			self::$tables[self::TABLE_RESTORING_POINT],
-			'b'
+			self::TABLE_REMOTE,
+			self::$tables[self::TABLE_REMOTE],
+			'remote'
 		);
 
 		return $qb;
@@ -92,13 +88,11 @@ class BackupsRequestBuilder extends CoreRequestBuilder {
 
 
 	/**
-	 * Base of the Sql Delete request
-	 *
 	 * @return IQueryBuilder
 	 */
-	protected function getBackupsDeleteSql(): IQueryBuilder {
+	protected function getRemoteDeleteSql(): IQueryBuilder {
 		$qb = $this->getQueryBuilder();
-		$qb->delete(self::TABLE_RESTORING_POINT);
+		$qb->delete(self::TABLE_REMOTE);
 
 		return $qb;
 	}
@@ -107,28 +101,28 @@ class BackupsRequestBuilder extends CoreRequestBuilder {
 	/**
 	 * @param CoreQueryBuilder $qb
 	 *
-	 * @return RestoringPoint
-	 * @throws RestoringPointNotFoundException
+	 * @return RemoteInstance
+	 * @throws RemoteInstanceNotFoundException
 	 */
-	public function getItemFromRequest(CoreQueryBuilder $qb): RestoringPoint {
-		/** @var RestoringPoint $restoringPoint */
+	public function getItemFromRequest(CoreQueryBuilder $qb): RemoteInstance {
+		/** @var RemoteInstance $remote */
 		try {
-			$restoringPoint = $qb->asItem(RestoringPoint::class);
+			$remote = $qb->asItem(RemoteInstance::class);
 		} catch (RowNotFoundException $e) {
-			throw new RestoringPointNotFoundException();
+			throw new RemoteInstanceNotFoundException();
 		}
 
-		return $restoringPoint;
+		return $remote;
 	}
 
 	/**
 	 * @param CoreQueryBuilder $qb
 	 *
-	 * @return RestoringPoint[]
+	 * @return RemoteInstance[]
 	 */
 	public function getItemsFromRequest(CoreQueryBuilder $qb): array {
-		/** @var RestoringPoint[] $result */
-		return $qb->asItems(RestoringPoint::class);
+		/** @var RemoteInstance[] $result */
+		return $qb->asItems(RemoteInstance::class);
 	}
 
 }

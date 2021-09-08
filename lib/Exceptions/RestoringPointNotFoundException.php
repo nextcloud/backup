@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -28,54 +29,18 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\Db;
+namespace OCA\Backup\Exceptions;
 
 
-use OCA\Backup\Model\Backup;
+use Exception;
 
 
 /**
- * Class BackupsRequest
+ * Class RestoringPointNotFoundException
  *
- * @package OCA\Backup\Db
+ * @package OCA\Backup\Exceptions
  */
-class BackupsRequest extends BackupsRequestBuilder {
-
-
-	/**
-	 * create a new Person in the database.
-	 *
-	 * @param Backup $backup
-	 *
-	 * @return int
-	 */
-	public function create(Backup $backup): int {
-
-		$qb = $this->getBackupsInsertSql();
-
-//		$qb->setValue('id', $qb->createNamedParameter($id))
-////			   ->setValue('type', $qb->createNamedParameter($actor->getType()))
-//		   ->setValue('user_id', $qb->createNamedParameter($actor->getUserId()))
-//		   ->setValue('name', $qb->createNamedParameter($actor->getName()))
-//		   ->setValue('summary', $qb->createNamedParameter($actor->getSummary()))
-//		   ->setValue(
-//			   'creation',
-//			   $qb->createNamedParameter(new DateTime('now'), IQueryBuilder::PARAM_DATE)
-//		   );
-
-		return $qb->execute();
-	}
-
-
-	/**
-	 * @param Backup $backup
-	 */
-	public function update(Backup $backup) {
-		$qb = $this->getBackupsUpdateSql();
-		$qb->limitToId($backup->getId());
-
-		$qb->execute();
-	}
+class RestoringPointNotFoundException extends Exception {
 
 }
 

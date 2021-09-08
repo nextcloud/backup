@@ -1,5 +1,5 @@
 <?php
-/** @noinspection PhpUndefinedClassInspection */
+
 declare(strict_types=1);
 
 
@@ -32,8 +32,8 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
-use daita\MySmallPhpTools\Traits\TArrayTools;
-use daita\MySmallPhpTools\Traits\TPathTools;
+use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Request;
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\AppInfo\Application;
 use OCP\IConfig;
 
@@ -41,29 +41,28 @@ use OCP\IConfig;
 class ConfigService {
 
 
-	use TPathTools;
 	use TArrayTools;
 
 
+	const SELF_SIGNED_CERT = 'self_signed_cert';
+
+
 	/** @var array */
-	public $defaults = [];
+	public $defaults = [
+		self::SELF_SIGNED_CERT => '0'
+	];
 
 	/** @var IConfig */
 	private $config;
-
-	/** @var MiscService */
-	private $miscService;
 
 
 	/**
 	 * ConfigService constructor.
 	 *
 	 * @param IConfig $config
-	 * @param MiscService $miscService
 	 */
-	public function __construct(IConfig $config, MiscService $miscService) {
+	public function __construct(IConfig $config) {
 		$this->config = $config;
-		$this->miscService = $miscService;
 	}
 
 
@@ -74,30 +73,36 @@ class ConfigService {
 	 *
 	 * @return string
 	 */
-	public function getAppValue($key) {
-		$defaultValue = null;
-		if (array_key_exists($key, $this->defaults)) {
-			$defaultValue = $this->defaults[$key];
+	public function getAppValue(string $key): string {
+		if (($value = $this->config->getAppValue(Application::APP_ID, $key, '')) !== '') {
+			return $value;
 		}
 
-		return $this->config->getAppValue(Application::APP_ID, $key, $defaultValue);
+		if (($value = $this->config->getSystemValue(Application::APP_ID . '.' . $key, '')) !== '') {
+			return $value;
+		}
+
+		return $this->get($key, $this->defaults);
 	}
 
 	/**
-	 * Get a value by key
-	 *
 	 * @param string $key
 	 *
 	 * @return int
 	 */
 	public function getAppValueInt(string $key): int {
-		$defaultValue = null;
-		if (array_key_exists($key, $this->defaults)) {
-			$defaultValue = $this->defaults[$key];
-		}
-
-		return (int)$this->config->getAppValue(Application::APP_ID, $key, $defaultValue);
+		return (int)$this->getAppValue($key);
 	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return bool
+	 */
+	public function getAppValueBool(string $key): bool {
+		return ($this->getAppValueInt($key) === 1);
+	}
+
 
 	/**
 	 * Set a value by key
@@ -107,19 +112,41 @@ class ConfigService {
 	 *
 	 * @return void
 	 */
-	public function setAppValue($key, $value) {
+	public function setAppValue(string $key, string $value): void {
 		$this->config->setAppValue(Application::APP_ID, $key, $value);
+	}
+
+
+	/**
+	 *
+	 */
+	public function unsetAppConfig(): void {
+		$this->config->deleteAppValues(Application::APP_ID);
 	}
 
 
 	/**
 	 * @param $key
 	 *
-	 * @return mixed
+	 * @return string
 	 */
-	public function getSystemValue($key) {
+	public function getSystemValue($key): string {
 		return $this->config->getSystemValue($key, '');
 	}
+
+
+	/**
+	 * @param NC23Request $request
+	 */
+	public function configureRequest(NC23Request $request): void {
+		$request->setVerifyPeer($this->getAppValue(self::SELF_SIGNED_CERT) !== '1');
+		$request->setProtocols(['https', 'http']);
+		$request->setHttpErrorsAllowed(true);
+		$request->setLocalAddressAllowed(true);
+		$request->setFollowLocation(true);
+		$request->setTimeout(5);
+	}
+
 
 }
 

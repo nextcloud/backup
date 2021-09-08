@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -8,7 +9,6 @@ declare(strict_types=1);
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
- * @author Frank Karlitschek <frank@karlitschek.de>
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
@@ -32,7 +32,22 @@ declare(strict_types=1);
 namespace OCA\Backup\AppInfo;
 
 
+use OCA\Backup\Handlers\WebfingerHandler;
+use OCA\Backup\Listeners\FileChanged;
+use OCA\Backup\Listeners\FileCreated;
+use OCA\Backup\Listeners\FileDeleted;
+use OCA\Backup\Listeners\FileRenamed;
 use OCP\AppFramework\App;
+use OCP\AppFramework\Bootstrap\IBootContext;
+use OCP\AppFramework\Bootstrap\IBootstrap;
+use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Files\Events\Node\NodeCreatedEvent;
+use OCP\Files\Events\Node\NodeDeletedEvent;
+use OCP\Files\Events\Node\NodeRenamedEvent;
+use OCP\Files\Events\Node\NodeWrittenEvent;
+
+
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 
 /**
@@ -40,10 +55,13 @@ use OCP\AppFramework\App;
  *
  * @package OCA\Backup\AppInfo
  */
-class Application extends App {
+class Application extends App implements IBootstrap {
 
 
 	const APP_ID = 'backup';
+	const APP_NAME = 'Backup';
+	const APP_SUBJECT = 'http://nextcloud.com/';
+	const APP_REL = 'https://apps.nextcloud.com/apps/backup';
 
 
 	/**
@@ -53,6 +71,26 @@ class Application extends App {
 	 */
 	public function __construct(array $params = []) {
 		parent::__construct(self::APP_ID, $params);
+	}
+
+
+	/**
+	 * @param IRegistrationContext $context
+	 */
+	public function register(IRegistrationContext $context): void {
+		$context->registerEventListener(NodeCreatedEvent::class, FileCreated::class);
+		$context->registerEventListener(NodeWrittenEvent::class, FileChanged::class);
+		$context->registerEventListener(NodeRenamedEvent::class, FileRenamed::class);
+		$context->registerEventListener(NodeDeletedEvent::class, FileDeleted::class);
+
+		$context->registerWellKnownHandler(WebfingerHandler::class);
+	}
+
+
+	/**
+	 * @param IBootContext $context
+	 */
+	public function boot(IBootContext $context): void {
 	}
 
 }
