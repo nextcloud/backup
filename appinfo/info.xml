@@ -25,6 +25,9 @@
 		<command>OCA\Backup\Command\RemoteAdd</command>
 		<command>OCA\Backup\Command\RemoteList</command>
 		<command>OCA\Backup\Command\RemoteRemove</command>
+
+		<command>OCA\Backup\Command\RestoringBrowse</command>
+
 		<!--		<command>OCA\Backup\Command\Create</command>-->
 		<!--		<command>OCA\Backup\Command\Listing</command>-->
 		<!--		<command>OCA\Backup\Command\Details</command>-->

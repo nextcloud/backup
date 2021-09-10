@@ -32,12 +32,22 @@ declare(strict_types=1);
 namespace OCA\Backup\Controller;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidOriginException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\JsonNotRequestedException;
+use ArtificialOwl\MySmallPhpTools\Exceptions\MalformedArrayException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
+use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc22\TNC22Controller;
+use Exception;
 use OC\AppFramework\Middleware\Security\Exceptions\NotLoggedInException;
+use OCA\Backup\Exceptions\RemoteRequestException;
+use OCA\Backup\IRemoteRequest;
+use OCA\Backup\Model\RemoteInstance;
+use OCA\Backup\RemoteRequest\ListRestoringPoint;
 use OCA\Backup\Service\RemoteStreamService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
@@ -95,5 +105,117 @@ class RemoteController extends Controller {
 		return new DataResponse($signatory);
 	}
 
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function listRestoringPoint(): DataResponse {
+		try {
+			$request = $this->extractRequest(ListRestoringPoint::class);
+		} catch (Exception $e) {
+			return $this->exceptionResponse($e, Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$request->execute();
+
+			return new DataResponse($request->getOutcomeData());
+		} catch (Exception $e) {
+			$this->e($e, ['request' => $request]);
+
+			return $this->exceptionResponse($e);
+		}
+	}
+
+
+	public function detailsRestoringPoint(int $restoringId): DataResponse {
+	}
+
+
+	public function partRestoringPoint(int $restoringId): DataResponse {
+	}
+
+
+	public function downloadRestoringPoint(int $restoringId): DataResponse {
+	}
+
+	public function uploadRestoringPoint(int $restoringId): DataResponse {
+	}
+
+
+	/**
+	 * @param string $class
+	 *
+	 * @return IRemoteRequest
+	 * @throws RemoteRequestException
+	 * @throws SignatoryException
+	 * @throws InvalidOriginException
+	 * @throws MalformedArrayException
+	 * @throws SignatureException
+	 */
+	private function extractRequest(string $class = ''): ?IRemoteRequest {
+		$signed = $this->remoteStreamService->incomingSignedRequest();
+		$this->confirmRemoteInstance($signed);
+
+		if ($class === '') {
+			return null;
+		}
+
+		$request = new $class();
+		if (!($request instanceof IRemoteRequest)) {
+			throw new RemoteRequestException('invalid class ' . $class);
+		}
+
+		$request->import(json_decode($signed->getBody(), true));
+		$request->setSignedRequest($signed);
+
+		return $request;
+	}
+
+
+	/**
+	 * @param NC23SignedRequest $signedRequest
+	 *
+	 * @return RemoteInstance
+	 * @throws SignatoryException
+	 */
+	private function confirmRemoteInstance(NC23SignedRequest $signedRequest): RemoteInstance {
+		/** @var RemoteInstance $signatory */
+		$signatory = $signedRequest->getSignatory();
+
+		if (!$signatory instanceof RemoteInstance) {
+			$this->debug('Signatory is not a known RemoteInstance', ['signedRequest' => $signedRequest]);
+			throw new SignatoryException('Could not confirm identity');
+		}
+
+		if (!$signatory->isIncoming()) {
+			throw new SignatoryException('Remote instance is not configured as Incoming');
+		}
+
+		return $signatory;
+	}
+
+
+	/**
+	 * @param Exception $e
+	 * @param int $httpErrorCode
+	 *
+	 * @return DataResponse
+	 */
+	public function exceptionResponse(
+		Exception $e,
+		int $httpErrorCode = Http::STATUS_BAD_REQUEST
+	): DataResponse {
+		return new DataResponse(
+			[
+				'message' => $e->getMessage(),
+				'code' => $e->getCode()
+			],
+			($e->getCode() > 0) ? $e->getCode() : $httpErrorCode
+		);
+	}
 }
 

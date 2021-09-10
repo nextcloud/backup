@@ -39,14 +39,21 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\WellKnownLinkNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Request;
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Signatory;
+use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
+use ArtificialOwl\MySmallPhpTools\Model\Request;
+use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23LocalSignatory;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23WellKnown;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
+use JsonSerializable;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\RemoteRequest;
+use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
+use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Model\RemoteInstance;
+use OCP\AppFramework\Http;
 use OCP\IURLGenerator;
 
 
@@ -112,8 +119,38 @@ class RemoteStreamService extends NC23Signature {
 			$app->setAuthSigned($this->signString($confirmKey, $app));
 		}
 
-		$app->setRoot($this->urlGenerator->linkToRouteAbsolute('backup.Remote.test'));
-		$app->setTest($this->urlGenerator->linkToRouteAbsolute('backup.Remote.test'));
+		$app->setRoot($this->urlGenerator->linkToRouteAbsolute('backup.Remote.appService'));
+
+		$app->setRPList($this->urlGenerator->linkToRouteAbsolute('backup.Remote.listRestoringPoint'));
+		$app->setRPDetails(
+			urldecode(
+				$this->urlGenerator->linkToRouteAbsolute(
+					'backup.Remote.detailsRestoringPoint', ['restoringId' => '{restoringId}']
+				)
+			)
+		);
+		$app->setRPDownload(
+			urldecode(
+				$this->urlGenerator->linkToRouteAbsolute(
+					'backup.Remote.downloadRestoringPoint', ['restoringId' => '{restoringId}']
+				)
+			)
+		);
+		$app->setRPCreate($this->urlGenerator->linkToRouteAbsolute('backup.Remote.createRestoringPoint'));
+		$app->setRPUpdate(
+			urldecode(
+				$this->urlGenerator->linkToRouteAbsolute(
+					'backup.Remote.updateRestoringPoint', ['restoringId' => '{restoringId}']
+				)
+			)
+		);
+		$app->setRPUpload(
+			urldecode(
+				$this->urlGenerator->linkToRouteAbsolute(
+					'backup.Remote.uploadRestoringPoint', ['restoringId' => '{restoringId}']
+				)
+			)
+		);
 
 		$app->setOrigData($this->serialize($app));
 
@@ -186,6 +223,117 @@ class RemoteStreamService extends NC23Signature {
 		$this->confirmAuth($remoteInstance, $confirm);
 
 		return $remoteInstance;
+	}
+
+
+	/**
+	 * shortcut to requestRemoteInstance that return result if available, or exception.
+	 *
+	 * @param string $instance
+	 * @param string $item
+	 * @param int $type
+	 * @param JsonSerializable|null $object
+	 * @param array $params
+	 *
+	 * @return array
+	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
+	 */
+	public function resultRequestRemoteInstance(
+		string $instance,
+		string $item,
+		int $type = Request::TYPE_GET,
+		?JsonSerializable $object = null,
+		array $params = []
+	): array {
+		$signedRequest = $this->requestRemoteInstance($instance, $item, $type, $object, $params);
+
+		if (!$signedRequest->getOutgoingRequest()->hasResult()) {
+			throw new RemoteInstanceException();
+		}
+
+		$result = $signedRequest->getOutgoingRequest()->getResult();
+		if ($result->getStatusCode() === Http::STATUS_OK) {
+			return $result->getAsArray();
+		}
+
+		throw new RemoteInstanceException($this->get('message', $result->getAsArray()));
+	}
+
+
+	/**
+	 * Send a request to a remote instance, based on:
+	 * - instance: address as saved in database,
+	 * - item: the item to request (incoming, event, ...)
+	 * - type: GET, POST
+	 * - data: Serializable to be send if needed
+	 *
+	 * @param string $instance
+	 * @param string $item
+	 * @param int $type
+	 * @param JsonSerializable|null $object
+	 * @param array $params
+	 *
+	 * @return NC23SignedRequest
+	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
+	 */
+	private function requestRemoteInstance(
+		string $instance,
+		string $item,
+		int $type = Request::TYPE_GET,
+		?JsonSerializable $object = null,
+		array $params = []
+	): NC23SignedRequest {
+		$request = new NC23Request('', $type);
+		$this->configService->configureRequest($request);
+		$link = $this->getRemoteInstanceEntry($instance, $item, $params);
+		$request->basedOnUrl($link);
+
+		// TODO: Work Around: if object is empty, request can takes up to 10s on some configuration
+		if (is_null($object) || empty($object->jsonSerialize())) {
+			$object = new SimpleDataStore(['empty' => 1]);
+		}
+
+		if (!is_null($object)) {
+			$request->setDataSerialize($object);
+		}
+
+		try {
+			$app = $this->getAppSignatory();
+//		$app->setAlgorithm(NC22Signatory::SHA512);
+			$signedRequest = $this->signOutgoingRequest($request, $app);
+			$this->doRequest($signedRequest->getOutgoingRequest(), false);
+		} catch (RequestNetworkException | SignatoryException $e) {
+			throw new RemoteInstanceException($e->getMessage());
+		}
+
+		return $signedRequest;
+	}
+
+
+	/**
+	 * get the value of an entry from the Signatory of the RemoteInstance.
+	 *
+	 * @param string $instance
+	 * @param string $item
+	 * @param array $params
+	 *
+	 * @return string
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
+	 */
+	private function getRemoteInstanceEntry(string $instance, string $item, array $params = []): string {
+		$remote = $this->remoteRequest->getFromInstance($instance);
+
+		$value = $this->get($item, $remote->getOrigData());
+		if ($value === '') {
+			throw new RemoteResourceNotFoundException();
+		}
+
+		return $this->feedStringWithParams($value, $params);
 	}
 
 

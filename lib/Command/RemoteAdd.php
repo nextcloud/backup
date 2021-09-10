@@ -136,7 +136,6 @@ class RemoteAdd extends Base {
 		}
 
 		$remoteSignatory->setInstance($address);
-echo json_encode($knownInstance) . "\n";
 		if (!is_null($knownInstance)) {
 			if ($remoteSignatory->getInstance() !== $knownInstance->getInstance()) {
 				throw new RemoteInstanceDuplicateException(

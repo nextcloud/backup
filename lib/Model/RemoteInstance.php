@@ -55,7 +55,15 @@ class RemoteInstance extends NC23Signatory implements INC22QueryRow, JsonSeriali
 	const EXCHANGE_OUT = 2;
 
 
-	const TEST = 'test';
+	public const UID = 'uid';
+	public const ROOT = 'root';
+	public const AUTH_SIGNED = 'auth-signed';
+	public const RP_LIST = 'restoringPoint.list';
+	public const RP_CREATE = 'restoringPoint.create';
+	public const RP_UPDATE = 'restoringPoint.update';
+	public const RP_DETAILS = 'restoringPoint.details';
+	public const RP_UPLOAD = 'restoringPoint.upload';
+	public const RP_DOWNLOAD = 'restoringPoint.download';
 
 
 	/** @var int */
@@ -68,7 +76,22 @@ class RemoteInstance extends NC23Signatory implements INC22QueryRow, JsonSeriali
 	private $exchange = 0;
 
 	/** @var string */
-	private $test = '';
+	private $RPList = '';
+
+	/** @var string */
+	private $RPDetails = '';
+
+	/** @var string */
+	private $RPDownload = '';
+
+	/** @var string */
+	private $RPCreate = '';
+
+	/** @var string */
+	private $RPUpdate = '';
+
+	/** @var string */
+	private $RPUpload = '';
 
 	/** @var string */
 	private $uid = '';
@@ -181,12 +204,12 @@ class RemoteInstance extends NC23Signatory implements INC22QueryRow, JsonSeriali
 
 
 	/**
-	 * @param string $test
+	 * @param string $RPList
 	 *
 	 * @return RemoteInstance
 	 */
-	public function setTest(string $test): self {
-		$this->test = $test;
+	public function setRPList(string $RPList): self {
+		$this->RPList = $RPList;
 
 		return $this;
 	}
@@ -194,8 +217,103 @@ class RemoteInstance extends NC23Signatory implements INC22QueryRow, JsonSeriali
 	/**
 	 * @return string
 	 */
-	public function getTest(): string {
-		return $this->test;
+	public function getRPList(): string {
+		return $this->RPList;
+	}
+
+
+	/**
+	 * @param string $RPDetails
+	 *
+	 * @return RemoteInstance
+	 */
+	public function setRPDetails(string $RPDetails): self {
+		$this->RPDetails = $RPDetails;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRPDetails(): string {
+		return $this->RPDetails;
+	}
+
+
+	/**
+	 * @param string $RPDownload
+	 *
+	 * @return RemoteInstance
+	 */
+	public function setRPDownload(string $RPDownload): self {
+		$this->RPDownload = $RPDownload;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRPDownload(): string {
+		return $this->RPDownload;
+	}
+
+
+	/**
+	 * @param string $RPCreate
+	 *
+	 * @return RemoteInstance
+	 */
+	public function setRPCreate(string $RPCreate): self {
+		$this->RPCreate = $RPCreate;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRPCreate(): string {
+		return $this->RPCreate;
+	}
+
+
+	/**
+	 * @param string $RPUpdate
+	 *
+	 * @return RemoteInstance
+	 */
+	public function setRPUpdate(string $RPUpdate): self {
+		$this->RPUpdate = $RPUpdate;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRPUpdate(): string {
+		return $this->RPUpdate;
+	}
+
+
+	/**
+	 * @param string $RPUpload
+	 *
+	 * @return RemoteInstance
+	 */
+	public function setRPUpload(string $RPUpload): self {
+		$this->RPUpload = $RPUpload;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRPUpload(): string {
+		return $this->RPUpload;
 	}
 
 
@@ -288,12 +406,17 @@ class RemoteInstance extends NC23Signatory implements INC22QueryRow, JsonSeriali
 	public function import(array $data): NC23Signatory {
 		parent::import($data);
 
-		$this->setTest($this->get('test', $data))
-			 ->setRoot($this->get('root', $data))
-			 ->setUid($this->get('uid', $data));
+		$this->setRoot($this->get(self::ROOT, $data))
+			 ->setRPList($this->get(self::RP_LIST, $data))
+			 ->setRPCreate($this->get(self::RP_CREATE, $data))
+			 ->setRPUpdate($this->get(self::RP_UPDATE, $data))
+			 ->setRPDetails($this->get(self::RP_DETAILS, $data))
+			 ->setRPUpload($this->get(self::RP_UPLOAD, $data))
+			 ->setRPDownload($this->get(self::RP_DOWNLOAD, $data))
+			 ->setUid($this->get(self::UID, $data));
 
 		$algo = '';
-		$authSigned = trim($this->get('auth-signed', $data), ':');
+		$authSigned = trim($this->get(self::AUTH_SIGNED, $data), ':');
 		if (strpos($authSigned, ':') > 0) {
 			list($algo, $authSigned) = explode(':', $authSigned);
 		}
@@ -310,9 +433,17 @@ class RemoteInstance extends NC23Signatory implements INC22QueryRow, JsonSeriali
 	 */
 	public function jsonSerialize(): array {
 		$data = [
-			'uid' => $this->getUid(true),
-			'root' => $this->getRoot(),
-			'test' => $this->getTest()
+			self::UID => $this->getUid(true),
+			self::ROOT => $this->getRoot(),
+			'restoringPoint' =>
+				[
+					'list' => $this->getRPList(),
+					'create' => $this->getRPCreate(),
+					'update' => $this->getRPDetails(),
+					'details' => $this->getRPDetails(),
+					'upload' => $this->getRPUpload(),
+					'download' => $this->getRPDownload()
+				]
 		];
 
 		if ($this->getAuthSigned() !== '') {

@@ -10,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,81 +29,43 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\Model;
+namespace OCA\Backup\RemoteRequest;
 
 
-use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use JsonSerializable;
+use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use OCA\Backup\IRemoteRequest;
+use OCA\Backup\Model\RemoteInstance;
+use OCA\Backup\Model\RestoringPoint;
 
 
 /**
- * Class RestoringPoint
+ * Class ListRestoringPoint
  *
- * @package OCA\Backup\Model
+ * @package OCA\Backup\RemoteRequest
  */
-class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable {
-
-
-	use TArrayTools;
-
-
-	/** @var string */
-	private $id = '';
+class ListRestoringPoint extends RemoteRequest implements IRemoteRequest {
 
 
 	/**
-	 * @param string $id
 	 *
-	 * @return RestoringPoint
 	 */
-	public function setId(string $id): self {
-		$this->id = $id;
+	public function execute(): void {
+		/** @var RemoteInstance $signatory */
+		$signatory = $this->getSignedRequest()->getSignatory();
 
-		return $this;
-	}
+		$list = [];
+		$rp = new RestoringPoint();
+		$rp->setId($signatory->getInstance());
+		$list[] = $rp;
 
-	/**
-	 * @return string
-	 */
-	public function getId(): string {
-		return $this->id;
+		$this->setOutcome(new SimpleDataStore($list));
 	}
 
 
-	/**
-	 * @param array $data
-	 *
-	 * @return INC23QueryRow
-	 */
-	public function importFromDatabase(array $data): INC23QueryRow {
-		return $this;
-	}
-
-
-	/**
-	 * @param array $data
-	 *
-	 * @return IDeserializable
-	 */
 	public function import(array $data): IDeserializable {
-		$this->setId($this->get('id', $data));
-
 		return $this;
 	}
-
-
-	/**
-	 * @return array
-	 */
-	public function jsonSerialize(): array {
-		return
-			[
-				'id' => $this->getId(),
-			];
-	}
-
 
 }
 

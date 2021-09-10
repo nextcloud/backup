@@ -10,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,81 +29,33 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\Model;
+namespace OCA\Backup;
 
 
-use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use JsonSerializable;
+use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
 
 
 /**
- * Class RestoringPoint
+ * Interface IRemoteRequest
  *
- * @package OCA\Backup\Model
+ * @package OCA\Backup
  */
-class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable {
-
-
-	use TArrayTools;
-
-
-	/** @var string */
-	private $id = '';
-
+interface IRemoteRequest extends IDeserializable {
 
 	/**
-	 * @param string $id
+	 * @param NC23SignedRequest $signedRequest
+	 */
+	public function setSignedRequest(NC23SignedRequest $signedRequest): void;
+
+	/**
 	 *
-	 * @return RestoringPoint
 	 */
-	public function setId(string $id): self {
-		$this->id = $id;
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getId(): string {
-		return $this->id;
-	}
-
-
-	/**
-	 * @param array $data
-	 *
-	 * @return INC23QueryRow
-	 */
-	public function importFromDatabase(array $data): INC23QueryRow {
-		return $this;
-	}
-
-
-	/**
-	 * @param array $data
-	 *
-	 * @return IDeserializable
-	 */
-	public function import(array $data): IDeserializable {
-		$this->setId($this->get('id', $data));
-
-		return $this;
-	}
-
+	public function execute(): void;
 
 	/**
 	 * @return array
 	 */
-	public function jsonSerialize(): array {
-		return
-			[
-				'id' => $this->getId(),
-			];
-	}
-
-
+	public function getOutcomeData(): array;
 }
 
