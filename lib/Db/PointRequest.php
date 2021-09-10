@@ -32,6 +32,7 @@ namespace OCA\Backup\Db;
 
 
 use OCA\Backup\Model\Backup;
+use OCA\Backup\Model\RestoringPoint;
 
 
 /**
@@ -39,7 +40,7 @@ use OCA\Backup\Model\Backup;
  *
  * @package OCA\Backup\Db
  */
-class BackupsRequest extends BackupsRequestBuilder {
+class PointRequest extends PointRequestBuilder {
 
 
 	/**
@@ -50,8 +51,7 @@ class BackupsRequest extends BackupsRequestBuilder {
 	 * @return int
 	 */
 	public function create(Backup $backup): int {
-
-		$qb = $this->getBackupsInsertSql();
+		$qb = $this->getPointInsertSql();
 
 //		$qb->setValue('id', $qb->createNamedParameter($id))
 ////			   ->setValue('type', $qb->createNamedParameter($actor->getType()))
@@ -71,10 +71,23 @@ class BackupsRequest extends BackupsRequestBuilder {
 	 * @param Backup $backup
 	 */
 	public function update(Backup $backup) {
-		$qb = $this->getBackupsUpdateSql();
-		$qb->limitToId($backup->getId());
+//		$qb = $this->getPointUpdateSql();
+//		$qb->limitToId($backup->getId());
+//
+//		$qb->execute();
+	}
 
-		$qb->execute();
+
+	/**
+	 * @param string $instance
+	 *
+	 * @return RestoringPoint[]
+	 */
+	public function getByInstance(string $instance): array {
+		$qb = $this->getPointSelectSql();
+		$qb->limitToInstance($instance);
+
+		return $this->getItemsFromRequest($qb);
 	}
 
 }

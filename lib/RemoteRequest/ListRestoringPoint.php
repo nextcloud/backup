@@ -34,9 +34,11 @@ namespace OCA\Backup\RemoteRequest;
 
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
+use OCA\Backup\AppInfo\Application;
+use OCA\Backup\Db\PointRequest;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
-use OCA\Backup\Model\RestoringPoint;
 
 
 /**
@@ -47,19 +49,34 @@ use OCA\Backup\Model\RestoringPoint;
 class ListRestoringPoint extends RemoteRequest implements IRemoteRequest {
 
 
+	use TNC23Logger;
+
+
+	/** @var PointRequest */
+	private $pointRequest;
+
+
+	/**
+	 * ListRestoringPoint constructor.
+	 *
+	 * @param PointRequest $pointRequest
+	 */
+	public function __construct(PointRequest $pointRequest) {
+		$this->pointRequest = $pointRequest;
+
+		$this->setup('app', Application::APP_ID);
+	}
+
+
 	/**
 	 *
 	 */
 	public function execute(): void {
 		/** @var RemoteInstance $signatory */
 		$signatory = $this->getSignedRequest()->getSignatory();
+		$points = $this->pointRequest->getByInstance($signatory->getInstance());
 
-		$list = [];
-		$rp = new RestoringPoint();
-		$rp->setId($signatory->getInstance());
-		$list[] = $rp;
-
-		$this->setOutcome(new SimpleDataStore($list));
+		$this->setOutcome(new SimpleDataStore($points));
 	}
 
 

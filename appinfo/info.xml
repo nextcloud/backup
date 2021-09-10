@@ -6,7 +6,7 @@
 	<description><![CDATA[Backup. Restore.]]></description>
 	<licence>agpl</licence>
 	<author mail="maxence@artificial-owl.com">Maxence Lange</author>
-	<version>0.1.2</version>
+	<version>0.1.4</version>
 	<namespace>Backup</namespace>
 	<category>tools</category>
 	<website>https://github.com/nextcloud/backup</website>
@@ -27,6 +27,7 @@
 		<command>OCA\Backup\Command\RemoteRemove</command>
 
 		<command>OCA\Backup\Command\RestoringBrowse</command>
+		<command>OCA\Backup\Command\Reset</command>
 
 		<!--		<command>OCA\Backup\Command\Create</command>-->
 		<!--		<command>OCA\Backup\Command\Listing</command>-->

@@ -40,6 +40,7 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc22\TNC22Controller;
 use Exception;
+use OC;
 use OC\AppFramework\Middleware\Security\Exceptions\NotLoggedInException;
 use OCA\Backup\Exceptions\RemoteRequestException;
 use OCA\Backup\IRemoteRequest;
@@ -50,6 +51,8 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
+use ReflectionClass;
+use ReflectionException;
 
 
 /**
@@ -164,15 +167,25 @@ class RemoteController extends Controller {
 			return null;
 		}
 
-		$request = new $class();
-		if (!($request instanceof IRemoteRequest)) {
-			throw new RemoteRequestException('invalid class ' . $class);
+		try {
+			$test = new ReflectionClass($class);
+		} catch (ReflectionException $e) {
+			throw new RemoteRequestException('ReflectionException with ' . $class . ': ' . $e->getMessage());
 		}
 
-		$request->import(json_decode($signed->getBody(), true));
-		$request->setSignedRequest($signed);
+		if (!in_array(IRemoteRequest::class, $test->getInterfaceNames())) {
+			throw new RemoteRequestException($class . ' does not implements IRemoteRequest');
+		}
 
-		return $request;
+		$item = OC::$server->get($class);
+		if (!($item instanceof IRemoteRequest)) {
+			throw new RemoteRequestException($class . ' not an IRemoteRequest');
+		}
+
+		$item->import(json_decode($signed->getBody(), true));
+		$item->setSignedRequest($signed);
+
+		return $item;
 	}
 
 

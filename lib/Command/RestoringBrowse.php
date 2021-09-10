@@ -59,9 +59,6 @@ class RestoringBrowse extends Base {
 	use TNC23Deserialize;
 
 
-	const LOCAL = 'local';
-
-
 	/** @var RemoteRequest */
 	private $remoteRequest;
 
@@ -101,7 +98,7 @@ class RestoringBrowse extends Base {
 		$output->writeln('');
 		$output->writeln('Browsing available Restoring Point on <info>' . $instance . '</info>');
 
-		$rp = $this->getRestoringPoint($instance, ($instance === self::LOCAL));
+		$rp = $this->getRestoringPoint($instance, ($instance === RemoteInstance::LOCAL));
 		echo 'RP: ' . json_encode($rp, JSON_PRETTY_PRINT);
 
 		return 0;
@@ -131,7 +128,7 @@ class RestoringBrowse extends Base {
 		$helper = $this->getHelper('question');
 		$question = new ChoiceQuestion(
 			'Which location to browse ?',
-			array_merge([self::LOCAL], $remote),
+			array_merge([RemoteInstance::LOCAL], $remote),
 			0
 		);
 		$question->setErrorMessage('Instance %s is not known.');

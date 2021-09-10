@@ -31,7 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc22\NC22ExtendedQueryBuilder;
+use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\NC23ExtendedQueryBuilder;
 
 
 /**
@@ -39,7 +39,7 @@ use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc22\NC22ExtendedQueryBuilder;
  *
  * @package OCA\Backup\Db
  */
-class CoreQueryBuilder extends NC22ExtendedQueryBuilder {
+class CoreQueryBuilder extends NC23ExtendedQueryBuilder {
 
 
 	/**
@@ -61,10 +61,10 @@ class CoreQueryBuilder extends NC22ExtendedQueryBuilder {
 
 
 	/**
-	 * @param string $host
+	 * @param string $instance
 	 */
-	public function limitToInstance(string $host): void {
-		$this->limit('instance', $host, '', false);
+	public function limitToInstance(string $instance): void {
+		$this->limit('instance', $instance, '', false);
 	}
 
 }

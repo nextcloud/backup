@@ -42,18 +42,16 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
  *
  * @package OCA\Backup\Db
  */
-class BackupsRequestBuilder extends CoreRequestBuilder {
+class PointRequestBuilder extends CoreRequestBuilder {
 
 
 	use TArrayTools;
 
 
 	/**
-	 * Base of the Sql Insert request
-	 *
 	 * @return CoreQueryBuilder
 	 */
-	protected function getBackupsInsertSql(): CoreQueryBuilder {
+	protected function getPointInsertSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
 		$qb->select(self::TABLE_RESTORING_POINT);
 
@@ -64,9 +62,9 @@ class BackupsRequestBuilder extends CoreRequestBuilder {
 	/**
 	 * Base of the Sql Update request
 	 *
-	 * @return IQueryBuilder
+	 * @return CoreQueryBuilder
 	 */
-	protected function getBackupsUpdateSql(): CoreQueryBuilder {
+	protected function getPointUpdateSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
 		$qb->update(self::TABLE_RESTORING_POINT);
 
@@ -79,7 +77,7 @@ class BackupsRequestBuilder extends CoreRequestBuilder {
 	 *
 	 * @return CoreQueryBuilder
 	 */
-	protected function getBackupsSelectSql(): CoreQueryBuilder {
+	protected function getPointSelectSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
 		$qb->generateSelect(
 			self::TABLE_RESTORING_POINT,
@@ -96,7 +94,7 @@ class BackupsRequestBuilder extends CoreRequestBuilder {
 	 *
 	 * @return IQueryBuilder
 	 */
-	protected function getBackupsDeleteSql(): IQueryBuilder {
+	protected function getPointDeleteSql(): IQueryBuilder {
 		$qb = $this->getQueryBuilder();
 		$qb->delete(self::TABLE_RESTORING_POINT);
 

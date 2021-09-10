@@ -61,14 +61,11 @@ class CoreRequestBuilder {
 		],
 		self::TABLE_RESTORING_POINT => [
 			'id',
-			'user_id',
-			'preferred_username',
-			'name',
-			'summary',
-			'sa.public_key',
-			'avatar_version',
-			'private_key',
-			'creation'
+			'uid',
+			'instance',
+			'status',
+			'metadata',
+			'date'
 		]
 	];
 
@@ -141,7 +138,6 @@ class CoreRequestBuilder {
 		$qb = $this->getQueryBuilder();
 		$qb->delete('migrations');
 		$qb->limit('app', 'backup');
-		$qb->unlike('version', '001%');
 
 		$qb->execute();
 	}

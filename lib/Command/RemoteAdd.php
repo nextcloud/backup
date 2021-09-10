@@ -42,6 +42,7 @@ use OC\Core\Command\Base;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\RemoteRequest;
 use OCA\Backup\Exceptions\RemoteInstanceDuplicateException;
+use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceUidException;
 use OCA\Backup\Model\RemoteInstance;
@@ -106,9 +107,13 @@ class RemoteAdd extends Base {
 	 * @throws SignatoryException
 	 * @throws RemoteInstanceUidException
 	 * @throws RemoteInstanceDuplicateException
+	 * @throws RemoteInstanceException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$address = $input->getArgument('address');
+		if ($address === RemoteInstance::LOCAL) {
+			throw new RemoteInstanceException('\'local\' is a reserved name');
+		}
 
 		$resource = $this->getCurrentResourceFromAddress($output, $address);
 

@@ -65,6 +65,59 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
+
+		/**
+		 * BACKUP_POINT
+		 */
+		if (!$schema->hasTable('backup_point')) {
+			$table = $schema->createTable('backup_point');
+			$table->addColumn(
+				'id', 'integer', [
+						'autoincrement' => true,
+						'notnull' => true,
+						'length' => 4,
+						'unsigned' => true,
+					]
+			);
+			$table->addColumn(
+				'uid', 'string', [
+						 'notnull' => true,
+						 'length' => 20,
+					 ]
+			);
+			$table->addColumn(
+				'instance', 'string', [
+							  'notnull' => true,
+							  'length' => 127,
+						  ]
+			);
+			$table->addColumn(
+				'status', 'integer', [
+							'notnull' => true,
+							'unsigned' => true,
+							'length' => 1
+						]
+			);
+			$table->addColumn(
+				'metadata', 'text', [
+							  'notnull' => true
+						  ]
+			);
+			$table->addColumn(
+				'date', 'integer', [
+						  'notnull' => true,
+						  'unsigned' => true,
+						  'length' => 11
+					  ]
+			);
+
+			$table->setPrimaryKey(['id']);
+			$table->addUniqueIndex(['uid']);
+			$table->addIndex(['uid']);
+			$table->addIndex(['instance']);
+		}
+
+
 		/**
 		 * BACKUP_REMOTE
 		 */

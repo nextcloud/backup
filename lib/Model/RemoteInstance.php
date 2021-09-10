@@ -32,7 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Model;
 
 
-use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc22\INC22QueryRow;
+use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Signatory;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
@@ -45,10 +45,14 @@ use OCA\Backup\Exceptions\RemoteInstanceUidException;
  *
  * @package OCA\Backup\Model
  */
-class RemoteInstance extends NC23Signatory implements INC22QueryRow, JsonSerializable {
+class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSerializable {
 
 
 	use TArrayTools;
+
+
+	const LOCAL = 'local';
+
 
 
 	const EXCHANGE_IN = 1;
@@ -460,7 +464,7 @@ class RemoteInstance extends NC23Signatory implements INC22QueryRow, JsonSeriali
 	 * @return self
 	 * @throws RemoteInstanceNotFoundException
 	 */
-	public function importFromDatabase(array $data): INC22QueryRow {
+	public function importFromDatabase(array $data): INC23QueryRow {
 		if ($this->getInt('id', $data) === 0) {
 			throw new RemoteInstanceNotFoundException();
 		}

@@ -34,6 +34,7 @@ namespace OCA\Backup\Model;
 
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
+use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
 
@@ -51,6 +52,18 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 	/** @var string */
 	private $id = '';
+
+	/** @var string */
+	private $instance = '';
+
+	/** @var int */
+	private $status = 0;
+
+	/** @var SimpleDataStore */
+	private $metadata;
+
+	/** @var int */
+	private $date = 0;
 
 
 	/**
@@ -73,11 +86,93 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 
 	/**
+	 * @param string $instance
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setInstance(string $instance): self {
+		$this->instance = $instance;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getInstance(): string {
+		return $this->instance;
+	}
+
+
+	/**
+	 * @param int $status
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setStatus(int $status): self {
+		$this->status = $status;
+
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getStatus(): int {
+		return $this->status;
+	}
+
+
+	/**
+	 * @param SimpleDataStore $metadata
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setMetadata(SimpleDataStore $metadata): self {
+		$this->metadata = $metadata;
+
+		return $this;
+	}
+
+	/**
+	 * @return SimpleDataStore
+	 */
+	public function getMetadata(): SimpleDataStore {
+		return $this->metadata;
+	}
+
+
+	/**
+	 * @param int $date
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setDate(int $date): self {
+		$this->date = $date;
+
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getDate(): int {
+		return $this->date;
+	}
+
+
+	/**
 	 * @param array $data
 	 *
 	 * @return INC23QueryRow
 	 */
 	public function importFromDatabase(array $data): INC23QueryRow {
+		$this->setId($this->get('uid', $data))
+			 ->setInstance($this->get('instance', $data))
+			 ->setStatus($this->getInt('status', $data))
+			 ->setMetadata(new SimpleDataStore($this->getArray('metadata', $data)))
+			 ->setDate($this->getInt('date', $data));
+
 		return $this;
 	}
 
@@ -88,7 +183,11 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	 * @return IDeserializable
 	 */
 	public function import(array $data): IDeserializable {
-		$this->setId($this->get('id', $data));
+		$this->setId($this->get('id', $data))
+			 ->setInstance($this->get('instance', $data))
+			 ->setStatus($this->getInt('status', $data))
+			 ->setMetadata(new SimpleDataStore($this->getArray('metadata', $data)))
+			 ->setDate($this->getInt('date', $data));
 
 		return $this;
 	}
@@ -101,9 +200,12 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 		return
 			[
 				'id' => $this->getId(),
+				'instance' => $this->getInstance(),
+				'status' => $this->getStatus(),
+				'metadata' => $this->getMetadata(),
+				'date' => $this->getDate()
 			];
 	}
-
 
 }
 
