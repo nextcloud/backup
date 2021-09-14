@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -31,16 +32,18 @@ declare(strict_types=1);
 namespace OCA\Backup\Model;
 
 
-use daita\MySmallPhpTools\Traits\TArrayTools;
-use daita\MySmallPhpTools\Traits\TStringTools;
+use ArtificialOwl\MySmallPhpTools\IDeserializable;
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
 
+
 /**
- * Class BackupArchive
+ * Class RestoringChunk
  *
  * @package OCA\Backup\Model
  */
-class BackupArchive implements JsonSerializable {
+class RestoringChunk implements JsonSerializable, IDeserializable {
 
 
 	use TArrayTools;
@@ -67,7 +70,7 @@ class BackupArchive implements JsonSerializable {
 
 
 	/**
-	 * BackupArchive constructor.
+	 * RestoringChunk constructor.
 	 */
 	public function __construct() {
 		$this->name = $this->uuid();
@@ -90,9 +93,9 @@ class BackupArchive implements JsonSerializable {
 	/**
 	 * @param string $name
 	 *
-	 * @return BackupArchive
+	 * @return RestoringChunk
 	 */
-	public function setName(string $name): BackupArchive {
+	public function setName(string $name): RestoringChunk {
 		$this->name = $name;
 
 		return $this;
@@ -116,9 +119,9 @@ class BackupArchive implements JsonSerializable {
 	/**
 	 * @param int $count
 	 *
-	 * @return BackupArchive
+	 * @return RestoringChunk
 	 */
-	public function setCount(int $count = -1): BackupArchive {
+	public function setCount(int $count = -1): RestoringChunk {
 		if ($count === -1) {
 			$this->count = sizeof($this->files);
 		} else {
@@ -139,9 +142,9 @@ class BackupArchive implements JsonSerializable {
 	/**
 	 * @param ArchiveFile[] $files
 	 *
-	 * @return BackupArchive
+	 * @return RestoringChunk
 	 */
-	public function setFiles(array $files): BackupArchive {
+	public function setFiles(array $files): RestoringChunk {
 		$this->files = $files;
 
 		return $this;
@@ -150,9 +153,9 @@ class BackupArchive implements JsonSerializable {
 	/**
 	 * @param ArchiveFile $file
 	 *
-	 * @return BackupArchive
+	 * @return RestoringChunk
 	 */
-	public function addFile(ArchiveFile $file): BackupArchive {
+	public function addFile(ArchiveFile $file): RestoringChunk {
 		$this->files[] = $file;
 
 		return $this;
@@ -169,9 +172,9 @@ class BackupArchive implements JsonSerializable {
 	/**
 	 * @param int $size
 	 *
-	 * @return BackupArchive
+	 * @return RestoringChunk
 	 */
-	public function setSize(int $size): BackupArchive {
+	public function setSize(int $size): RestoringChunk {
 		$this->size = $size;
 
 		return $this;
@@ -188,9 +191,9 @@ class BackupArchive implements JsonSerializable {
 	/**
 	 * @param string $checksum
 	 *
-	 * @return BackupArchive
+	 * @return RestoringChunk
 	 */
-	public function setChecksum(string $checksum): BackupArchive {
+	public function setChecksum(string $checksum): RestoringChunk {
 		$this->checksum = $checksum;
 
 		return $this;
@@ -207,9 +210,9 @@ class BackupArchive implements JsonSerializable {
 	/**
 	 * @param string $encryptedChecksum
 	 *
-	 * @return BackupArchive
+	 * @return RestoringChunk
 	 */
-	public function setEncryptedChecksum(string $encryptedChecksum): BackupArchive {
+	public function setEncryptedChecksum(string $encryptedChecksum): RestoringChunk {
 		$this->encryptedChecksum = $encryptedChecksum;
 
 		return $this;
@@ -219,9 +222,9 @@ class BackupArchive implements JsonSerializable {
 	/**
 	 * @param array $data
 	 *
-	 * @return BackupArchive
+	 * @return RestoringChunk
 	 */
-	public function import(array $data): BackupArchive {
+	public function import(array $data): IDeserializable {
 		$this->setName($this->get('name', $data, ''))
 //			 ->setFiles($this->getArray('files', $data, []))
 			 ->setCount($this->getInt('count', $data, 0))
@@ -238,7 +241,7 @@ class BackupArchive implements JsonSerializable {
 	 */
 	public function getResume(): array {
 		return [
-			'files' => $this->getFileS()
+			'files' => $this->getFiles()
 		];
 	}
 
@@ -249,10 +252,10 @@ class BackupArchive implements JsonSerializable {
 	public function jsonSerialize(): array {
 		return
 			[
-				'name'      => $this->getName(),
-				'count'     => $this->getCount(),
-				'size'      => $this->getSize(),
-				'checksum'  => $this->getChecksum(),
+				'name' => $this->getName(),
+				'count' => $this->getCount(),
+				'size' => $this->getSize(),
+				'checksum' => $this->getChecksum(),
 				'encrypted' => $this->getEncryptedChecksum()
 			];
 	}

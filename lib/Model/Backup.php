@@ -31,9 +31,9 @@ declare(strict_types=1);
 namespace OCA\Backup\Model;
 
 
-use daita\MySmallPhpTools\Traits\TArrayTools;
-use daita\MySmallPhpTools\Traits\TPathTools;
-use daita\MySmallPhpTools\Traits\TStringTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TPathTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
 use OCA\Backup\Exceptions\VersionException;
 use OCP\Files\SimpleFS\ISimpleFolder;
@@ -106,14 +106,8 @@ class Backup implements JsonSerializable {
 	 *
 	 * @param bool $init
 	 */
-	public function __construct(bool $init = false) {
+	public function __construct() {
 		$this->options = new BackupOptions();
-
-		if ($init) {
-			$this->creation = time();
-			$this->id = $this->uuid();
-			$this->name = date("Y-m-d-His", $this->creation) . '-' . $this->getId();
-		}
 	}
 
 

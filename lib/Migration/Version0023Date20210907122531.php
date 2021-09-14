@@ -92,6 +92,12 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 						  ]
 			);
 			$table->addColumn(
+				'root', 'string', [
+						  'notnull' => true,
+						  'length' => 20,
+					  ]
+			);
+			$table->addColumn(
 				'status', 'integer', [
 							'notnull' => true,
 							'unsigned' => true,
@@ -114,6 +120,7 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 			$table->addUniqueIndex(['uid']);
 			$table->addIndex(['uid']);
+			$table->addIndex(['root']);
 			$table->addIndex(['instance']);
 		}
 

@@ -31,12 +31,13 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
-use daita\MySmallPhpTools\Traits\TArrayTools;
-use daita\MySmallPhpTools\Traits\TPathTools;
-use daita\MySmallPhpTools\Traits\TStringTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TPathTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OCA\Backup\Model\Backup;
-use OCA\Backup\Model\BackupArchive;
+use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\BackupChunk;
+use OCA\Backup\Model\RestoringData;
 
 
 /**
@@ -49,6 +50,8 @@ class FilesService {
 
 	use TArrayTools;
 	use TStringTools;
+	use TPathTools;
+
 
 
 	const APP_ROOT = __DIR__ . '/../../';
@@ -74,14 +77,12 @@ class FilesService {
 
 
 	/**
-	 * @param BackupChunk $backupChunk
+	 * @param RestoringData $data
 	 * @param string $path
 	 */
-	public function fillBackupChunk(BackupChunk $backupChunk, string $path = ''): void {
-
-		// TODO: check no trailing slashes
-		if (!is_dir($backupChunk->getAbsolutePath() . $path)) {
-			$backupChunk->addFile($path);
+	public function fillRestoringData(RestoringData $data, string $path): void {
+		if (!is_dir($data->getAbsolutePath() . rtrim($path, '/'))) {
+			$data->addFile($path);
 
 			return;
 		}
@@ -90,28 +91,27 @@ class FilesService {
 			$path .= '/';
 		}
 
-		if (file_exists($backupChunk->getAbsolutePath() . $path . BackupService::NOBACKUP_FILE)) {
+		if (file_exists($data->getAbsolutePath() . $path . BackupService::NOBACKUP_FILE)) {
 			return;
 		}
 
-		foreach (scandir($backupChunk->getAbsolutePath() . $path) as $entry) {
+		foreach (scandir($data->getAbsolutePath() . $path) as $entry) {
 			if ($entry === '.' || $entry === '..') {
 				continue;
 			}
 
-			$this->fillBackupChunk($backupChunk, $path . $entry);
+			$this->fillRestoringData($data, $path . $entry);
 		}
 	}
 
 
-	use TPathTools;
 
 	/**
-	 * @param BackupChunk $backupChunk
+	 * @param RestoringData $data
 	 */
-	public function initBackupChunk(BackupChunk $backupChunk): void {
+	public function initRestoringData(RestoringData $data): void {
 		$root = '';
-		switch ($backupChunk->getType()) {
+		switch ($data->getType()) {
 			case BackupChunk::ROOT_DISK:
 				$root = '/';
 				break;
@@ -126,13 +126,13 @@ class FilesService {
 
 			case BackupChunk::FILE_CONFIG:
 				$root = \OC::$SERVERROOT;
-				$backupChunk->setPath('config/');
-				$backupChunk->setUniqueFile('config.php');
+				$data->setPath('config/');
+				$data->setUniqueFile('config.php');
 				break;
 		}
 
 		if ($root !== '') {
-			$backupChunk->setRoot($this->withEndSlash($root));
+			$data->setRoot($this->withEndSlash($root));
 		}
 	}
 

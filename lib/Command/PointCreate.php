@@ -33,8 +33,7 @@ namespace OCA\Backup\Command;
 
 
 use OC\Core\Command\Base;
-use OCA\Backup\Service\BackupService;
-use OCA\Backup\Service\MiscService;
+use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,33 +41,26 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- * Class Backup
+ * Class PointCreate
  *
  * @package OCA\Backup\Command
  */
-class Create extends Base {
+class PointCreate extends Base {
 
 
-	/** @var BackupService */
-	private $backupService;
-
-	/** @var MiscService */
-	private $miscService;
+	/** @var PointService */
+	private $pointService;
 
 
 	/**
-	 * Backup constructor.
+	 * PointCreate constructor.
 	 *
-	 * @param BackupService $backupService
-	 * @param MiscService $miscService
+	 * @param PointService $pointService
 	 */
-	public function __construct(BackupService $backupService, MiscService $miscService) {
-		$this->backupService = $backupService;
-		$this->miscService = $miscService;
-
+	public function __construct(PointService $pointService) {
 		parent::__construct();
 
-
+		$this->pointService = $pointService;
 	}
 
 
@@ -76,8 +68,8 @@ class Create extends Base {
 	 *
 	 */
 	protected function configure() {
-		$this->setName('backup:create')
-			 ->setDescription('Generate a backup of the instance');
+		$this->setName('backup:point:create')
+			 ->setDescription('Generate a restoring point of the instance');
 	}
 
 
@@ -89,8 +81,9 @@ class Create extends Base {
 	 * @throws NotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$backup = $this->backupService->backup();
+		$point = $this->pointService->create(true);
 
+		echo $point->getId() . "\n\n";
 //		echo '> ' . json_encode($backup, JSON_PRETTY_PRINT);
 	}
 

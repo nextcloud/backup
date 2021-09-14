@@ -53,7 +53,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
  *
  * @package OCA\Backup\Command
  */
-class RestoringBrowse extends Base {
+class PointBrowse extends Base {
 
 
 	use TNC23Deserialize;
@@ -91,6 +91,7 @@ class RestoringBrowse extends Base {
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
+	 * @throws InvalidItemException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$instance = $this->selectInstanceToBrowse($input, $output);
@@ -98,7 +99,7 @@ class RestoringBrowse extends Base {
 		$output->writeln('');
 		$output->writeln('Browsing available Restoring Point on <info>' . $instance . '</info>');
 
-		$rp = $this->getRestoringPoint($instance, ($instance === RemoteInstance::LOCAL));
+		$rp = $this->getRestoringPoints($instance, ($instance === RemoteInstance::LOCAL));
 		echo 'RP: ' . json_encode($rp, JSON_PRETTY_PRINT);
 
 		return 0;
@@ -147,7 +148,7 @@ class RestoringBrowse extends Base {
 	 * @throws RemoteResourceNotFoundException
 	 * @throws InvalidItemException
 	 */
-	private function getRestoringPoint(string $instance, bool $local = false): array {
+	private function getRestoringPoints(string $instance, bool $local = false): array {
 		if ($local) {
 			return [];
 		}

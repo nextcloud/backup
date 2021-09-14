@@ -37,6 +37,7 @@ use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
+use OCP\Files\SimpleFS\ISimpleFolder;
 
 
 /**
@@ -56,6 +57,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	/** @var string */
 	private $instance = '';
 
+	/** @var string */
+	private $root = '';
+
 	/** @var int */
 	private $status = 0;
 
@@ -64,6 +68,18 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 	/** @var int */
 	private $date = 0;
+
+	/** @var array */
+	private $nc = [];
+
+	/** @var ISimpleFolder */
+	private $baseFolder = null;
+
+	/** @var RestoringData[] */
+	private $restoringData = [];
+
+	/** @var bool */
+	private $package = false;
 
 
 	/**
@@ -105,6 +121,25 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 
 	/**
+	 * @param string $root
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setRoot(string $root): self {
+		$this->root = $root;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRoot(): string {
+		return $this->root;
+	}
+
+
+	/**
 	 * @param int $status
 	 *
 	 * @return RestoringPoint
@@ -122,6 +157,13 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 		return $this->status;
 	}
 
+
+	/**
+	 * @return bool
+	 */
+	public function hasMetadata(): bool {
+		return !is_null($this->metadata);
+	}
 
 	/**
 	 * @param SimpleDataStore $metadata
@@ -160,6 +202,121 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 		return $this->date;
 	}
 
+	/**
+	 * @param array $nc
+	 */
+	public function setNC(array $nc): void {
+		$this->nc = $nc;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getNC(): array {
+		return $this->nc;
+	}
+
+	public function getNCVersion(): string {
+		return implode('.', $this->getNc());
+	}
+
+
+	public function getNCInt(): int {
+		$nc = $this->getNc();
+
+		return 1 * $nc[3] + 100 * $nc[2] + 10000 * $nc[1] + 1000000 * $nc[0];
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function hasBaseFolder(): bool {
+		return !is_null($this->baseFolder);
+	}
+
+	/**
+	 * @param ISimpleFolder $baseFolder
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setBaseFolder(ISimpleFolder $baseFolder): self {
+		$this->baseFolder = $baseFolder;
+
+		return $this;
+	}
+
+	/**
+	 * @return ISimpleFolder
+	 */
+	public function getBaseFolder(): ISimpleFolder {
+		return $this->baseFolder;
+	}
+
+
+	/**
+	 * @param bool $filtered
+	 *
+	 * @return RestoringData[]
+	 */
+	public function getRestoringData(bool $filtered = false): array {
+		return $this->restoringData;
+//		$options = $this->getOptions();
+//		if (!$filtered || $options->getChunk() === '') {
+//			return $this->chunks;
+//		}
+//
+//		$options = $this->getOptions();
+//		foreach ($this->chunks as $chunk) {
+//			if ($chunk->getName() === $options->getChunk()) {
+//				return [$chunk];
+//			}
+//		}
+//
+//		return [];
+	}
+
+	/**
+	 * @param RestoringData[] $restoringData
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setRestoringData(array $restoringData): self {
+		$this->restoringData = $restoringData;
+
+		return $this;
+	}
+
+	/**
+	 * @param RestoringData $chunk
+	 *
+	 * @return RestoringPoint
+	 */
+	public function addRestoringData(RestoringData $chunk): self {
+		$this->restoringData[] = $chunk;
+
+		return $this;
+	}
+
+
+	/**
+	 * @param bool $package
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setPackage(bool $package): self {
+		$this->package = $package;
+
+		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isPackage(): bool {
+		return $this->package;
+	}
+
 
 	/**
 	 * @param array $data
@@ -169,6 +326,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	public function importFromDatabase(array $data): INC23QueryRow {
 		$this->setId($this->get('uid', $data))
 			 ->setInstance($this->get('instance', $data))
+			 ->setRoot($this->get('root', $data))
 			 ->setStatus($this->getInt('status', $data))
 			 ->setMetadata(new SimpleDataStore($this->getArray('metadata', $data)))
 			 ->setDate($this->getInt('date', $data));
@@ -185,6 +343,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	public function import(array $data): IDeserializable {
 		$this->setId($this->get('id', $data))
 			 ->setInstance($this->get('instance', $data))
+			 ->setRoot($this->get('root', $data))
 			 ->setStatus($this->getInt('status', $data))
 			 ->setMetadata(new SimpleDataStore($this->getArray('metadata', $data)))
 			 ->setDate($this->getInt('date', $data));
@@ -197,14 +356,20 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	 * @return array
 	 */
 	public function jsonSerialize(): array {
-		return
-			[
-				'id' => $this->getId(),
-				'instance' => $this->getInstance(),
-				'status' => $this->getStatus(),
-				'metadata' => $this->getMetadata(),
-				'date' => $this->getDate()
-			];
+		$arr = [
+			'id' => $this->getId(),
+			'instance' => $this->getInstance(),
+			'root' => $this->getRoot(),
+			'status' => $this->getStatus(),
+			'data' => $this->getRestoringData(),
+			'date' => $this->getDate()
+		];
+
+		if ($this->hasMetadata()) {
+			$arr['metadata'] = $this->getMetadata();
+		}
+
+		return $arr;
 	}
 
 }

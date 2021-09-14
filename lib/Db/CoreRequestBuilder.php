@@ -63,6 +63,7 @@ class CoreRequestBuilder {
 			'id',
 			'uid',
 			'instance',
+			'root',
 			'status',
 			'metadata',
 			'date'

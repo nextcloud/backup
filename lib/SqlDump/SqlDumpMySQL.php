@@ -34,6 +34,7 @@ namespace OCA\Backup\SqlDump;
 
 use Exception;
 use Ifsnop\Mysqldump\Mysqldump;
+use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\ISqlDump;
 
 
@@ -56,7 +57,7 @@ class SqlDumpMySQL implements ISqlDump {
 	 * @param array $data
 	 *
 	 * @return string
-	 * @throws Exception
+	 * @throws SqlDumpException
 	 */
 	public function export(array $data): string {
 		$connect = 'mysql:host=' . $data['dbhost'] . ';dbname=' . $data['dbname'];
@@ -76,13 +77,15 @@ class SqlDumpMySQL implements ISqlDump {
 			'hex-blob'                   => true
 		];
 
-		$dump = new Mysqldump($connect, $data['dbuser'], $data['dbpassword'], $settings);
+		try {
+			$dump = new Mysqldump($connect, $data['dbuser'], $data['dbpassword'], $settings);
+			ob_start();
+			$dump->start();
+			return ob_get_clean();
+		} catch (Exception $e) {
+			throw new SqlDumpException($e->getMessage());
+		}
 
-		ob_start();
-		$dump->start();
-		$content = ob_get_clean();
-
-		return $content;
 	}
 
 

@@ -31,8 +31,8 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
-use daita\MySmallPhpTools\Exceptions\MalformedArrayException;
-use daita\MySmallPhpTools\Traits\TArrayTools;
+use ArtificialOwl\MySmallPhpTools\Exceptions\MalformedArrayException;
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use Exception;
 use OCA\Backup\Exceptions\ArchiveDeleteException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
@@ -41,7 +41,7 @@ use OCA\Backup\Exceptions\ChunkNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Model\ArchiveFile;
 use OCA\Backup\Model\Backup;
-use OCA\Backup\Model\BackupArchive;
+use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\BackupChunk;
 use OCA\Backup\Model\BackupOptions;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
@@ -316,11 +316,11 @@ class CliService {
 
 	/**
 	 * @param Backup $backup
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 *
 	 * @return string
 	 */
-	private function generateEncryptedChecksum(Backup $backup, BackupArchive $archive): string {
+	private function generateEncryptedChecksum(Backup $backup, RestoringChunk $archive): string {
 		if (!$this->input->getOption('check')) {
 			return $archive->getEncryptedChecksum();
 		}
@@ -339,13 +339,13 @@ class CliService {
 
 	/**
 	 * @param Backup $backup
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 *
 	 * @return string
 	 * @throws EncryptionKeyException
 	 * @throws ArchiveDeleteException
 	 */
-	private function generateArchiveChecksum(Backup $backup, BackupArchive $archive): string {
+	private function generateArchiveChecksum(Backup $backup, RestoringChunk $archive): string {
 		if ($backup->getEncryptionKey() === '') {
 			return $archive->getChecksum();
 		}

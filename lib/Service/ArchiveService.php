@@ -31,9 +31,9 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
-use daita\MySmallPhpTools\Traits\TArrayTools;
-use daita\MySmallPhpTools\Traits\TFileTools;
-use daita\MySmallPhpTools\Traits\TStringTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveDeleteException;
@@ -44,8 +44,9 @@ use OCA\Backup\Exceptions\BackupScriptNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Model\ArchiveFile;
 use OCA\Backup\Model\Backup;
-use OCA\Backup\Model\BackupArchive;
-use OCA\Backup\Model\BackupChunk;
+use OCA\Backup\Model\RestoringChunk;
+use OCA\Backup\Model\RestoringData;
+use OCA\Backup\Model\RestoringPoint;
 use ZipArchive;
 use ZipStreamer\COMPR;
 use ZipStreamer\ZipStreamer;
@@ -65,6 +66,7 @@ class ArchiveService {
 
 
 	const MAX_ZIP_SIZE = 100000000;
+	const BACKUP_SCRIPT = 'restore.php';
 
 
 	/** @var FilesService */
@@ -94,28 +96,25 @@ class ArchiveService {
 
 
 	/**
-	 * @param Backup $backup
+	 * @param RestoringPoint $point
 	 *
-	 * @return bool
+	 * @return void
 	 * @throws ArchiveCreateException
-	 * @throws ArchiveDeleteException
 	 * @throws ArchiveNotFoundException
 	 */
-	public function getArchives(Backup $backup): bool {
-		foreach ($backup->getChunks(false) as $chunk) {
-			$this->filesService->initBackupChunk($chunk);
-			$this->filesService->fillBackupChunk($chunk, $chunk->getUniqueFile());
+	public function createChunks(RestoringPoint $point): void {
+		foreach ($point->getRestoringData(false) as $data) {
+			$this->filesService->initRestoringData($data);
+			$this->filesService->fillRestoringData($data, $data->getUniqueFile());
 
-			$this->generateArchives($backup, $chunk);
+			$this->fillChunks($point, $data);
 		}
-
-		return true;
 	}
 
 
 	/**
 	 * @param Backup $backup
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 * @param string $root
 	 *
 	 * @throws ArchiveDeleteException
@@ -123,7 +122,7 @@ class ArchiveService {
 	 * @throws EncryptionKeyException
 	 * @throws BackupFolderException
 	 */
-	public function extractAll(Backup $backup, BAckupArchive $archive, string $root): void {
+	public function extractAll(Backup $backup, RestoringChunk $archive, string $root): void {
 		if (!is_dir($root)) {
 			if (!@mkdir($root, 0755, true)) {
 				throw new BackupFolderException('could not create ' . $root);
@@ -137,13 +136,13 @@ class ArchiveService {
 
 
 	/**
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 * @param string $root
 	 *
 	 * @throws ArchiveNotFoundException
 	 * @throws Exception
 	 */
-	public function extractAllFromArchive(BackupArchive $archive, string $root): void {
+	public function extractAllFromArchive(RestoringChunk $archive, string $root): void {
 		$zip = $this->openZipArchive($archive);
 		$zip->extractTo($root);
 		$this->closeZipArchive($zip);
@@ -153,12 +152,12 @@ class ArchiveService {
 
 
 	/**
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 *
 	 * @return ZipArchive
 	 * @throws ArchiveNotFoundException
 	 */
-	public function openZipArchive(BackupArchive $archive): ZipArchive {
+	public function openZipArchive(RestoringChunk $archive): ZipArchive {
 		$zip = new ZipArchive();
 		if (($err = $zip->open($archive->getName('zip'))) !== true) {
 			throw new ArchiveNotFoundException('Could not open Zip Archive (' . $err . ')');
@@ -177,10 +176,10 @@ class ArchiveService {
 
 
 	/**
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 * @param ZipArchive $zip
 	 */
-	public function listFilesFromZip(BackupArchive $archive, ZipArchive $zip): void {
+	public function listFilesFromZip(RestoringChunk $archive, ZipArchive $zip): void {
 		$json = $zip->getFromName('.backup.' . $archive->getName() . '.json');
 		$data = json_decode($json, true);
 		$files = $this->getList('files', $data, [ArchiveFile::class, 'import'], []);
@@ -196,7 +195,7 @@ class ArchiveService {
 	 */
 	public function extractFilesFromZip(ZipArchive $zip, string $root, array $archiveFiles): void {
 		$files = array_map(
-			function(ArchiveFile $entry) {
+			function (ArchiveFile $entry) {
 				return $entry->getName();
 			}, $archiveFiles
 		);
@@ -218,13 +217,13 @@ class ArchiveService {
 
 	/**
 	 * @param Backup $backup
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 * @param bool $encrypted
 	 *
 	 * @return bool
 	 * @throws ArchiveNotFoundException
 	 */
-	public function verifyChecksum(Backup $backup, BackupArchive $archive, bool $encrypted): bool {
+	public function verifyChecksum(Backup $backup, RestoringChunk $archive, bool $encrypted): bool {
 		$sum = $this->getChecksum($backup, $archive, $encrypted);
 
 		if (!$encrypted && $sum === $archive->getChecksum()) {
@@ -240,118 +239,136 @@ class ArchiveService {
 
 
 	/**
-	 * @param Backup $backup
-	 * @param BackupChunk $backupChunk
+	 * @param RestoringPoint $point
+	 * @param RestoringData $data
 	 *
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
-	 * @throws ArchiveDeleteException
 	 */
-	private function generateArchives(Backup $backup, BackupChunk $backupChunk) {
-		$files = $backupChunk->getFiles();
+	private function fillChunks(RestoringPoint $point, RestoringData $data) {
+		$files = $data->getFiles();
 		while (!empty($files)) {
-			$archive = $this->createArchiveWithFiles($backup, $backupChunk, $files);
-			$this->updateChecksum($backup, $archive, false);
-			$this->encryptArchive($backup, $archive, true);
-			$this->updateChecksum($backup, $archive, true);
+			$archive = $this->generateChunk($point, $data, $files);
+			$this->updateChecksum($point, $archive, false);
+//			$this->encryptArchive($backup, $archive, true);
+//			$this->updateChecksum($point, $archive, true);
 
-			$backupChunk->addArchive($archive);
+			$data->addChunk($archive);
 		}
 	}
 
 
 	/**
-	 * @param Backup $backup
-	 * @param BackupChunk $chunk
+	 * @param RestoringPoint $point
+	 * @param RestoringData $data
 	 * @param string $filename
 	 * @param string $content
 	 *
-	 * @return void
 	 * @throws ArchiveCreateException
-	 * @throws ArchiveDeleteException
 	 * @throws ArchiveNotFoundException
 	 */
-	public function createContentArchive(
-		Backup $backup, BackupChunk $chunk, string $filename, string $content
+	public function createContentChunk(
+		RestoringPoint $point,
+		RestoringData $data,
+		string $filename,
+		string $content
 	): void {
-		$archive = new BackupArchive();
-		$archive->setCount(1);
-		$archive->addFile(new ArchiveFile($filename));
-		$archive->setSize(strlen($content));
-		$chunk->addArchive($archive);
+		$chunk = new RestoringChunk();
+		$chunk->setCount(1);
+		$chunk->addFile(new ArchiveFile($filename));
+		$chunk->setSize(strlen($content));
+		$data->addChunk($chunk);
 
-		$zip = $this->generateZip($backup, $archive->getName('zip'));
+		$this->createContentZip($point, $chunk, $filename, $content);
+
+		$this->updateChecksum($point, $chunk, false);
+//		$this->encryptArchive($backup, $archive, true);
+//		$this->updateChecksum($backup, $archive, true);
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param string $filename
+	 * @param string $content
+	 *
+	 * @throws ArchiveCreateException
+	 */
+	private function createContentZip(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		string $filename,
+		string $content
+	): void {
+		$zip = $this->generateZip($point, $chunk->getName('zip'));
 		$read = fopen('data://text/plain,' . $content, 'r');
 		$zip->addFileFromStream($read, $filename);
 		$zip->finalize();
-
-		$this->updateChecksum($backup, $archive, false);
-		$this->encryptArchive($backup, $archive, true);
-		$this->updateChecksum($backup, $archive, true);
 	}
 
 
 	/**
-	 * @param Backup $backup
-	 * @param BackupChunk $backupChunk
+	 * @param RestoringPoint $point
+	 * @param RestoringData $data
 	 * @param array $files
 	 *
-	 * @return BackupArchive
+	 * @return RestoringChunk
 	 * @throws ArchiveCreateException
 	 */
-	private function createArchiveWithFiles(Backup $backup, BackupChunk $backupChunk, array &$files
-	): BackupArchive {
+	private function generateChunk(
+		RestoringPoint $point,
+		RestoringData $data,
+		array &$files
+	): RestoringChunk {
+		$chunk = new RestoringChunk();
 
-		$archive = new BackupArchive();
-
-		$zip = $this->generateZip($backup, $archive->getName('zip'));
-
+		$zip = $this->generateZip($point, $chunk->getName('zip'));
 		$zipSize = 0;
 		while (($filename = array_shift($files)) !== null) {
-			$fileSize = filesize($backupChunk->getAbsolutePath() . $filename);
+			$fileSize = filesize($data->getAbsolutePath() . $filename);
 			if ($zipSize > 0 && ($zipSize + $fileSize) > self::MAX_ZIP_SIZE) {
-				$this->finalizeZip($zip, $archive->setSize($zipSize));
+				$this->finalizeZip($zip, $chunk->setSize($zipSize));
 
-				return $archive;
+				return $chunk;
 			}
 
 			$zipSize += $fileSize;
-			$in = fopen($backupChunk->getAbsolutePath() . $filename, 'r');
+			$in = fopen($data->getAbsolutePath() . $filename, 'r');
 
 			$zip->addFileFromStream($in, $filename);
 			$archiveFile = new ArchiveFile($filename);
-			$archive->addFile($archiveFile);
-			$archive->setCount();
+			$chunk->addFile($archiveFile);
+			$chunk->setCount();
 		}
 
-		$this->finalizeZip($zip, $archive->setSize($zipSize));
+		$this->finalizeZip($zip, $chunk->setSize($zipSize));
 
-		return $archive;
+		return $chunk;
 	}
 
 
 	/**
-	 * @param Backup $backup
+	 * @param RestoringPoint $point
 	 * @param string $filename
 	 *
 	 * @return ZipStreamer
 	 * @throws ArchiveCreateException
 	 */
-	public function generateZip(Backup $backup, string $filename) {
-
-		if (!$backup->hasBaseFolder()) {
+	public function generateZip(RestoringPoint $point, string $filename): ZipStreamer {
+		if (!$point->hasBaseFolder()) {
 			throw new ArchiveCreateException('Backup has no Base Folder');
 		}
 
-		$folder = $backup->getBaseFolder();
+		$folder = $point->getBaseFolder();
 		try {
 			$file = $folder->newFile($filename);
 			$zip = new ZipStreamer(
 				[
 					'outstream' => $file->write(),
-					'zip64'     => false,
-					'compress'  => COMPR::DEFLATE,
-					'level'     => $this->assignCompressionLevel()
+					'zip64' => false,
+					'compress' => COMPR::DEFLATE,
+					'level' => $this->assignCompressionLevel()
 				]
 			);
 		} catch (Exception $e) {
@@ -365,9 +382,9 @@ class ArchiveService {
 
 	/**
 	 * @param ZipStreamer $zip
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 */
-	public function finalizeZip(ZipStreamer $zip, BackupArchive $archive): void {
+	public function finalizeZip(ZipStreamer $zip, RestoringChunk $archive): void {
 		$str = json_encode($archive->getResume(), JSON_PRETTY_PRINT);
 		$read = fopen('data://text/plain,' . $str, 'r');
 		$zip->addFileFromStream($read, '.backup.' . $archive->getName() . '.json');
@@ -377,48 +394,56 @@ class ArchiveService {
 
 
 	/**
-	 * @param Backup $backup
-	 * @param BackupArchive $archive
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
 	 * @param bool $encrypted
 	 *
 	 * @throws ArchiveNotFoundException
 	 */
-	private function updateChecksum(Backup $backup, BackupArchive $archive, bool $encrypted): void {
-		$sum = $this->getChecksum($backup, $archive, $encrypted);
+	private function updateChecksum(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		bool $encrypted
+	): void {
+		$sum = $this->getChecksum($point, $chunk, $encrypted);
 		if ($encrypted) {
-			$archive->setEncryptedChecksum($sum);
+			$chunk->setEncryptedChecksum($sum);
 		} else {
-			$archive->setChecksum($sum);
+			$chunk->setChecksum($sum);
 		}
 	}
 
 
 	/**
-	 * @param Backup $backup
-	 * @param BackupArchive $archive
+	 * @param Backup $point
+	 * @param RestoringChunk $chunk
 	 * @param bool $encrypted
 	 *
 	 * @return string
 	 * @throws ArchiveNotFoundException
 	 */
-	private function getChecksum(Backup $backup, BackupArchive $archive, bool $encrypted): string {
+	private function getChecksum(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		bool $encrypted
+	): string {
 		try {
-			if ($backup->isLocal()) {
-				if (!file_exists('./' . $archive->getName(($encrypted) ? '' : 'zip'))) {
+			if ($point->isPackage()) {
+				if (!file_exists('./' . $chunk->getName(($encrypted) ? '' : 'zip'))) {
 					throw new ArchiveNotFoundException('Archive not found');
 				}
-				$stream = fopen('./' . $archive->getName(($encrypted) ? '' : 'zip'), 'r');
+				$stream = fopen('./' . $chunk->getName(($encrypted) ? '' : 'zip'), 'r');
 			} else {
-				$folder = $backup->getBaseFolder();
-				$file = $folder->getFile($archive->getName(($encrypted) ? '' : 'zip'));
+				$folder = $point->getBaseFolder();
+				$file = $folder->getFile($chunk->getName(($encrypted) ? '' : 'zip'));
 				$stream = $file->read();
 			}
 		} catch (Exception $e) {
-			throw new ArchiveNotFoundException('Archive not found');
+			throw new ArchiveNotFoundException('Chunk not found');
 		}
 
 		if (is_bool($stream)) {
-			throw new ArchiveNotFoundException('Archive not found');
+			throw new ArchiveNotFoundException('Chunk not found');
 		}
 
 		return $this->getChecksumFromStream($stream);
@@ -427,12 +452,12 @@ class ArchiveService {
 
 	/**
 	 * @param Backup $backup
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 * @param string $ext
 	 *
 	 * @throws ArchiveDeleteException
 	 */
-	public function deleteArchive(Backup $backup, BackupArchive $archive, $ext = '') {
+	public function deleteArchive(Backup $backup, RestoringChunk $archive, $ext = '') {
 		if ($backup->isLocal()) {
 			unlink('./' . $archive->getName($ext));
 		} else {
@@ -449,13 +474,13 @@ class ArchiveService {
 
 	/**
 	 * @param Backup $backup
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 * @param bool $delete
 	 *
 	 * @throws ArchiveNotFoundException
 	 * @throws ArchiveDeleteException
 	 */
-	public function encryptArchive(Backup $backup, BackupArchive $archive, bool $delete): void {
+	public function encryptArchive(Backup $backup, RestoringChunk $archive, bool $delete): void {
 		$folder = $backup->getBaseFolder();
 		try {
 			$file = $folder->getFile($archive->getName('zip'));
@@ -488,13 +513,13 @@ class ArchiveService {
 
 	/**
 	 * @param Backup $backup
-	 * @param BackupArchive $archive
+	 * @param RestoringChunk $archive
 	 *
 	 * @throws EncryptionKeyException
 	 * @throws ArchiveNotFoundException
 	 * @throws ArchiveNotFoundException
 	 */
-	public function decryptArchive(Backup $backup, BackupArchive $archive) {
+	public function decryptArchive(Backup $backup, RestoringChunk $archive) {
 		if ($backup->isLocal()) {
 			if (!file_exists('./' . $archive->getName())) {
 				throw new ArchiveNotFoundException('Archive not found');
@@ -525,21 +550,21 @@ class ArchiveService {
 
 
 	/**
-	 * @param Backup $backup
+	 * @param RestoringPoint $point
 	 *
-	 * @throws BackupScriptNotFoundException
 	 * @throws BackupAppCopyException
+	 * @throws BackupScriptNotFoundException
 	 */
-	public function copyApp(Backup $backup): void {
-		$folder = $backup->getBaseFolder();
+	public function copyApp(RestoringPoint $point): void {
+		$folder = $point->getBaseFolder();
 		try {
 			$file = $folder->newFile('app.zip');
 			$zip = new ZipStreamer(
 				[
 					'outstream' => $file->write(),
-					'zip64'     => false,
-					'compress'  => COMPR::DEFLATE,
-					'level'     => $this->assignCompressionLevel()
+					'zip64' => false,
+					'compress' => COMPR::DEFLATE,
+					'level' => $this->assignCompressionLevel()
 				]
 			);
 
@@ -549,7 +574,7 @@ class ArchiveService {
 
 		$appFiles = $this->filesService->getFilesFromApp();
 		foreach ($appFiles as $file) {
-			if ($file === 'backup.php') {
+			if ($file === self::BACKUP_SCRIPT) {
 				continue;
 			}
 
@@ -559,12 +584,12 @@ class ArchiveService {
 
 		$zip->finalize();
 
-		$script = file_get_contents(FilesService::APP_ROOT . 'backup.php');
+		$script = file_get_contents(FilesService::APP_ROOT . self::BACKUP_SCRIPT);
 		try {
-			$scriptFile = $folder->newFile('backup.php');
+			$scriptFile = $folder->newFile(self::BACKUP_SCRIPT);
 			$scriptFile->putContent($script);
 		} catch (Exception $e) {
-			throw new BackupScriptNotFoundException('Could not create backup.php');
+			throw new BackupScriptNotFoundException('Could not create ' . self::BACKUP_SCRIPT);
 		}
 	}
 

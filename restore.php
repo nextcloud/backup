@@ -32,8 +32,8 @@ namespace OCA\Backup;
 
 
 use Composer\Autoload\ClassLoader;
-use daita\MySmallPhpTools\DI\DIContainer;
-use daita\MySmallPhpTools\Exceptions\DependencyInjectionException;
+use ArtificialOwl\MySmallPhpTools\DI\DIContainer;
+use ArtificialOwl\MySmallPhpTools\Exceptions\DependencyInjectionException;
 use Exception;
 use OC\Config;
 use OC\Logger;

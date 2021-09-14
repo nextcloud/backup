@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -9,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,11 +32,12 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
-use daita\MySmallPhpTools\Traits\TArrayTools;
-use daita\MySmallPhpTools\Traits\TFileTools;
-use daita\MySmallPhpTools\Traits\TStringTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use OC;
+use OC\Files\AppData\Factory;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Exceptions\ArchiveCreateException as ArchiveCreateExceptionAlias;
 use OCA\Backup\Exceptions\ArchiveDeleteException;
@@ -47,6 +49,8 @@ use OCA\Backup\Exceptions\BackupScriptNotFoundException as BackupScriptNotFoundE
 use OCA\Backup\Exceptions\ChunkNotFoundException;
 use OCA\Backup\Model\Backup;
 use OCA\Backup\Model\BackupChunk;
+use OCA\Backup\Model\RestoringData;
+use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
@@ -68,7 +72,7 @@ class BackupService {
 
 
 	const NOBACKUP_FILE = '.nobackup';
-	const SUMMARY_FILE = 'backup.json';
+	const SUMMARY_FILE = 'metadata.json';
 	const SQL_DUMP_FILE = 'backup_sql';
 
 	/** @var IAppData */
@@ -100,7 +104,9 @@ class BackupService {
 		MiscService $miscService
 	) {
 		if (class_exists(OC::class)) {
-			$this->appData = OC::$server->getAppDataDir(Application::APP_ID);
+			/** @var Factory $factory */
+			$factory = OC::$server->get(Factory::class);
+			$this->appData = $factory->get(Application::APP_ID);
 		}
 
 		$this->archiveService = $archiveService;
@@ -120,14 +126,14 @@ class BackupService {
 	 * @throws BackupScriptNotFoundExceptionAlias
 	 * @throws NotFoundException
 	 */
-	public function backup(): Backup {
-		$backup = $this->initBackup();
-		$this->archiveService->copyApp($backup);
+	public function backup(bool $complete = true): Backup {
+		$backup = $this->initRestoringPoint($complete);
+//		$this->archiveService->copyApp($backup);
 
-		$backup->setEncryptionKey('12345');
-		$this->archiveService->getArchives($backup);
-		$this->backupSql($backup);
-		$this->endBackup($backup);
+//		$backup->setEncryptionKey('12345');
+//		$this->archiveService->getArchives($backup);
+//		$this->backupSql($backup);
+//		$this->endBackup($backup);
 
 		return $backup;
 	}
@@ -303,65 +309,6 @@ class BackupService {
 	}
 
 
-	/**
-	 * @return Backup
-	 * @throws NotPermittedException
-	 */
-	private function initBackup(): Backup {
-		$this->initBackupFS();
-
-		$backup = new Backup(true);
-		$backup->setVersion(Util::getVersion());
-
-		$folder = $this->appData->newFolder('/' . $backup->getName());
-		$temp = $folder->newFile(self::SUMMARY_FILE);
-		$temp->putContent('');
-
-		$backup->setBaseFolder($folder);
-
-		$backup->addChunk(new BackupChunk(BackupChunk::ROOT_DATA, '', 'data'));
-		$backup->addChunk(new BackupChunk(BackupChunk::ROOT_NEXTCLOUD, 'apps/', 'apps'));
-		$backup->addChunk(new BackupChunk(BackupChunk::FILE_CONFIG, '', 'config'));
-
-		$this->addCustomAppsChunk($backup);
-
-		return $backup;
-	}
-
-
-	/**
-	 * @throws NotPermittedException
-	 */
-	private function initBackupFS() {
-		$path = '/';
-
-		try {
-			$folder = $this->appData->getFolder($path);
-		} catch (NotFoundException $e) {
-			$folder = $this->appData->newFolder($path);
-		}
-
-		$folder->newFile(self::NOBACKUP_FILE);
-	}
-
-
-	/**
-	 * @param Backup $backup
-	 *
-	 * @throws NotPermittedException
-	 * @throws NotFoundException
-	 */
-	private function endBackup(Backup $backup) {
-		if (!$backup->hasBaseFolder()) {
-			return;
-		}
-
-		$folder = $backup->getBaseFolder();
-
-		$json = $folder->getFile(self::SUMMARY_FILE);
-		$json->putContent(json_encode($backup, JSON_PRETTY_PRINT));
-	}
-
 
 	/**
 	 * @param string $path
@@ -388,72 +335,6 @@ class BackupService {
 		} catch (NotFoundException $e) {
 			throw new BackupFolderException();
 		}
-	}
-
-
-	/**
-	 * @param Backup $backup
-	 */
-	private function addCustomAppsChunk(Backup $backup) {
-		// TODO: testing with custom apps folder (should work)
-		$customApps = $this->configService->getSystemValue('apps_paths');
-		if (is_array($customApps)) {
-			foreach ($customApps as $app) {
-				if (!is_array($app) || !array_key_exists('path', $app)) {
-					continue;
-				}
-
-				$backup->addChunk(
-					new BackupChunk(
-						BackupChunk::ROOT_DISK, $app['path'], 'apps_' . $this->uuid(8)
-					)
-				);
-			}
-		}
-	}
-
-
-	/**
-	 * @param Backup $backup
-	 *
-	 * @throws ArchiveCreateExceptionAlias
-	 * @throws Exception
-	 */
-	private function backupSql(Backup $backup) {
-		$content = $this->generateSqlDump();
-
-		$chunk = new BackupChunk(BackupChunk::SQL_DUMP, '', 'sqldump');
-		$this->archiveService->createContentArchive(
-			$backup, $chunk, self::SQL_DUMP_FILE, $content
-		);
-
-		$backup->addChunk($chunk);
-	}
-
-
-	/**
-	 * @param Backup $backup
-	 *
-	 * @return string
-	 * @throws Exception
-	 */
-	private function generateSqlDump() {
-		$data = [
-			'dbname'     => $this->configService->getSystemValue('dbname'),
-			'dbhost'     => $this->configService->getSystemValue('dbhost'),
-			'dbport'     => $this->configService->getSystemValue('dbport'),
-			'dbuser'     => $this->configService->getSystemValue('dbuser'),
-			'dbpassword' => $this->configService->getSystemValue('dbpassword')
-		];
-
-//		$folder = $this->appData->getFolder('/' . $backup->getName());
-//		$sql = $folder->newFile(self::SQL_DUMP_FILE);
-//		$sql->putContent('');
-//
-		$sqlDump = new SqlDumpMySQL();
-		$content = $sqlDump->export($data);
-
-		return $content;
 	}
 
 

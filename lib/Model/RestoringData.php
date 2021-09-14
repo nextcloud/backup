@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -9,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,21 +32,24 @@ declare(strict_types=1);
 namespace OCA\Backup\Model;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
 
 
 /**
- * Class BackupChunk
+ * Class RestoringChunk
  *
  * @package OCA\Backup\Model
  */
-class BackupChunk implements JsonSerializable {
+class RestoringData implements JsonSerializable {
 
 
 	use TArrayTools;
 	use TStringTools;
+	use TNC23Deserialize;
 
 
 	const ROOT_DISK = 1;
@@ -57,6 +61,11 @@ class BackupChunk implements JsonSerializable {
 
 	// value > 1000 is for content that are not 'file'
 	const SQL_DUMP = 1001;
+
+	const DATA = 'data';
+	const APPS = 'apps';
+	const CONFIG = 'config';
+
 
 	/** @var string */
 	private $name = '';
@@ -74,14 +83,14 @@ class BackupChunk implements JsonSerializable {
 	private $uniqueFile = '';
 
 	/** @var RestoringChunk[] */
-	private $archives = [];
+	private $chunks = [];
 
 	/** @var string[] */
 	private $files = [];
 
 
 	/**
-	 * BackupChunk constructor.
+	 * RestoringChunk constructor.
 	 *
 	 * @param string $name
 	 * @param int $type
@@ -109,9 +118,9 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @param string $name
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function setName(string $name): BackupChunk {
+	public function setName(string $name): RestoringData {
 		$this->name = $name;
 
 		return $this;
@@ -128,9 +137,9 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @param int $type
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function setType(int $type): BackupChunk {
+	public function setType(int $type): RestoringData {
 		$this->type = $type;
 
 		return $this;
@@ -147,9 +156,9 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @param string $path
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function setPath(string $path): BackupChunk {
+	public function setPath(string $path): RestoringData {
 		$this->path = $path;
 
 		return $this;
@@ -165,9 +174,9 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @param string $root
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function setRoot(string $root): BackupChunk {
+	public function setRoot(string $root): RestoringData {
 		$this->root = $root;
 
 		return $this;
@@ -185,9 +194,9 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @param string $path
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function addFile(string $path): BackupChunk {
+	public function addFile(string $path): RestoringData {
 		$this->files[] = $path;
 
 		return $this;
@@ -203,9 +212,9 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @param string[] $files
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function setFiles(array $files): BackupChunk {
+	public function setFiles(array $files): RestoringData {
 		$this->files = $files;
 
 		return $this;
@@ -222,9 +231,9 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @param string $file
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function setUniqueFile(string $file): BackupChunk {
+	public function setUniqueFile(string $file): RestoringData {
 		$this->uniqueFile = $file;
 
 		return $this;
@@ -234,28 +243,28 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @return RestoringChunk[]
 	 */
-	public function getArchives(): array {
-		return $this->archives;
+	public function getChunks(): array {
+		return $this->chunks;
 	}
 
 	/**
-	 * @param RestoringChunk[] $archives
+	 * @param RestoringChunk[] $chunks
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function setArchives(array $archives): BackupChunk {
-		$this->archives = $archives;
+	public function setChunks(array $chunks): RestoringData {
+		$this->chunks = $chunks;
 
 		return $this;
 	}
 
 	/**
-	 * @param RestoringChunk $archive
+	 * @param RestoringChunk $chunk
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function addArchive(RestoringChunk $archive): BackupChunk {
-		$this->archives[] = $archive;
+	public function addChunk(RestoringChunk $chunk): RestoringData {
+		$this->chunks[] = $chunk;
 
 		return $this;
 	}
@@ -264,14 +273,20 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @param array $data
 	 *
-	 * @return BackupChunk
+	 * @return RestoringData
 	 */
-	public function import(array $data): BackupChunk {
+	public function import(array $data): RestoringData {
 		$this->setType($this->getInt('type', $data, 0));
 		$this->setName($this->get('name', $data, ''));
 		$this->setRoot($this->get('root', $data, ''));
 		$this->setPath($this->get('path', $data, ''));
-		$this->setArchives($this->getList('archives', $data, [RestoringChunk::class, 'import'], []));
+
+		try {
+			/** @var RestoringChunk[] $chunks */
+			$chunks = $this->deserializeArray($this->getArray('chunks', $data), RestoringChunk::class);
+			$this->setChunks($chunks);
+		} catch (InvalidItemException $e) {
+		}
 
 		return $this;
 	}
@@ -280,13 +295,13 @@ class BackupChunk implements JsonSerializable {
 	/**
 	 * @return array
 	 */
-	public function jsonSerialize() {
+	public function jsonSerialize(): array {
 		return [
-			'name'     => $this->getName(),
-			'type'     => $this->getType(),
-			'root'     => $this->getRoot(),
-			'path'     => $this->getPath(),
-			'archives' => $this->getArchives()
+			'name' => $this->getName(),
+			'type' => $this->getType(),
+			'root' => $this->getRoot(),
+			'path' => $this->getPath(),
+			'chunks' => $this->getChunks()
 		];
 	}
 

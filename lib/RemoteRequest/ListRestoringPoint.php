@@ -39,6 +39,7 @@ use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
+use OCP\IL10N;
 
 
 /**
