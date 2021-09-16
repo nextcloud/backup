@@ -38,14 +38,19 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\MalformedArrayException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc22\TNC22Controller;
+use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Controller;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use Exception;
 use OC;
 use OC\AppFramework\Middleware\Security\Exceptions\NotLoggedInException;
 use OCA\Backup\Exceptions\RemoteRequestException;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
+use OCA\Backup\RemoteRequest\CreateRestoringPoint;
+use OCA\Backup\RemoteRequest\GetRestoringPoint;
 use OCA\Backup\RemoteRequest\ListRestoringPoint;
+use OCA\Backup\RemoteRequest\UploadRestoringPoint;
 use OCA\Backup\Service\RemoteStreamService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -63,7 +68,8 @@ use ReflectionException;
 class RemoteController extends Controller {
 
 
-	use TNC22Controller;
+	use TNC23Controller;
+	use TNC23Logger;
 
 
 	/** @var RemoteStreamService */
@@ -115,6 +121,31 @@ class RemoteController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
+	public function createRestoringPoint(): DataResponse {
+		try {
+			$request = $this->extractRequest(CreateRestoringPoint::class);
+		} catch (Exception $e) {
+			return $this->exceptionResponse($e, Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$request->execute();
+
+			return new DataResponse($request->getOutcomeData());
+		} catch (Exception $e) {
+			$this->e($e, ['request' => $request]);
+
+			return $this->exceptionResponse($e);
+		}
+	}
+
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @return DataResponse
+	 */
 	public function listRestoringPoint(): DataResponse {
 		try {
 			$request = $this->extractRequest(ListRestoringPoint::class);
@@ -134,18 +165,104 @@ class RemoteController extends Controller {
 	}
 
 
-	public function detailsRestoringPoint(int $restoringId): DataResponse {
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @param string $pointId
+	 *
+	 * @return DataResponse
+	 */
+	public function getRestoringPoint(string $pointId): DataResponse {
+		try {
+			$request = $this->extractRequest(GetRestoringPoint::class);
+		} catch (Exception $e) {
+			return $this->exceptionResponse($e, Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$request->execute();
+
+			return new DataResponse($request->getOutcomeData());
+		} catch (Exception $e) {
+			$this->e($e, ['request' => $request]);
+
+			return $this->exceptionResponse($e);
+		}
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @param string $pointId
+	 *
+	 * @return DataResponse
+	 */
+	public function healthRestoringPoint(string $pointId): DataResponse {
+		try {
+			$request = $this->extractRequest(GetRestoringPoint::class);
+		} catch (Exception $e) {
+			return $this->exceptionResponse($e, Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$request->config(new SimpleDataStore(['refreshHealth' => true]));
+			$request->execute();
+
+			return new DataResponse($request->getOutcomeData());
+		} catch (Exception $e) {
+			$this->e($e, ['request' => $request]);
+
+			return $this->exceptionResponse($e);
+		}
 	}
 
 
-	public function partRestoringPoint(int $restoringId): DataResponse {
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @param string $pointId
+	 *
+	 * @return DataResponse
+	 */
+	public function partRestoringPoint(string $pointId): DataResponse {
 	}
 
 
-	public function downloadRestoringPoint(int $restoringId): DataResponse {
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function downloadRestoringPoint(string $pointId): DataResponse {
 	}
 
-	public function uploadRestoringPoint(int $restoringId): DataResponse {
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @return DataResponse
+	 */
+	public function uploadRestoringPoint(string $pointId): DataResponse {
+		try {
+			$request = $this->extractRequest(UploadRestoringPoint::class);
+		} catch (Exception $e) {
+			return $this->exceptionResponse($e, Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$request->execute();
+
+			return new DataResponse($request->getOutcomeData());
+		} catch (Exception $e) {
+			$this->e($e, ['request' => $request]);
+
+			return $this->exceptionResponse($e);
+		}
 	}
 
 

@@ -36,12 +36,12 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Model\Request;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use OC\Core\Command\Base;
-use OCA\Backup\Db\RemoteRequest;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Service\RemoteService;
 use OCA\Backup\Service\RemoteStreamService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -59,15 +59,15 @@ class PointBrowse extends Base {
 	use TNC23Deserialize;
 
 
-	/** @var RemoteRequest */
-	private $remoteRequest;
+	/** @var RemoteService */
+	private $remoteService;
 
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
 
 
-	public function __construct(RemoteRequest $remoteRequest, RemoteStreamService $remoteStreamService) {
-		$this->remoteRequest = $remoteRequest;
+	public function __construct(RemoteService $remoteService, RemoteStreamService $remoteStreamService) {
+		$this->remoteService = $remoteService;
 		$this->remoteStreamService = $remoteStreamService;
 
 		parent::__construct();
@@ -116,12 +116,8 @@ class PointBrowse extends Base {
 		$remote = array_filter(
 			array_map(
 				function (RemoteInstance $remoteInstance): ?string {
-					if (!$remoteInstance->isOutgoing()) {
-						return null;
-					}
-
 					return $remoteInstance->getInstance();
-				}, $this->remoteRequest->getAll()
+				}, $this->remoteService->getOutgoing()
 			)
 		);
 
@@ -159,7 +155,7 @@ class PointBrowse extends Base {
 			Request::TYPE_GET
 		);
 
-	return 	$this->deserializeArray($result, RestoringPoint::class);
+		return $this->deserializeArray($result, RestoringPoint::class);
 	}
 
 }

@@ -82,7 +82,7 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table->addColumn(
 				'uid', 'string', [
 						 'notnull' => true,
-						 'length' => 20,
+						 'length' => 63,
 					 ]
 			);
 			$table->addColumn(
@@ -94,7 +94,7 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table->addColumn(
 				'root', 'string', [
 						  'notnull' => true,
-						  'length' => 20,
+						  'length' => 63,
 					  ]
 			);
 			$table->addColumn(
@@ -108,6 +108,12 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 				'metadata', 'text', [
 							  'notnull' => true
 						  ]
+			);
+			$table->addColumn(
+				'health', 'text', [
+							'notnull' => false,
+							'default' => '[]'
+						]
 			);
 			$table->addColumn(
 				'date', 'integer', [

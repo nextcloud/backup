@@ -34,22 +34,23 @@ namespace OCA\Backup\RemoteRequest;
 
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\IRemoteRequest;
-use OCA\Backup\Model\RemoteInstance;
-use OCP\IL10N;
+use OCA\Backup\Model\RestoringChunk;
 
 
 /**
- * Class ListRestoringPoint
+ * Class UploadRestoringPoint
  *
  * @package OCA\Backup\RemoteRequest
  */
-class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
+class UploadRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 
+	use TNC23Deserialize;
 	use TNC23Logger;
 
 
@@ -58,7 +59,7 @@ class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 
 	/**
-	 * ListRestoringPoint constructor.
+	 * UploadRestoringPoint constructor.
 	 *
 	 * @param PointRequest $pointRequest
 	 */
@@ -74,11 +75,10 @@ class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
 	 *
 	 */
 	public function execute(): void {
-		/** @var RemoteInstance $signatory */
-		$signatory = $this->getSignedRequest()->getSignatory();
-		$points = $this->pointRequest->getByInstance($signatory->getInstance());
+		$chunk = $this->deserializeJson($this->getSignedRequest()->getBody(), RestoringChunk::class);
 
-		$this->setOutcome(new SimpleDataStore($points));
+		$this->log(3, '### ' . strlen($chunk->getContent()));
+		$this->setOutcome(new SimpleDataStore(['dssd']));
 	}
 
 

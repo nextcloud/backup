@@ -33,8 +33,11 @@ namespace OCA\Backup\Model;
 
 
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
 use OCP\Files\SimpleFS\ISimpleFolder;
@@ -49,6 +52,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 
 	use TArrayTools;
+	use TNC23Deserialize;
+	use TNC23Logger;
 
 
 	/** @var string */
@@ -63,9 +68,6 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	/** @var int */
 	private $status = 0;
 
-	/** @var SimpleDataStore */
-	private $metadata;
-
 	/** @var int */
 	private $date = 0;
 
@@ -77,6 +79,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 	/** @var RestoringData[] */
 	private $restoringData = [];
+
+	/** @var RestoringHealth */
+	private $health;
 
 	/** @var bool */
 	private $package = false;
@@ -155,32 +160,6 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	 */
 	public function getStatus(): int {
 		return $this->status;
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function hasMetadata(): bool {
-		return !is_null($this->metadata);
-	}
-
-	/**
-	 * @param SimpleDataStore $metadata
-	 *
-	 * @return RestoringPoint
-	 */
-	public function setMetadata(SimpleDataStore $metadata): self {
-		$this->metadata = $metadata;
-
-		return $this;
-	}
-
-	/**
-	 * @return SimpleDataStore
-	 */
-	public function getMetadata(): SimpleDataStore {
-		return $this->metadata;
 	}
 
 
@@ -300,6 +279,32 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 
 	/**
+	 * @return bool
+	 */
+	public function hasHealth(): bool {
+		return !is_null($this->health);
+	}
+
+	/**
+	 * @param RestoringHealth $health
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setHealth(RestoringHealth $health): self {
+		$this->health = $health;
+
+		return $this;
+	}
+
+	/**
+	 * @return RestoringHealth
+	 */
+	public function getHealth(): RestoringHealth {
+		return $this->health;
+	}
+
+
+	/**
 	 * @param bool $package
 	 *
 	 * @return RestoringPoint
@@ -319,6 +324,16 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 
 	/**
+	 * @return array
+	 */
+	public function getMetadata(): array {
+		$arr = $this->jsonSerialize();
+		unset($arr['health']);
+
+		return $arr;
+	}
+
+	/**
 	 * @param array $data
 	 *
 	 * @return INC23QueryRow
@@ -328,8 +343,24 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 			 ->setInstance($this->get('instance', $data))
 			 ->setRoot($this->get('root', $data))
 			 ->setStatus($this->getInt('status', $data))
-			 ->setMetadata(new SimpleDataStore($this->getArray('metadata', $data)))
 			 ->setDate($this->getInt('date', $data));
+
+		$metadata = new SimpleDataStore($this->getArray('metadata', $data));
+		$this->setNc($metadata->gArray('nc'));
+
+		try {
+			/** @var RestoringHealth $health */
+			$health = $this->deserialize($this->getArray('health', $data), RestoringHealth::class);
+			$this->setHealth($health);
+		} catch (InvalidItemException $e) {
+		}
+
+		try {
+			/** @var RestoringData[] $restoringData */
+			$restoringData = $this->deserializeArray($metadata->gArray('data'), RestoringData::class);
+			$this->setRestoringData($restoringData);
+		} catch (InvalidItemException $e) {
+		}
 
 		return $this;
 	}
@@ -339,14 +370,33 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	 * @param array $data
 	 *
 	 * @return IDeserializable
+	 * @throws InvalidItemException
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setId($this->get('id', $data))
 			 ->setInstance($this->get('instance', $data))
 			 ->setRoot($this->get('root', $data))
 			 ->setStatus($this->getInt('status', $data))
-			 ->setMetadata(new SimpleDataStore($this->getArray('metadata', $data)))
 			 ->setDate($this->getInt('date', $data));
+		$this->setNc($this->getArray('nc', $data));
+
+		if ($this->getId() === '' || $this->getStatus() === -1) {
+			throw new InvalidItemException();
+		}
+
+		try {
+			/** @var RestoringData[] $restoringData */
+			$restoringData = $this->deserializeArray($this->getArray('data', $data), RestoringData::class);
+			$this->setRestoringData($restoringData);
+		} catch (InvalidItemException $e) {
+		}
+
+		try {
+			/** @var RestoringHealth $health */
+			$health = $this->deserialize($this->getArray('health', $data), RestoringHealth::class);
+			$this->setHealth($health);
+		} catch (InvalidItemException $e) {
+		}
 
 		return $this;
 	}
@@ -359,14 +409,15 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 		$arr = [
 			'id' => $this->getId(),
 			'instance' => $this->getInstance(),
+			'nc' => $this->getNC(),
 			'root' => $this->getRoot(),
 			'status' => $this->getStatus(),
 			'data' => $this->getRestoringData(),
 			'date' => $this->getDate()
 		];
 
-		if ($this->hasMetadata()) {
-			$arr['metadata'] = $this->getMetadata();
+		if ($this->hasHealth()) {
+			$arr['health'] = $this->getHealth();
 		}
 
 		return $arr;

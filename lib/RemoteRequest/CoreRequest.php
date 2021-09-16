@@ -41,14 +41,25 @@ use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
  *
  * @package OCA\Backup\RemoteRequest
  */
-class  RemoteRequest {
+class CoreRequest {
 
 
 	/** @var NC23SignedRequest */
 	private $signedRequest;
 
 	/** @var SimpleDataStore */
+	protected $config;
+
+	/** @var SimpleDataStore */
 	private $outcome;
+
+
+	/**
+	 * CoreRequest constructor.
+	 */
+	public function __construct() {
+		$this->config = new SimpleDataStore();
+	}
 
 
 	/**
@@ -65,6 +76,20 @@ class  RemoteRequest {
 		return $this->signedRequest;
 	}
 
+
+	/**
+	 * @param SimpleDataStore $config
+	 */
+	public function config(SimpleDataStore $config): void {
+		$this->config = $config;
+	}
+
+	/**
+	 *
+	 */
+	public function hasOutcome(): bool {
+		return !is_null($this->outcome);
+	}
 
 	/**
 	 * @param SimpleDataStore $outcome
@@ -84,7 +109,11 @@ class  RemoteRequest {
 	 * @return array
 	 */
 	public function getOutcomeData(): array {
-		return $this->outcome->gAll();
+		if ($this->hasOutcome()) {
+			return $this->outcome->gAll();
+		}
+
+		return [];
 	}
 
 }

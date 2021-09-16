@@ -39,12 +39,15 @@ use OC\Files\AppData\Factory;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\ArchiveCreateException;
-use OCA\Backup\Exceptions\ArchiveDeleteException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlDumpException;
+use OCA\Backup\Model\RestoringChunk;
+use OCA\Backup\Model\RestoringChunkHealth;
 use OCA\Backup\Model\RestoringData;
+use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCP\Files\IAppData;
@@ -82,6 +85,9 @@ class PointService {
 	/** @var IAppData */
 	private $appData;
 
+	/** @var bool */
+	private $backupFSInitiated = false;
+
 
 	/**
 	 * PointService constructor.
@@ -99,13 +105,17 @@ class PointService {
 		$this->archiveService = $archiveService;
 		$this->configService = $configService;
 
-		if (class_exists(OC::class)) {
-			/** @var Factory $factory */
-			$factory = OC::$server->get(Factory::class);
-			$this->appData = $factory->get(Application::APP_ID);
-		}
-
 		$this->setup('app', 'backup');
+	}
+
+
+	/**
+	 * @param string $pointId
+	 *
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function getPoint(string $pointId): RestoringPoint {
+		return $this->pointRequest->getById($pointId);
 	}
 
 
@@ -116,7 +126,6 @@ class PointService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws ArchiveCreateException
-	 * @throws ArchiveDeleteException
 	 * @throws ArchiveNotFoundException
 	 * @throws BackupAppCopyException
 	 * @throws BackupScriptNotFoundException
@@ -130,6 +139,8 @@ class PointService {
 		$this->archiveService->createChunks($point);
 		$this->backupSql($point);
 		$this->generateMetadata($point);
+
+		$this->pointRequest->save($point);
 
 		return $point;
 	}
@@ -147,14 +158,13 @@ class PointService {
 
 		$point = new RestoringPoint();
 		$point->setDate(time());
-		$point->setId(date("YmdHis", $point->getDate()) . '-' . $this->token());
+		$separator = ($complete) ? '-' : '+';
+		$point->setId(date("YmdHis", $point->getDate()) . $separator . $this->token());
 		$point->setNC(Util::getVersion());
 
-		$folder = $this->appData->newFolder('/' . $point->getId());
-		$temp = $folder->newFile(self::METADATA_FILE);
+		$this->initBaseFolder($point);
+		$temp = $point->getBaseFolder()->newFile(self::METADATA_FILE);
 		$temp->putContent('');
-
-		$point->setBaseFolder($folder);
 
 		$this->addingRestoringData($point, $complete);
 
@@ -282,8 +292,24 @@ class PointService {
 	 * @throws NotPermittedException
 	 * @throws NotFoundException
 	 */
-	private function initBackupFS() {
+	private function initBackupFS(bool $force = false): void {
+		if ($this->backupFSInitiated) {
+			return;
+		}
+
 		$path = '/';
+
+		if (!class_exists(OC::class)) {
+			return;
+		}
+
+		/** @var Factory $factory */
+		$factory = OC::$server->get(Factory::class);
+		$this->appData = $factory->get(Application::APP_ID);
+
+		if ($force) {
+			return;
+		}
 
 		try {
 			$folder = $this->appData->getFolder($path);
@@ -293,7 +319,147 @@ class PointService {
 
 		$temp = $folder->newFile(self::NOBACKUP_FILE);
 		$temp->putContent('');
+
+		$this->backupFSInitiated = true;
 	}
+
+
+	/**
+	 * @throws NotPermittedException
+	 * @throws NotFoundException
+	 */
+	public function destroyBackupFS(): void {
+		$this->initBackupFS(true);
+		try {
+			$folder = $this->appData->getFolder('/');
+			$folder->delete();
+		} catch (NotFoundException $e) {
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	private function initBaseFolder(RestoringPoint $point): void {
+		$this->initBackupFS();
+
+		try {
+			$folder = $this->appData->newFolder('/' . $point->getId());
+		} catch (NotPermittedException $e) {
+			$folder = $this->appData->getFolder('/' . $point->getId());
+		}
+
+		$point->setBaseFolder($folder);
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	public function generateHealth(RestoringPoint $point, bool $updateDb = false): void {
+		$this->initBackupFS();
+		$this->initBaseFolder($point);
+
+		$health = new RestoringHealth();
+		$globalStatus = 1;
+		foreach ($point->getRestoringData() as $restoringData) {
+			foreach ($restoringData->getChunks() as $chunk) {
+				$chunkHealth = new RestoringChunkHealth();
+
+				$status = $this->generateChunkHealthStatus($point, $chunk);
+				if ($status !== RestoringChunkHealth::STATUS_OK) {
+					$globalStatus = 0;
+				}
+
+				$chunkHealth->setDataName($restoringData->getName())
+							->setChunkName($chunk->getName())
+							->setStatus($status);
+				$health->addChunk($chunkHealth);
+			}
+		}
+
+		$health->setStatus($globalStatus);
+		$point->setHealth($health);
+
+		if ($updateDb) {
+			$this->pointRequest->update($point);
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 *
+	 * @return int
+	 */
+	private function generateChunkHealthStatus(RestoringPoint $point, RestoringChunk $chunk): int {
+		try {
+			$checksum = $this->archiveService->getChecksum($point, $chunk, false);
+			if ($checksum !== $chunk->getChecksum()) {
+				return RestoringChunkHealth::STATUS_CHECKSUM;
+			}
+
+			return RestoringChunkHealth::STATUS_OK;
+		} catch (ArchiveNotFoundException $e) {
+			return RestoringChunkHealth::STATUS_MISSING;
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param string $data
+	 * @param string $chunk
+	 *
+	 * @return RestoringChunk
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	public function getChunkContent(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
+		$restoringChunk = $this->getChunk($point, $data, $chunk);
+
+		$this->initBaseFolder($point);
+		$folder = $point->getBaseFolder();
+		$file = $folder->getFile($chunk . '.zip');
+
+		$restoringChunk->setContent(base64_encode($file->getContent()));
+
+		return $restoringChunk;
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param string $data
+	 * @param string $chunk
+	 *
+	 * @return RestoringChunk
+	 * @throws ChunkNotFoundException
+	 */
+	private function getChunk(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
+		foreach ($point->getRestoringData() as $restoringData) {
+			if ($restoringData->getName() !== $data) {
+				continue;
+			}
+
+			foreach ($restoringData->getChunks() as $restoringChunk) {
+				if ($restoringChunk->getName() === $chunk) {
+					return $restoringChunk;
+				}
+			}
+		}
+
+		throw new ChunkNotFoundException();
+	}
+
 
 }
 

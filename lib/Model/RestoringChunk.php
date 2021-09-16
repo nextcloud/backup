@@ -53,6 +53,9 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	/** @var string */
 	private $name = '';
 
+	/** @var string */
+	private $content = '';
+
 	/** @var string[] */
 	private $files = [];
 
@@ -218,6 +221,24 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this;
 	}
 
+	/**
+	 * @param string $content
+	 *
+	 * @return RestoringChunk
+	 */
+	public function setContent(string $content): self {
+		$this->content = $content;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getContent(): string {
+		return $this->content;
+	}
+
 
 	/**
 	 * @param array $data
@@ -230,6 +251,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			 ->setCount($this->getInt('count', $data, 0))
 			 ->setSize($this->getInt('size', $data, 0))
 			 ->setChecksum($this->get('checksum', $data, ''))
+			 ->setContent($this->get('content', $data))
 			 ->setEncryptedChecksum($this->get('encrypted', $data, ''));
 
 		return $this;
@@ -250,15 +272,21 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 * @return array
 	 */
 	public function jsonSerialize(): array {
-		return
-			[
-				'name' => $this->getName(),
-				'count' => $this->getCount(),
-				'size' => $this->getSize(),
-				'checksum' => $this->getChecksum(),
-				'encrypted' => $this->getEncryptedChecksum()
-			];
+		$arr = [
+			'name' => $this->getName(),
+			'count' => $this->getCount(),
+			'size' => $this->getSize(),
+			'checksum' => $this->getChecksum(),
+			'encrypted' => $this->getEncryptedChecksum()
+		];
+
+		if ($this->getContent() !== '') {
+			$arr['content'] = $this->getContent();
+		}
+
+		return $arr;
 	}
+
 
 }
 

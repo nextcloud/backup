@@ -33,6 +33,7 @@ namespace OCA\Backup\Model;
 
 
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
+use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
@@ -44,7 +45,7 @@ use JsonSerializable;
  *
  * @package OCA\Backup\Model
  */
-class RestoringData implements JsonSerializable {
+class RestoringData implements IDeserializable, JsonSerializable {
 
 
 	use TArrayTools;
@@ -275,7 +276,7 @@ class RestoringData implements JsonSerializable {
 	 *
 	 * @return RestoringData
 	 */
-	public function import(array $data): RestoringData {
+	public function import(array $data): IDeserializable {
 		$this->setType($this->getInt('type', $data, 0));
 		$this->setName($this->get('name', $data, ''));
 		$this->setRoot($this->get('root', $data, ''));

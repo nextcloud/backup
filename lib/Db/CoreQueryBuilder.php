@@ -61,6 +61,14 @@ class CoreQueryBuilder extends NC23ExtendedQueryBuilder {
 
 
 	/**
+	 * @param string $uid
+	 */
+	public function limitToUid(string $uid): void {
+		$this->limit('uid', $uid);
+	}
+
+
+	/**
 	 * @param string $instance
 	 */
 	public function limitToInstance(string $instance): void {

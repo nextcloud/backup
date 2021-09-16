@@ -32,39 +32,53 @@ declare(strict_types=1);
 namespace OCA\Backup\RemoteRequest;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
+use OCA\Backup\Exceptions\RestoringPointException;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
-use OCP\IL10N;
+use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Service\PointService;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 
 
 /**
- * Class ListRestoringPoint
+ * Class CreateRestoringPoint
  *
  * @package OCA\Backup\RemoteRequest
  */
-class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
+class CreateRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 
+	use TNC23Deserialize;
 	use TNC23Logger;
 
 
 	/** @var PointRequest */
 	private $pointRequest;
 
+	/** @var PointService */
+	private $pointService;
+
 
 	/**
 	 * ListRestoringPoint constructor.
 	 *
 	 * @param PointRequest $pointRequest
+	 * @param PointService $pointService
 	 */
-	public function __construct(PointRequest $pointRequest) {
+	public function __construct(PointRequest $pointRequest, PointService $pointService) {
 		parent::__construct();
+
 		$this->pointRequest = $pointRequest;
+		$this->pointService = $pointService;
 
 		$this->setup('app', Application::APP_ID);
 	}
@@ -72,16 +86,43 @@ class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 	/**
 	 *
+	 * @throws InvalidItemException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotFoundException
 	 */
 	public function execute(): void {
 		/** @var RemoteInstance $signatory */
 		$signatory = $this->getSignedRequest()->getSignatory();
-		$points = $this->pointRequest->getByInstance($signatory->getInstance());
 
-		$this->setOutcome(new SimpleDataStore($points));
+		/** @var RestoringPoint $point */
+		$point = $this->deserializeJson($this->getSignedRequest()->getBody(), RestoringPoint::class);
+		$point->setInstance($signatory->getInstance());
+		$this->pointService->generateHealth($point);
+
+		try {
+			$this->pointRequest->getById($point->getId());
+
+			// TODO: returns error that RP already exist;
+			return;
+		} catch (RestoringPointNotFoundException $e) {
+		}
+
+		try {
+			$this->pointRequest->save($point);
+			$stored = $this->pointRequest->getById($point->getId(), $signatory->getInstance());
+
+			$this->setOutcome(new SimpleDataStore([$point->getId() => $stored]));
+		} catch (RestoringPointException $e) {
+		}
 	}
 
 
+	/**
+	 * @param array $data
+	 *
+	 * @return IDeserializable
+	 */
 	public function import(array $data): IDeserializable {
 		return $this;
 	}

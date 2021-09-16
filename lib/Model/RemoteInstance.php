@@ -54,7 +54,6 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 	const LOCAL = 'local';
 
 
-
 	const EXCHANGE_IN = 1;
 	const EXCHANGE_OUT = 2;
 
@@ -63,9 +62,10 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 	public const ROOT = 'root';
 	public const AUTH_SIGNED = 'auth-signed';
 	public const RP_LIST = 'restoringPoint.list';
+	public const RP_GET = 'restoringPoint.get';
 	public const RP_CREATE = 'restoringPoint.create';
 	public const RP_UPDATE = 'restoringPoint.update';
-	public const RP_DETAILS = 'restoringPoint.details';
+	public const RP_HEALTH = 'restoringPoint.health';
 	public const RP_UPLOAD = 'restoringPoint.upload';
 	public const RP_DOWNLOAD = 'restoringPoint.download';
 
@@ -83,7 +83,10 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 	private $RPList = '';
 
 	/** @var string */
-	private $RPDetails = '';
+	private $RPGet = '';
+
+	/** @var string */
+	private $RPHealth = '';
 
 	/** @var string */
 	private $RPDownload = '';
@@ -227,12 +230,12 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 
 
 	/**
-	 * @param string $RPDetails
+	 * @param string $RPHealth
 	 *
 	 * @return RemoteInstance
 	 */
-	public function setRPDetails(string $RPDetails): self {
-		$this->RPDetails = $RPDetails;
+	public function setRPHealth(string $RPHealth): self {
+		$this->RPHealth = $RPHealth;
 
 		return $this;
 	}
@@ -240,8 +243,27 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 	/**
 	 * @return string
 	 */
-	public function getRPDetails(): string {
-		return $this->RPDetails;
+	public function getRPHealth(): string {
+		return $this->RPHealth;
+	}
+
+
+	/**
+	 * @param string $RPGet
+	 *
+	 * @return RemoteInstance
+	 */
+	public function setRPGet(string $RPGet): self {
+		$this->RPGet = $RPGet;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRPGet(): string {
+		return $this->RPGet;
 	}
 
 
@@ -414,7 +436,8 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 			 ->setRPList($this->get(self::RP_LIST, $data))
 			 ->setRPCreate($this->get(self::RP_CREATE, $data))
 			 ->setRPUpdate($this->get(self::RP_UPDATE, $data))
-			 ->setRPDetails($this->get(self::RP_DETAILS, $data))
+			 ->setRPGet($this->get(self::RP_GET, $data))
+			 ->setRPHealth($this->get(self::RP_HEALTH, $data))
 			 ->setRPUpload($this->get(self::RP_UPLOAD, $data))
 			 ->setRPDownload($this->get(self::RP_DOWNLOAD, $data))
 			 ->setUid($this->get(self::UID, $data));
@@ -443,8 +466,9 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 				[
 					'list' => $this->getRPList(),
 					'create' => $this->getRPCreate(),
-					'update' => $this->getRPDetails(),
-					'details' => $this->getRPDetails(),
+					'get' => $this->getRPGet(),
+					'health' => $this->getRPHealth(),
+					'update' => $this->getRPUpdate(),
 					'upload' => $this->getRPUpload(),
 					'download' => $this->getRPDownload()
 				]
@@ -478,7 +502,6 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 
 		return $this;
 	}
-
 
 }
 

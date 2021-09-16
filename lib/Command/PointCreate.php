@@ -33,6 +33,11 @@ namespace OCA\Backup\Command;
 
 
 use OC\Core\Command\Base;
+use OCA\Backup\Exceptions\ArchiveCreateException;
+use OCA\Backup\Exceptions\ArchiveNotFoundException;
+use OCA\Backup\Exceptions\BackupAppCopyException;
+use OCA\Backup\Exceptions\BackupScriptNotFoundException;
+use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -68,6 +73,8 @@ class PointCreate extends Base {
 	 *
 	 */
 	protected function configure() {
+		parent::configure();
+
 		$this->setName('backup:point:create')
 			 ->setDescription('Generate a restoring point of the instance');
 	}
@@ -77,14 +84,32 @@ class PointCreate extends Base {
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 *
-	 * @throws NotPermittedException
+	 * @return int
 	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws ArchiveCreateException
+	 * @throws ArchiveNotFoundException
+	 * @throws BackupAppCopyException
+	 * @throws BackupScriptNotFoundException
+	 * @throws SqlDumpException
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$point = $this->pointService->create(true);
 
-		echo $point->getId() . "\n\n";
-//		echo '> ' . json_encode($backup, JSON_PRETTY_PRINT);
+		if ($input->getOption('output') === 'none') {
+			return 0;
+		}
+
+
+		if ($input->getOption('output') === 'json') {
+			$output->writeln(json_encode($point, JSON_PRETTY_PRINT));
+
+			return 0;
+		}
+
+		$output->writeln('Restoring Point ID: <info>' . $point->getId() . '</info>');
+
+		return 0;
 	}
 
 }

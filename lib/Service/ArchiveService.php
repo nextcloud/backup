@@ -47,6 +47,8 @@ use OCA\Backup\Model\Backup;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use ZipArchive;
 use ZipStreamer\COMPR;
 use ZipStreamer\ZipStreamer;
@@ -415,14 +417,14 @@ class ArchiveService {
 
 
 	/**
-	 * @param Backup $point
+	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 * @param bool $encrypted
 	 *
 	 * @return string
 	 * @throws ArchiveNotFoundException
 	 */
-	private function getChecksum(
+	public function getChecksum(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
 		bool $encrypted
@@ -611,5 +613,5 @@ class ArchiveService {
 		return COMPR::NONE;
 	}
 
-}
 
+}

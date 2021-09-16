@@ -53,7 +53,7 @@ class PointRequestBuilder extends CoreRequestBuilder {
 	 */
 	protected function getPointInsertSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
-		$qb->select(self::TABLE_RESTORING_POINT);
+		$qb->insert(self::TABLE_RESTORING_POINT);
 
 		return $qb;
 	}

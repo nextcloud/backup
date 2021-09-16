@@ -122,17 +122,24 @@ class RemoteStreamService extends NC23Signature {
 		$app->setRoot($this->urlGenerator->linkToRouteAbsolute('backup.Remote.appService'));
 
 		$app->setRPList($this->urlGenerator->linkToRouteAbsolute('backup.Remote.listRestoringPoint'));
-		$app->setRPDetails(
+		$app->setRPGet(
 			urldecode(
 				$this->urlGenerator->linkToRouteAbsolute(
-					'backup.Remote.detailsRestoringPoint', ['restoringId' => '{restoringId}']
+					'backup.Remote.getRestoringPoint', ['pointId' => '{pointId}']
+				)
+			)
+		);
+		$app->setRPHealth(
+			urldecode(
+				$this->urlGenerator->linkToRouteAbsolute(
+					'backup.Remote.healthRestoringPoint', ['pointId' => '{pointId}']
 				)
 			)
 		);
 		$app->setRPDownload(
 			urldecode(
 				$this->urlGenerator->linkToRouteAbsolute(
-					'backup.Remote.downloadRestoringPoint', ['restoringId' => '{restoringId}']
+					'backup.Remote.downloadRestoringPoint', ['pointId' => '{pointId}']
 				)
 			)
 		);
@@ -140,14 +147,14 @@ class RemoteStreamService extends NC23Signature {
 		$app->setRPUpdate(
 			urldecode(
 				$this->urlGenerator->linkToRouteAbsolute(
-					'backup.Remote.updateRestoringPoint', ['restoringId' => '{restoringId}']
+					'backup.Remote.updateRestoringPoint', ['pointId' => '{pointId}']
 				)
 			)
 		);
 		$app->setRPUpload(
 			urldecode(
 				$this->urlGenerator->linkToRouteAbsolute(
-					'backup.Remote.uploadRestoringPoint', ['restoringId' => '{restoringId}']
+					'backup.Remote.uploadRestoringPoint', ['pointId' => '{pointId}']
 				)
 			)
 		);

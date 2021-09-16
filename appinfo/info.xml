@@ -28,6 +28,7 @@
 
 		<command>OCA\Backup\Command\PointBrowse</command>
 		<command>OCA\Backup\Command\PointCreate</command>
+		<command>OCA\Backup\Command\PointUpload</command>
 
 		<command>OCA\Backup\Command\Reset</command>
 

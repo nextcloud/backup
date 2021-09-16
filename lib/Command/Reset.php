@@ -34,6 +34,7 @@ namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
 use OCA\Backup\Db\CoreRequestBuilder;
+use OCA\Backup\Service\PointService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -52,16 +53,21 @@ class Reset extends Base {
 	/** @var CoreRequestBuilder */
 	private $coreRequestBuilder;
 
+	/** @var PointService */
+	private $pointService;
+
 
 	/**
 	 * Reset constructor.
 	 *
 	 * @param CoreRequestBuilder $coreRequestBuilder
+	 * @param PointService $pointService
 	 */
-	public function __construct(CoreRequestBuilder $coreRequestBuilder) {
-		$this->coreRequestBuilder = $coreRequestBuilder;
-
+	public function __construct(CoreRequestBuilder $coreRequestBuilder, PointService $pointService) {
 		parent::__construct();
+
+		$this->coreRequestBuilder = $coreRequestBuilder;
+		$this->pointService = $pointService;
 	}
 
 
@@ -120,6 +126,7 @@ class Reset extends Base {
 		}
 
 		$this->coreRequestBuilder->cleanDatabase();
+		$this->pointService->destroyBackupFS();
 		if ($action === 'uninstall') {
 			$this->coreRequestBuilder->uninstall();
 		}

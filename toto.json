@@ -1,0 +1,124 @@
+{
+  "id": "20210915125232-9CCp5ELxphyzIN3",
+  "instance": "backup.local",
+  "nc": [
+    22,
+    1,
+    1,
+    2
+  ],
+  "root": "",
+  "status": 0,
+  "data": [
+    {
+      "name": "data",
+      "type": 3,
+      "root": "\/home\/maxence\/sites\/backup\/nextcloud\/data\/",
+      "path": "",
+      "chunks": [
+        {
+          "name": "7efffcbe-0470-4f7d-b5fa-309b667139d7",
+          "count": 35,
+          "size": 25063839,
+          "checksum": "9042bf0d89764aeeefca8a4e51455d0c",
+          "encrypted": ""
+        }
+      ]
+    },
+    {
+      "name": "apps",
+      "type": 2,
+      "root": "\/home\/maxence\/sites\/backup\/nextcloud\/",
+      "path": "apps\/",
+      "chunks": [
+        {
+          "name": "4ce913f7-5506-4f51-85db-91b36bcf86f6",
+          "count": 6670,
+          "size": 99915289,
+          "checksum": "add6880264116727c17a14f8fa79777a",
+          "encrypted": ""
+        },
+        {
+          "name": "c9cdf712-1552-49be-bd48-0cf89ab6f60a",
+          "count": 3705,
+          "size": 99993053,
+          "checksum": "04979f3a6c166abcedf7e07d3f105c41",
+          "encrypted": ""
+        },
+        {
+          "name": "a46b36b9-bb91-4661-97f8-5ed4fe6ed7bc",
+          "count": 2126,
+          "size": 50793524,
+          "checksum": "3143e05da8faa5aedd924b49eb199afa",
+          "encrypted": ""
+        }
+      ]
+    },
+    {
+      "name": "config",
+      "type": 101,
+      "root": "\/home\/maxence\/sites\/backup\/nextcloud\/",
+      "path": "config\/",
+      "chunks": [
+        {
+          "name": "fe4ae47b-ed20-4aa9-9e4d-9e75a04499ff",
+          "count": 1,
+          "size": 661,
+          "checksum": "0f17ed4fbb25d66d63c0a4e9e7417f26",
+          "encrypted": ""
+        }
+      ]
+    },
+    {
+      "name": "sqldump",
+      "type": 1001,
+      "root": "",
+      "path": "",
+      "chunks": [
+        {
+          "name": "73897ef8-37e5-4351-b7f7-cdd678aeeac1",
+          "count": 1,
+          "size": 265143,
+          "checksum": "57dee802ee99a162940007c2c11da28e",
+          "encrypted": ""
+        }
+      ]
+    }
+  ],
+  "date": 1631710352,
+  "health": {
+    "status": 0,
+    "chunks": {
+      "7efffcbe-0470-4f7d-b5fa-309b667139d7": {
+        "chunk": "7efffcbe-0470-4f7d-b5fa-309b667139d7",
+        "data": "data",
+        "status": 2
+      },
+      "4ce913f7-5506-4f51-85db-91b36bcf86f6": {
+        "chunk": "4ce913f7-5506-4f51-85db-91b36bcf86f6",
+        "data": "apps",
+        "status": 2
+      },
+      "c9cdf712-1552-49be-bd48-0cf89ab6f60a": {
+        "chunk": "c9cdf712-1552-49be-bd48-0cf89ab6f60a",
+        "data": "apps",
+        "status": 2
+      },
+      "a46b36b9-bb91-4661-97f8-5ed4fe6ed7bc": {
+        "chunk": "a46b36b9-bb91-4661-97f8-5ed4fe6ed7bc",
+        "data": "apps",
+        "status": 2
+      },
+      "fe4ae47b-ed20-4aa9-9e4d-9e75a04499ff": {
+        "chunk": "fe4ae47b-ed20-4aa9-9e4d-9e75a04499ff",
+        "data": "config",
+        "status": 2
+      },
+      "73897ef8-37e5-4351-b7f7-cdd678aeeac1": {
+        "chunk": "73897ef8-37e5-4351-b7f7-cdd678aeeac1",
+        "data": "sqldump",
+        "status": 2
+      }
+    }
+  }
+}

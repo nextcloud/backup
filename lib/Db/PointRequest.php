@@ -31,7 +31,8 @@ declare(strict_types=1);
 namespace OCA\Backup\Db;
 
 
-use OCA\Backup\Model\Backup;
+use OCA\Backup\Exceptions\RestoringPointException;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
 
 
@@ -44,37 +45,62 @@ class PointRequest extends PointRequestBuilder {
 
 
 	/**
-	 * create a new Person in the database.
-	 *
-	 * @param Backup $backup
+	 * @param RestoringPoint $point
 	 *
 	 * @return int
+	 * @throws RestoringPointException
 	 */
-	public function create(Backup $backup): int {
+	public function save(RestoringPoint $point): int {
 		$qb = $this->getPointInsertSql();
 
-//		$qb->setValue('id', $qb->createNamedParameter($id))
-////			   ->setValue('type', $qb->createNamedParameter($actor->getType()))
-//		   ->setValue('user_id', $qb->createNamedParameter($actor->getUserId()))
-//		   ->setValue('name', $qb->createNamedParameter($actor->getName()))
-//		   ->setValue('summary', $qb->createNamedParameter($actor->getSummary()))
-//		   ->setValue(
-//			   'creation',
-//			   $qb->createNamedParameter(new DateTime('now'), IQueryBuilder::PARAM_DATE)
-//		   );
+		$qb->setValue('uid', $qb->createNamedParameter($point->getId()))
+		   ->setValue('instance', $qb->createNamedParameter($point->getInstance()))
+		   ->setValue('root', $qb->createNamedParameter($point->getRoot()))
+		   ->setValue('status', $qb->createNamedParameter($point->getStatus()))
+		   ->setValue('metadata', $qb->createNamedParameter(json_encode($point->getMetadata())))
+		   ->setValue('date', $qb->createNamedParameter($point->getDate()));
+
+		if ($point->hasHealth()) {
+			$qb->setValue('health', $qb->createNamedParameter(json_encode($point->getHealth())));
+		}
 
 		return $qb->execute();
 	}
 
 
 	/**
-	 * @param Backup $backup
+	 * @param RestoringPoint $point
 	 */
-	public function update(Backup $backup) {
-//		$qb = $this->getPointUpdateSql();
-//		$qb->limitToId($backup->getId());
-//
-//		$qb->execute();
+	public function update(RestoringPoint $point): void {
+		$qb = $this->getPointUpdateSql();
+
+		$qb->setValue('status', $qb->createNamedParameter($point->getStatus()));
+		if ($point->hasHealth()) {
+			$qb->set('health', $qb->createNamedParameter(json_encode($point->getHealth())));
+		}
+
+		$qb->limitToUid($point->getId());
+		$qb->limitToInstance($point->getInstance());
+
+		$qb->execute();
+	}
+
+
+	/**
+	 * @param string $pointId
+	 * @param string $instance
+	 *
+	 * @return RestoringPoint
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function getById(string $pointId, string $instance = ''): RestoringPoint {
+		$qb = $this->getPointSelectSql();
+		$qb->limitToUid($pointId);
+		if ($instance !== '') {
+			$qb->limitToInstance($instance);
+		}
+
+		return $this->getItemFromRequest($qb);
 	}
 
 
@@ -89,6 +115,7 @@ class PointRequest extends PointRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
+
 
 }
 

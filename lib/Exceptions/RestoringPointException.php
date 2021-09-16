@@ -10,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,39 +29,18 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup;
+namespace OCA\Backup\Exceptions;
 
 
-use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
-use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use Exception;
 
 
 /**
- * Interface IRemoteRequest
+ * Class RestoringPointException
  *
- * @package OCA\Backup
+ * @package OCA\Backup\Exceptions
  */
-interface IRemoteRequest extends IDeserializable {
+class RestoringPointException extends Exception {
 
-	/**
-	 * @param NC23SignedRequest $signedRequest
-	 */
-	public function setSignedRequest(NC23SignedRequest $signedRequest): void;
-
-	/**
-	 * @param SimpleDataStore $config
-	 */
-	public function config(SimpleDataStore $config): void;
-
-	/**
-	 *
-	 */
-	public function execute(): void;
-
-	/**
-	 * @return array
-	 */
-	public function getOutcomeData(): array;
 }
 

@@ -6,11 +6,12 @@ return [
 		['name' => 'Remote#test', 'url' => '/test', 'verb' => 'GET'],
 
 		['name' => 'Remote#listRestoringPoint', 'url' => '/rp', 'verb' => 'GET'],
-		['name' => 'Remote#detailsRestoringPoint', 'url' => '/rp/{restoringId}', 'verb' => 'GET'],
-		['name' => 'Remote#partRestoringPoint', 'url' => '/rp/{restoringId}/part', 'verb' => 'GET'],
-		['name' => 'Remote#downloadRestoringPoint', 'url' => '/rp/{restoringId}/download', 'verb' => 'GET'],
+		['name' => 'Remote#getRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'GET'],
+		['name' => 'Remote#healthRestoringPoint', 'url' => '/rp/{pointId}/health', 'verb' => 'GET'],
+		['name' => 'Remote#partRestoringPoint', 'url' => '/rp/{pointId}/part', 'verb' => 'GET'],
+		['name' => 'Remote#downloadRestoringPoint', 'url' => '/rp/{pointId}/download', 'verb' => 'GET'],
 		['name' => 'Remote#createRestoringPoint', 'url' => '/rp', 'verb' => 'PUT'],
-		['name' => 'Remote#updateRestoringPoint', 'url' => '/rp/{restoringId}', 'verb' => 'PUT'],
-		['name' => 'Remote#uploadRestoringPoint', 'url' => '/rp/{restoringId}', 'verb' => 'POST']
+		['name' => 'Remote#updateRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'PUT'],
+		['name' => 'Remote#uploadRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'POST']
 	]
 ];

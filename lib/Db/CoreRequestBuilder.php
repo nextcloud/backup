@@ -66,6 +66,7 @@ class CoreRequestBuilder {
 			'root',
 			'status',
 			'metadata',
+			'health',
 			'date'
 		]
 	];

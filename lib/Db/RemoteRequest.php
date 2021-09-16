@@ -94,18 +94,14 @@ class RemoteRequest extends RemoteRequestBuilder {
 		return $this->getItemsFromRequest($qb);
 	}
 
-
 	/**
-	 * @param int $dbId
-	 *
-	 * @return RemoteInstance
-	 * @throws RemoteInstanceNotFoundException
+	 * @return RemoteInstance[]
 	 */
-	public function getFromDbId(int $dbId): RemoteInstance {
+	public function getOutgoing(): array {
 		$qb = $this->getRemoteSelectSql();
-		$qb->limitToId($dbId);
+		$qb->limitBitwise('exchange', RemoteInstance::EXCHANGE_OUT);
 
-		return $this->getItemFromRequest($qb);
+		return $this->getItemsFromRequest($qb);
 	}
 
 

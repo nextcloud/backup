@@ -37,17 +37,20 @@ use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
-use OCP\IL10N;
+use OCA\Backup\Service\PointService;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 
 
 /**
- * Class ListRestoringPoint
+ * Class GetRestoringPoint
  *
  * @package OCA\Backup\RemoteRequest
  */
-class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
+class GetRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 
 	use TNC23Logger;
@@ -56,32 +59,53 @@ class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
 	/** @var PointRequest */
 	private $pointRequest;
 
+	/** @var PointService */
+	private $pointService;
+
 
 	/**
 	 * ListRestoringPoint constructor.
 	 *
 	 * @param PointRequest $pointRequest
+	 * @param PointService $pointService
 	 */
-	public function __construct(PointRequest $pointRequest) {
+	public function __construct(PointRequest $pointRequest, PointService $pointService) {
 		parent::__construct();
 		$this->pointRequest = $pointRequest;
+		$this->pointService = $pointService;
 
 		$this->setup('app', Application::APP_ID);
 	}
 
 
 	/**
-	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 */
 	public function execute(): void {
 		/** @var RemoteInstance $signatory */
 		$signatory = $this->getSignedRequest()->getSignatory();
-		$points = $this->pointRequest->getByInstance($signatory->getInstance());
+		$pointId = $this->getSignedRequest()->getIncomingRequest()->getParam('pointId');
 
-		$this->setOutcome(new SimpleDataStore($points));
+		try {
+			$point = $this->pointRequest->getById($pointId, $signatory->getInstance());
+
+			if ($this->config->gBool('refreshHealth')) {
+				$this->pointService->generateHealth($point, true);
+				$point = $this->pointRequest->getById($pointId, $signatory->getInstance());
+			}
+
+			$this->setOutcome(new SimpleDataStore([$pointId => $point]));
+		} catch (RestoringPointNotFoundException $e) {
+		}
 	}
 
 
+	/**
+	 * @param array $data
+	 *
+	 * @return IDeserializable
+	 */
 	public function import(array $data): IDeserializable {
 		return $this;
 	}
