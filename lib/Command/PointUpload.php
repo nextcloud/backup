@@ -98,7 +98,7 @@ class PointUpload extends Base {
 	 * @throws RestoringPointNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$point = $this->pointService->getPoint($input->getArgument('point'));
+		$point = $this->pointService->getRestoringPoint($input->getArgument('point'));
 
 		$checks = $this->remoteService->verifyPoint($point);
 
@@ -124,7 +124,7 @@ class PointUpload extends Base {
 			}
 
 			$health = $item->getHealth();
-			$this->uploadMissingFiles($instance, $point, $item->getHealth(), $output);
+			$this->uploadMissingFiles($instance, $point, $health, $output);
 			if ($health->getStatus() === RestoringHealth::STATUS_OK) {
 				$output->writeln('  > RestoringPoint is fully uploaded to ' . $instance);
 			}
@@ -260,7 +260,8 @@ class PointUpload extends Base {
 			}
 
 			$output->write('  * Uploading ' . $chunk->getDataName() . '/' . $chunk->getChunkName() . ': ');
-			$restoringChunk = $this->pointService->getChunkContent($point, $chunk->getDataName(), $chunk->getChunkName());
+			$restoringChunk =
+				$this->pointService->getChunkContent($point, $chunk->getDataName(), $chunk->getChunkName());
 			$this->remoteService->uploadChunk($instance, $point, $restoringChunk);
 			$output->writeln('<info>ok</info>');
 

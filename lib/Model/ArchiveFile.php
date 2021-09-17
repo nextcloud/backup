@@ -72,7 +72,7 @@ class ArchiveFile implements JsonSerializable {
 	 *
 	 * @return ArchiveFile
 	 */
-	public function setName(string $name): ArchiveFile {
+	public function setName(string $name): self {
 		$this->name = $name;
 
 		return $this;
@@ -94,13 +94,12 @@ class ArchiveFile implements JsonSerializable {
 	/**
 	 * @return array
 	 */
-	public function jsonSerialize() {
+	public function jsonSerialize(): array {
 		return
 			[
 				'name' => $this->getName()
 			];
 	}
-
 
 }
 

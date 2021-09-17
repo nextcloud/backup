@@ -53,6 +53,7 @@ use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Model\RemoteInstance;
+use OCA\Backup\Model\RestoringPoint;
 use OCP\AppFramework\Http;
 use OCP\IURLGenerator;
 
@@ -369,5 +370,12 @@ class RemoteStreamService extends NC23Signature {
 		}
 	}
 
-}
 
+	/**
+	 * @throws SignatoryException
+	 */
+	public function signPoint(RestoringPoint $point) {
+		$this->signModel($point, $this->getAppSignatory(false));
+	}
+
+}

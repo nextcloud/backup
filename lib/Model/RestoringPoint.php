@@ -35,6 +35,7 @@ namespace OCA\Backup\Model;
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
+use ArtificialOwl\MySmallPhpTools\ISignedModel;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
@@ -48,7 +49,7 @@ use OCP\Files\SimpleFS\ISimpleFolder;
  *
  * @package OCA\Backup\Model
  */
-class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable {
+class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, JsonSerializable {
 
 
 	use TArrayTools;
@@ -82,6 +83,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 	/** @var RestoringHealth */
 	private $health;
+
+	/** @var string */
+	private $signature = '';
 
 	/** @var bool */
 	private $package = false;
@@ -305,6 +309,25 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 
 	/**
+	 * @param string $signature
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setSignature(string $signature): self {
+		$this->signature = $signature;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSignature(): string {
+		return $this->signature;
+	}
+
+
+	/**
 	 * @param bool $package
 	 *
 	 * @return RestoringPoint
@@ -347,6 +370,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 
 		$metadata = new SimpleDataStore($this->getArray('metadata', $data));
 		$this->setNc($metadata->gArray('nc'));
+		$this->setSignature($metadata->g('signature'));
 
 		try {
 			/** @var RestoringHealth $health */
@@ -377,7 +401,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 			 ->setInstance($this->get('instance', $data))
 			 ->setRoot($this->get('root', $data))
 			 ->setStatus($this->getInt('status', $data))
-			 ->setDate($this->getInt('date', $data));
+			 ->setDate($this->getInt('date', $data))
+			 ->setSignature($this->get('signature', $data));
 		$this->setNc($this->getArray('nc', $data));
 
 		if ($this->getId() === '' || $this->getStatus() === -1) {
@@ -405,6 +430,20 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	/**
 	 * @return array
 	 */
+	public function signedData(): array {
+		return [
+			'id' => $this->getId(),
+			'nc' => $this->getNC(),
+			'root' => $this->getRoot(),
+			'data' => $this->getRestoringData(),
+			'date' => $this->getDate()
+		];
+	}
+
+
+	/**
+	 * @return array
+	 */
 	public function jsonSerialize(): array {
 		$arr = [
 			'id' => $this->getId(),
@@ -413,6 +452,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 			'root' => $this->getRoot(),
 			'status' => $this->getStatus(),
 			'data' => $this->getRestoringData(),
+			'signature' => $this->getSignature(),
 			'date' => $this->getDate()
 		];
 
@@ -424,4 +464,3 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, JsonSerializable
 	}
 
 }
-

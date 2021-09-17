@@ -110,6 +110,8 @@ class CreateRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 		try {
 			$this->pointRequest->save($point);
+			$this->pointService->saveMetadata($point);
+
 			$stored = $this->pointRequest->getById($point->getId(), $signatory->getInstance());
 
 			$this->setOutcome(new SimpleDataStore([$point->getId() => $stored]));

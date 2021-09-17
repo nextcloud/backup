@@ -68,6 +68,9 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	/** @var string */
 	private $checksum = '';
 
+	/** @var bool */
+	private $encrypted = false;
+
 	/** @var string */
 	private $encryptedChecksum = '';
 
@@ -102,6 +105,17 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		$this->name = $name;
 
 		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFilename(): string {
+		if ($this->isEncrypted()) {
+			return $this->getName();
+		}
+
+		return $this->getName() . '.zip';
 	}
 
 
@@ -185,6 +199,25 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 
 	/**
+	 * @param bool $encrypted
+	 *
+	 * @return RestoringChunk
+	 */
+	public function setEncrypted(bool $encrypted): self {
+		$this->encrypted = $encrypted;
+
+		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isEncrypted(): bool {
+		return $this->encrypted;
+	}
+
+
+	/**
 	 * @return string
 	 */
 	public function getChecksum(): string {
@@ -246,13 +279,14 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 * @return RestoringChunk
 	 */
 	public function import(array $data): IDeserializable {
-		$this->setName($this->get('name', $data, ''))
+		$this->setName($this->get('name', $data))
 //			 ->setFiles($this->getArray('files', $data, []))
-			 ->setCount($this->getInt('count', $data, 0))
-			 ->setSize($this->getInt('size', $data, 0))
-			 ->setChecksum($this->get('checksum', $data, ''))
+			 ->setCount($this->getInt('count', $data))
+			 ->setSize($this->getInt('size', $data))
 			 ->setContent($this->get('content', $data))
-			 ->setEncryptedChecksum($this->get('encrypted', $data, ''));
+			 ->setEncrypted($this->getBool('encrypted', $data))
+			 ->setChecksum($this->get('checksum', $data))
+			 ->setEncryptedChecksum($this->get('encryptedChecksum', $data));
 
 		return $this;
 	}
@@ -276,8 +310,9 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			'name' => $this->getName(),
 			'count' => $this->getCount(),
 			'size' => $this->getSize(),
+			'encrypted' => $this->isEncrypted(),
 			'checksum' => $this->getChecksum(),
-			'encrypted' => $this->getEncryptedChecksum()
+			'encryptedChecksum' => $this->getEncryptedChecksum()
 		];
 
 		if ($this->getContent() !== '') {

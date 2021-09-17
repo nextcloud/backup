@@ -39,8 +39,8 @@ use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveDeleteException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
-use OCA\Backup\Exceptions\BackupFolderException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
+use OCA\Backup\Exceptions\ChunkNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Model\ArchiveFile;
 use OCA\Backup\Model\Backup;
@@ -113,44 +113,44 @@ class ArchiveService {
 		}
 	}
 
+//
+//	/**
+//	 * @param Backup $backup
+//	 * @param RestoringChunk $archive
+//	 * @param string $root
+//	 *
+//	 * @throws ArchiveDeleteException
+//	 * @throws ArchiveNotFoundException
+//	 * @throws EncryptionKeyException
+//	 * @throws BackupFolderException
+//	 */
+//	public function extractAll(Backup $backup, RestoringChunk $archive, string $root): void {
+//		if (!is_dir($root)) {
+//			if (!@mkdir($root, 0755, true)) {
+//				throw new BackupFolderException('could not create ' . $root);
+//			}
+//		}
+//
+//		$this->decryptArchive($backup, $archive);
+//		$this->extractAllFromArchive($archive, $root);
+//		$this->deleteArchive($backup, $archive, 'zip');
+//	}
 
-	/**
-	 * @param Backup $backup
-	 * @param RestoringChunk $archive
-	 * @param string $root
-	 *
-	 * @throws ArchiveDeleteException
-	 * @throws ArchiveNotFoundException
-	 * @throws EncryptionKeyException
-	 * @throws BackupFolderException
-	 */
-	public function extractAll(Backup $backup, RestoringChunk $archive, string $root): void {
-		if (!is_dir($root)) {
-			if (!@mkdir($root, 0755, true)) {
-				throw new BackupFolderException('could not create ' . $root);
-			}
-		}
 
-		$this->decryptArchive($backup, $archive);
-		$this->extractAllFromArchive($archive, $root);
-		$this->deleteArchive($backup, $archive, 'zip');
-	}
-
-
-	/**
-	 * @param RestoringChunk $archive
-	 * @param string $root
-	 *
-	 * @throws ArchiveNotFoundException
-	 * @throws Exception
-	 */
-	public function extractAllFromArchive(RestoringChunk $archive, string $root): void {
-		$zip = $this->openZipArchive($archive);
-		$zip->extractTo($root);
-		$this->closeZipArchive($zip);
-
-		unlink($root . '.backup.' . $archive->getName() . '.json');
-	}
+//	/**
+//	 * @param RestoringChunk $archive
+//	 * @param string $root
+//	 *
+//	 * @throws ArchiveNotFoundException
+//	 * @throws Exception
+//	 */
+//	public function extractAllFromArchive(RestoringChunk $archive, string $root): void {
+//		$zip = $this->openZipArchive($archive);
+//		$zip->extractTo($root);
+//		$this->closeZipArchive($zip);
+//
+//		unlink($root . '.backup.' . $archive->getName() . '.json');
+//	}
 
 
 	/**
@@ -613,5 +613,62 @@ class ArchiveService {
 		return COMPR::NONE;
 	}
 
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param string $data
+	 * @param string $chunk
+	 *
+	 * @return RestoringChunk
+	 * @throws ChunkNotFoundException
+	 */
+	public function extractChunkFromRP(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
+		foreach ($point->getRestoringData() as $restoringData) {
+			if ($restoringData->getName() !== $data) {
+				continue;
+			}
+
+			foreach ($restoringData->getChunks() as $restoringChunk) {
+				if ($restoringChunk->getName() === $chunk) {
+					return $restoringChunk;
+				}
+			}
+		}
+
+		throw new ChunkNotFoundException();
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $restoringChunk
+	 */
+	public function getChunkContent(RestoringPoint $point, RestoringChunk $restoringChunk): void {
+		$folder = $point->getBaseFolder();
+		try {
+			$file = $folder->getFile($restoringChunk->getFilename());
+			$restoringChunk->setContent(base64_encode($file->getContent()));
+		} catch (NotFoundException | NotPermittedException $e) {
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 */
+	public function saveChunkContent(RestoringPoint $point, RestoringChunk $chunk) {
+		$folder = $point->getBaseFolder();
+		try {
+			try {
+				$file = $folder->getFile($chunk->getFilename());
+			} catch (NotFoundException $e) {
+				$file = $folder->newFile($chunk->getFilename());
+			}
+
+			$file->putContent(base64_decode($chunk->getContent()));
+		} catch (NotPermittedException | NotFoundException $e) {
+		}
+	}
 
 }

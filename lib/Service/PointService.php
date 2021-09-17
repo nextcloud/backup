@@ -32,7 +32,8 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc22\TNC22Logger;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Signatory;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC;
 use OC\Files\AppData\Factory;
@@ -42,6 +43,8 @@ use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
+use OCA\Backup\Exceptions\ChunkNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\Model\RestoringChunk;
@@ -64,7 +67,8 @@ use OCP\Util;
 class PointService {
 
 
-	use TNC22Logger;
+	use TNC23Signatory;
+	use TNC23Logger;
 	use TStringTools;
 
 
@@ -76,11 +80,14 @@ class PointService {
 	/** @var PointRequest */
 	private $pointRequest;
 
-	/** @var ConfigService */
-	private $configService;
+	/** @var RemoteStreamService */
+	private $remoteStreamService;
 
 	/** @var ArchiveService */
-	private $archiveService;
+	private $chunkService;
+
+	/** @var ConfigService */
+	private $configService;
 
 	/** @var IAppData */
 	private $appData;
@@ -93,16 +100,19 @@ class PointService {
 	 * PointService constructor.
 	 *
 	 * @param PointRequest $pointRequest
-	 * @param ArchiveService $archiveService
+	 * @param RemoteStreamService $remoteStreamService
+	 * @param ArchiveService $chunkService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
 		PointRequest $pointRequest,
-		ArchiveService $archiveService,
+		RemoteStreamService $remoteStreamService,
+		ArchiveService $chunkService,
 		ConfigService $configService
 	) {
 		$this->pointRequest = $pointRequest;
-		$this->archiveService = $archiveService;
+		$this->chunkService = $chunkService;
+		$this->remoteStreamService = $remoteStreamService;
 		$this->configService = $configService;
 
 		$this->setup('app', 'backup');
@@ -111,11 +121,22 @@ class PointService {
 
 	/**
 	 * @param string $pointId
+	 * @param string $instance
 	 *
+	 * @return RestoringPoint
 	 * @throws RestoringPointNotFoundException
 	 */
-	public function getPoint(string $pointId): RestoringPoint {
-		return $this->pointRequest->getById($pointId);
+	public function getRestoringPoint(string $pointId, string $instance = ''): RestoringPoint {
+		return $this->pointRequest->getById($pointId, $instance);
+	}
+
+	/**
+	 * @param string $instance
+	 *
+	 * @return RestoringPoint[]
+	 */
+	public function getRPByInstance(string $instance): array {
+		return $this->pointRequest->getByInstance($instance);
 	}
 
 
@@ -130,15 +151,16 @@ class PointService {
 	 * @throws BackupAppCopyException
 	 * @throws BackupScriptNotFoundException
 	 * @throws SqlDumpException
+	 * @throws RestoringPointException
 	 */
 	public function create(bool $complete): RestoringPoint {
 		$point = $this->initRestoringPoint($complete);
-		$this->archiveService->copyApp($point);
+		$this->chunkService->copyApp($point);
 
 //		$backup->setEncryptionKey('12345');
-		$this->archiveService->createChunks($point);
+		$this->chunkService->createChunks($point);
 		$this->backupSql($point);
-		$this->generateMetadata($point);
+		$this->saveMetadata($point);
 
 		$this->pointRequest->save($point);
 
@@ -163,9 +185,6 @@ class PointService {
 		$point->setNC(Util::getVersion());
 
 		$this->initBaseFolder($point);
-		$temp = $point->getBaseFolder()->newFile(self::METADATA_FILE);
-		$temp->putContent('');
-
 		$this->addingRestoringData($point, $complete);
 
 		return $point;
@@ -240,7 +259,7 @@ class PointService {
 		$content = $this->generateSqlDump();
 
 		$data = new RestoringData(RestoringData::SQL_DUMP, '', 'sqldump');
-		$this->archiveService->createContentChunk(
+		$this->chunkService->createContentChunk(
 			$point,
 			$data,
 			self::SQL_DUMP_FILE,
@@ -273,18 +292,21 @@ class PointService {
 	/**
 	 * @param RestoringPoint $point
 	 *
-	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws NotFoundException
 	 */
-	private function generateMetadata(RestoringPoint $point) {
-		if (!$point->hasBaseFolder()) {
-			return;
-		}
+	public function saveMetadata(RestoringPoint $point) {
+		$this->initBaseFolder($point);
 
 		$folder = $point->getBaseFolder();
 
-		$json = $folder->getFile(self::METADATA_FILE);
-		$json->putContent(json_encode($point, JSON_PRETTY_PRINT));
+		try {
+			$file = $folder->getFile(self::METADATA_FILE);
+		} catch (NotFoundException $e) {
+			$file = $folder->newFile(self::METADATA_FILE);
+		}
+
+		$file->putContent(json_encode($point, JSON_PRETTY_PRINT));
 	}
 
 
@@ -325,6 +347,11 @@ class PointService {
 
 
 	/**
+	 * This will destroy all backup stored locally
+	 * (from this instance and from remote instance using this instance as storage)
+	 *
+	 * This method is only called when the app is reset/uninstall using ./occ backup:reset
+	 *
 	 * @throws NotPermittedException
 	 * @throws NotFoundException
 	 */
@@ -344,7 +371,11 @@ class PointService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-	private function initBaseFolder(RestoringPoint $point): void {
+	public function initBaseFolder(RestoringPoint $point): void {
+		if ($point->hasBaseFolder()) {
+			return;
+		}
+
 		$this->initBackupFS();
 
 		try {
@@ -359,6 +390,7 @@ class PointService {
 
 	/**
 	 * @param RestoringPoint $point
+	 * @param bool $updateDb
 	 *
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
@@ -402,7 +434,7 @@ class PointService {
 	 */
 	private function generateChunkHealthStatus(RestoringPoint $point, RestoringChunk $chunk): int {
 		try {
-			$checksum = $this->archiveService->getChecksum($point, $chunk, false);
+			$checksum = $this->chunkService->getChecksum($point, $chunk, false);
 			if ($checksum !== $chunk->getChecksum()) {
 				return RestoringChunkHealth::STATUS_CHECKSUM;
 			}
@@ -422,44 +454,15 @@ class PointService {
 	 * @return RestoringChunk
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws ChunkNotFoundException
 	 */
 	public function getChunkContent(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
-		$restoringChunk = $this->getChunk($point, $data, $chunk);
-
 		$this->initBaseFolder($point);
-		$folder = $point->getBaseFolder();
-		$file = $folder->getFile($chunk . '.zip');
 
-		$restoringChunk->setContent(base64_encode($file->getContent()));
+		$restoringChunk = $this->chunkService->extractChunkFromRP($point, $data, $chunk);
+		$this->chunkService->getChunkContent($point, $restoringChunk);
 
 		return $restoringChunk;
 	}
 
-
-	/**
-	 * @param RestoringPoint $point
-	 * @param string $data
-	 * @param string $chunk
-	 *
-	 * @return RestoringChunk
-	 * @throws ChunkNotFoundException
-	 */
-	private function getChunk(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
-		foreach ($point->getRestoringData() as $restoringData) {
-			if ($restoringData->getName() !== $data) {
-				continue;
-			}
-
-			foreach ($restoringData->getChunks() as $restoringChunk) {
-				if ($restoringChunk->getName() === $chunk) {
-					return $restoringChunk;
-				}
-			}
-		}
-
-		throw new ChunkNotFoundException();
-	}
-
-
 }
-

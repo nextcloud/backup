@@ -170,6 +170,8 @@ class RemoteService {
 			throw new RemoteInstanceException('instance not configured as outgoing');
 		}
 
+		$this->remoteStreamService->signPoint($point);
+
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$remoteInstance->getInstance(),
 			RemoteInstance::RP_CREATE,
