@@ -38,7 +38,6 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc22\TNC22Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\RemoteRequest;
-use OCA\Backup\Exceptions\ChunkNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
@@ -96,6 +95,13 @@ class RemoteService {
 	 */
 	public function getOutgoing(): array {
 		return $this->remoteRequest->getOutgoing();
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getAll(): array {
+		return $this->remoteRequest->getAll();
 	}
 
 
@@ -215,7 +221,6 @@ class RemoteService {
 
 		return true;
 	}
-
 
 }
 
