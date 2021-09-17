@@ -156,9 +156,11 @@ class PointService {
 	public function create(bool $complete): RestoringPoint {
 		$point = $this->initRestoringPoint($complete);
 		$this->chunkService->copyApp($point);
+		$this->chunkService->generateInternalData($point);
 
 //		$backup->setEncryptionKey('12345');
 		$this->chunkService->createChunks($point);
+
 		$this->backupSql($point);
 		$this->saveMetadata($point);
 
@@ -434,7 +436,7 @@ class PointService {
 	 */
 	private function generateChunkHealthStatus(RestoringPoint $point, RestoringChunk $chunk): int {
 		try {
-			$checksum = $this->chunkService->getChecksum($point, $chunk, false);
+			$checksum = $this->chunkService->getChecksum($point, $chunk);
 			if ($checksum !== $chunk->getChecksum()) {
 				return RestoringChunkHealth::STATUS_CHECKSUM;
 			}

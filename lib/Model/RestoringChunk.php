@@ -71,15 +71,26 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	/** @var bool */
 	private $encrypted = false;
 
+	/** @var bool */
+	private $staticName = false;
+
 	/** @var string */
 	private $encryptedChecksum = '';
 
 
 	/**
+	 * only add $name for specific Chunk.
+	 *
 	 * RestoringChunk constructor.
 	 */
-	public function __construct() {
-		$this->name = $this->uuid();
+	public function __construct(string $name = '') {
+		if ($name === '') {
+			$name = $this->uuid();
+		} else {
+			$this->staticName = true;
+		}
+
+		$this->name = $name;
 	}
 
 
@@ -107,10 +118,34 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this;
 	}
 
+
+	/**
+	 * @param bool $staticName
+	 *
+	 * @return RestoringChunk
+	 */
+	public function setStaticName(bool $staticName): self {
+		$this->staticName = $staticName;
+
+		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isStaticName(): bool {
+		return $this->staticName;
+	}
+
+
 	/**
 	 * @return string
 	 */
 	public function getFilename(): string {
+		if ($this->isStaticName()) {
+			return $this->getName();
+		}
+
 		if ($this->isEncrypted()) {
 			return $this->getName();
 		}
@@ -235,6 +270,18 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this;
 	}
 
+	/**
+	 * @param string $checksum
+	 *
+	 * @return bool
+	 */
+	public function compareChecksum(string $checksum): bool {
+		if ($this->isEncrypted()) {
+			return ($this->getEncryptedChecksum() === $checksum);
+		}
+
+		return ($this->getChecksum() === $checksum);
+	}
 
 	/**
 	 * @return string
@@ -285,6 +332,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			 ->setSize($this->getInt('size', $data))
 			 ->setContent($this->get('content', $data))
 			 ->setEncrypted($this->getBool('encrypted', $data))
+			 ->setStaticName($this->getBool('staticName', $data))
 			 ->setChecksum($this->get('checksum', $data))
 			 ->setEncryptedChecksum($this->get('encryptedChecksum', $data));
 
@@ -311,6 +359,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			'count' => $this->getCount(),
 			'size' => $this->getSize(),
 			'encrypted' => $this->isEncrypted(),
+			'staticName' => $this->isStaticName(),
 			'checksum' => $this->getChecksum(),
 			'encryptedChecksum' => $this->getEncryptedChecksum()
 		];

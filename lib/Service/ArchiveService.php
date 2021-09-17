@@ -69,7 +69,7 @@ class ArchiveService {
 
 	const MAX_ZIP_SIZE = 100000000;
 	const BACKUP_SCRIPT = 'restore.php';
-
+	const APP_ZIP = 'app.zip';
 
 	/** @var FilesService */
 	private $filesService;
@@ -105,7 +105,11 @@ class ArchiveService {
 	 * @throws ArchiveNotFoundException
 	 */
 	public function createChunks(RestoringPoint $point): void {
-		foreach ($point->getRestoringData(false) as $data) {
+		foreach ($point->getRestoringData() as $data) {
+			if ($data->getType() === RestoringData::INTERNAL_DATA) {
+				continue;
+			}
+
 			$this->filesService->initRestoringData($data);
 			$this->filesService->fillRestoringData($data, $data->getUniqueFile());
 
@@ -226,7 +230,7 @@ class ArchiveService {
 	 * @throws ArchiveNotFoundException
 	 */
 	public function verifyChecksum(Backup $backup, RestoringChunk $archive, bool $encrypted): bool {
-		$sum = $this->getChecksum($backup, $archive, $encrypted);
+		$sum = $this->getChecksum($backup, $archive);
 
 		if (!$encrypted && $sum === $archive->getChecksum()) {
 			return true;
@@ -283,7 +287,7 @@ class ArchiveService {
 
 		$this->createContentZip($point, $chunk, $filename, $content);
 
-		$this->updateChecksum($point, $chunk, false);
+		$this->updateChecksum($point, $chunk);
 //		$this->encryptArchive($backup, $archive, true);
 //		$this->updateChecksum($backup, $archive, true);
 	}
@@ -398,17 +402,12 @@ class ArchiveService {
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
-	 * @param bool $encrypted
 	 *
 	 * @throws ArchiveNotFoundException
 	 */
-	private function updateChecksum(
-		RestoringPoint $point,
-		RestoringChunk $chunk,
-		bool $encrypted
-	): void {
-		$sum = $this->getChecksum($point, $chunk, $encrypted);
-		if ($encrypted) {
+	private function updateChecksum(RestoringPoint $point, RestoringChunk $chunk): void {
+		$sum = $this->getChecksum($point, $chunk);
+		if ($chunk->isEncrypted()) {
 			$chunk->setEncryptedChecksum($sum);
 		} else {
 			$chunk->setChecksum($sum);
@@ -419,33 +418,28 @@ class ArchiveService {
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
-	 * @param bool $encrypted
 	 *
 	 * @return string
 	 * @throws ArchiveNotFoundException
 	 */
-	public function getChecksum(
-		RestoringPoint $point,
-		RestoringChunk $chunk,
-		bool $encrypted
-	): string {
+	public function getChecksum(RestoringPoint $point, RestoringChunk $chunk): string {
 		try {
 			if ($point->isPackage()) {
-				if (!file_exists('./' . $chunk->getName(($encrypted) ? '' : 'zip'))) {
+				if (!file_exists('./' . $chunk->getFilename())) {
 					throw new ArchiveNotFoundException('Archive not found');
 				}
-				$stream = fopen('./' . $chunk->getName(($encrypted) ? '' : 'zip'), 'r');
+				$stream = fopen('./' . $chunk->getFilename(), 'r');
 			} else {
 				$folder = $point->getBaseFolder();
-				$file = $folder->getFile($chunk->getName(($encrypted) ? '' : 'zip'));
+				$file = $folder->getFile($chunk->getFilename());
 				$stream = $file->read();
 			}
 		} catch (Exception $e) {
-			throw new ArchiveNotFoundException('Chunk not found');
+			throw new ArchiveNotFoundException('Chunk ' . $chunk->getFilename() . ' not found');
 		}
 
 		if (is_bool($stream)) {
-			throw new ArchiveNotFoundException('Chunk not found');
+			throw new ArchiveNotFoundException('Chunk ' . $chunk->getFilename() . ' not valid');
 		}
 
 		return $this->getChecksumFromStream($stream);
@@ -556,11 +550,12 @@ class ArchiveService {
 	 *
 	 * @throws BackupAppCopyException
 	 * @throws BackupScriptNotFoundException
+	 * @throws ArchiveNotFoundException
 	 */
 	public function copyApp(RestoringPoint $point): void {
 		$folder = $point->getBaseFolder();
 		try {
-			$file = $folder->newFile('app.zip');
+			$file = $folder->newFile(self::APP_ZIP);
 			$zip = new ZipStreamer(
 				[
 					'outstream' => $file->write(),
@@ -569,9 +564,8 @@ class ArchiveService {
 					'level' => $this->assignCompressionLevel()
 				]
 			);
-
 		} catch (Exception $e) {
-			throw new BackupAppCopyException('Could not generate app.zip');
+			throw new BackupAppCopyException('Could not generate ' . self::APP_ZIP);
 		}
 
 		$appFiles = $this->filesService->getFilesFromApp();
@@ -593,6 +587,30 @@ class ArchiveService {
 		} catch (Exception $e) {
 			throw new BackupScriptNotFoundException('Could not create ' . self::BACKUP_SCRIPT);
 		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws ArchiveNotFoundException
+	 */
+	public function generateInternalData(RestoringPoint $point): void {
+		$data = new RestoringData(
+			RestoringData::INTERNAL_DATA,
+			'',
+			RestoringData::INTERNAL
+		);
+
+		$chunk = new RestoringChunk(self::APP_ZIP);
+		$this->updateChecksum($point, $chunk);
+		$data->addChunk($chunk);
+
+		$chunk = new RestoringChunk(self::BACKUP_SCRIPT);
+		$this->updateChecksum($point, $chunk);
+		$data->addChunk($chunk);
+
+		$point->addRestoringData($data);
 	}
 
 

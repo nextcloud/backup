@@ -41,6 +41,7 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
+use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 
 
@@ -238,11 +239,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 
 	/**
-	 * @param bool $filtered
-	 *
 	 * @return RestoringData[]
 	 */
-	public function getRestoringData(bool $filtered = false): array {
+	public function getRestoringData(): array {
 		return $this->restoringData;
 //		$options = $this->getOptions();
 //		if (!$filtered || $options->getChunk() === '') {
@@ -271,14 +270,30 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	}
 
 	/**
-	 * @param RestoringData $chunk
+	 * @param RestoringData $data
 	 *
 	 * @return RestoringPoint
 	 */
-	public function addRestoringData(RestoringData $chunk): self {
-		$this->restoringData[] = $chunk;
+	public function addRestoringData(RestoringData $data): self {
+		$this->restoringData[] = $data;
 
 		return $this;
+	}
+
+	/**
+	 * @param string $dataName
+	 *
+	 * @return RestoringData
+	 * @throws RestoringDataNotFoundException
+	 */
+	public function getData(string $dataName): RestoringData {
+		foreach ($this->restoringData as $restoringData) {
+			if ($restoringData->getName() === $dataName) {
+				return $restoringData;
+			}
+		}
+
+		throw new RestoringDataNotFoundException();
 	}
 
 

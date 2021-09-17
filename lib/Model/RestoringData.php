@@ -53,6 +53,7 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	use TNC23Deserialize;
 
 
+	const INTERNAL_DATA = 0;
 	const ROOT_DISK = 1;
 	const ROOT_NEXTCLOUD = 2;
 	const ROOT_DATA = 3;
@@ -63,6 +64,7 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	// value > 1000 is for content that are not 'file'
 	const SQL_DUMP = 1001;
 
+	const INTERNAL = 'internal';
 	const DATA = 'data';
 	const APPS = 'apps';
 	const CONFIG = 'config';
