@@ -42,6 +42,7 @@ use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
 use OCA\Backup\Exceptions\ChunkNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
+use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Model\ArchiveFile;
 use OCA\Backup\Model\Backup;
 use OCA\Backup\Model\RestoringChunk;
@@ -121,28 +122,31 @@ class ArchiveService {
 		}
 	}
 
-//
-//	/**
-//	 * @param Backup $backup
-//	 * @param RestoringChunk $archive
-//	 * @param string $root
-//	 *
-//	 * @throws ArchiveDeleteException
-//	 * @throws ArchiveNotFoundException
-//	 * @throws EncryptionKeyException
-//	 * @throws BackupFolderException
-//	 */
-//	public function extractAll(Backup $backup, RestoringChunk $archive, string $root): void {
-//		if (!is_dir($root)) {
-//			if (!@mkdir($root, 0755, true)) {
-//				throw new BackupFolderException('could not create ' . $root);
-//			}
-//		}
-//
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param string $root
+	 *
+	 * @throws ArchiveNotFoundException
+	 * @throws RestoreChunkException
+	 */
+	public function restoreChunk(RestoringPoint $point, RestoringChunk $chunk, string $root): void {
+		if (!is_dir($root)) {
+			if (!@mkdir($root, 0755, true)) {
+				throw new RestoreChunkException('could not create ' . $root);
+			}
+		}
+
 //		$this->decryptArchive($backup, $archive);
-//		$this->extractAllFromArchive($archive, $root);
+		$zip = $this->openZipArchive($point, $chunk);
+		$zip->extractTo($root);
+		$this->closeZipArchive($zip);
+
+		unlink($root . '.backup.' . $chunk->getName() . '.json');
+//		$this->restoreFromArchive($archive, $root);
 //		$this->deleteArchive($backup, $archive, 'zip');
-//	}
+	}
 
 
 //	/**
@@ -162,16 +166,32 @@ class ArchiveService {
 
 
 	/**
+	 * @param RestoringPoint $point
 	 * @param RestoringChunk $archive
 	 *
 	 * @return ZipArchive
 	 * @throws ArchiveNotFoundException
 	 */
-	public function openZipArchive(RestoringChunk $archive): ZipArchive {
+	public function openZipArchive(RestoringPoint $point, RestoringChunk $archive): ZipArchive {
+		if (!$point->hasBaseFolder()) {
+			throw new ArchiveCreateException('Backup has no Base Folder');
+		}
+
+		$folder = $point->getBaseFolder();
+		$file = $folder->getFile($archive->getFilename());
+
+
+		$tmp = tmpfile();
+		fwrite($tmp, $file->getContent());
+		$tmpPath = stream_get_meta_data($tmp)['uri'];
+
 		$zip = new ZipArchive();
-		if (($err = $zip->open($archive->getName('zip'))) !== true) {
+		if (($err = $zip->open($tmpPath)) !== true) {
+			fclose($tmp);
 			throw new ArchiveNotFoundException('Could not open Zip Archive (' . $err . ')');
 		}
+
+		fclose($tmp);
 
 		return $zip;
 	}

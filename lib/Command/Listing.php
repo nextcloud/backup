@@ -59,11 +59,11 @@ class Listing extends Base {
 	/**
 	 * Backup constructor.
 	 *
-	 * @param BackupService $backupService
+	 * @param BackupService $pointService
 	 * @param MiscService $miscService
 	 */
-	public function __construct(BackupService $backupService, MiscService $miscService) {
-		$this->backupService = $backupService;
+	public function __construct(BackupService $pointService, MiscService $miscService) {
+		$this->backupService = $pointService;
 		$this->miscService = $miscService;
 
 		parent::__construct();

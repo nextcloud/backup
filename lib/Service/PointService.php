@@ -37,6 +37,7 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Signatory;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC;
 use OC\Files\AppData\Factory;
+use OC\Files\Node\Node;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\ChangesRequest;
 use OCA\Backup\Db\PointRequest;
@@ -55,6 +56,7 @@ use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCP\Files\IAppData;
+use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -94,6 +96,9 @@ class PointService {
 	/** @var FilesService */
 	private $filesService;
 
+	/** @var OutputService */
+	private $outputService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -120,6 +125,7 @@ class PointService {
 		RemoteStreamService $remoteStreamService,
 		ArchiveService $chunkService,
 		FilesService $filesService,
+		OutputService $outputService,
 		ConfigService $configService
 	) {
 		$this->pointRequest = $pointRequest;
@@ -127,6 +133,7 @@ class PointService {
 		$this->chunkService = $chunkService;
 		$this->remoteStreamService = $remoteStreamService;
 		$this->filesService = $filesService;
+		$this->outputService = $outputService;
 		$this->configService = $configService;
 
 		$this->setup('app', 'backup');
@@ -530,7 +537,15 @@ class PointService {
 		$this->initBaseFolder($point);
 
 		$restoringChunk = clone $this->chunkService->extractChunkFromRP($point, $data, $chunk);
+
 		return $this->chunkService->getChunkResource($point, $restoringChunk);
 	}
 
+
+	/**
+	 * @param string $output
+	 */
+	private function o(string $output): void {
+		$this->outputService->o($output);
+	}
 }

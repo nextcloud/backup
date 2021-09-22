@@ -44,6 +44,7 @@ use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringChunkHealth;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
 use Symfony\Component\Console\Input\InputArgument;
@@ -65,18 +66,27 @@ class PointUpload extends Base {
 	/** @var RemoteService */
 	private $remoteService;
 
+	/** @var OutputService */
+	private $occService;
+
 
 	/**
 	 * PointUpload constructor.
 	 *
 	 * @param PointService $pointService
 	 * @param RemoteService $remoteService
+	 * @param OutputService $occService
 	 */
-	public function __construct(PointService $pointService, RemoteService $remoteService) {
+	public function __construct(
+		PointService $pointService,
+		RemoteService $remoteService,
+		OutputService $occService
+	) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
 		$this->remoteService = $remoteService;
+		$this->occService = $occService;
 	}
 
 
@@ -144,7 +154,7 @@ class PointUpload extends Base {
 			}
 
 			$health = $stored->getHealth();
-			$output->writeln('  > Health status: ' . $this->displayHealth($stored));
+			$output->writeln('  > Health status: ' . $this->occService->displayHealth($stored));
 			$this->uploadMissingFiles($instance, $point, $health, $output);
 
 //			echo $output->writeln('  * '$stored->getId();
@@ -253,47 +263,6 @@ class PointUpload extends Base {
 			$output->writeln('<error>' . $e->getMessage() . '</error>');
 			throw $e;
 		}
-	}
-
-
-	/**
-	 * @param RestoringPoint $point
-	 *
-	 * @return string
-	 */
-	private function displayHealth(RestoringPoint $point): string {
-		$health = $point->getHealth();
-		if ($health->getStatus() === RestoringHealth::STATUS_OK) {
-			return '<info>ok</info>';
-		}
-
-		if ($health->getStatus() === RestoringHealth::STATUS_ORPHAN) {
-			return '<comment>orphan</comment>';
-		}
-
-		$chunks = $health->getChunks();
-		$unknown = $good = $missing = $faulty = 0;
-		foreach ($chunks as $chunk) {
-			switch ($chunk->getStatus()) {
-				case RestoringChunkHealth::STATUS_UNKNOWN:
-					$unknown++;
-					break;
-				case RestoringChunkHealth::STATUS_OK:
-					$good++;
-					break;
-				case RestoringChunkHealth::STATUS_MISSING:
-					$missing++;
-					break;
-				case RestoringChunkHealth::STATUS_CHECKSUM:
-					$faulty++;
-					break;
-			}
-		}
-
-		return '<comment>'
-			   . $good . ' uploaded, '
-			   . $missing . ' missing and '
-			   . $faulty . ' faulty files</comment>';
 	}
 
 

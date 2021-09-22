@@ -229,7 +229,7 @@ class PointList extends Base {
 						($fresh) ? date("Y-m-d H:i:s", $point->getDate()) : '',
 						($fresh) ? $point->getParent() : '',
 						$instance,
-						$this->displayHealth($point),
+						$this->displayStyleHealth($point),
 						'<error>' . $issue . '</error>'
 					]
 				);
@@ -328,7 +328,7 @@ class PointList extends Base {
 	 *
 	 * @return string
 	 */
-	private function displayHealth(RestoringPoint $point): string {
+	private function displayStyleHealth(RestoringPoint $point): string {
 		if ($point->getInstance() === '') {
 			return 'not checked';
 		}

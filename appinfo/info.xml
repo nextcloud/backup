@@ -30,6 +30,7 @@
 		<command>OCA\Backup\Command\PointCreate</command>
 		<command>OCA\Backup\Command\PointUpload</command>
 		<command>OCA\Backup\Command\PointDownload</command>
+		<command>OCA\Backup\Command\PointRestore</command>
 
 		<command>OCA\Backup\Command\SetupExport</command>
 		<command>OCA\Backup\Command\SetupImport</command>
