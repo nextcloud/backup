@@ -52,6 +52,7 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 
 
 	const LOCAL = 'local';
+	const ALL = 'all';
 
 
 	const EXCHANGE_IN = 1;

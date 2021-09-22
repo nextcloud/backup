@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "artificial-owl/my-small-php-tools",
-            "version": "v23.0.7",
+            "version": "v23.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ArtificialOwl/my-small-php-tools.git",
-                "reference": "0d9011b41954f072ba5ff721aee6b83b583a4da2"
+                "reference": "d26111b0e6124608e41eca24f072dec83126715c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ArtificialOwl/my-small-php-tools/zipball/0d9011b41954f072ba5ff721aee6b83b583a4da2",
-                "reference": "0d9011b41954f072ba5ff721aee6b83b583a4da2",
+                "url": "https://api.github.com/repos/ArtificialOwl/my-small-php-tools/zipball/d26111b0e6124608e41eca24f072dec83126715c",
+                "reference": "d26111b0e6124608e41eca24f072dec83126715c",
                 "shasum": ""
             },
             "require": {
@@ -42,9 +42,9 @@
             "description": "My small PHP Tools",
             "support": {
                 "issues": "https://github.com/ArtificialOwl/my-small-php-tools/issues",
-                "source": "https://github.com/ArtificialOwl/my-small-php-tools/tree/v23.0.7"
+                "source": "https://github.com/ArtificialOwl/my-small-php-tools/tree/v23.0.8"
             },
-            "time": "2021-09-17T09:48:57+00:00"
+            "time": "2021-09-21T13:18:47+00:00"
         },
         {
             "name": "ifsnop/mysqldump-php",

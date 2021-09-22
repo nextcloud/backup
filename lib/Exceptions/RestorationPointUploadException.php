@@ -29,41 +29,18 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\Listeners;
+namespace OCA\Backup\Exceptions;
 
 
-use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventListener;
-use OCP\Files\Events\Node\NodeCreatedEvent;
+use Exception;
 
 
 /**
- * Class FileCreated
+ * Class RestorationPointUploadException
  *
- * @package OCA\Backup\Listeners
+ * @package OCA\Backup\Exceptions
  */
-class FileCreated implements IEventListener {
-
-
-	/**
-	 * @param Event $event
-	 */
-	public function handle(Event $event): void {
-		if (!($event instanceof NodeCreatedEvent)) {
-			return;
-		}
-
-//		$node = $event->getNode();
-//		$user = $this->userSession->getUser();
-//		if ($user === null) {
-//			return;
-//		}
-//
-//		try {
-//		} catch (InvalidPathException | NotFoundException $e) {
-//			$this->exception($e);
-//		}
-	}
+class RestorationPointUploadException extends Exception {
 
 }
 

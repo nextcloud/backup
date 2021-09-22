@@ -50,8 +50,8 @@ class CoreRequest {
 	/** @var SimpleDataStore */
 	protected $config;
 
-	/** @var SimpleDataStore */
-	private $outcome;
+	/** @var array */
+	private $outcome = [];
 
 
 	/**
@@ -84,36 +84,19 @@ class CoreRequest {
 		$this->config = $config;
 	}
 
-	/**
-	 *
-	 */
-	public function hasOutcome(): bool {
-		return !is_null($this->outcome);
-	}
 
 	/**
-	 * @param SimpleDataStore $outcome
+	 * @param array $outcome
 	 */
-	public function setOutcome(SimpleDataStore $outcome): void {
+	public function setOutcome(array $outcome): void {
 		$this->outcome = $outcome;
-	}
-
-	/**
-	 * @return SimpleDataStore
-	 */
-	public function getOutcome(): SimpleDataStore {
-		return $this->outcome;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getOutcomeData(): array {
-		if ($this->hasOutcome()) {
-			return $this->outcome->gAll();
-		}
-
-		return [];
+	public function getOutcome(): array {
+		return $this->outcome;
 	}
 
 }

@@ -65,7 +65,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	private $instance = '';
 
 	/** @var string */
-	private $root = '';
+	private $parent = '';
 
 	/** @var int */
 	private $status = 0;
@@ -91,6 +91,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/** @var bool */
 	private $package = false;
 
+	/** @var int */
+	private $countIncremental = 0;
 
 	/**
 	 * @param string $id
@@ -131,12 +133,12 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 
 	/**
-	 * @param string $root
+	 * @param string $parent
 	 *
 	 * @return RestoringPoint
 	 */
-	public function setRoot(string $root): self {
-		$this->root = $root;
+	public function setParent(string $parent): self {
+		$this->parent = $parent;
 
 		return $this;
 	}
@@ -144,8 +146,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/**
 	 * @return string
 	 */
-	public function getRoot(): string {
-		return $this->root;
+	public function getParent(): string {
+		return $this->parent;
 	}
 
 
@@ -371,17 +373,43 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		return $arr;
 	}
 
+
+	/**
+	 * @param int $count
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setCountIncremental(int $count): self {
+		$this->countIncremental = $count;
+
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getCountIncremental(): int {
+		return $this->countIncremental;
+	}
+
+
 	/**
 	 * @param array $data
 	 *
 	 * @return INC23QueryRow
+	 * @throws InvalidItemException
 	 */
 	public function importFromDatabase(array $data): INC23QueryRow {
 		$this->setId($this->get('uid', $data))
 			 ->setInstance($this->get('instance', $data))
-			 ->setRoot($this->get('root', $data))
+			 ->setParent($this->get('parent', $data))
 			 ->setStatus($this->getInt('status', $data))
-			 ->setDate($this->getInt('date', $data));
+			 ->setDate($this->getInt('date', $data))
+			 ->setCountIncremental($this->getInt('count_incremental', $data));
+
+		if ($this->getId() === '') {
+			throw new InvalidItemException();
+		}
 
 		$metadata = new SimpleDataStore($this->getArray('metadata', $data));
 		$this->setNc($metadata->gArray('nc'));
@@ -414,7 +442,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	public function import(array $data): IDeserializable {
 		$this->setId($this->get('id', $data))
 			 ->setInstance($this->get('instance', $data))
-			 ->setRoot($this->get('root', $data))
+			 ->setParent($this->get('parent', $data))
 			 ->setStatus($this->getInt('status', $data))
 			 ->setDate($this->getInt('date', $data))
 			 ->setSignature($this->get('signature', $data));
@@ -449,7 +477,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		return [
 			'id' => $this->getId(),
 			'nc' => $this->getNC(),
-			'root' => $this->getRoot(),
+			'parent' => $this->getParent(),
 			'data' => $this->getRestoringData(),
 			'date' => $this->getDate()
 		];
@@ -464,7 +492,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			'id' => $this->getId(),
 			'instance' => $this->getInstance(),
 			'nc' => $this->getNC(),
-			'root' => $this->getRoot(),
+			'parent' => $this->getParent(),
 			'status' => $this->getStatus(),
 			'data' => $this->getRestoringData(),
 			'signature' => $this->getSignature(),

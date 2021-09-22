@@ -34,7 +34,6 @@ namespace OCA\Backup\RemoteRequest;
 
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
@@ -114,7 +113,7 @@ class CreateRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 			$stored = $this->pointRequest->getById($point->getId(), $signatory->getInstance());
 
-			$this->setOutcome(new SimpleDataStore([$point->getId() => $stored]));
+			$this->setOutcome($this->serialize($stored));
 		} catch (RestoringPointException $e) {
 		}
 	}

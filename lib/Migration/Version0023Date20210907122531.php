@@ -67,6 +67,35 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 
 
 		/**
+		 * BACKUP_CHANGE
+		 */
+		if (!$schema->hasTable('backup_changes')) {
+			$table = $schema->createTable('backup_changes');
+			$table->addColumn(
+				'id', 'integer', [
+						'autoincrement' => true,
+						'notnull' => true,
+						'length' => 11,
+						'unsigned' => true,
+					]
+			);
+			$table->addColumn(
+				'path', 'text', [
+						  'notnull' => true
+					  ]
+			);
+			$table->addColumn(
+				'hash', 'string', [
+						  'notnull' => true,
+						  'length' => 63
+					  ]
+			);
+			$table->setPrimaryKey(['id']);
+			$table->addUniqueIndex(['hash']);
+		}
+
+
+		/**
 		 * BACKUP_POINT
 		 */
 		if (!$schema->hasTable('backup_point')) {
@@ -92,10 +121,10 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 						  ]
 			);
 			$table->addColumn(
-				'root', 'string', [
-						  'notnull' => true,
-						  'length' => 63,
-					  ]
+				'parent', 'string', [
+							'notnull' => true,
+							'length' => 63,
+						]
 			);
 			$table->addColumn(
 				'status', 'integer', [
@@ -126,7 +155,7 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 			$table->addUniqueIndex(['uid']);
 			$table->addIndex(['uid']);
-			$table->addIndex(['root']);
+			$table->addIndex(['parent']);
 			$table->addIndex(['instance']);
 		}
 

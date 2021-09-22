@@ -34,9 +34,9 @@ namespace OCA\Backup\Service;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TPathTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
-use OCA\Backup\Model\Backup;
-use OCA\Backup\Model\RestoringChunk;
+use OCA\Backup\Db\ChangesRequest;
 use OCA\Backup\Model\BackupChunk;
+use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
 
 
@@ -53,9 +53,11 @@ class FilesService {
 	use TPathTools;
 
 
-
 	const APP_ROOT = __DIR__ . '/../../';
 
+
+	/** @var ChangesRequest */
+	private $changesRequest;
 
 	/** @var ConfigService */
 	private $configService;
@@ -67,10 +69,16 @@ class FilesService {
 	/**
 	 * FilesService constructor.
 	 *
+	 * @param ChangesRequest $changesRequest
 	 * @param ConfigService $configService
 	 * @param MiscService $miscService
 	 */
-	public function __construct(ConfigService $configService, MiscService $miscService) {
+	public function __construct(
+		ChangesRequest $changesRequest,
+		ConfigService $configService,
+		MiscService $miscService
+	) {
+		$this->changesRequest = $changesRequest;
 		$this->configService = $configService;
 		$this->miscService = $miscService;
 	}
@@ -103,7 +111,6 @@ class FilesService {
 			$this->fillRestoringData($data, $path . $entry);
 		}
 	}
-
 
 
 	/**
@@ -141,7 +148,7 @@ class FilesService {
 	 *
 	 * @return string[]
 	 */
-	public function getFilesFromApp($path = ''): array {
+	public function getFilesFromApp(string $path = ''): array {
 		$files = [];
 		foreach (scandir(self::APP_ROOT . $path) as $entry) {
 			if ($entry === '.' || $entry === '..') {
@@ -160,5 +167,12 @@ class FilesService {
 		return $files;
 	}
 
-}
 
+	/**
+	 * @param ChangedFile $file
+	 */
+	public function changedFile(ChangedFile $file): void {
+		$this->changesRequest->insertIfNotFound($file);
+	}
+
+}

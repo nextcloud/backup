@@ -37,11 +37,13 @@ use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
@@ -76,7 +78,8 @@ class PointCreate extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:create')
-			 ->setDescription('Generate a restoring point of the instance');
+			 ->setDescription('Generate a restoring point of the instance (complete or incremental)')
+			 ->addOption('incremental', '', InputOption::VALUE_NONE, 'create an incremental restoring point');
 	}
 
 
@@ -92,9 +95,10 @@ class PointCreate extends Base {
 	 * @throws BackupAppCopyException
 	 * @throws BackupScriptNotFoundException
 	 * @throws SqlDumpException
+	 * @throws RestoringPointException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$point = $this->pointService->create(true);
+		$point = $this->pointService->create(!$input->getOption('incremental'));
 
 		if ($input->getOption('output') === 'none') {
 			return 0;

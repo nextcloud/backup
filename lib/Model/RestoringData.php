@@ -91,6 +91,9 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	/** @var string[] */
 	private $files = [];
 
+	/** @var bool */
+	private $locked = false;
+
 
 	/**
 	 * RestoringChunk constructor.
@@ -221,6 +224,21 @@ class RestoringData implements IDeserializable, JsonSerializable {
 		$this->files = $files;
 
 		return $this;
+	}
+
+
+	/**
+	 * @param bool $locked
+	 */
+	public function setLocked(bool $locked): void {
+		$this->locked = $locked;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isLocked(): bool {
+		return $this->locked;
 	}
 
 

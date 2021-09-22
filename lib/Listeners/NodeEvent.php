@@ -31,33 +31,69 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Listeners;
 
+
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
+use OCA\Backup\AppInfo\Application;
+use OCA\Backup\Model\ChangedFile;
+use OCA\Backup\Service\FilesService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Files\Events\Node\NodeCreatedEvent;
 use OCP\Files\Events\Node\NodeRenamedEvent;
+use OCP\Files\Events\Node\NodeWrittenEvent;
 use OCP\Files\InvalidPathException;
 use OCP\Files\NotFoundException;
 
 
 /**
- * Class FileRenamed
+ * Class FileCreated
  *
  * @package OCA\Backup\Listeners
  */
-class FileRenamed implements IEventListener {
+class NodeEvent implements IEventListener {
+
+
+	use TNC23Logger;
+
+
+	/** @var FilesService */
+	private $filesService;
+
+
+	/**
+	 * FileCreated constructor.
+	 *
+	 * @param FilesService $filesService
+	 */
+	public function __construct(FilesService $filesService) {
+		$this->filesService = $filesService;
+
+		$this->setup('app', Application::APP_ID);
+	}
 
 
 	/**
 	 * @param Event $event
+	 *
+	 * @throws InvalidPathException
+	 * @throws NotFoundException
 	 */
 	public function handle(Event $event): void {
-		if (!($event instanceof NodeRenamedEvent)) {
+		$node = null;
+		if ($event instanceof NodeCreatedEvent || $event instanceof NodeWrittenEvent) {
+			$node = $event->getNode();
+		}
+
+		if ($event instanceof NodeRenamedEvent) {
+			$node = $event->getTarget();
+		}
+
+		if (is_null($node)) {
 			return;
 		}
 
-		try {
-			$node = $event->getTarget();
-		} catch (InvalidPathException | NotFoundException $e) {
-		}
+		$file = new ChangedFile($node->getPath());
+		$this->filesService->changedFile($file);
 	}
 
 }

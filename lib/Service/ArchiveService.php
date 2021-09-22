@@ -49,6 +49,7 @@ use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Files\SimpleFS\ISimpleFile;
 use ZipArchive;
 use ZipStreamer\COMPR;
 use ZipStreamer\ZipStreamer;
@@ -111,7 +112,10 @@ class ArchiveService {
 			}
 
 			$this->filesService->initRestoringData($data);
-			$this->filesService->fillRestoringData($data, $data->getUniqueFile());
+			if (!$data->isLocked()) {
+				$this->filesService->fillRestoringData($data, $data->getUniqueFile());
+			}
+			$data->setLocked(true);
 
 			$this->fillChunks($point, $data);
 		}
@@ -662,12 +666,21 @@ class ArchiveService {
 	 * @param RestoringChunk $restoringChunk
 	 */
 	public function getChunkContent(RestoringPoint $point, RestoringChunk $restoringChunk): void {
-		$folder = $point->getBaseFolder();
 		try {
-			$file = $folder->getFile($restoringChunk->getFilename());
+			$file = $this->getChunkResource($point, $restoringChunk);
 			$restoringChunk->setContent(base64_encode($file->getContent()));
 		} catch (NotFoundException | NotPermittedException $e) {
 		}
+	}
+
+
+	/**
+	 * @throws NotFoundException
+	 */
+	public function getChunkResource(RestoringPoint $point, RestoringChunk $restoringChunk): ISimpleFile {
+		$folder = $point->getBaseFolder();
+
+		return $folder->getFile($restoringChunk->getFilename());
 	}
 
 

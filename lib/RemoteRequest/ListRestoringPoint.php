@@ -78,7 +78,7 @@ class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
 		$signatory = $this->getSignedRequest()->getSignatory();
 		$points = $this->pointRequest->getByInstance($signatory->getInstance());
 
-		$this->setOutcome(new SimpleDataStore($points));
+		$this->setOutcome($points);
 	}
 
 

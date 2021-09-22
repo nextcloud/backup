@@ -33,16 +33,12 @@ namespace OCA\Backup\AppInfo;
 
 
 use OCA\Backup\Handlers\WebfingerHandler;
-use OCA\Backup\Listeners\FileChanged;
-use OCA\Backup\Listeners\FileCreated;
-use OCA\Backup\Listeners\FileDeleted;
-use OCA\Backup\Listeners\FileRenamed;
+use OCA\Backup\Listeners\NodeEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Files\Events\Node\NodeCreatedEvent;
-use OCP\Files\Events\Node\NodeDeletedEvent;
 use OCP\Files\Events\Node\NodeRenamedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
 
@@ -78,10 +74,9 @@ class Application extends App implements IBootstrap {
 	 * @param IRegistrationContext $context
 	 */
 	public function register(IRegistrationContext $context): void {
-		$context->registerEventListener(NodeCreatedEvent::class, FileCreated::class);
-		$context->registerEventListener(NodeWrittenEvent::class, FileChanged::class);
-		$context->registerEventListener(NodeRenamedEvent::class, FileRenamed::class);
-		$context->registerEventListener(NodeDeletedEvent::class, FileDeleted::class);
+		$context->registerEventListener(NodeCreatedEvent::class, NodeEvent::class);
+		$context->registerEventListener(NodeWrittenEvent::class, NodeEvent::class);
+		$context->registerEventListener(NodeRenamedEvent::class, NodeEvent::class);
 
 		$context->registerWellKnownHandler(WebfingerHandler::class);
 	}

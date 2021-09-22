@@ -26,9 +26,10 @@
 		<command>OCA\Backup\Command\RemoteList</command>
 		<command>OCA\Backup\Command\RemoteRemove</command>
 
-		<command>OCA\Backup\Command\PointBrowse</command>
+		<command>OCA\Backup\Command\PointList</command>
 		<command>OCA\Backup\Command\PointCreate</command>
 		<command>OCA\Backup\Command\PointUpload</command>
+		<command>OCA\Backup\Command\PointDownload</command>
 
 		<command>OCA\Backup\Command\SetupExport</command>
 		<command>OCA\Backup\Command\SetupImport</command>

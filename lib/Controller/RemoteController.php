@@ -131,7 +131,7 @@ class RemoteController extends Controller {
 		try {
 			$request->execute();
 
-			return new DataResponse($request->getOutcomeData());
+			return new DataResponse($request->getOutcome());
 		} catch (Exception $e) {
 			$this->e($e, ['request' => $request]);
 
@@ -156,7 +156,7 @@ class RemoteController extends Controller {
 		try {
 			$request->execute();
 
-			return new DataResponse($request->getOutcomeData());
+			return new DataResponse($request->getOutcome());
 		} catch (Exception $e) {
 			$this->e($e, ['request' => $request]);
 
@@ -183,7 +183,7 @@ class RemoteController extends Controller {
 		try {
 			$request->execute();
 
-			return new DataResponse($request->getOutcomeData());
+			return new DataResponse($request->getOutcome());
 		} catch (Exception $e) {
 			$this->e($e, ['request' => $request]);
 
@@ -210,7 +210,7 @@ class RemoteController extends Controller {
 			$request->config(new SimpleDataStore(['refreshHealth' => true]));
 			$request->execute();
 
-			return new DataResponse($request->getOutcomeData());
+			return new DataResponse($request->getOutcome());
 		} catch (Exception $e) {
 			$this->e($e, ['request' => $request]);
 
@@ -245,6 +245,8 @@ class RemoteController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
+	 * @param string $pointId
+	 *
 	 * @return DataResponse
 	 */
 	public function uploadRestoringPoint(string $pointId): DataResponse {
@@ -257,7 +259,7 @@ class RemoteController extends Controller {
 		try {
 			$request->execute();
 
-			return new DataResponse($request->getOutcomeData());
+			return new DataResponse($request->getOutcome());
 		} catch (Exception $e) {
 			$this->e($e, ['request' => $request]);
 

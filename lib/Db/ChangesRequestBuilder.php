@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -9,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,19 +32,18 @@ declare(strict_types=1);
 namespace OCA\Backup\Db;
 
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use OCA\Backup\Exceptions\RestoringPointNotFoundException;
-use OCA\Backup\Model\RestoringPoint;
-use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCA\Backup\Exceptions\ChangedFileNotFoundException;
+use OCA\Backup\Model\ChangedFile;
+
 
 /**
- * Class BackupRequestBuilder
+ * Class ChangesRequestBuilder
  *
  * @package OCA\Backup\Db
  */
-class PointRequestBuilder extends CoreRequestBuilder {
+class ChangesRequestBuilder extends CoreRequestBuilder {
 
 
 	use TArrayTools;
@@ -52,38 +52,34 @@ class PointRequestBuilder extends CoreRequestBuilder {
 	/**
 	 * @return CoreQueryBuilder
 	 */
-	protected function getPointInsertSql(): CoreQueryBuilder {
+	protected function getChangesInsertSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
-		$qb->insert(self::TABLE_RESTORING_POINT);
+		$qb->insert(self::TABLE_FILE_CHANGES);
 
 		return $qb;
 	}
 
 
 	/**
-	 * Base of the Sql Update request
-	 *
 	 * @return CoreQueryBuilder
 	 */
-	protected function getPointUpdateSql(): CoreQueryBuilder {
+	protected function getChangesUpdateSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
-		$qb->update(self::TABLE_RESTORING_POINT);
+		$qb->update(self::TABLE_FILE_CHANGES);
 
 		return $qb;
 	}
 
 
 	/**
-	 * Base of the Sql Select request for Shares
-	 *
 	 * @return CoreQueryBuilder
 	 */
-	protected function getPointSelectSql(): CoreQueryBuilder {
+	protected function getChangesSelectSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
 		$qb->generateSelect(
-			self::TABLE_RESTORING_POINT,
-			self::$tables[self::TABLE_RESTORING_POINT],
-			'rp'
+			self::TABLE_FILE_CHANGES,
+			self::$tables[self::TABLE_FILE_CHANGES],
+			'changes'
 		);
 
 		return $qb;
@@ -91,13 +87,11 @@ class PointRequestBuilder extends CoreRequestBuilder {
 
 
 	/**
-	 * Base of the Sql Delete request
-	 *
-	 * @return IQueryBuilder
+	 * @return CoreQueryBuilder
 	 */
-	protected function getPointDeleteSql(): IQueryBuilder {
+	protected function getChangesDeleteSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
-		$qb->delete(self::TABLE_RESTORING_POINT);
+		$qb->delete(self::TABLE_FILE_CHANGES);
 
 		return $qb;
 	}
@@ -106,28 +100,28 @@ class PointRequestBuilder extends CoreRequestBuilder {
 	/**
 	 * @param CoreQueryBuilder $qb
 	 *
-	 * @return RestoringPoint
-	 * @throws RestoringPointNotFoundException
+	 * @return ChangedFile
+	 * @throws ChangedFileNotFoundException
 	 */
-	public function getItemFromRequest(CoreQueryBuilder $qb): RestoringPoint {
-		/** @var RestoringPoint $restoringPoint */
+	public function getItemFromRequest(CoreQueryBuilder $qb): ChangedFile {
+		/** @var ChangedFile $changed */
 		try {
-			$restoringPoint = $qb->asItem(RestoringPoint::class);
-		} catch (RowNotFoundException | InvalidItemException $e) {
-			throw new RestoringPointNotFoundException();
+			$changed = $qb->asItem(ChangedFile::class);
+		} catch (RowNotFoundException $e) {
+			throw new ChangedFileNotFoundException();
 		}
 
-		return $restoringPoint;
+		return $changed;
 	}
 
 	/**
 	 * @param CoreQueryBuilder $qb
 	 *
-	 * @return RestoringPoint[]
+	 * @return ChangedFile[]
 	 */
 	public function getItemsFromRequest(CoreQueryBuilder $qb): array {
-		/** @var RestoringPoint[] $result */
-		return $qb->asItems(RestoringPoint::class);
+		/** @var ChangedFile[] $result */
+		return $qb->asItems(ChangedFile::class);
 	}
 
 }

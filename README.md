@@ -43,3 +43,11 @@ The `--quick` option will only create an incremental backup
 **Browse your restoring points**
 
     ./occ backup:point:browse
+
+
+
+### Known issues:
+
+- cannot upload restoring point with file bigger than 100M
+- uploading a parent RP after a dependant incremental backup does not remote the 'orphan' tag
+

@@ -111,8 +111,8 @@ class RemoteAdd extends Base {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$address = $input->getArgument('address');
-		if ($address === RemoteInstance::LOCAL) {
-			throw new RemoteInstanceException('\'local\' is a reserved name');
+		if (strtolower($address) === RemoteInstance::LOCAL || strtolower($address) === RemoteInstance::ALL) {
+			throw new RemoteInstanceException($address . ' is a reserved name');
 		}
 
 		$resource = $this->getCurrentResourceFromAddress($output, $address);
@@ -151,9 +151,29 @@ class RemoteAdd extends Base {
 
 			if ($remoteSignatory->getUid(true) !== $knownInstance->getUid()) {
 				$output->writeln('');
-				$output->writeln('<error>This instance is already known under an other identity!</error>');
+				$output->writeln('<error>### WARNING ###</error>');
 				$output->writeln(
-					'<error>Please CONFIRM with the admin of the remote instance before updating this known instance.</error>'
+					'<error>The instance on ' . $knownInstance->getInstance()
+					. ' is already known under an other identity!</error>'
+				);
+				$output->writeln('<error>### WARNING ###</error>');
+
+				$output->writeln('');
+				$output->writeln('Continue with this process if you want to store the new identity.');
+				$output->writeln('Doing so (and based on the given outgoing/incoming rights): ');
+				$output->writeln('  - the remote instance with the old identity will loose access to');
+				$output->writeln('    this service,');
+				$output->writeln('  - the remote instance with the new identity will gain access to');
+				$output->writeln('    <options=underscore>all backups previously uploaded</> by the previous instance,');
+				$output->writeln('  - your instance will now <options=underscore>upload your local backups</> to this new');
+				$output->writeln('    remote instance,');
+				$output->writeln('  - your instance will not be able to browse any backup on the old');
+				$output->writeln('    remote instance,');
+				$output->writeln('  - your instance might be able to get access to previous uploaded');
+				$output->writeln('    backup if available on the new remote instance');
+				$output->writeln('');
+				$output->writeln(
+					'<error>Please CONFIRM with an Administrator from the remote instance before updating any identity.</error>'
 				);
 				$helper = $this->getHelper('question');
 				$question = new ConfirmationQuestion(

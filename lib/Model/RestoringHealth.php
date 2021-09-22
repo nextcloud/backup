@@ -55,7 +55,15 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 
 
 	const STATUS_ISSUE = 0;
-	const STATUS_OK = 1;
+	const STATUS_ORPHAN = 1;
+	const STATUS_OK = 9;
+
+
+	static public $DEF = [
+		self::STATUS_ISSUE => 'not complete',
+		self::STATUS_ORPHAN => 'without parent',
+		self::STATUS_OK => 'ok'
+	];
 
 
 	/** @var int */

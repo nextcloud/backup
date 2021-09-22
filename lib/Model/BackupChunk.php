@@ -282,10 +282,10 @@ class BackupChunk implements JsonSerializable {
 	 */
 	public function jsonSerialize() {
 		return [
-			'name'     => $this->getName(),
-			'type'     => $this->getType(),
-			'root'     => $this->getRoot(),
-			'path'     => $this->getPath(),
+			'name' => $this->getName(),
+			'type' => $this->getType(),
+			'root' => $this->getRoot(),
+			'path' => $this->getPath(),
 			'archives' => $this->getArchives()
 		];
 	}

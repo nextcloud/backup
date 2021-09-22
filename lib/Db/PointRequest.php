@@ -31,7 +31,6 @@ declare(strict_types=1);
 namespace OCA\Backup\Db;
 
 
-use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
 
@@ -48,14 +47,13 @@ class PointRequest extends PointRequestBuilder {
 	 * @param RestoringPoint $point
 	 *
 	 * @return int
-	 * @throws RestoringPointException
 	 */
 	public function save(RestoringPoint $point): int {
 		$qb = $this->getPointInsertSql();
 
 		$qb->setValue('uid', $qb->createNamedParameter($point->getId()))
 		   ->setValue('instance', $qb->createNamedParameter($point->getInstance()))
-		   ->setValue('root', $qb->createNamedParameter($point->getRoot()))
+		   ->setValue('parent', $qb->createNamedParameter($point->getParent()))
 		   ->setValue('status', $qb->createNamedParameter($point->getStatus()))
 		   ->setValue('metadata', $qb->createNamedParameter(json_encode($point->getMetadata())))
 		   ->setValue('date', $qb->createNamedParameter($point->getDate()));
@@ -87,6 +85,18 @@ class PointRequest extends PointRequestBuilder {
 
 
 	/**
+	 * @return RestoringPoint[]
+	 */
+	public function getLocal(): array {
+		$qb = $this->getPointSelectSql();
+		$qb->limitToInstance('');
+		$qb->orderBy('date', 'asc');
+
+		return $this->getItemsFromRequest($qb);
+	}
+
+
+	/**
 	 * @param string $pointId
 	 * @param string $instance
 	 *
@@ -99,6 +109,7 @@ class PointRequest extends PointRequestBuilder {
 		if ($instance !== '') {
 			$qb->limitToInstance($instance);
 		}
+		$qb->countIncremental();
 
 		return $this->getItemFromRequest($qb);
 	}
@@ -112,10 +123,25 @@ class PointRequest extends PointRequestBuilder {
 	public function getByInstance(string $instance): array {
 		$qb = $this->getPointSelectSql();
 		$qb->limitToInstance($instance);
+		$qb->countIncremental();
 
 		return $this->getItemsFromRequest($qb);
 	}
 
+
+	/**
+	 * @return RestoringPoint
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function getLastFullRP(): RestoringPoint {
+		$qb = $this->getPointSelectSql();
+		$qb->limitToInstance('');
+		$qb->limitToParent('');
+		$qb->chunk(0, 1);
+		$qb->orderBy('date', 'desc');
+
+		return $this->getItemFromRequest($qb);
+	}
 
 }
 

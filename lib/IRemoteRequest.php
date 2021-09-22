@@ -62,6 +62,6 @@ interface IRemoteRequest extends IDeserializable {
 	/**
 	 * @return array
 	 */
-	public function getOutcomeData(): array;
+	public function getOutcome(): array;
 }
 

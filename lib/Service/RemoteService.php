@@ -33,6 +33,7 @@ namespace OCA\Backup\Service;
 
 
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Model\Request;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc22\TNC22Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
@@ -41,11 +42,13 @@ use OCA\Backup\Db\RemoteRequest;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringPoint;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Files\SimpleFS\ISimpleFile;
 
 
 /**
@@ -106,69 +109,70 @@ class RemoteService {
 
 
 	/**
-	 * @param RestoringPoint $point
-	 *
-	 * @return array
-	 */
-	public function verifyPoint(RestoringPoint $point): array {
-		$checks = [];
-		foreach ($this->getOutgoing() as $remoteInstance) {
-			try {
-				$remote = $this->verifyRemotePoint($remoteInstance->getInstance(), $point);
-				$checks[$remoteInstance->getInstance()] = $remote;
-			} catch (RemoteInstanceException
-			| RemoteInstanceNotFoundException
-			| RemoteResourceNotFoundException $e) {
-				continue;
-			}
-		}
-
-		return $checks;
-	}
-
-
-	/**
 	 * @param string $instance
-	 * @param RestoringPoint $point
+	 * @param string $pointId
 	 * @param bool $current
 	 *
-	 * @return RestoringPoint|null
+	 * @return RestoringPoint
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
+	 * @throws RestoringPointNotFoundException
 	 */
-	public function verifyRemotePoint(
+	public function getRestoringPoint(
 		string $instance,
-		RestoringPoint $point,
+		string $pointId,
 		bool $current = false
-	): ?RestoringPoint {
+	): RestoringPoint {
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$instance,
 			($current) ? RemoteInstance::RP_HEALTH : RemoteInstance::RP_GET,
 			Request::TYPE_GET,
 			null,
-			['pointId' => $point->getId()]
+			['pointId' => $pointId]
 		);
 
 		try {
 			/** @var RestoringPoint $remote */
-			$remote = $this->deserialize($this->getArray($point->getId(), $result), RestoringPoint::class);
+			$remote = $this->deserialize($result, RestoringPoint::class);
 
 			return $remote;
 		} catch (InvalidItemException $e) {
 		}
 
-		return null;
+		throw new RestoringPointNotFoundException();
 	}
+
+
+	/**
+	 * @param string $instance
+	 *
+	 * @return RestoringPoint[]
+	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
+	 */
+	public function getRestoringPoints(string $instance): array {
+		$result = $this->remoteStreamService->resultRequestRemoteInstance(
+			$instance,
+			RemoteInstance::RP_LIST,
+			Request::TYPE_GET
+		);
+
+		return $this->deserializeArray($result, RestoringPoint::class);
+	}
+
 
 	/**
 	 * @param string $instance
 	 * @param RestoringPoint $point
 	 *
+	 * @return RestoringPoint
+	 * @throws InvalidItemException
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
-	 * @throws InvalidItemException
+	 * @throws SignatoryException
 	 */
 	public function createPoint(string $instance, RestoringPoint $point): RestoringPoint {
 		$remoteInstance = $this->remoteRequest->getFromInstance($instance);
@@ -186,7 +190,7 @@ class RemoteService {
 		);
 
 		/** @var RestoringPoint $remote */
-		$remote = $this->deserialize($this->getArray($point->getId(), $result), RestoringPoint::class);
+		$remote = $this->deserialize($result, RestoringPoint::class);
 
 		return $remote;
 	}
@@ -195,14 +199,13 @@ class RemoteService {
 	/**
 	 * @param string $instance
 	 * @param RestoringPoint $point
-	 * @param string $chunk
+	 * @param RestoringChunk $chunk
+	 * @param ISimpleFile $file
 	 *
 	 * @return bool
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
-	 * @throws NotFoundException
-	 * @throws NotPermittedException
 	 */
 	public function uploadChunk(
 		string $instance,
@@ -221,6 +224,40 @@ class RemoteService {
 
 		return true;
 	}
+
+
+	
+
+	/**
+	 * @param string $instance
+	 * @param RestoringPoint $point
+	 *
+	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 */
+	public function downloadPoint(string $instance, string $pointId): void {
+		$remoteInstance = $this->remoteRequest->getFromInstance($instance);
+		if (!$remoteInstance->isOutgoing()) {
+			throw new RemoteInstanceException('instance not configured as outgoing');
+		}
+
+//		$this->remoteStreamService->signPoint($point);
+//
+		$result = $this->remoteStreamService->resultRequestRemoteInstance(
+			$remoteInstance->getInstance(),
+			RemoteInstance::RP_DOWNLOAD,
+			Request::TYPE_GET,
+			null,
+			['pointId' => $pointId]
+		);
+
+//
+//		/** @var RestoringPoint $remote */
+//		$remote = $this->deserialize($this->getArray($point->getId(), $result), RestoringPoint::class);
+//
+//		return $remote;
+	}
+
 
 }
 

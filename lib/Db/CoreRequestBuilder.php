@@ -45,12 +45,18 @@ use OCA\Backup\Service\ConfigService;
 class CoreRequestBuilder {
 
 
+	public const TABLE_FILE_CHANGES = 'backup_changes';
 	public const TABLE_RESTORING_POINT = 'backup_point';
 	public const TABLE_REMOTE = 'backup_remote';
 
 
 	/** @var array */
 	public static $tables = [
+		self::TABLE_FILE_CHANGES => [
+			'id',
+			'path',
+			'hash'
+		],
 		self::TABLE_REMOTE => [
 			'id',
 			'uid',
@@ -63,7 +69,7 @@ class CoreRequestBuilder {
 			'id',
 			'uid',
 			'instance',
-			'root',
+			'parent',
 			'status',
 			'metadata',
 			'health',

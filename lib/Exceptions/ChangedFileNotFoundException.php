@@ -10,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,36 +29,18 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\Listeners;
+namespace OCA\Backup\Exceptions;
 
-use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventListener;
-use OCP\Files\Events\Node\NodeWrittenEvent;
-use OCP\Files\InvalidPathException;
-use OCP\Files\NotFoundException;
+
+use Exception;
 
 
 /**
- * Class FileChanged
+ * Class ChangedFileNotFoundException
  *
- * @package OCA\Backup\Listeners
+ * @package OCA\Backup\Exceptions
  */
-class FileChanged implements IEventListener {
-
-
-	/**
-	 * @param Event $event
-	 */
-	public function handle(Event $event): void {
-		if (!($event instanceof NodeWrittenEvent)) {
-			return;
-		}
-
-		try {
-			$node = $event->getNode();
-		} catch (InvalidPathException | NotFoundException $e) {
-		}
-	}
+class ChangedFileNotFoundException extends Exception {
 
 }
 

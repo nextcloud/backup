@@ -34,6 +34,7 @@ namespace OCA\Backup\RemoteRequest;
 
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
@@ -54,6 +55,7 @@ class GetRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 
 	use TNC23Logger;
+	use TNC23Deserialize;
 
 
 	/** @var PointRequest */
@@ -95,7 +97,7 @@ class GetRestoringPoint extends CoreRequest implements IRemoteRequest {
 				$point = $this->pointRequest->getById($pointId, $signatory->getInstance());
 			}
 
-			$this->setOutcome(new SimpleDataStore([$pointId => $point]));
+			$this->setOutcome($this->serialize($point));
 		} catch (RestoringPointNotFoundException $e) {
 		}
 	}

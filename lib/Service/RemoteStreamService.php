@@ -359,7 +359,7 @@ class RemoteStreamService extends NC23Signature {
 			if ($signed === null) {
 				throw new SignatureException('invalid auth-signed');
 			}
-			$this->verifyString($auth, base64_decode($signed), $remote->getPublicKey(), $algo);
+			$this->verifyString($auth, $signed, $remote->getPublicKey(), $algo);
 			$remote->setIdentityAuthed(true);
 		} catch (SignatureException $e) {
 			$this->e(
@@ -372,10 +372,22 @@ class RemoteStreamService extends NC23Signature {
 
 
 	/**
+	 * @param RestoringPoint $point
+	 *
 	 * @throws SignatoryException
 	 */
 	public function signPoint(RestoringPoint $point) {
 		$this->signModel($point, $this->getAppSignatory(false));
+	}
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws SignatoryException
+	 * @throws SignatureException
+	 */
+	public function verifyPoint(RestoringPoint $point) {
+		$this->verifyModel($point, $this->getAppSignatory()->getPublicKey());
 	}
 
 }
