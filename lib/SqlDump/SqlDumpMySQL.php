@@ -62,25 +62,26 @@ class SqlDumpMySQL implements ISqlDump {
 	public function export(array $data): string {
 		$connect = 'mysql:host=' . $data['dbhost'] . ';dbname=' . $data['dbname'];
 		$settings = [
-			'compress'                   => Mysqldump::NONE,
-			'no-data'                    => false,
-			'add-drop-table'             => true,
-			'single-transaction'         => true,
-			'lock-tables'                => true,
-			'add-locks'                  => true,
-			'extended-insert'            => true,
+			'compress' => Mysqldump::NONE,
+			'no-data' => false,
+			'add-drop-table' => true,
+			'single-transaction' => true,
+			'lock-tables' => true,
+			'add-locks' => true,
+			'extended-insert' => true,
 			'disable-foreign-keys-check' => true,
-			'skip-triggers'              => false,
-			'add-drop-trigger'           => true,
-			'databases'                  => false,
-			'add-drop-database'          => true,
-			'hex-blob'                   => true
+			'skip-triggers' => false,
+			'add-drop-trigger' => true,
+			'databases' => false,
+			'add-drop-database' => true,
+			'hex-blob' => true
 		];
 
 		try {
 			$dump = new Mysqldump($connect, $data['dbuser'], $data['dbpassword'], $settings);
 			ob_start();
 			$dump->start();
+
 			return ob_get_clean();
 		} catch (Exception $e) {
 			throw new SqlDumpException($e->getMessage());
@@ -96,11 +97,11 @@ class SqlDumpMySQL implements ISqlDump {
 	 * @return bool
 	 */
 	public function import(array $data, $read): bool {
-		$sql =
-			mysqli_connect($data['dbhost'], $data['dbuser'], $data['dbpassword'], $data['dbname']);
-
+		$sql = mysqli_connect($data['dbhost'], $data['dbuser'], $data['dbpassword'], $data['dbname']);
+echo '-- ' . json_encode($data) . "\n";
 		$request = '';
 		while (($line = fgets($read)) !== false) {
+			echo '.';
 			$line = trim($line);
 			if (substr($line, 0, 2) === '--' || $line === '') {
 				continue;

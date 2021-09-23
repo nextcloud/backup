@@ -32,17 +32,22 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
+use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Exceptions\SqlImportException;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -61,6 +66,7 @@ class PointRestore extends Base {
 
 
 	use TStringTools;
+	use TArrayTools;
 
 
 	/** @var PointService */
@@ -68,6 +74,9 @@ class PointRestore extends Base {
 
 	/** @var ArchiveService */
 	private $archiveService;
+
+	/** @var ConfigService */
+	private $configService;
 
 	/** @var OutputService */
 	private $outputService;
@@ -85,16 +94,20 @@ class PointRestore extends Base {
 	 *
 	 * @param PointService $pointService
 	 * @param ArchiveService $archiveService
+	 * @param ConfigService $configService
+	 * @param OutputService $outputService
 	 */
 	public function __construct(
 		PointService $pointService,
 		ArchiveService $archiveService,
+		ConfigService $configService,
 		OutputService $outputService
 	) {
 		parent::__construct();
 
 		$this->archiveService = $archiveService;
 		$this->pointService = $pointService;
+		$this->configService = $configService;
 		$this->outputService = $outputService;
 	}
 
@@ -194,7 +207,13 @@ class PointRestore extends Base {
 
 			if ($data->getType() === RestoringData::SQL_DUMP) {
 				$this->output->writeln('  will be imported in your current database');
-				//$this->importSqlDump();
+
+				try {
+					$this->importSqlDump($point, $data);
+					$this->output->writeln('<info>ok</info>');
+				} catch (SqlImportException $e) {
+					$this->output->writeln('<error>' . $e->getMessage() . '</error>');
+				}
 				continue;
 			}
 
@@ -208,19 +227,82 @@ class PointRestore extends Base {
 				try {
 					$this->archiveService->restoreChunk($point, $chunk, $root);
 					$this->output->writeln('<info>ok</info>');
-				} catch (ArchiveNotFoundException| RestoreChunkException $e) {
+				} catch (ArchiveNotFoundException | RestoreChunkException $e) {
 					$this->output->writeln('<error>' . $e->getMessage() . '</error>');
 				}
 			}
-
 
 		}
 	}
 
 
-	public function restoreChunk(RestoringPoint $point, RestoringChunk $chunk): void {
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringData $data
+	 *
+	 * @throws SqlImportException
+	 */
+	private function importSqlDump(RestoringPoint $point, RestoringData $data): void {
+		$chunks = $data->getChunks();
+		if (sizeof($chunks) !== 1) {
+			throw new SqlImportException('sql dump contains no chunks');
+		}
 
+		$chunk = $chunks[0];
+		try {
+			$read = $this->archiveService->getStreamFromChunk(
+				$point,
+				$chunk,
+				PointService::SQL_DUMP_FILE
+			);
+		} catch (ArchiveCreateException
+		| ArchiveNotFoundException
+		| RestoreChunkException
+		| NotFoundException
+		| NotPermittedException $e) {
+			throw new SqlImportException($e->getMessage());
+		}
+
+		$config = $this->extractDatabaseConfig();
+		$sqlDump = new SqlDumpMySQL();
+		$sqlDump->import($config, $read);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	private function extractDatabaseConfig(): array {
+		if ($this->configService->getSystemValue('dbtype') !== 'mysql') {
+			return [];
+		}
+
+		return [
+			'dbname' => $this->configService->getSystemValue('dbname'),
+			'dbhost' => $this->configService->getSystemValue('dbhost'),
+			'dbport' => $this->configService->getSystemValue('dbport'),
+			'dbuser' => $this->configService->getSystemValue('dbuser'),
+			'dbpassword' => $this->configService->getSystemValue('dbpassword')
+		];
+
+//		$CONFIG = [];
+//		require($config);
+//
+//		$this->mustContains(['dbtype'], $CONFIG);
+//		if ($CONFIG['dbtype'] === 'mysql') {
+//			$this->mustContains(['dbname', 'dbport', 'dbhost', 'dbuser', 'dbpassword'], $CONFIG);
+//			$data = [
+//				'dbname' => $CONFIG['dbname'],
+//				'dbhost' => $CONFIG['dbhost'],
+//				'dbport' => $CONFIG['dbport'],
+//				'dbuser' => $CONFIG['dbuser'],
+//				'dbpassword' => $CONFIG['dbpassword']
+//			];
+//
+//			return $data;
+//		}
+//
+//		return [];
 	}
 
 }
-

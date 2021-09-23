@@ -418,32 +418,6 @@ class CliService {
 	}
 
 
-	/**
-	 * @param string $config
-	 *
-	 * @return array
-	 * @throws MalformedArrayException
-	 */
-	private function extractDatabaseConfig(string $config): array {
-		$CONFIG = [];
-		require($config);
-
-		$this->mustContains(['dbtype'], $CONFIG);
-		if ($CONFIG['dbtype'] === 'mysql') {
-			$this->mustContains(['dbname', 'dbport', 'dbhost', 'dbuser', 'dbpassword'], $CONFIG);
-			$data = [
-				'dbname'     => $CONFIG['dbname'],
-				'dbhost'     => $CONFIG['dbhost'],
-				'dbport'     => $CONFIG['dbport'],
-				'dbuser'     => $CONFIG['dbuser'],
-				'dbpassword' => $CONFIG['dbpassword']
-			];
-
-			return $data;
-		}
-
-		return [];
-	}
 
 
 	/**
@@ -460,8 +434,7 @@ class CliService {
 		foreach ($chunk->getArchives() as $archive) {
 			$this->archiveService->decryptArchive($backup, $archive);
 			$zip = $this->archiveService->openZipArchive($archive);
-			$read =
-				$this->archiveService->extractContentFromZip($zip, BackupService::SQL_DUMP_FILE);
+			$read = $zip->getStream(BackupService::SQL_DUMP_FILE);
 
 			$sqlDump = new SqlDumpMySQL();
 			$sqlDump->import($data, $read);

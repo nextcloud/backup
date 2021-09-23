@@ -516,7 +516,7 @@ class PointService {
 	public function getChunkContent(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
 		$this->initBaseFolder($point);
 
-		$restoringChunk = clone $this->chunkService->extractChunkFromRP($point, $data, $chunk);
+		$restoringChunk = clone $this->chunkService->getChunkFromRP($point, $data, $chunk);
 		$this->chunkService->getChunkContent($point, $restoringChunk);
 
 		return $restoringChunk;
@@ -536,7 +536,7 @@ class PointService {
 	public function getChunkResource(RestoringPoint $point, string $data, string $chunk): ISimpleFile {
 		$this->initBaseFolder($point);
 
-		$restoringChunk = clone $this->chunkService->extractChunkFromRP($point, $data, $chunk);
+		$restoringChunk = clone $this->chunkService->getChunkFromRP($point, $data, $chunk);
 
 		return $this->chunkService->getChunkResource($point, $restoringChunk);
 	}

@@ -166,36 +166,56 @@ class ArchiveService {
 
 
 	/**
+	 * Set $stream to true if the returned ZipArchive will have its method getStream() called
+	 * In this case, the generated temporary file need to be removed manually: unlink($zip->filename);
+	 *
 	 * @param RestoringPoint $point
-	 * @param RestoringChunk $archive
+	 * @param RestoringChunk $chunk
+	 * @param bool $stream
 	 *
 	 * @return ZipArchive
+	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 */
-	public function openZipArchive(RestoringPoint $point, RestoringChunk $archive): ZipArchive {
+	public function openZipArchive(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		bool $stream = false
+	): ZipArchive {
 		if (!$point->hasBaseFolder()) {
 			throw new ArchiveCreateException('Backup has no Base Folder');
 		}
 
 		$folder = $point->getBaseFolder();
-		$file = $folder->getFile($archive->getFilename());
-
+		$file = $folder->getFile($chunk->getFilename());
 
 		$tmp = tmpfile();
-		fwrite($tmp, $file->getContent());
 		$tmpPath = stream_get_meta_data($tmp)['uri'];
+		if ($stream) {
+			// ZipArchive::getStream() will not works on temporary files.
+			// we create a real file based on the temporary filename.
+			fclose($tmp);
+			$tmp = fopen($tmpPath, 'a');
+		}
+
+		$read = $file->read();
+		while (!feof($read)) {
+			fwrite($tmp, fread($read, 8192));
+		}
 
 		$zip = new ZipArchive();
 		if (($err = $zip->open($tmpPath)) !== true) {
-			fclose($tmp);
+			unlink($tmpPath);
 			throw new ArchiveNotFoundException('Could not open Zip Archive (' . $err . ')');
 		}
 
+		/** this will delete the temp file if it is a true temp file */
 		fclose($tmp);
 
 		return $zip;
 	}
-
 
 	/**
 	 * @param ZipArchive $zip
@@ -203,7 +223,6 @@ class ArchiveService {
 	public function closeZipArchive(ZipArchive $zip): void {
 		$zip->close();
 	}
-
 
 	/**
 	 * @param RestoringChunk $archive
@@ -215,6 +234,29 @@ class ArchiveService {
 		$files = $this->getList('files', $data, [ArchiveFile::class, 'import'], []);
 
 		$archive->setFiles($files);
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param string $filename
+	 *
+	 * @return resource
+	 * @throws ArchiveCreateException
+	 * @throws ArchiveNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoreChunkException
+	 */
+	public function getStreamFromChunk(RestoringPoint $point, RestoringChunk $chunk, string $filename) {
+		$zip = $this->openZipArchive($point, $chunk, true);
+		$stream = $zip->getStream($filename);
+		if ($stream === false) {
+			throw new RestoreChunkException('cannot open stream');
+		}
+		unlink($zip->filename);
+		return $stream;
 	}
 
 
@@ -231,17 +273,6 @@ class ArchiveService {
 		);
 
 		$zip->extractTo($root, $files);
-	}
-
-
-	/**
-	 * @param ZipArchive $zip
-	 * @param string $file
-	 *
-	 * @return resource
-	 */
-	public function extractContentFromZip(ZipArchive $zip, string $file) {
-		return $zip->getStream($file);
 	}
 
 
@@ -397,7 +428,7 @@ class ArchiveService {
 				[
 					'outstream' => $file->write(),
 					'zip64' => false,
-					'compress' => COMPR::DEFLATE,
+					'compress' => COMPR::STORE,
 					'level' => $this->assignCompressionLevel()
 				]
 			);
@@ -664,7 +695,7 @@ class ArchiveService {
 	 * @return RestoringChunk
 	 * @throws ChunkNotFoundException
 	 */
-	public function extractChunkFromRP(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
+	public function getChunkFromRP(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
 		foreach ($point->getRestoringData() as $restoringData) {
 			if ($restoringData->getName() !== $data) {
 				continue;

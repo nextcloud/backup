@@ -6,7 +6,7 @@
 	<description><![CDATA[Backup. Restore.]]></description>
 	<licence>agpl</licence>
 	<author mail="maxence@artificial-owl.com">Maxence Lange</author>
-	<version>0.1.4</version>
+	<version>0.1.5</version>
 	<namespace>Backup</namespace>
 	<category>tools</category>
 	<website>https://github.com/nextcloud/backup</website>
@@ -31,6 +31,7 @@
 		<command>OCA\Backup\Command\PointUpload</command>
 		<command>OCA\Backup\Command\PointDownload</command>
 		<command>OCA\Backup\Command\PointRestore</command>
+		<command>OCA\Backup\Command\PointScan</command>
 
 		<command>OCA\Backup\Command\SetupExport</command>
 		<command>OCA\Backup\Command\SetupImport</command>
