@@ -438,13 +438,16 @@ class PointService {
 
 
 	/**
+	 * Update $point with it, but also returns the generated RestoringHealth
+	 *
 	 * @param RestoringPoint $point
 	 * @param bool $updateDb
 	 *
+	 * @return RestoringHealth
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-	public function generateHealth(RestoringPoint $point, bool $updateDb = false): void {
+	public function generateHealth(RestoringPoint $point, bool $updateDb = false): RestoringHealth {
 		$this->initBackupFS();
 		$this->initBaseFolder($point);
 
@@ -480,6 +483,8 @@ class PointService {
 		if ($updateDb) {
 			$this->pointRequest->update($point);
 		}
+
+		return $health;
 	}
 
 

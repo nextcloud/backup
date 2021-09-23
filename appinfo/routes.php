@@ -12,6 +12,7 @@ return [
 		['name' => 'Remote#downloadRestoringPoint', 'url' => '/rp/{pointId}/download', 'verb' => 'GET'],
 		['name' => 'Remote#createRestoringPoint', 'url' => '/rp', 'verb' => 'PUT'],
 		['name' => 'Remote#updateRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'PUT'],
-		['name' => 'Remote#uploadRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'POST']
+//		['name' => 'Remote#uploadRestoringChunk', 'url' => '/rp/{pointId}', 'verb' => 'POST']
+		['name' => 'Remote#uploadRestoringChunk', 'url' => '/rp/{pointId}/{chunkId}', 'verb' => 'POST']
 	]
 ];

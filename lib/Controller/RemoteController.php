@@ -50,7 +50,7 @@ use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\RemoteRequest\CreateRestoringPoint;
 use OCA\Backup\RemoteRequest\GetRestoringPoint;
 use OCA\Backup\RemoteRequest\ListRestoringPoint;
-use OCA\Backup\RemoteRequest\UploadRestoringPoint;
+use OCA\Backup\RemoteRequest\UploadRestoringChunk;
 use OCA\Backup\Service\RemoteStreamService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -249,9 +249,9 @@ class RemoteController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
-	public function uploadRestoringPoint(string $pointId): DataResponse {
+	public function uploadRestoringChunk(string $pointId, string $chunkId): DataResponse {
 		try {
-			$request = $this->extractRequest(UploadRestoringPoint::class);
+			$request = $this->extractRequest(UploadRestoringChunk::class);
 		} catch (Exception $e) {
 			return $this->exceptionResponse($e, Http::STATUS_UNAUTHORIZED);
 		}

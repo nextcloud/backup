@@ -149,22 +149,6 @@ class ArchiveService {
 	}
 
 
-//	/**
-//	 * @param RestoringChunk $archive
-//	 * @param string $root
-//	 *
-//	 * @throws ArchiveNotFoundException
-//	 * @throws Exception
-//	 */
-//	public function extractAllFromArchive(RestoringChunk $archive, string $root): void {
-//		$zip = $this->openZipArchive($archive);
-//		$zip->extractTo($root);
-//		$this->closeZipArchive($zip);
-//
-//		unlink($root . '.backup.' . $archive->getName() . '.json');
-//	}
-
-
 	/**
 	 * Set $stream to true if the returned ZipArchive will have its method getStream() called
 	 * In this case, the generated temporary file need to be removed manually: unlink($zip->filename);
@@ -252,10 +236,12 @@ class ArchiveService {
 	public function getStreamFromChunk(RestoringPoint $point, RestoringChunk $chunk, string $filename) {
 		$zip = $this->openZipArchive($point, $chunk, true);
 		$stream = $zip->getStream($filename);
+		unlink($zip->filename);
+
 		if ($stream === false) {
 			throw new RestoreChunkException('cannot open stream');
 		}
-		unlink($zip->filename);
+
 		return $stream;
 	}
 
@@ -390,6 +376,7 @@ class ArchiveService {
 			$fileSize = filesize($data->getAbsolutePath() . $filename);
 			if ($zipSize > 0 && ($zipSize + $fileSize) > self::MAX_ZIP_SIZE) {
 				$this->finalizeZip($zip, $chunk->setSize($zipSize));
+				array_unshift($files, $filename);
 
 				return $chunk;
 			}
@@ -400,9 +387,9 @@ class ArchiveService {
 			$zip->addFileFromStream($in, $filename);
 			$archiveFile = new ArchiveFile($filename);
 			$chunk->addFile($archiveFile);
-			$chunk->setCount();
 		}
 
+		$chunk->setCount();
 		$this->finalizeZip($zip, $chunk->setSize($zipSize));
 
 		return $chunk;

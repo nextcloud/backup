@@ -47,11 +47,11 @@ use OCP\Files\NotPermittedException;
 
 
 /**
- * Class UploadRestoringPoint
+ * Class UploadRestoringChunk
  *
  * @package OCA\Backup\RemoteRequest
  */
-class UploadRestoringPoint extends CoreRequest implements IRemoteRequest {
+class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 
 
 	use TNC23Deserialize;
@@ -66,7 +66,7 @@ class UploadRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 
 	/**
-	 * UploadRestoringPoint constructor.
+	 * UploadRestoringChunk constructor.
 	 *
 	 * @param PointService $pointService
 	 * @param ArchiveService $chunkService
@@ -99,15 +99,14 @@ class UploadRestoringPoint extends CoreRequest implements IRemoteRequest {
 			$this->pointService->initBaseFolder($point);
 			$this->chunkService->saveChunkContent($point, $chunk);
 
-			$this->pointService->generateHealth($point, true);
+			$health = $this->pointService->generateHealth($point, true);
 
-//			$this->setOutcome(new SimpleDataStore(['dssd']));
+			$this->setOutcome($this->serialize($health));
 		} catch (RestoringPointNotFoundException
 		| InvalidItemException
 		| NotFoundException
 		| NotPermittedException $e) {
 		}
-
 	}
 
 
