@@ -50,6 +50,12 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 use ZipArchive;
 
 
+
+echo "\n" . 'At this moment, this script will not works. Sorry.' . "\n";
+echo 'Please follow online documentation to restore your backup.'. "\n\n";
+
+exit();
+
 /**
  * extracting app files
  */

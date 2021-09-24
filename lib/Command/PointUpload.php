@@ -107,7 +107,7 @@ class PointUpload extends Base {
 	 * @throws RestoringPointNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$point = $this->pointService->getRestoringPoint($input->getArgument('point'));
+		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('point'));
 
 		$this->verifyPointFromInstances($output, $point);
 	}

@@ -37,7 +37,6 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Signatory;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC;
 use OC\Files\AppData\Factory;
-use OC\Files\Node\Node;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\ChangesRequest;
 use OCA\Backup\Db\PointRequest;
@@ -56,7 +55,6 @@ use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCP\Files\IAppData;
-use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -141,6 +139,9 @@ class PointService {
 
 
 	/**
+	 * If $instance is empty, will returns RestoringPoint without checking the origin.
+	 * Use getLocalRestoringPoint() to limit the search to local RestoringPoint
+	 *
 	 * @param string $pointId
 	 * @param string $instance
 	 *
@@ -151,12 +152,27 @@ class PointService {
 		return $this->pointRequest->getById($pointId, $instance);
 	}
 
+
 	/**
+	 * @param string $pointId
+	 *
+	 * @return RestoringPoint
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function getLocalRestoringPoint(string $pointId): RestoringPoint {
+		return $this->pointRequest->getLocalById($pointId);
+	}
+
+
+	/**
+	 * @param int $since
+	 *
 	 * @return RestoringPoint[]
 	 */
-	public function getRPLocal(): array {
-		return $this->pointRequest->getLocal();
+	public function getRPLocal(int $since = 0, int $until = 0): array {
+		return $this->pointRequest->getLocal($since, $until);
 	}
+
 
 	/**
 	 * @param string $instance
@@ -211,7 +227,7 @@ class PointService {
 		$point = new RestoringPoint();
 		$point->setDate(time());
 		$separator = ($complete) ? '-' : '_';
-		$point->setId(date("YmdHis", $point->getDate()) . $separator . $this->token());
+		$point->setId(date('YmdHis', $point->getDate()) . $separator . $this->token());
 		$point->setNC(Util::getVersion());
 
 		$this->initBaseFolder($point);
@@ -521,7 +537,7 @@ class PointService {
 	public function getChunkContent(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
 		$this->initBaseFolder($point);
 
-		$restoringChunk = clone $this->chunkService->getChunkFromRP($point, $data, $chunk);
+		$restoringChunk = clone $this->chunkService->getChunkFromRP($point, $chunk, $data);
 		$this->chunkService->getChunkContent($point, $restoringChunk);
 
 		return $restoringChunk;
@@ -541,7 +557,7 @@ class PointService {
 	public function getChunkResource(RestoringPoint $point, string $data, string $chunk): ISimpleFile {
 		$this->initBaseFolder($point);
 
-		$restoringChunk = clone $this->chunkService->getChunkFromRP($point, $data, $chunk);
+		$restoringChunk = clone $this->chunkService->getChunkFromRP($point, $chunk, $data);
 
 		return $this->chunkService->getChunkResource($point, $restoringChunk);
 	}

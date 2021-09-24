@@ -208,12 +208,32 @@ class ArchiveService {
 		$zip->close();
 	}
 
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 *
+	 * @throws ArchiveCreateException
+	 * @throws ArchiveNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	public function listFilesFromChunk(RestoringPoint $point, RestoringChunk $chunk): void {
+		$zip = $this->openZipArchive($point, $chunk);
+		$this->listFilesFromZip($chunk, $zip);
+	}
+
+
 	/**
 	 * @param RestoringChunk $archive
 	 * @param ZipArchive $zip
 	 */
 	public function listFilesFromZip(RestoringChunk $archive, ZipArchive $zip): void {
 		$json = $zip->getFromName('.backup.' . $archive->getName() . '.json');
+		if (!$json) {
+			return;
+		}
+
 		$data = json_decode($json, true);
 		$files = $this->getList('files', $data, [ArchiveFile::class, 'import'], []);
 
@@ -375,7 +395,7 @@ class ArchiveService {
 		while (($filename = array_shift($files)) !== null) {
 			$fileSize = filesize($data->getAbsolutePath() . $filename);
 			if ($zipSize > 0 && ($zipSize + $fileSize) > self::MAX_ZIP_SIZE) {
-				$this->finalizeZip($zip, $chunk->setSize($zipSize));
+				$this->finalizeZip($zip, $chunk->setCount()->setSize($zipSize));
 				array_unshift($files, $filename);
 
 				return $chunk;
@@ -389,8 +409,7 @@ class ArchiveService {
 			$chunk->addFile($archiveFile);
 		}
 
-		$chunk->setCount();
-		$this->finalizeZip($zip, $chunk->setSize($zipSize));
+		$this->finalizeZip($zip, $chunk->setCount()->setSize($zipSize));
 
 		return $chunk;
 	}
@@ -414,7 +433,7 @@ class ArchiveService {
 			$zip = new ZipStreamer(
 				[
 					'outstream' => $file->write(),
-					'zip64' => false,
+					'zip64' => true,
 					'compress' => COMPR::STORE,
 					'level' => $this->assignCompressionLevel()
 				]
@@ -676,15 +695,15 @@ class ArchiveService {
 
 	/**
 	 * @param RestoringPoint $point
-	 * @param string $data
 	 * @param string $chunk
+	 * @param string $data
 	 *
 	 * @return RestoringChunk
 	 * @throws ChunkNotFoundException
 	 */
-	public function getChunkFromRP(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
+	public function getChunkFromRP(RestoringPoint $point, string $chunk, string $data = ''): RestoringChunk {
 		foreach ($point->getRestoringData() as $restoringData) {
-			if ($restoringData->getName() !== $data) {
+			if ($data !== '' && $restoringData->getName() !== $data) {
 				continue;
 			}
 
@@ -738,6 +757,36 @@ class ArchiveService {
 			$file->putContent(base64_decode($chunk->getContent()));
 		} catch (NotPermittedException | NotFoundException $e) {
 		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param string $search
+	 *
+	 * @return array
+	 * @throws ArchiveCreateException
+	 * @throws ArchiveNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	public function searchFileInChunk(RestoringPoint $point, RestoringChunk $chunk, string $search): array {
+		if (empty($chunk->getFiles())) {
+			$this->listFilesFromChunk($point, $chunk);
+		}
+
+		return array_filter(
+			array_map(
+				function (ArchiveFile $file) use ($search): string {
+					if (strpos($file->getName(), $search) !== false) {
+						return $file->getName();
+					}
+
+					return '';
+				}, $chunk->getFiles()
+			)
+		);
 	}
 
 }

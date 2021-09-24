@@ -31,20 +31,24 @@ A restoring point can be:
 
 **Create a new Restoring Point**
 
-    ./occ backup:point:create [--quick]
+    ./occ backup:point:create [--incremental]
 
-The `--quick` option will only create an incremental backup
+The `--incremental` option will only create an incremental backup
 
 
 **Upload a Restoring Point**
 
     ./occ backup:point:upload <pointId>
 
-**Browse your restoring points**
+**List restoring points (local and/or remote)**
 
-    ./occ backup:point:browse
+    ./occ backup:point:list
 
+**Search for a specific file:**
 
+    ./occ backup:point:search [--since|--until|--point] <string>
+
+example: `./occ backup:point:search test.jpg --since 2021-09-23`
 
 ### Known issues:
 

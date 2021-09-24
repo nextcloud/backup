@@ -34,6 +34,7 @@ namespace OCA\Backup\Command;
 
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
+use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
@@ -119,9 +120,8 @@ class PointRestore extends Base {
 		$this->setName('backup:point:restore')
 			 ->setDescription('Restore a restoring point')
 			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
-			 ->addOption(
-				 'files', 'f', InputOption::VALUE_REQUIRED, 'restore only a specific file', ''
-			 );
+			 ->addOption('file', '', InputOption::VALUE_REQUIRED, 'restore only a specific file')
+			 ->addOption('chunk', '', InputOption::VALUE_REQUIRED, 'restore only a specific file');
 	}
 
 
@@ -138,12 +138,19 @@ class PointRestore extends Base {
 		$this->output = $output;
 		$this->input = $input;
 
-		$pointId = $input->getArgument('pointId');
-		$file = $input->getOption('files');
+		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
 
-		$point = $this->pointService->getRestoringPoint($pointId);
+		$file = $input->getOption('file');
+		$chunk = $input->getOption('chunk');
+
+		if (!is_null($file) || !is_null($chunk)) {
+			$this->restoreUniqueFile($point, $file, $chunk);
+
+			return 0;
+		}
+
 		$output->writeln('Restoring Point: <info>' . $point->getId() . '</info>');
-		$output->writeln('Date: <info>' . date("Y-m-d H:i:s", $point->getDate()) . '</info>');
+		$output->writeln('Date: <info>' . date('Y-m-d H:i:s', $point->getDate()) . '</info>');
 
 		$output->write('Checking Health status: ');
 		$this->pointService->generateHealth($point);
@@ -303,6 +310,35 @@ class PointRestore extends Base {
 //		}
 //
 //		return [];
+	}
+
+
+	/**
+	 * @param string|null $file
+	 * @param string|null $chunk
+	 *
+	 * @throws Exception
+	 */
+	private function restoreUniqueFile(RestoringPoint $point, ?string $file, ?string $chunkName): void {
+		if (is_null($file)) {
+			throw new Exception('must specify --file option');
+		}
+
+		if (is_null($chunkName)) {
+			throw new Exception('must specify --chunk option');
+		}
+
+		$dataName = '';
+		if (strpos($chunkName, '/') > 0) {
+			[$dataName, $chunkName] = explode('/', $chunkName, 2);
+		}
+
+		$this->pointService->initBaseFolder($point);
+		$chunk = $this->archiveService->getChunkFromRP($point, $chunkName, $dataName);
+		$this->archiveService->listFilesFromChunk($point, $chunk);
+
+		// get file from list
+		echo json_encode($chunk->getFiles());
 	}
 
 }

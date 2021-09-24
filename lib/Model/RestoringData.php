@@ -69,6 +69,13 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	const APPS = 'apps';
 	const CONFIG = 'config';
 
+	public static $DEF = [
+		self::INTERNAL_DATA => 'internal',
+		self::ROOT_DATA => 'data',
+		self::ROOT_NEXTCLOUD => 'nextcloud',
+		self::ROOT_APPS => 'apps'
+	];
+
 
 	/** @var string */
 	private $name = '';

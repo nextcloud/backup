@@ -139,7 +139,7 @@ class PointList extends Base {
 					$point->getId(),
 					$point->getParent(),
 					$point->getCountIncremental(),
-					date("Y-m-d H:i:s", $point->getDate())
+					date('Y-m-d H:i:s', $point->getDate())
 				]
 			);
 		}
@@ -226,7 +226,7 @@ class PointList extends Base {
 				$table->appendRow(
 					[
 						($fresh) ? $displayPointId : '',
-						($fresh) ? date("Y-m-d H:i:s", $point->getDate()) : '',
+						($fresh) ? date('Y-m-d H:i:s', $point->getDate()) : '',
 						($fresh) ? $point->getParent() : '',
 						$instance,
 						$this->displayStyleHealth($point),

@@ -90,7 +90,7 @@ class Listing extends Base {
 		$backups = $this->backupService->listing();
 
 		foreach ($backups as $backup) {
-			echo '   ' . date("Y-m-d H:i:s", $backup->getCreation()) . ' - ' . $backup->getId()
+			echo '   ' . date('Y-m-d H:i:s', $backup->getCreation()) . ' - ' . $backup->getId()
 				 . "\n";
 		}
 	}

@@ -87,12 +87,37 @@ class PointRequest extends PointRequestBuilder {
 	/**
 	 * @return RestoringPoint[]
 	 */
-	public function getLocal(): array {
+	public function getLocal(int $since = 0, int $until = 0): array {
 		$qb = $this->getPointSelectSql();
 		$qb->limitToInstance('');
 		$qb->orderBy('date', 'asc');
 
+		if ($since > 0) {
+			$qb->gt('date', $since, true);
+		}
+
+		if ($until > 0) {
+			$qb->lt('date', $until, true);
+		}
+
 		return $this->getItemsFromRequest($qb);
+	}
+
+
+	/**
+	 * @param string $pointId
+	 *
+	 * @return RestoringPoint
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function getLocalById(string $pointId): RestoringPoint {
+		$qb = $this->getPointSelectSql();
+		$qb->limitToUid($pointId);
+		$qb->limitToInstance('');
+
+		$qb->countIncremental();
+
+		return $this->getItemFromRequest($qb);
 	}
 
 

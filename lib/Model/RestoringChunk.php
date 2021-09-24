@@ -112,7 +112,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 *
 	 * @return RestoringChunk
 	 */
-	public function setName(string $name): RestoringChunk {
+	public function setName(string $name): self {
 		$this->name = $name;
 
 		return $this;
@@ -173,7 +173,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 *
 	 * @return RestoringChunk
 	 */
-	public function setCount(int $count = -1): RestoringChunk {
+	public function setCount(int $count = -1): self {
 		if ($count === -1) {
 			$this->count = sizeof($this->files);
 		} else {
@@ -196,7 +196,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 *
 	 * @return RestoringChunk
 	 */
-	public function setFiles(array $files): RestoringChunk {
+	public function setFiles(array $files): self {
 		$this->files = $files;
 
 		return $this;
@@ -207,7 +207,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 *
 	 * @return RestoringChunk
 	 */
-	public function addFile(ArchiveFile $file): RestoringChunk {
+	public function addFile(ArchiveFile $file): self {
 		$this->files[] = $file;
 
 		return $this;
@@ -226,7 +226,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 *
 	 * @return RestoringChunk
 	 */
-	public function setSize(int $size): RestoringChunk {
+	public function setSize(int $size): self {
 		$this->size = $size;
 
 		return $this;
@@ -264,7 +264,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 *
 	 * @return RestoringChunk
 	 */
-	public function setChecksum(string $checksum): RestoringChunk {
+	public function setChecksum(string $checksum): self {
 		$this->checksum = $checksum;
 
 		return $this;
@@ -295,7 +295,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 *
 	 * @return RestoringChunk
 	 */
-	public function setEncryptedChecksum(string $encryptedChecksum): RestoringChunk {
+	public function setEncryptedChecksum(string $encryptedChecksum): self {
 		$this->encryptedChecksum = $encryptedChecksum;
 
 		return $this;
