@@ -240,11 +240,14 @@ class PointService {
 	/**
 	 * @param RestoringPoint $point
 	 * @param bool $complete
+	 *
+	 * @throws RestoringPointNotFoundException
 	 */
 	private function addingRestoringData(RestoringPoint $point, bool $complete): void {
 		if ($complete) {
 			$point->addRestoringData(new RestoringData(RestoringData::ROOT_DATA, '', RestoringData::DATA));
 		} else {
+			// TODO: might be interesting to store the ID of the last parent somewhere, in case the parent have been uploaded
 			$this->initParent($point);
 			$this->addIncrementalData($point);
 		}
@@ -299,7 +302,7 @@ class PointService {
 
 		$data = new RestoringData(RestoringData::ROOT_DATA, '', RestoringData::DATA);
 		foreach ($changedFiles as $file) {
-			$data->addFile($file->getPath());
+			$data->addFile(ltrim($file->getPath(), '/'));
 		}
 
 		$data->setLocked(true);

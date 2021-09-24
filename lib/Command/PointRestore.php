@@ -34,10 +34,11 @@ namespace OCA\Backup\Command;
 
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
-use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
+use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
+use OCA\Backup\Exceptions\ChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlImportException;
@@ -51,6 +52,7 @@ use OCA\Backup\Service\PointService;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -121,7 +123,8 @@ class PointRestore extends Base {
 			 ->setDescription('Restore a restoring point')
 			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
 			 ->addOption('file', '', InputOption::VALUE_REQUIRED, 'restore only a specific file')
-			 ->addOption('chunk', '', InputOption::VALUE_REQUIRED, 'restore only a specific file');
+			 ->addOption('chunk', '', InputOption::VALUE_REQUIRED, 'location of the file')
+			 ->addOption('data', '', InputOption::VALUE_REQUIRED, 'location of the file');
 	}
 
 
@@ -130,9 +133,13 @@ class PointRestore extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws RestoringPointNotFoundException
+	 * @throws ArchiveCreateException
+	 * @throws ArchiveNotFoundException
+	 * @throws ChunkNotFoundException
+	 * @throws ArchiveFileNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws RestoringPointNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->output = $output;
@@ -141,10 +148,11 @@ class PointRestore extends Base {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
 
 		$file = $input->getOption('file');
+		$data = $input->getOption('data');
 		$chunk = $input->getOption('chunk');
 
 		if (!is_null($file) || !is_null($chunk)) {
-			$this->restoreUniqueFile($point, $file, $chunk);
+			$this->restoreUniqueFile($point, $file, $data, $chunk);
 
 			return 0;
 		}
@@ -234,7 +242,12 @@ class PointRestore extends Base {
 				try {
 					$this->archiveService->restoreChunk($point, $chunk, $root);
 					$this->output->writeln('<info>ok</info>');
-				} catch (ArchiveNotFoundException | RestoreChunkException $e) {
+				} catch (
+				ArchiveCreateException
+				| ArchiveNotFoundException
+				| NotFoundException
+				| NotPermittedException
+				| RestoreChunkException $e) {
 					$this->output->writeln('<error>' . $e->getMessage() . '</error>');
 				}
 			}
@@ -314,31 +327,68 @@ class PointRestore extends Base {
 
 
 	/**
-	 * @param string|null $file
-	 * @param string|null $chunk
+	 * @param RestoringPoint $point
+	 * @param string|null $filename
+	 * @param string|null $dataName
+	 * @param string|null $chunkName
 	 *
-	 * @throws Exception
+	 * @throws ArchiveCreateException
+	 * @throws ArchiveNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws ChunkNotFoundException
+	 * @throws ArchiveFileNotFoundException
+	 * @throws \OCA\Backup\Exceptions\RestoringDataNotFoundException
 	 */
-	private function restoreUniqueFile(RestoringPoint $point, ?string $file, ?string $chunkName): void {
-		if (is_null($file)) {
-			throw new Exception('must specify --file option');
+	private function restoreUniqueFile(
+		RestoringPoint $point,
+		?string $filename,
+		?string $dataName,
+		?string $chunkName
+	): void {
+		if (is_null($filename)) {
+			throw new InvalidOptionException('must specify --file option');
 		}
 
-		if (is_null($chunkName)) {
-			throw new Exception('must specify --chunk option');
-		}
-
-		$dataName = '';
-		if (strpos($chunkName, '/') > 0) {
-			[$dataName, $chunkName] = explode('/', $chunkName, 2);
+		if (is_null($chunkName) && is_null($dataName)) {
+			throw new InvalidOptionException('must specify --chunk or --data option');
 		}
 
 		$this->pointService->initBaseFolder($point);
-		$chunk = $this->archiveService->getChunkFromRP($point, $chunkName, $dataName);
-		$this->archiveService->listFilesFromChunk($point, $chunk);
+		if (!is_null($chunkName)) {
+			if (is_null($dataName)) {
+				$data = $this->archiveService->getDataWithChunk($point, $chunkName);
+			} else {
+				$data = $this->archiveService->getDataFromRP($point, $dataName);
+			}
 
-		// get file from list
-		echo json_encode($chunk->getFiles());
+			$chunk = $this->archiveService->getChunkFromRP($point, $chunkName, $data->getName());
+			$file = $this->archiveService->getArchiveFileFromChunk($point, $chunk, $filename);
+		} else {
+			$data = $this->archiveService->getDataFromRP($point, $dataName);
+			$file = $this->archiveService->getArchiveFileFromData($point, $data, $filename);
+		}
+
+		$root = $data->getAbsolutePath();
+		$chunk = $file->getRestoringChunk();
+		$this->output->write(
+			'   > restoring ' . $file->getName() . ' (' . $this->humanReadable($file->getFilesize())
+			. ') from <info>'
+			. $chunk->getName() . '</info>'
+		);
+
+		// TODO: display $root and add a confirmation step
+
+		try {
+			$this->archiveService->restoreUniqueFile($point, $chunk, $root, $file->getName());
+			$this->output->writeln('<info>ok</info>');
+		} catch (ArchiveCreateException
+		| ArchiveNotFoundException
+		| NotFoundException
+		| NotPermittedException
+		| RestoreChunkException $e) {
+			$this->output->writeln('<error>' . $e->getMessage() . '</error>');
+		}
 	}
 
 }

@@ -49,14 +49,23 @@ class ArchiveFile implements JsonSerializable {
 	/** @var string */
 	private $name = '';
 
+	/** @var int */
+	private $filesize = 0;
+
+
+	/** @var RestoringChunk */
+	private $restoringChunk;
+
 
 	/**
 	 * ArchiveFile constructor.
 	 *
 	 * @param string $name
+	 * @param int $filesize
 	 */
-	public function __construct(string $name = '') {
+	public function __construct(string $name = '', int $filesize = 0) {
 		$this->name = $name;
+		$this->filesize = $filesize;
 	}
 
 
@@ -78,6 +87,42 @@ class ArchiveFile implements JsonSerializable {
 		return $this;
 	}
 
+	/**
+	 * @param int $filesize
+	 *
+	 * @return ArchiveFile
+	 */
+	public function setFilesize(int $filesize): self {
+		$this->filesize = $filesize;
+
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getFilesize(): int {
+		return $this->filesize;
+	}
+
+	/**
+	 * @param RestoringChunk $restoringChunk
+	 *
+	 * @return ArchiveFile
+	 */
+	public function setRestoringChunk(RestoringChunk $restoringChunk): self {
+		$this->restoringChunk = $restoringChunk;
+
+		return $this;
+	}
+
+	/**
+	 * @return RestoringChunk
+	 */
+	public function getRestoringChunk(): RestoringChunk {
+		return $this->restoringChunk;
+	}
+
 
 	/**
 	 * @param array $data
@@ -85,7 +130,8 @@ class ArchiveFile implements JsonSerializable {
 	 * @return ArchiveFile
 	 */
 	public function import(array $data): ArchiveFile {
-		$this->setName($this->get('name', $data, ''));
+		$this->setName($this->get('name', $data));
+		$this->setFilesize($this->getInt('filesize', $data));
 
 		return $this;
 	}
@@ -97,7 +143,8 @@ class ArchiveFile implements JsonSerializable {
 	public function jsonSerialize(): array {
 		return
 			[
-				'name' => $this->getName()
+				'name' => $this->getName(),
+				'filesize' => $this->getFilesize()
 			];
 	}
 

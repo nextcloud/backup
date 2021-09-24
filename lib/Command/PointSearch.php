@@ -42,6 +42,7 @@ use OCA\Backup\Service\ArchiveService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -127,18 +128,25 @@ class PointSearch extends Base {
 				. date('Y-m-d H:i:s', $point->getDate()) . ')'
 			);
 			$empty = true;
+
 			foreach ($point->getRestoringData() as $data) {
-				foreach ($data->getChunks() as $chunk) {
+				$chunks = $data->getChunks();
+				$progressBar = new ProgressBar($output, sizeof($chunks));
+				$progressBar->start();
+
+				foreach ($chunks as $chunk) {
+					$progressBar->advance();
 					try {
-						$result = $this->chunkService->searchFileInChunk($point, $chunk, $search);
-						if (empty($result)) {
+						$files = $this->chunkService->searchFileInChunk($point, $chunk, $search);
+						if (empty($files)) {
 							continue;
 						}
 
 						$empty = false;
-						foreach ($result as $item) {
+						foreach ($files as $file) {
 							$output->writeln(
-								' > found <info>' . $item . '</info> in <info>'
+								'   found <info>' . $file->getName() . '</info> ('
+								. $this->humanReadable($file->getFilesize()) . ') in <info>'
 								. $data->getName() . '</info>/<info>' . $chunk->getName() . '</info>'
 							);
 						}
@@ -149,14 +157,19 @@ class PointSearch extends Base {
 					| NotPermittedException $e) {
 					}
 				}
+
+				$progressBar->finish();
 			}
 
 			if ($empty) {
-				$output->writeln(' > no result');
+				$output->writeln('   <comment>no result</comment>');
+			} else {
+				$output->writeln('');
 			}
 
 			$this->pointService->initBaseFolder($point);
 		}
+		$output->writeln('');
 
 		return 0;
 	}

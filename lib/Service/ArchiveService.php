@@ -37,12 +37,14 @@ use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveDeleteException;
+use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
 use OCA\Backup\Exceptions\ChunkNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\RestoreChunkException;
+use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCA\Backup\Model\ArchiveFile;
 use OCA\Backup\Model\Backup;
 use OCA\Backup\Model\RestoringChunk;
@@ -127,11 +129,47 @@ class ArchiveService {
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 * @param string $root
+	 * @param string $filename
 	 *
+	 * @throws ArchiveCreateException
+	 * @throws ArchiveFileNotFoundException
 	 * @throws ArchiveNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 * @throws RestoreChunkException
 	 */
-	public function restoreChunk(RestoringPoint $point, RestoringChunk $chunk, string $root): void {
+	public function restoreUniqueFile(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		string $root,
+		string $filename
+	): void {
+		if ($filename === '') {
+			throw new ArchiveFileNotFoundException();
+		}
+
+		$this->restoreChunk($point, $chunk, $root, $filename);
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param string $root
+	 * @param string $filename
+	 *
+	 * @throws ArchiveCreateException
+	 * @throws ArchiveNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoreChunkException
+	 */
+	public function restoreChunk(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		string $root,
+		string $filename = ''
+	): void {
 		if (!is_dir($root)) {
 			if (!@mkdir($root, 0755, true)) {
 				throw new RestoreChunkException('could not create ' . $root);
@@ -140,7 +178,7 @@ class ArchiveService {
 
 //		$this->decryptArchive($backup, $archive);
 		$zip = $this->openZipArchive($point, $chunk);
-		$zip->extractTo($root);
+		$zip->extractTo($root, ($filename === '') ? null : $filename);
 		$this->closeZipArchive($zip);
 
 		unlink($root . '.backup.' . $chunk->getName() . '.json');
@@ -405,7 +443,7 @@ class ArchiveService {
 			$in = fopen($data->getAbsolutePath() . $filename, 'r');
 
 			$zip->addFileFromStream($in, $filename);
-			$archiveFile = new ArchiveFile($filename);
+			$archiveFile = new ArchiveFile($filename, $fileSize);
 			$chunk->addFile($archiveFile);
 		}
 
@@ -695,15 +733,55 @@ class ArchiveService {
 
 	/**
 	 * @param RestoringPoint $point
+	 * @param string $dataName
+	 *
+	 * @return RestoringData
+	 * @throws RestoringDataNotFoundException
+	 */
+	public function getDataFromRP(RestoringPoint $point, string $dataName): RestoringData {
+		foreach ($point->getRestoringData() as $data) {
+			if ($data->getName() === $dataName) {
+				return $data;
+			}
+		}
+
+		throw new RestoringDataNotFoundException();
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
 	 * @param string $chunk
-	 * @param string $data
+	 *
+	 * @return RestoringData
+	 * @throws ChunkNotFoundException
+	 */
+	public function getDataWithChunk(RestoringPoint $point, string $chunk): RestoringData {
+		foreach ($point->getRestoringData() as $restoringData) {
+			try {
+				$this->getChunkFromRP($point, $chunk, $restoringData->getName());
+
+				return $restoringData;
+			} catch (ChunkNotFoundException $e) {
+			}
+		}
+
+		throw new ChunkNotFoundException();
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param string $chunk
+	 * @param string $dataName
 	 *
 	 * @return RestoringChunk
 	 * @throws ChunkNotFoundException
 	 */
-	public function getChunkFromRP(RestoringPoint $point, string $chunk, string $data = ''): RestoringChunk {
+	public function getChunkFromRP(RestoringPoint $point, string $chunk, string $dataName = ''
+	): RestoringChunk {
 		foreach ($point->getRestoringData() as $restoringData) {
-			if ($data !== '' && $restoringData->getName() !== $data) {
+			if ($dataName !== '' && $restoringData->getName() !== $dataName) {
 				continue;
 			}
 
@@ -765,7 +843,7 @@ class ArchiveService {
 	 * @param RestoringChunk $chunk
 	 * @param string $search
 	 *
-	 * @return array
+	 * @return ArchiveFile[]
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
 	 * @throws NotFoundException
@@ -778,15 +856,89 @@ class ArchiveService {
 
 		return array_filter(
 			array_map(
-				function (ArchiveFile $file) use ($search): string {
+				function (ArchiveFile $file) use ($search): ?ArchiveFile {
 					if (strpos($file->getName(), $search) !== false) {
-						return $file->getName();
+						return $file;
 					}
 
-					return '';
+					return null;
 				}, $chunk->getFiles()
 			)
 		);
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringData $data
+	 * @param string $filename
+	 *
+	 * @return ArchiveFile
+	 * @throws ArchiveFileNotFoundException
+	 */
+	public function getArchiveFileFromData(
+		RestoringPoint $point,
+		RestoringData $data,
+		string $filename
+	): ArchiveFile {
+		foreach ($data->getChunks() as $chunk) {
+			try {
+				return $this->getArchiveFileFromChunk($point, $chunk, $filename);
+			} catch (
+			ArchiveCreateException
+			| ArchiveNotFoundException
+			| ArchiveFileNotFoundException
+			| NotFoundException
+			| NotPermittedException $e) {
+			}
+		}
+
+		throw new ArchiveFileNotFoundException();
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param string $filename
+	 *
+	 * @return ArchiveFile
+	 * @throws ArchiveCreateException
+	 * @throws ArchiveNotFoundException
+	 * @throws ArchiveFileNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	public function getArchiveFileFromChunk(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		string $filename
+	): ArchiveFile {
+		if (empty($chunk->getFiles())) {
+			$this->listFilesFromChunk($point, $chunk);
+		}
+
+		$result = array_filter(
+			array_map(
+				function (ArchiveFile $file) use ($filename): ?ArchiveFile {
+					if ($file->getName() === $filename) {
+						return $file;
+					}
+
+					return null;
+				}, $chunk->getFiles()
+			)
+		);
+
+		if (empty($result)) {
+			throw new ArchiveFileNotFoundException();
+		}
+
+		/** @var ArchiveFile $file */
+		$file = array_shift($result);
+		$file->setRestoringChunk($chunk);
+
+		return $file;
 	}
 
 }
