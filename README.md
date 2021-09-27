@@ -53,6 +53,10 @@ You can upload your backup files on a remote instance
     ./occ backup:remote:remove cloud.example.net
 
 
+**Note**: if you enable the backup on remote instance, it is strongly advice to [keep your current setup somewhere](), or 
+your files won't be available without your identity nor readable without your encryption key
+
+
 ### Manage your restoring point
 
 
@@ -146,4 +150,4 @@ key means that your remote backup cannot be decrypted and are totally useless.**
 - uploading a parent RP after a dependant incremental backup does not remove the 'orphan' tag
 - Importing a Restoring Point using `backup:point:scan` from an external folder
 - Add remote instance to `backup:point:details`
-- encrypting exported setup with a passphrase
+- encrypting the exported setup with a passphrase

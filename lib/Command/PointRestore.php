@@ -177,7 +177,7 @@ class PointRestore extends Base {
 		$healthStatus = $point->getHealth()->getStatus();
 		if ($healthStatus !== RestoringHealth::STATUS_OK) {
 			$output->writeln('Some files from your restoring point might not be available');
-			$output->writeln('You can run ./occ backup:point:health for more details on the affected files');
+			$output->writeln('You can run ./occ backup:point:details for more details on the affected files');
 			$output->writeln('continue ? (not available yet)');
 			$output->writeln('');
 
