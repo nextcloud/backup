@@ -210,14 +210,14 @@ class PointService {
 
 		// maintenance mode on
 		$maintenance = $this->configService->getSystemValueBool(ConfigService::MAINTENANCE);
-		$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, true);
+		$this->configService->maintenanceMode(true);
 
 		try {
 			$this->chunkService->createChunks($point);
 			$this->backupSql($point);
 		} catch (Throwable $t) {
 			if (!$maintenance) {
-				$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, false);
+				$this->configService->maintenanceMode(false);
 			}
 			throw $t;
 		}
@@ -229,7 +229,7 @@ class PointService {
 
 		// maintenance mode off
 		if (!$maintenance) {
-			$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, false);
+			$this->configService->maintenanceMode(false);
 		}
 
 		$this->saveMetadata($point);

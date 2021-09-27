@@ -173,6 +173,13 @@ class ConfigService {
 
 
 	/**
+	 * @param bool $maintenance
+	 */
+	public function maintenanceMode(bool $maintenance = false): void {
+		//$this->setSystemValueBool(self::MAINTENANCE, $maintenance);
+	}
+
+	/**
 	 * @param NC23Request $request
 	 */
 	public function configureRequest(NC23Request $request): void {

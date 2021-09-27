@@ -40,6 +40,7 @@ use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\ChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoreChunkException;
+use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlImportException;
 use OCA\Backup\Model\ChangedFile;
@@ -51,6 +52,7 @@ use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Service\RestoreService;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -83,6 +85,9 @@ class PointRestore extends Base {
 	/** @var FilesService */
 	private $filesService;
 
+	/** @var RestoreService */
+	private $restoreService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -103,6 +108,7 @@ class PointRestore extends Base {
 	 * @param PointService $pointService
 	 * @param ArchiveService $archiveService
 	 * @param FilesService $filesService
+	 * @param RestoreService $restoreService
 	 * @param ConfigService $configService
 	 * @param OutputService $outputService
 	 */
@@ -110,6 +116,7 @@ class PointRestore extends Base {
 		PointService $pointService,
 		ArchiveService $archiveService,
 		FilesService $filesService,
+		RestoreService $restoreService,
 		ConfigService $configService,
 		OutputService $outputService
 	) {
@@ -118,6 +125,7 @@ class PointRestore extends Base {
 		$this->pointService = $pointService;
 		$this->archiveService = $archiveService;
 		$this->filesService = $filesService;
+		$this->restoreService = $restoreService;
 		$this->configService = $configService;
 		$this->outputService = $outputService;
 	}
@@ -148,6 +156,7 @@ class PointRestore extends Base {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotFoundException
+	 * @throws RestoringDataNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->output = $output;
@@ -211,9 +220,9 @@ class PointRestore extends Base {
 			return 0;
 		}
 
-		$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, true);
+		$this->configService->maintenanceMode(true);
 		$this->restorePointComplete($point);
-		$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, false);
+		$this->configService->maintenanceMode(false);
 
 		return 0;
 	}
@@ -255,7 +264,7 @@ class PointRestore extends Base {
 				try {
 					$this->archiveService->restoreChunk($point, $chunk, $root);
 					$this->output->writeln('<info>ok</info>');
-					$this->configService->setAppValue(ConfigService::LAST_FULL_RP, '');
+					$this->restoreService->finalizeFullRestore();
 				} catch (
 				ArchiveCreateException
 				| ArchiveNotFoundException
@@ -352,7 +361,7 @@ class PointRestore extends Base {
 	 * @throws NotPermittedException
 	 * @throws ChunkNotFoundException
 	 * @throws ArchiveFileNotFoundException
-	 * @throws \OCA\Backup\Exceptions\RestoringDataNotFoundException
+	 * @throws RestoringDataNotFoundException
 	 */
 	private function restoreUniqueFile(
 		RestoringPoint $point,

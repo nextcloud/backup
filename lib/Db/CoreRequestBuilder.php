@@ -49,6 +49,8 @@ class CoreRequestBuilder {
 	public const TABLE_RESTORING_POINT = 'backup_point';
 	public const TABLE_REMOTE = 'backup_remote';
 
+	public const TABLE_AUTHTOKEN = 'authtoken';
+
 
 	/** @var array */
 	public static $tables = [
@@ -153,10 +155,20 @@ class CoreRequestBuilder {
 	/**
 	 *
 	 */
-	public function uninstallFromJobs() {
+	public function uninstallFromJobs(): void {
 		$qb = $this->getQueryBuilder();
 //		$qb->delete('jobs');
 //		$qb->where($this->exprLimitToDBField($qb, 'class', 'OCA\Backup\', true, true));
 //		$qb->execute();
 	}
+
+
+	/**
+	 * @param string $table
+	 */
+	public function emptyTable(string $table): void {
+		$qb = $this->getQueryBuilder();
+		$qb->delete($table);
+	}
+
 }
