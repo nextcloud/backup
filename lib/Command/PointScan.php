@@ -34,7 +34,9 @@ namespace OCA\Backup\Command;
 
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
+use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ArchiveService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
@@ -53,6 +55,9 @@ class PointScan extends Base {
 
 	use TStringTools;
 
+
+	/** @var PointRequest */
+	private $pointRequest;
 
 	/** @var PointService */
 	private $pointService;
@@ -74,15 +79,18 @@ class PointScan extends Base {
 	/**
 	 * PointScan constructor.
 	 *
+	 * @param PointRequest $pointRequest
 	 * @param PointService $pointService
 	 * @param ArchiveService $archiveService
 	 */
 	public function __construct(
+		PointRequest $pointRequest,
 		PointService $pointService,
 		ArchiveService $archiveService
 	) {
 		parent::__construct();
 
+		$this->pointRequest = $pointRequest;
 		$this->archiveService = $archiveService;
 		$this->pointService = $pointService;
 	}
@@ -99,7 +107,7 @@ class PointScan extends Base {
 			 ->addArgument(
 				 'pointId', InputArgument::REQUIRED, 'Id of the restoring point'
 			 )
-			 ->addArgument('folder', InputArgument::REQUIRED, 'Folder to scan');
+			 ->addArgument('folder', InputArgument::OPTIONAL, 'Folder to scan');
 	}
 
 
@@ -121,7 +129,18 @@ class PointScan extends Base {
 		} catch (RestoringPointNotFoundException $e) {
 		}
 
-		// TODO: scan $folder to add $pointId in DB
+//		$scan = $this->pointService->scanPoint($pointId);
+
+		$point = new RestoringPoint();
+		$point->setId($pointId);
+//			$this->scanBaseFolder($point);
+
+
+		$point = $this->pointService->generatePointFromBackupFS($pointId);
+		// TODO: display info about the RP and ask for a confirmation before saving into database
+
+//		echo json_encode($point) . "\n";
+		$this->pointRequest->save($point);
 
 		return 0;
 	}

@@ -153,20 +153,5 @@ class PointRequest extends PointRequestBuilder {
 		return $this->getItemsFromRequest($qb);
 	}
 
-
-	/**
-	 * @return RestoringPoint
-	 * @throws RestoringPointNotFoundException
-	 */
-	public function getLastFullRP(): RestoringPoint {
-		$qb = $this->getPointSelectSql();
-		$qb->limitToInstance('');
-		$qb->limitToParent('');
-		$qb->chunk(0, 1);
-		$qb->orderBy('date', 'desc');
-
-		return $this->getItemFromRequest($qb);
-	}
-
 }
 

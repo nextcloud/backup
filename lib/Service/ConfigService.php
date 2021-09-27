@@ -44,12 +44,15 @@ class ConfigService {
 	use TArrayTools;
 
 
+	const MAINTENANCE = 'maintenance';
 	const SELF_SIGNED_CERT = 'self_signed_cert';
+	const LAST_FULL_RP = 'last_full_rp';
 
 
 	/** @var array */
 	public $defaults = [
-		self::SELF_SIGNED_CERT => '0'
+		self::SELF_SIGNED_CERT => '0',
+		self::LAST_FULL_RP => ''
 	];
 
 	/** @var IConfig */
@@ -126,12 +129,46 @@ class ConfigService {
 
 
 	/**
-	 * @param $key
+	 * @param string $key
 	 *
 	 * @return string
 	 */
-	public function getSystemValue($key): string {
-		return $this->config->getSystemValue($key, '');
+	public function getSystemValue(string $key): string {
+		return $this->config->getSystemValue($key);
+	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return int
+	 */
+	public function getSystemValueInt(string $key): int {
+		return $this->config->getSystemValueInt($key);
+	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return bool
+	 */
+	public function getSystemValueBool(string $key): bool {
+		return $this->config->getSystemValueBool($key);
+	}
+
+	/**
+	 * @param string $key
+	 * @param string $value
+	 */
+	public function setSystemValue(string $key, string $value): void {
+		$this->config->setSystemValue($key, $value);
+	}
+
+	/**
+	 * @param string $key
+	 * @param bool $value
+	 */
+	public function setSystemValueBool(string $key, bool $value): void {
+		$this->config->setSystemValue($key, $value);
 	}
 
 

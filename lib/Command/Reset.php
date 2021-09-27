@@ -34,7 +34,10 @@ namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
 use OCA\Backup\Db\CoreRequestBuilder;
+use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\PointService;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -56,18 +59,27 @@ class Reset extends Base {
 	/** @var PointService */
 	private $pointService;
 
+	/** @var ConfigService */
+	private $configService;
+
 
 	/**
 	 * Reset constructor.
 	 *
 	 * @param CoreRequestBuilder $coreRequestBuilder
 	 * @param PointService $pointService
+	 * @param ConfigService $configService
 	 */
-	public function __construct(CoreRequestBuilder $coreRequestBuilder, PointService $pointService) {
+	public function __construct(
+		CoreRequestBuilder $coreRequestBuilder,
+		PointService $pointService,
+		ConfigService $configService
+	) {
 		parent::__construct();
 
 		$this->coreRequestBuilder = $coreRequestBuilder;
 		$this->pointService = $pointService;
+		$this->configService = $configService;
 	}
 
 
@@ -126,7 +138,12 @@ class Reset extends Base {
 		}
 
 		$this->coreRequestBuilder->cleanDatabase();
-		$this->pointService->destroyBackupFS();
+		try {
+			$this->pointService->destroyBackupFS();
+		} catch (NotFoundException $e) {
+		} catch (NotPermittedException $e) {
+		}
+		$this->configService->setAppValue(ConfigService::LAST_FULL_RP, '');
 		if ($action === 'uninstall') {
 			$this->coreRequestBuilder->uninstall();
 		}

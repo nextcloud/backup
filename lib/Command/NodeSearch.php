@@ -50,11 +50,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- * Class PointSearch
+ * Class NodeSearch
  *
  * @package OCA\Backup\Command
  */
-class PointSearch extends Base {
+class NodeSearch extends Base {
 
 
 	use TArrayTools;
@@ -69,7 +69,7 @@ class PointSearch extends Base {
 
 
 	/**
-	 * PointSearch constructor.
+	 * NodeSearch constructor.
 	 *
 	 * @param PointService $pointService
 	 * @param ArchiveService $chunkService
@@ -88,7 +88,7 @@ class PointSearch extends Base {
 	protected function configure() {
 		parent::configure();
 
-		$this->setName('backup:point:search')
+		$this->setName('backup:node:search')
 			 ->setDescription('Search a specific file in your restoring points')
 			 ->addArgument('search', InputArgument::REQUIRED, 'path/name to search')
 			 ->addOption(

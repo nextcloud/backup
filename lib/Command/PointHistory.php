@@ -32,18 +32,10 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
-use Exception;
 use OC\Core\Command\Base;
-use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCA\Backup\Service\ArchiveService;
 use OCA\Backup\Service\PointService;
-use OCP\Files\NotFoundException;
-use OCP\Files\NotPermittedException;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
@@ -83,11 +75,7 @@ class PointHistory extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:history')
-			 ->setDescription('Get the history of a file')
-			 ->addArgument('data', InputArgument::REQUIRED, 'name of the data pack')
-			 ->addArgument('filename', InputArgument::REQUIRED, 'full path of the file')
-			 ->addOption('since', '', InputOption::VALUE_REQUIRED, 'start at a specific date')
-			 ->addOption('until', '', InputOption::VALUE_REQUIRED, 'end at a specific date');
+			 ->setDescription('Get the history of your restoring point');
 	}
 
 
@@ -96,49 +84,9 @@ class PointHistory extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws RestoringDataNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$dataName = $input->getArgument('data');
-		$filename = $input->getArgument('filename');
-
-		$output = new ConsoleOutput();
-		$output = $output->section();
-		$table = new Table($output);
-		$table->setHeaders(['Date', 'Restoring Point', 'Data', 'Chunk', 'Filesize']);
-		$table->render();
-
-		$since = ($input->getOption('since')) ? (int)strtotime($input->getOption('since')) : 0;
-		$until = ($input->getOption('until')) ? (int)strtotime($input->getOption('until')) : 0;
-		$points = $this->pointService->getRPLocal($since, $until);
-
-		foreach ($points as $point) {
-			try {
-				$this->pointService->initBaseFolder($point);
-			} catch (NotFoundException | NotPermittedException $e) {
-				continue;
-			}
-
-			$data = $this->archiveService->getDataFromRP($point, $dataName);
-
-			foreach ($data->getChunks() as $chunk) {
-				try {
-					$file = $this->archiveService->getArchiveFileFromChunk($point, $chunk, $filename);
-					$table->appendRow(
-						[
-							date('Y-m-d H:i:s', $point->getDate()),
-							$point->getId(),
-							$data->getName(),
-							$chunk->getName(),
-							$file->getFileSize()
-						]
-					);
-				} catch (Exception $e) {
-				}
-			}
-		}
-
-//		$output->writeln('Restoring Point ID: <info>' . $point->getId() . '</info>');
+		$output->writeln('not yet available, use ./occ backup:point:list to get available restoring point');
 
 		return 0;
 	}

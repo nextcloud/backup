@@ -98,10 +98,8 @@ class SqlDumpMySQL implements ISqlDump {
 	 */
 	public function import(array $data, $read): bool {
 		$sql = mysqli_connect($data['dbhost'], $data['dbuser'], $data['dbpassword'], $data['dbname']);
-echo '-- ' . json_encode($data) . "\n";
 		$request = '';
 		while (($line = fgets($read)) !== false) {
-			echo '.';
 			$line = trim($line);
 			if (substr($line, 0, 2) === '--' || $line === '') {
 				continue;

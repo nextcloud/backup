@@ -32,6 +32,8 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Signatory;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
@@ -45,7 +47,7 @@ use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
 use OCA\Backup\Exceptions\ChunkNotFoundException;
-use OCA\Backup\Exceptions\RestoringPointException;
+use OCA\Backup\Exceptions\ParentRestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\Model\RestoringChunk;
@@ -59,6 +61,7 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Util;
+use Throwable;
 
 
 /**
@@ -72,6 +75,7 @@ class PointService {
 	use TNC23Signatory;
 	use TNC23Logger;
 	use TStringTools;
+	use TNC23Deserialize;
 
 
 	const NOBACKUP_FILE = '.nobackup';
@@ -114,7 +118,8 @@ class PointService {
 	 * @param ChangesRequest $changesRequest
 	 * @param RemoteStreamService $remoteStreamService
 	 * @param ArchiveService $chunkService
-	 * @param FilesService $fileService
+	 * @param FilesService $filesService
+	 * @param OutputService $outputService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
@@ -166,6 +171,7 @@ class PointService {
 
 	/**
 	 * @param int $since
+	 * @param int $until
 	 *
 	 * @return RestoringPoint[]
 	 */
@@ -188,26 +194,45 @@ class PointService {
 	 * @param bool $complete
 	 *
 	 * @return RestoringPoint
-	 * @throws NotFoundException
-	 * @throws NotPermittedException
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
 	 * @throws BackupAppCopyException
 	 * @throws BackupScriptNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 * @throws SqlDumpException
-	 * @throws RestoringPointException
+	 * @throws Throwable
 	 */
 	public function create(bool $complete): RestoringPoint {
 		$point = $this->initRestoringPoint($complete);
 		$this->chunkService->copyApp($point);
 		$this->chunkService->generateInternalData($point);
 
-		$this->chunkService->createChunks($point);
+		// maintenance mode on
+		$maintenance = $this->configService->getSystemValueBool(ConfigService::MAINTENANCE);
+		$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, true);
 
-		$this->backupSql($point);
+		try {
+			$this->chunkService->createChunks($point);
+			$this->backupSql($point);
+		} catch (Throwable $t) {
+			if (!$maintenance) {
+				$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, false);
+			}
+			throw $t;
+		}
+
+		if ($complete) {
+			$this->changesRequest->reset();
+			$this->configService->setAppValue(ConfigService::LAST_FULL_RP, $point->getId());
+		}
+
+		// maintenance mode off
+		if (!$maintenance) {
+			$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, false);
+		}
+
 		$this->saveMetadata($point);
-
-		$this->changesRequest->reset();
 		$this->pointRequest->save($point);
 
 		return $point;
@@ -220,6 +245,7 @@ class PointService {
 	 * @return RestoringPoint
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws ParentRestoringPointNotFoundException
 	 */
 	private function initRestoringPoint(bool $complete): RestoringPoint {
 		$this->initBackupFS();
@@ -241,13 +267,12 @@ class PointService {
 	 * @param RestoringPoint $point
 	 * @param bool $complete
 	 *
-	 * @throws RestoringPointNotFoundException
+	 * @throws ParentRestoringPointNotFoundException
 	 */
 	private function addingRestoringData(RestoringPoint $point, bool $complete): void {
 		if ($complete) {
 			$point->addRestoringData(new RestoringData(RestoringData::ROOT_DATA, '', RestoringData::DATA));
 		} else {
-			// TODO: might be interesting to store the ID of the last parent somewhere, in case the parent have been uploaded
 			$this->initParent($point);
 			$this->addIncrementalData($point);
 		}
@@ -266,11 +291,20 @@ class PointService {
 
 
 	/**
-	 * @throws RestoringPointNotFoundException
+	 * @param RestoringPoint $point
+	 *
+	 * @throws ParentRestoringPointNotFoundException
 	 */
 	private function initParent(RestoringPoint $point): void {
-		$parent = $this->pointRequest->getLastFullRP();
-		$point->setParent($parent->getId());
+		$parentId = $this->configService->getAppValue(ConfigService::LAST_FULL_RP);
+
+		if ($parentId === '') {
+			throw new ParentRestoringPointNotFoundException(
+				'cannot create incremental. parent cannot be found'
+			);
+		}
+
+		$point->setParent($parentId);
 	}
 
 
@@ -358,6 +392,41 @@ class PointService {
 
 
 	/**
+	 * @param string $pointId
+	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function generatePointFromBackupFS(string $pointId): RestoringPoint {
+		$tmp = new RestoringPoint();
+		$tmp->setId($pointId);
+		$this->initBaseFolder($tmp);
+
+		$folder = $tmp->getBaseFolder();
+
+		try {
+			$file = $folder->getFile(self::METADATA_FILE);
+		} catch (NotFoundException $e) {
+			throw new RestoringPointNotFoundException('could not find restoring point in appdata');
+		}
+
+		/** @var RestoringPoint $point */
+		try {
+			$point = $this->deserializeJson($file->getContent(), RestoringPoint::class);
+		} catch (InvalidItemException $e) {
+			throw new RestoringPointNotFoundException('invalid metadata');
+		} catch (NotFoundException $e) {
+			throw new RestoringPointNotFoundException('cannot access ' . self::METADATA_FILE);
+		} catch (NotPermittedException $e) {
+			throw new RestoringPointNotFoundException('cannot read ' . self::METADATA_FILE);
+		}
+
+		return $point;
+	}
+
+
+	/**
 	 * @param RestoringPoint $point
 	 *
 	 * @throws NotPermittedException
@@ -387,8 +456,6 @@ class PointService {
 			return;
 		}
 
-		$path = '/';
-
 		if (!class_exists(OC::class)) {
 			return;
 		}
@@ -401,10 +468,10 @@ class PointService {
 			return;
 		}
 
+		$path = '/';
 		try {
 			$folder = $this->appData->getFolder($path);
 		} catch (NotFoundException $e) {
-			$folder = $this->appData->newFolder($path);
 		}
 
 		$temp = $folder->newFile(self::NOBACKUP_FILE);
@@ -446,11 +513,17 @@ class PointService {
 
 		$this->initBackupFS();
 
+//		$folder = $this->appData->getFolder('/');
+//		echo $folder->fileExists($point->getId()) . "\n";
+
 		try {
 			$folder = $this->appData->newFolder('/' . $point->getId());
 		} catch (NotPermittedException $e) {
 			$folder = $this->appData->getFolder('/' . $point->getId());
 		}
+
+//		$folder = $this->appData->getFolder('/');
+//		echo $folder->fileExists($point->getId()) . "\n";
 
 		$point->setBaseFolder($folder);
 	}

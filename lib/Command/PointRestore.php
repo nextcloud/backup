@@ -42,11 +42,13 @@ use OCA\Backup\Exceptions\ChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlImportException;
+use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ArchiveService;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
@@ -78,6 +80,9 @@ class PointRestore extends Base {
 	/** @var ArchiveService */
 	private $archiveService;
 
+	/** @var FilesService */
+	private $filesService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -97,19 +102,22 @@ class PointRestore extends Base {
 	 *
 	 * @param PointService $pointService
 	 * @param ArchiveService $archiveService
+	 * @param FilesService $filesService
 	 * @param ConfigService $configService
 	 * @param OutputService $outputService
 	 */
 	public function __construct(
 		PointService $pointService,
 		ArchiveService $archiveService,
+		FilesService $filesService,
 		ConfigService $configService,
 		OutputService $outputService
 	) {
 		parent::__construct();
 
-		$this->archiveService = $archiveService;
 		$this->pointService = $pointService;
+		$this->archiveService = $archiveService;
+		$this->filesService = $filesService;
 		$this->configService = $configService;
 		$this->outputService = $outputService;
 	}
@@ -181,10 +189,14 @@ class PointRestore extends Base {
 			'<error>WARNING! You are about to initiate the complete restoration of your instance!</error>'
 		);
 
-		$output->writeln(
-			'Your instance will come back to a previous state from '
-			. $this->getDateDiff($point->getDate(), time()) . ' ago.'
-		);
+		try {
+			$output->writeln(
+				'Your instance will come back to a previous state from '
+				. $this->getDateDiff($point->getDate(), time()) . ' ago.'
+			);
+		} catch (\Exception $e) {
+		}
+
 		$output->writeln('');
 		$question = new ConfirmationQuestion(
 			'<comment>Do you really want to continue this operation ?</comment> (y/N) ',
@@ -199,8 +211,10 @@ class PointRestore extends Base {
 			return 0;
 		}
 
-
+		$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, true);
 		$this->restorePointComplete($point);
+		echo 'maintenance false';
+		$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, false);
 
 		return 0;
 	}
@@ -242,6 +256,7 @@ class PointRestore extends Base {
 				try {
 					$this->archiveService->restoreChunk($point, $chunk, $root);
 					$this->output->writeln('<info>ok</info>');
+					$this->configService->setAppValue(ConfigService::LAST_FULL_RP, '');
 				} catch (
 				ArchiveCreateException
 				| ArchiveNotFoundException
@@ -382,6 +397,12 @@ class PointRestore extends Base {
 		try {
 			$this->archiveService->restoreUniqueFile($point, $chunk, $root, $file->getName());
 			$this->output->writeln('<info>ok</info>');
+
+			// include restored file in next incremental backup
+			$changedFile = new ChangedFile($file->getName());
+			$this->filesService->changedFile($changedFile);
+
+			// TODO: files:scan file ?
 		} catch (ArchiveCreateException
 		| ArchiveNotFoundException
 		| NotFoundException

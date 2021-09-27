@@ -33,8 +33,10 @@
 		<command>OCA\Backup\Command\PointList</command>
 		<command>OCA\Backup\Command\PointRestore</command>
 		<command>OCA\Backup\Command\PointScan</command>
-		<command>OCA\Backup\Command\PointSearch</command>
 		<command>OCA\Backup\Command\PointUpload</command>
+
+		<command>OCA\Backup\Command\NodeHistory</command>
+		<command>OCA\Backup\Command\NodeSearch</command>
 
 		<command>OCA\Backup\Command\SetupExport</command>
 		<command>OCA\Backup\Command\SetupImport</command>
