@@ -213,7 +213,6 @@ class PointRestore extends Base {
 
 		$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, true);
 		$this->restorePointComplete($point);
-		echo 'maintenance false';
 		$this->configService->setSystemValueBool(ConfigService::MAINTENANCE, false);
 
 		return 0;

@@ -116,6 +116,7 @@ class RemoteAdd extends Base {
 		}
 
 		$resource = $this->getCurrentResourceFromAddress($output, $address);
+		$this->remoteStreamService->getAppSignatory();
 
 		$knownInstance = null;
 		try {
@@ -164,8 +165,12 @@ class RemoteAdd extends Base {
 				$output->writeln('  - the remote instance with the old identity will loose access to');
 				$output->writeln('    this service,');
 				$output->writeln('  - the remote instance with the new identity will gain access to');
-				$output->writeln('    <options=underscore>all backups previously uploaded</> by the previous instance,');
-				$output->writeln('  - your instance will now <options=underscore>upload your local backups</> to this new');
+				$output->writeln(
+					'    <options=underscore>all backups previously uploaded</> by the previous instance,'
+				);
+				$output->writeln(
+					'  - your instance will now <options=underscore>upload your local backups</> to this new'
+				);
 				$output->writeln('    remote instance,');
 				$output->writeln('  - your instance will not be able to browse any backup on the old');
 				$output->writeln('    remote instance,');

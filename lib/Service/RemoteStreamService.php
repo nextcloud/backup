@@ -86,6 +86,7 @@ class RemoteStreamService extends NC23Signature {
 	 * RemoteStreamService constructor.
 	 *
 	 * @param IURLGenerator $urlGenerator
+	 * @param RemoteRequest $remoteRequest
 	 * @param ConfigService $configService
 	 */
 	public function __construct(

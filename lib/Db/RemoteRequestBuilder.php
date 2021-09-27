@@ -116,12 +116,19 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 
 	/**
 	 * @param CoreQueryBuilder $qb
+	 * @param bool $includeExtraDataOnSerialize
 	 *
 	 * @return RemoteInstance[]
 	 */
-	public function getItemsFromRequest(CoreQueryBuilder $qb): array {
+	public function getItemsFromRequest(
+		CoreQueryBuilder $qb,
+		bool $includeExtraDataOnSerialize = false
+	): array {
 		/** @var RemoteInstance[] $result */
-		return $qb->asItems(RemoteInstance::class);
+		return $qb->asItems(
+			RemoteInstance::class,
+			['includeExtraDataOnSerialize' => $includeExtraDataOnSerialize]
+		);
 	}
 
 }

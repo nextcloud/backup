@@ -32,9 +32,13 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use Exception;
 use OC\Core\Command\Base;
+use OCA\Backup\Db\RemoteRequest;
+use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Service\ConfigService;
-use OCA\Backup\Service\RemoteService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -47,8 +51,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SetupImport extends Base {
 
 
-	/** @var RemoteService */
-	private $remoteService;
+	use TArrayTools;
+	use TNC23Deserialize;
+
+
+	/** @var RemoteRequest */
+	private $remoteRequest;
 
 	/** @var ConfigService */
 	private $configService;
@@ -57,14 +65,14 @@ class SetupImport extends Base {
 	/**
 	 * SetupImport constructor.
 	 *
-	 * @param RemoteService $remoteService
+	 * @param RemoteRequest $remoteRequest
 	 * @param ConfigService $configService
 	 */
-	public function __construct(RemoteService $remoteService, ConfigService $configService) {
+	public function __construct(RemoteRequest $remoteRequest, ConfigService $configService) {
 		parent::__construct();
 
 		$this->configService = $configService;
-		$this->remoteService = $remoteService;
+		$this->remoteRequest = $remoteRequest;
 	}
 
 
@@ -82,6 +90,7 @@ class SetupImport extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
+	 * @throws Exception
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$json = '';
@@ -90,8 +99,19 @@ class SetupImport extends Base {
 		}
 
 		$setup = json_decode($json, true);
+		if (!is_array($setup)) {
+			throw new Exception('setup cannot be imported');
+		}
 
-		echo json_encode($setup);
+		$this->configService->setAppValue('key_pairs', $this->get('signatory', $setup));
+
+
+		/** @var RemoteInstance[] $remotes */
+		$remotes = $this->deserializeArray($this->getArray('remote', $setup), RemoteInstance::class);
+
+		foreach ($remotes as $remote) {
+			$this->remoteRequest->insertOrUpdate($remote, true);
+		}
 
 		return 0;
 	}

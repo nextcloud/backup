@@ -49,12 +49,15 @@ class RemoteRequest extends RemoteRequestBuilder {
 	 * create a new Person in the database.
 	 *
 	 * @param RemoteInstance $remote
+	 * @param bool $force
 	 *
 	 * @return int
 	 * @throws RemoteInstanceUidException
 	 */
-	public function save(RemoteInstance $remote): int {
-		$remote->mustBeIdentityAuthed();
+	public function save(RemoteInstance $remote, bool $force = false): int {
+		if (!$force) {
+			$remote->mustBeIdentityAuthed();
+		}
 		$qb = $this->getRemoteInsertSql();
 		$qb->setValue('uid', $qb->createNamedParameter($remote->getUid(true)))
 		   ->setValue('instance', $qb->createNamedParameter($remote->getInstance()))
@@ -68,11 +71,15 @@ class RemoteRequest extends RemoteRequestBuilder {
 
 	/**
 	 * @param RemoteInstance $remote
+	 * @param bool $force
 	 *
 	 * @throws RemoteInstanceUidException
 	 */
-	public function update(RemoteInstance $remote) {
-		$remote->mustBeIdentityAuthed();
+	public function update(RemoteInstance $remote, bool $force = false) {
+		if (!$force) {
+			$remote->mustBeIdentityAuthed();
+		}
+
 		$qb = $this->getRemoteUpdateSql();
 		$qb->set('uid', $qb->createNamedParameter($remote->getUid(true)))
 		   ->set('href', $qb->createNamedParameter($remote->getId()))
@@ -88,10 +95,10 @@ class RemoteRequest extends RemoteRequestBuilder {
 	/**
 	 * @return RemoteInstance[]
 	 */
-	public function getAll(): array {
+	public function getAll(bool $includeExtraDataOnSerialize = false): array {
 		$qb = $this->getRemoteSelectSql();
 
-		return $this->getItemsFromRequest($qb);
+		return $this->getItemsFromRequest($qb, $includeExtraDataOnSerialize);
 	}
 
 	/**
@@ -131,15 +138,16 @@ class RemoteRequest extends RemoteRequestBuilder {
 
 	/**
 	 * @param RemoteInstance $remoteInstance
+	 * @param bool $force
 	 *
 	 * @throws RemoteInstanceUidException
 	 */
-	public function insertOrUpdate(RemoteInstance $remoteInstance): void {
+	public function insertOrUpdate(RemoteInstance $remoteInstance, bool $force = false): void {
 		try {
 			$this->getFromHref($remoteInstance->getId());
-			$this->update($remoteInstance);
+			$this->update($remoteInstance, $force);
 		} catch (RemoteInstanceNotFoundException $e) {
-			$this->save($remoteInstance);
+			$this->save($remoteInstance, $force);
 		}
 	}
 

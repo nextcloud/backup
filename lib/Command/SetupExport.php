@@ -86,7 +86,8 @@ class SetupExport extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$setup = [
 			'signatory' => $this->configService->getAppValue('key_pairs'),
-			'remote' => $this->remoteService->getAll()
+			'remote' => $this->remoteService->getAll(true),
+			'encryption' => ''
 		];
 
 		$output->writeln(json_encode($setup, JSON_PRETTY_PRINT));

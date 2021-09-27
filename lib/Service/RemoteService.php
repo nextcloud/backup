@@ -101,10 +101,12 @@ class RemoteService {
 	}
 
 	/**
+	 * @param bool $includeExtraDataOnSerialize
+	 *
 	 * @return array
 	 */
-	public function getAll(): array {
-		return $this->remoteRequest->getAll();
+	public function getAll(bool $includeExtraDataOnSerialize = false): array {
+		return $this->remoteRequest->getAll($includeExtraDataOnSerialize);
 	}
 
 
@@ -226,7 +228,7 @@ class RemoteService {
 	}
 
 
-	
+
 
 	/**
 	 * @param string $instance

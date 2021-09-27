@@ -33,6 +33,7 @@ namespace OCA\Backup\Model;
 
 
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
+use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Signatory;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
@@ -45,7 +46,7 @@ use OCA\Backup\Exceptions\RemoteInstanceUidException;
  *
  * @package OCA\Backup\Model
  */
-class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSerializable {
+class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializable, JsonSerializable {
 
 
 	use TArrayTools;
@@ -109,6 +110,9 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 
 	/** @var bool */
 	private $identityAuthed = false;
+
+	/** @var bool */
+	private $includeExtraDataOnSerialize = false;
 
 
 	/**
@@ -428,10 +432,25 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 	/**
 	 * @param array $data
 	 *
+	 * @return IDeserializable
+	 */
+	public function import(array $data): IDeserializable {
+		$this->importSignatory($data);
+		$this->setInstance($this->get('instance', $data));
+		$this->setOrigData($data);
+		$this->setExchange($this->getInt('exchange', $data));
+
+		return $this;
+	}
+
+
+	/**
+	 * @param array $data
+	 *
 	 * @return NC23Signatory
 	 */
-	public function import(array $data): NC23Signatory {
-		parent::import($data);
+	public function importSignatory(array $data): NC23Signatory {
+		parent::importSignatory($data);
 
 		$this->setRoot($this->get(self::ROOT, $data))
 			 ->setRPList($this->get(self::RP_LIST, $data))
@@ -475,6 +494,15 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 				]
 		];
 
+		if ($this->includeExtraDataOnSerialize) {
+			$data = array_merge(
+				$data, [
+				'instance' => $this->getInstance(),
+				'exchange' => $this->getExchange()
+			]
+			);
+		}
+
 		if ($this->getAuthSigned() !== '') {
 			$data['auth-signed'] = $this->getAlgorithm() . ':' . $this->getAuthSigned();
 		}
@@ -495,11 +523,15 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, JsonSeriali
 		}
 
 		$this->setDbId($this->getInt('id', $data));
-		$this->import($this->getArray('item', $data));
+		$this->importSignatory($this->getArray('item', $data));
 		$this->setExchange($this->getInt('exchange', $data));
 		$this->setOrigData($this->getArray('item', $data));
 		$this->setInstance($this->get('instance', $data));
 		$this->setId($this->get('href', $data));
+
+		if ($this->getBool('_params.includeExtraDataOnSerialize', $data)) {
+			$this->includeExtraDataOnSerialize = true;
+		}
 
 		return $this;
 	}

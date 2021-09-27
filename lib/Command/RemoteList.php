@@ -59,6 +59,12 @@ class RemoteList extends Base {
 	private $remoteStreamService;
 
 
+	/**
+	 * RemoteList constructor.
+	 *
+	 * @param RemoteRequest $remoteRequest
+	 * @param RemoteStreamService $remoteStreamService
+	 */
 	public function __construct(RemoteRequest $remoteRequest, RemoteStreamService $remoteStreamService) {
 		$this->remoteRequest = $remoteRequest;
 		$this->remoteStreamService = $remoteStreamService;
@@ -94,10 +100,14 @@ class RemoteList extends Base {
 		foreach ($this->remoteRequest->getAll() as $remoteInstance) {
 
 			$color = 'error';
+			$currentUid = 'not available';
+
 			/** @var RemoteInstance $current */
 			try {
+				echo $remoteInstance->getId() . "\n";
 				$current = $this->remoteStreamService->retrieveSignatory($remoteInstance->getId());
-				if ($remoteInstance->getUid(true) === $current->getUid(true)) {
+				$currentUid = $current->getUid(true);
+				if ($remoteInstance->getUid(true) === $currentUid) {
 					$color = 'info';
 				}
 			} catch (SignatoryException | SignatureException $e) {
@@ -107,7 +117,7 @@ class RemoteList extends Base {
 				[
 					$remoteInstance->getInstance(),
 					$remoteInstance->getUid(true),
-					'<' . $color . '>' . $current->getUid(true) . '</' . $color . '>',
+					'<' . $color . '>' . $currentUid . '</' . $color . '>',
 					$remoteInstance->getId(),
 					($remoteInstance->isIncoming() ? '<info>yes</info>' : '<comment>no</comment'),
 					($remoteInstance->isOutgoing() ? '<info>yes</info>' : '<comment>no</comment')
