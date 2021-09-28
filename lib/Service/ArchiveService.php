@@ -367,24 +367,24 @@ class ArchiveService {
 	 * @param RestoringPoint $point
 	 * @param RestoringData $data
 	 * @param string $filename
-	 * @param string $content
+	 * @param string $path
 	 *
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
 	 */
-	public function createContentChunk(
+	public function createSingleFileChunk(
 		RestoringPoint $point,
 		RestoringData $data,
 		string $filename,
-		string $content
+		string $path
 	): void {
 		$chunk = new RestoringChunk();
 		$chunk->setCount(1);
 		$chunk->addFile(new ArchiveFile($filename));
-		$chunk->setSize(strlen($content));
+		$chunk->setSize(filesize($path));
 		$data->addChunk($chunk);
 
-		$this->createContentZip($point, $chunk, $filename, $content);
+		$this->createSingleFileZip($point, $chunk, $filename, $path);
 
 		$this->updateChecksum($point, $chunk);
 //		$this->encryptArchive($backup, $archive, true);
@@ -396,18 +396,18 @@ class ArchiveService {
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 * @param string $filename
-	 * @param string $content
+	 * @param string $path
 	 *
 	 * @throws ArchiveCreateException
 	 */
-	private function createContentZip(
+	private function createSingleFileZip(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
 		string $filename,
-		string $content
+		string $path
 	): void {
 		$zip = $this->generateZip($point, $chunk->getName('zip'));
-		$read = fopen('data://text/plain,' . $content, 'r');
+		$read = fopen($path, 'r');
 		$zip->addFileFromStream($read, $filename);
 		$zip->finalize();
 	}

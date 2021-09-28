@@ -16,7 +16,7 @@
   },
   "require": {
     "artificial-owl/my-small-php-tools": "~23",
-    "ifsnop/mysqldump-php": "2.0.0",
+    "ifsnop/mysqldump-php": "2.9",
     "pimple/pimple": "~3.0"
   }
 }

@@ -78,15 +78,17 @@ class SqlDumpMySQL implements ISqlDump {
 		];
 
 		try {
-			$dump = new Mysqldump($connect, $data['dbuser'], $data['dbpassword'], $settings);
-			ob_start();
-			$dump->start();
+			$tmp = tmpfile();
+			$tmpPath = stream_get_meta_data($tmp)['uri'];
+			fclose($tmp);
 
-			return ob_get_clean();
+			$dump = new Mysqldump($connect, $data['dbuser'], $data['dbpassword'], $settings);
+			$dump->start($tmpPath);
 		} catch (Exception $e) {
 			throw new SqlDumpException($e->getMessage());
 		}
 
+		return $tmpPath;
 	}
 
 

@@ -356,23 +356,34 @@ class PointService {
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
 	 * @throws SqlDumpException
+	 * @throws Throwable
 	 */
 	private function backupSql(RestoringPoint $point) {
-		$content = $this->generateSqlDump();
+		$path = '';
+		try {
+			$path = $this->generateSqlDump();
+			$data = new RestoringData(RestoringData::SQL_DUMP, '', 'sqldump');
+			$this->chunkService->createSingleFileChunk(
+				$point,
+				$data,
+				self::SQL_DUMP_FILE,
+				$path
+			);
+		} catch (Throwable $t) {
+			if ($path !== '') {
+				unlink($path);
+			}
 
-		$data = new RestoringData(RestoringData::SQL_DUMP, '', 'sqldump');
-		$this->chunkService->createContentChunk(
-			$point,
-			$data,
-			self::SQL_DUMP_FILE,
-			$content
-		);
+			throw $t;
+		}
 
 		$point->addRestoringData($data);
 	}
 
 
 	/**
+	 * return temp file name/path
+	 *
 	 * @return string
 	 * @throws SqlDumpException
 	 */
