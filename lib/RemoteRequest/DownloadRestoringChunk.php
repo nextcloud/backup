@@ -47,11 +47,11 @@ use OCP\Files\NotPermittedException;
 
 
 /**
- * Class UploadRestoringChunk
+ * Class DownloadRestoringChunk
  *
  * @package OCA\Backup\RemoteRequest
  */
-class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
+class DownloadRestoringChunk extends CoreRequest implements IRemoteRequest {
 
 
 	use TNC23Deserialize;
@@ -66,7 +66,7 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 
 
 	/**
-	 * UploadRestoringChunk constructor.
+	 * DownloadRestoringChunk constructor.
 	 *
 	 * @param PointService $pointService
 	 * @param ArchiveService $chunkService
@@ -92,17 +92,16 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 			$signatory = $signedRequest->getSignatory();
 			$pointId = $signedRequest->getIncomingRequest()->getParam('pointId');
 
+			\OC::$server->getLogger()->log(3, '### A');
 			$point = $this->pointService->getRestoringPoint($pointId, $signatory->getInstance());
 			/** @var RestoringChunk $chunk */
 			$chunk = $this->deserializeJson($signedRequest->getBody(), RestoringChunk::class);
 
 			$this->pointService->initBaseFolder($point);
-			$this->chunkService->saveChunkContent($point, $chunk);
+			$this->chunkService->getChunkContent($point, $chunk);
 
-			// TODO: make it lighter, update Health at the end of the process, on request
-			$health = $this->pointService->generateHealth($point, true);
+			$this->setOutcome($this->serialize($chunk));
 
-			$this->setOutcome($this->serialize($health));
 		} catch (RestoringPointNotFoundException
 		| InvalidItemException
 		| NotFoundException

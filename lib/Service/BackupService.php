@@ -46,7 +46,7 @@ use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupFolderException;
 use OCA\Backup\Exceptions\BackupNotFoundException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException as BackupScriptNotFoundExceptionAlias;
-use OCA\Backup\Exceptions\ChunkNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Model\Backup;
 use OCA\Backup\Model\BackupChunk;
 use OCA\Backup\Model\RestoringData;
@@ -343,7 +343,7 @@ class BackupService {
 	 * @param string $name
 	 *
 	 * @return BackupChunk
-	 * @throws ChunkNotFoundException
+	 * @throws RestoringChunkNotFoundException
 	 */
 	public function getChunk(Backup $backup, string $name): BackupChunk {
 		foreach ($backup->getChunks() as $chunk) {
@@ -352,7 +352,7 @@ class BackupService {
 			}
 		}
 
-		throw new ChunkNotFoundException();
+		throw new RestoringChunkNotFoundException();
 	}
 
 

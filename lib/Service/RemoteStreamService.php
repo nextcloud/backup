@@ -254,9 +254,11 @@ class RemoteStreamService extends NC23Signature {
 		string $item,
 		int $type = Request::TYPE_GET,
 		?JsonSerializable $object = null,
-		array $params = []
+		array $params = [],
+		bool $longTimeout = false
 	): array {
-		$signedRequest = $this->requestRemoteInstance($instance, $item, $type, $object, $params);
+		$signedRequest =
+			$this->requestRemoteInstance($instance, $item, $type, $object, $params, $longTimeout);
 
 		if (!$signedRequest->getOutgoingRequest()->hasResult()) {
 			throw new RemoteInstanceException();
@@ -294,10 +296,11 @@ class RemoteStreamService extends NC23Signature {
 		string $item,
 		int $type = Request::TYPE_GET,
 		?JsonSerializable $object = null,
-		array $params = []
+		array $params = [],
+		bool $longTimeout = false
 	): NC23SignedRequest {
 		$request = new NC23Request('', $type);
-		$this->configService->configureRequest($request);
+		$this->configService->configureRequest($request, $longTimeout);
 		$link = $this->getRemoteInstanceEntry($instance, $item, $params);
 		$request->basedOnUrl($link);
 

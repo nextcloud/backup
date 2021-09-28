@@ -38,7 +38,7 @@ use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
-use OCA\Backup\Exceptions\ChunkNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
@@ -151,7 +151,7 @@ class PointRestore extends Base {
 	 * @return int
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
-	 * @throws ChunkNotFoundException
+	 * @throws RestoringChunkNotFoundException
 	 * @throws ArchiveFileNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
@@ -359,7 +359,7 @@ class PointRestore extends Base {
 	 * @throws ArchiveNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws ChunkNotFoundException
+	 * @throws RestoringChunkNotFoundException
 	 * @throws ArchiveFileNotFoundException
 	 * @throws RestoringDataNotFoundException
 	 */

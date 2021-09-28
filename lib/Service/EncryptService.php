@@ -107,7 +107,7 @@ class EncryptService {
 		return $plain;
 	}
 
-	
+
 //
 //	/**
 //	 * @param resource $in

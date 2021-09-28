@@ -41,7 +41,7 @@ use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
-use OCA\Backup\Exceptions\ChunkNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
@@ -754,7 +754,7 @@ class ArchiveService {
 	 * @param string $chunk
 	 *
 	 * @return RestoringData
-	 * @throws ChunkNotFoundException
+	 * @throws RestoringChunkNotFoundException
 	 */
 	public function getDataWithChunk(RestoringPoint $point, string $chunk): RestoringData {
 		foreach ($point->getRestoringData() as $restoringData) {
@@ -762,11 +762,11 @@ class ArchiveService {
 				$this->getChunkFromRP($point, $chunk, $restoringData->getName());
 
 				return $restoringData;
-			} catch (ChunkNotFoundException $e) {
+			} catch (RestoringChunkNotFoundException $e) {
 			}
 		}
 
-		throw new ChunkNotFoundException();
+		throw new RestoringChunkNotFoundException();
 	}
 
 
@@ -776,7 +776,7 @@ class ArchiveService {
 	 * @param string $dataName
 	 *
 	 * @return RestoringChunk
-	 * @throws ChunkNotFoundException
+	 * @throws RestoringChunkNotFoundException
 	 */
 	public function getChunkFromRP(RestoringPoint $point, string $chunk, string $dataName = ''
 	): RestoringChunk {
@@ -792,7 +792,7 @@ class ArchiveService {
 			}
 		}
 
-		throw new ChunkNotFoundException();
+		throw new RestoringChunkNotFoundException();
 	}
 
 

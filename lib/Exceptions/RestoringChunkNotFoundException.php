@@ -32,7 +32,7 @@ namespace OCA\Backup\Exceptions;
 
 
 
-class ChunkNotFoundException extends \Exception {
+class RestoringChunkNotFoundException extends \Exception {
 
 }
 

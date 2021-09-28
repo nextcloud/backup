@@ -46,7 +46,7 @@ use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
-use OCA\Backup\Exceptions\ChunkNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\ParentRestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlDumpException;
@@ -56,6 +56,7 @@ use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
+use OCP\DB\Exception;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -236,6 +237,23 @@ class PointService {
 		$this->pointRequest->save($point);
 
 		return $point;
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws Exception
+	 */
+	public function delete(RestoringPoint $point): void {
+		$this->pointRequest->deletePoint($point->getId());
+
+		$this->initBackupFS();
+		$this->initBaseFolder($point);
+
+		$point->getBaseFolder()->delete();
 	}
 
 
@@ -623,7 +641,7 @@ class PointService {
 	 * @return RestoringChunk
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws ChunkNotFoundException
+	 * @throws RestoringChunkNotFoundException
 	 */
 	public function getChunkContent(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
 		$this->initBaseFolder($point);
@@ -641,7 +659,7 @@ class PointService {
 	 * @param string $chunk
 	 *
 	 * @return ISimpleFile
-	 * @throws ChunkNotFoundException
+	 * @throws RestoringChunkNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */

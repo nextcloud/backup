@@ -95,7 +95,7 @@ class PointRequestBuilder extends CoreRequestBuilder {
 	 *
 	 * @return IQueryBuilder
 	 */
-	protected function getPointDeleteSql(): IQueryBuilder {
+	protected function getPointDeleteSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();
 		$qb->delete(self::TABLE_RESTORING_POINT);
 

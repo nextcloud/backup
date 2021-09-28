@@ -27,6 +27,7 @@
 		<command>OCA\Backup\Command\RemoteRemove</command>
 
 		<command>OCA\Backup\Command\PointCreate</command>
+		<command>OCA\Backup\Command\PointDelete</command>
 		<command>OCA\Backup\Command\PointDetails</command>
 		<command>OCA\Backup\Command\PointDownload</command>
 		<command>OCA\Backup\Command\PointHistory</command>

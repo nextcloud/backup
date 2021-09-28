@@ -42,6 +42,7 @@ use OCA\Backup\Db\RemoteRequest;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringChunk;
@@ -218,7 +219,8 @@ class RemoteService {
 			[
 				'pointId' => $point->getId(),
 				'chunkId' => $chunk->getName()
-			]
+			],
+			true
 		);
 
 //		echo '****** ' . json_Encode($result);
@@ -226,6 +228,40 @@ class RemoteService {
 		return true;
 	}
 
+
+	/**
+	 * @param string $instance
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 *
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
+	 * @throws RestoringChunkNotFoundException
+	 * @throws RemoteInstanceException
+	 */
+	public function downloadChunk(
+		string $instance,
+		RestoringPoint $point,
+		RestoringChunk $chunk
+	): RestoringChunk {
+		$result = $this->remoteStreamService->resultRequestRemoteInstance(
+			$instance,
+			RemoteInstance::RP_DOWNLOAD,
+			Request::TYPE_GET,
+			$chunk,
+			['pointId' => $point->getId()],
+			true
+		);
+
+		try {
+			/** @var RestoringChunk $downloaded */
+			$downloaded = $this->deserialize($result, RestoringChunk::class);
+		} catch (InvalidItemException $e) {
+			throw new RestoringChunkNotFoundException();
+		}
+
+		return $downloaded;
+	}
 
 	/**
 	 * @param string $instance

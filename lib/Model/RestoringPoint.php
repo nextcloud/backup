@@ -324,6 +324,15 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		return $this->health;
 	}
 
+	/**
+	 * @return $this
+	 */
+	public function unsetHealth(): self {
+		$this->health = null;
+
+		return $this;
+	}
+
 
 	/**
 	 * @param string $signature

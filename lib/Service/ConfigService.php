@@ -183,13 +183,15 @@ class ConfigService {
 	/**
 	 * @param NC23Request $request
 	 */
-	public function configureRequest(NC23Request $request): void {
+	public function configureRequest(NC23Request $request, bool $longTimeout = false): void {
 		$request->setVerifyPeer($this->getAppValue(self::SELF_SIGNED_CERT) !== '1');
 		$request->setProtocols(['https', 'http']);
 		$request->setHttpErrorsAllowed(true);
 		$request->setLocalAddressAllowed(true);
 		$request->setFollowLocation(true);
-		$request->setTimeout(5);
+		if ($longTimeout) {
+			$request->setTimeout(1800);
+		}
 	}
 
 

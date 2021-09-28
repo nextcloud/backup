@@ -37,7 +37,7 @@ use Exception;
 use OCA\Backup\Exceptions\ArchiveDeleteException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupFolderException;
-use OCA\Backup\Exceptions\ChunkNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Model\ArchiveFile;
 use OCA\Backup\Model\Backup;
@@ -398,7 +398,7 @@ class CliService {
 			} else {
 				$this->output->writeln(' <!> File <comment>' . $config . '</comment> not found');
 			}
-		} catch (ChunkNotFoundException | MalformedArrayException $e) {
+		} catch (RestoringChunkNotFoundException | MalformedArrayException $e) {
 		}
 
 		if (empty($data)) {
@@ -465,7 +465,7 @@ class CliService {
 				$dataChunk = $this->backupService->getChunk($backup, 'data');
 				$CONFIG['datadirectory'] =
 					$this->backupService->getExtractRoot($backup, $dataChunk);
-			} catch (ChunkNotFoundException $e) {
+			} catch (RestoringChunkNotFoundException $e) {
 			}
 		}
 

@@ -32,8 +32,11 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use OC\Core\Command\Base;
+use OCA\Backup\Db\PointRequest;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
@@ -41,8 +44,13 @@ use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringChunkHealth;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
+use OCA\Backup\Service\RemoteStreamService;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -56,24 +64,51 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PointDownload extends Base {
 
 
+	/** @var PointRequest */
+	private $pointRequest;
+
 	/** @var PointService */
 	private $pointService;
 
+	/** @var ArchiveService */
+	private $chunkService;
+
+	/** @var RemoteStreamService */
+	private $remoteStreamService;
+
 	/** @var RemoteService */
 	private $remoteService;
+
+	/** @var OutputService */
+	private $outputService;
 
 
 	/**
 	 * PointDownload constructor.
 	 *
+	 * @param PointRequest $pointRequest
 	 * @param PointService $pointService
+	 * @param ArchiveService $chunkService
+	 * @param RemoteStreamService $remoteStreamService
 	 * @param RemoteService $remoteService
+	 * @param OutputService $outputService
 	 */
-	public function __construct(PointService $pointService, RemoteService $remoteService) {
+	public function __construct(
+		PointRequest $pointRequest,
+		PointService $pointService,
+		ArchiveService $chunkService,
+		RemoteStreamService $remoteStreamService,
+		RemoteService $remoteService,
+		OutputService $outputService
+	) {
 		parent::__construct();
 
+		$this->pointRequest = $pointRequest;
 		$this->pointService = $pointService;
+		$this->chunkService = $chunkService;
+		$this->remoteStreamService = $remoteStreamService;
 		$this->remoteService = $remoteService;
+		$this->outputService = $outputService;
 	}
 
 
@@ -83,7 +118,8 @@ class PointDownload extends Base {
 	protected function configure() {
 		$this->setName('backup:point:download')
 			 ->setDescription('Download restoring point from remote instance')
-			 ->addArgument('point', InputArgument::REQUIRED, 'Id of the restoring point');
+			 ->addArgument('instance', InputArgument::REQUIRED, 'address of the remote instance')
+			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point');
 	}
 
 
@@ -91,17 +127,43 @@ class PointDownload extends Base {
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 *
+	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
 	 * @throws RestoringPointNotFoundException
+	 * @throws SignatoryException
+	 * @throws SignatureException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$pointId = $input->getArgument('point');
+		$instance = $input->getArgument('instance');
+		$pointId = $input->getArgument('pointId');
 
-		// TODO: check local restoring point status
-		//$point = $this->pointService->getRestoringPoint($pointId);
+		try {
+			$point = $this->pointService->getRestoringPoint($pointId);
+			$output->writeln('> found a local restoring point');
+		} catch (RestoringPointNotFoundException $e) {
+			$output->writeln('> downloading metadata');
+
+			$point = $this->remoteService->getRestoringPoint($instance, $pointId);
+			$this->remoteStreamService->verifyPoint($point);
+
+			$point->unsetHealth()
+				  ->setInstance('');
+
+			$this->pointRequest->save($point);
+			$this->pointService->saveMetadata($point);
+		}
 
 
-		$remote = $this->remoteService->getRestoringPoint('backup2.local', $pointId);
+		$output->write('check health status: ');
+		$this->pointService->generateHealth($point);
+		$output->writeln($this->outputService->displayHealth($point));
+		$this->downloadMissingFiles($instance, $point, $point->getHealth(), $output);
 
+
+//		echo json_encode($point->getHealth());
 
 //		$checks = $this->remoteService->verifyPoint($point);
 //
@@ -139,133 +201,37 @@ class PointDownload extends Base {
 	/**
 	 * @param string $instance
 	 * @param RestoringPoint $point
+	 * @param RestoringHealth $health
 	 * @param OutputInterface $output
 	 *
-	 * @return RestoringPoint
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
+	 * @throws RestoringChunkNotFoundException
 	 */
-	private function createRemotePoint(
-		string $instance,
-		RestoringPoint $point,
-		OutputInterface $output
-	): ?RestoringPoint {
-		$output->write('  * Creating Restoring Point on remote instance: ');
-
-		try {
-			$stored = $this->remoteService->createPoint($instance, $point);
-			$output->writeln('<info>ok</info>');
-
-			return $stored;
-		} catch (InvalidItemException
-		| RemoteInstanceException
-		| RemoteInstanceNotFoundException
-		| RemoteResourceNotFoundException $e) {
-			$output->writeln('<error>' . $e->getMessage() . '</error>');
-		}
-
-		return null;
-	}
-
-
-	/**
-	 * @param string $instance
-	 * @param RestoringPoint $point
-	 * @param OutputInterface $output
-	 *
-	 * @return RestoringPoint|null
-	 */
-	private function getCurrentHealth(
-		string $instance,
-		RestoringPoint $point,
-		OutputInterface $output
-	): ?RestoringPoint {
-		$output->write('  * Generating Health Status on remote instance: ');
-
-		try {
-			$stored = $this->remoteService->getRestoringPoint($instance, $point->getId(), true);
-
-			if (!$stored->hasHealth()) {
-				$output->writeln('<error>no health status attached</error>');
-			} else {
-				$output->writeln('<info>ok</info>');
-			}
-
-			return $stored;
-		} catch (RestoringPointNotFoundException $e) {
-			$output->writeln('<error>RestoringPoint not found on remote instance</error>');
-		} catch
-		(RemoteInstanceException
-		| RemoteInstanceNotFoundException
-		| RemoteResourceNotFoundException $e) {
-			$output->writeln('<error>' . $e->getMessage() . '</error>');
-		}
-
-		return null;
-	}
-
-
-	/**
-	 * @param RestoringPoint|null $point
-	 *
-	 * @return string
-	 */
-	private function displayHealth(?RestoringPoint $point): string {
-		if (is_null($point)) {
-			return '<comment>not found</comment>';
-		}
-
-		if (!$point->hasHealth()) {
-			return '<error>unknown health status</error>';
-		}
-
-		$health = $point->getHealth();
-		if ($health->getStatus() === RestoringHealth::STATUS_OK) {
-			return '<info>ok</info>';
-		}
-
-		$chunks = $health->getChunks();
-		$unknown = $good = $missing = $faulty = 0;
-		foreach ($chunks as $chunk) {
-			switch ($chunk->getStatus()) {
-				case RestoringChunkHealth::STATUS_UNKNOWN:
-					$unknown++;
-					break;
-				case RestoringChunkHealth::STATUS_OK:
-					$good++;
-					break;
-				case RestoringChunkHealth::STATUS_MISSING:
-					$missing++;
-					break;
-				case RestoringChunkHealth::STATUS_CHECKSUM:
-					$faulty++;
-					break;
-			}
-		}
-
-		return '<comment>'
-			   . $good . ' uploaded, '
-			   . $missing . ' missing and '
-			   . $faulty . ' faulty files</comment>';
-	}
-
-
-	private function uploadMissingFiles(
+	private function downloadMissingFiles(
 		string $instance,
 		RestoringPoint $point,
 		RestoringHealth $health,
 		OutputInterface $output
 	): void {
-		$chunks = $health->getChunks();
-		foreach ($chunks as $chunk) {
+		foreach ($health->getChunks() as $chunk) {
 			if ($chunk->getStatus() === RestoringChunkHealth::STATUS_OK) {
 				continue;
 			}
 
-			$output->write('  * Uploading ' . $chunk->getDataName() . '/' . $chunk->getChunkName() . ': ');
-			$restoringChunk =
-				$this->pointService->getChunkContent($point, $chunk->getDataName(), $chunk->getChunkName());
-			$this->remoteService->uploadChunk($instance, $point, $restoringChunk);
-			$output->writeln('<info>ok</info>');
+			$output->write('  * Downloading ' . $chunk->getDataName() . '/' . $chunk->getChunkName() . ': ');
+			$restoringChunk = $this->pointService->getChunkContent(
+				$point,
+				$chunk->getDataName(),
+				$chunk->getChunkName()
+			);
 
+			$chunk = $this->remoteService->downloadChunk($instance, $point, $restoringChunk);
+			$this->chunkService->saveChunkContent($point, $chunk);
+			$output->writeln('<info>ok</info>');
 		}
 	}
 }

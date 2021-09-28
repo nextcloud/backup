@@ -48,6 +48,7 @@ use OCA\Backup\Exceptions\RemoteRequestException;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\RemoteRequest\CreateRestoringPoint;
+use OCA\Backup\RemoteRequest\DownloadRestoringChunk;
 use OCA\Backup\RemoteRequest\GetRestoringPoint;
 use OCA\Backup\RemoteRequest\ListRestoringPoint;
 use OCA\Backup\RemoteRequest\UploadRestoringChunk;
@@ -235,9 +236,26 @@ class RemoteController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
+	 * @param string $pointId
+	 *
 	 * @return DataResponse
 	 */
 	public function downloadRestoringPoint(string $pointId): DataResponse {
+		try {
+			$request = $this->extractRequest(DownloadRestoringChunk::class);
+		} catch (Exception $e) {
+			return $this->exceptionResponse($e, Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$request->execute();
+
+			return new DataResponse($request->getOutcome());
+		} catch (Exception $e) {
+			$this->e($e, ['request' => $request]);
+
+			return $this->exceptionResponse($e);
+		}
 	}
 
 
@@ -246,6 +264,7 @@ class RemoteController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * @param string $pointId
+	 * @param string $chunkId
 	 *
 	 * @return DataResponse
 	 */
