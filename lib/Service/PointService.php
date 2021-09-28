@@ -359,6 +359,10 @@ class PointService {
 	 * @throws Throwable
 	 */
 	private function backupSql(RestoringPoint $point) {
+		if ($this->configService->getSystemValue(ConfigService::DB_TYPE) !== 'mysql') {
+			return;
+		}
+
 		$path = '';
 		try {
 			$path = $this->generateSqlDump();

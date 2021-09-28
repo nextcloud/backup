@@ -45,6 +45,7 @@ class ConfigService {
 
 
 	const MAINTENANCE = 'maintenance';
+	const DB_TYPE = 'dbtype';
 	const SELF_SIGNED_CERT = 'self_signed_cert';
 	const LAST_FULL_RP = 'last_full_rp';
 
