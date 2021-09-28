@@ -34,9 +34,13 @@ namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\EncryptService;
 use OCA\Backup\Service\RemoteService;
+use SodiumException;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 
 /**
@@ -50,6 +54,9 @@ class SetupExport extends Base {
 	/** @var RemoteService */
 	private $remoteService;
 
+	/** @var EncryptService */
+	private $encryptService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -58,13 +65,19 @@ class SetupExport extends Base {
 	 * SetupExport constructor.
 	 *
 	 * @param RemoteService $remoteService
+	 * @param EncryptService $encryptService
 	 * @param ConfigService $configService
 	 */
-	public function __construct(RemoteService $remoteService, ConfigService $configService) {
+	public function __construct(
+		RemoteService $remoteService,
+		EncryptService $encryptService,
+		ConfigService $configService
+	) {
 		parent::__construct();
 
-		$this->configService = $configService;
 		$this->remoteService = $remoteService;
+		$this->encryptService = $encryptService;
+		$this->configService = $configService;
 	}
 
 
@@ -73,7 +86,8 @@ class SetupExport extends Base {
 	 */
 	protected function configure() {
 		$this->setName('backup:setup:export')
-			 ->setDescription('Export your setup for easier restoration');
+			 ->setDescription('Export your setup for easier restoration')
+			 ->addOption('key', '', InputOption::VALUE_NONE, 'use a generated key to encrypt the data');
 	}
 
 
@@ -82,6 +96,7 @@ class SetupExport extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
+	 * @throws SodiumException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$setup = [
@@ -90,7 +105,24 @@ class SetupExport extends Base {
 			'encryption' => ''
 		];
 
-		$output->writeln(json_encode($setup, JSON_PRETTY_PRINT));
+		$data = json_encode($setup);
+
+		$key = '';
+		if ($input->getOption('key')) {
+			$key = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+			$data = $this->encryptService->encryptString($data, $key);
+		}
+
+		$output->writeln($data);
+
+		if ($key !== '') {
+			$io = new SymfonyStyle($input, $output);
+			$io->getErrorStyle()->warning(
+				'Keep this KEY somewhere safe, it will be required to import' . "\n"
+				. 'the setup of your Backup App on a fresh installation of Nextcloud: ' . "\n\n"
+				. base64_encode($key)
+			);
+		}
 
 		return 0;
 	}

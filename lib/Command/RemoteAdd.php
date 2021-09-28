@@ -309,6 +309,19 @@ class RemoteAdd extends Base {
 		}
 
 		$this->remoteRequest->insertOrUpdate($remoteInstance);
+
+		$output->writeln('');
+		$output->writeln('<error>Important note</error>: ');
+		$output->writeln('Uploaded backup are encrypted which is good, don\'t you think ?');
+		$output->writeln('However, it also means that <options=bold>if you loose the Encryption Key, your backup will be totally useless</>');
+		$output->writeln('');
+		$output->writeln('It is advised to export the setup of the Backup App in the file of your choice.');
+		$output->writeln('Keep in mind that with this file, any installation of Nextcloud can access your backup,');
+		$output->writeln('restore them and access the data of your users');
+		$output->writeln('While this is an option, ts is also advised to use a passphrase to encrypt the content of the file:');
+		$output->writeln('');
+		$output->writeln('   ./occ backup:setup:export [--passphrase your-passphrase] > ~/backup_setup.json');
+		$output->writeln('');
 	}
 
 }

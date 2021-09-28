@@ -39,7 +39,9 @@ use OC\Core\Command\Base;
 use OCA\Backup\Db\RemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\EncryptService;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
@@ -58,6 +60,9 @@ class SetupImport extends Base {
 	/** @var RemoteRequest */
 	private $remoteRequest;
 
+	/** @var EncryptService */
+	private $encryptService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -66,13 +71,19 @@ class SetupImport extends Base {
 	 * SetupImport constructor.
 	 *
 	 * @param RemoteRequest $remoteRequest
+	 * @param EncryptService $encryptService
 	 * @param ConfigService $configService
 	 */
-	public function __construct(RemoteRequest $remoteRequest, ConfigService $configService) {
+	public function __construct(
+		RemoteRequest $remoteRequest,
+		EncryptService $encryptService,
+		ConfigService $configService
+	) {
 		parent::__construct();
 
-		$this->configService = $configService;
 		$this->remoteRequest = $remoteRequest;
+		$this->encryptService = $encryptService;
+		$this->configService = $configService;
 	}
 
 
@@ -81,7 +92,8 @@ class SetupImport extends Base {
 	 */
 	protected function configure() {
 		$this->setName('backup:setup:import')
-			 ->setDescription('Import your setup for easier restoration');
+			 ->setDescription('Import your setup for easier restoration')
+			 ->addOption('key', '', InputOption::VALUE_REQUIRED, 'key used when exporting the setup', '');
 	}
 
 
@@ -98,13 +110,21 @@ class SetupImport extends Base {
 			$json .= fgets(STDIN);
 		}
 
+		$key = $input->getOption('key');
+		if ($key !== '') {
+			$key = base64_decode($key);
+			$json = $this->encryptService->decryptString($json, $key);
+		}
+
 		$setup = json_decode($json, true);
 		if (!is_array($setup)) {
-			throw new Exception('setup cannot be imported');
+			throw new Exception(
+				'Setup cannot be imported' . "\n"
+				. 'Is it encrypted ? if so use --key <KEY>'
+			);
 		}
 
 		$this->configService->setAppValue('key_pairs', $this->get('signatory', $setup));
-
 
 		/** @var RemoteInstance[] $remotes */
 		$remotes = $this->deserializeArray($this->getArray('remote', $setup), RemoteInstance::class);
