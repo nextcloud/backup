@@ -264,7 +264,6 @@ class PointRestore extends Base {
 				try {
 					$this->archiveService->restoreChunk($point, $chunk, $root);
 					$this->output->writeln('<info>ok</info>');
-					$this->restoreService->finalizeFullRestore();
 				} catch (
 				ArchiveCreateException
 				| ArchiveNotFoundException
@@ -274,8 +273,9 @@ class PointRestore extends Base {
 					$this->output->writeln('<error>' . $e->getMessage() . '</error>');
 				}
 			}
-
 		}
+
+		$this->restoreService->finalizeFullRestore();
 	}
 
 

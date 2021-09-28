@@ -36,10 +36,14 @@ use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
+use OCA\Backup\Exceptions\RemoteInstanceException;
+use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
+use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Service\ArchiveService;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Service\RemoteService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Helper\Table;
@@ -61,6 +65,9 @@ class PointDetails extends Base {
 	use TStringTools;
 
 
+	/** @var RemoteService */
+	private $remoteService;
+
 	/** @var PointService */
 	private $pointService;
 
@@ -71,12 +78,18 @@ class PointDetails extends Base {
 	/**
 	 * PointDetails constructor.
 	 *
+	 * @param RemoteService $remoteService
 	 * @param PointService $pointService
 	 * @param ArchiveService $chunkService
 	 */
-	public function __construct(PointService $pointService, ArchiveService $chunkService) {
+	public function __construct(
+		RemoteService $remoteService,
+		PointService $pointService,
+		ArchiveService $chunkService
+	) {
 		parent::__construct();
 
+		$this->remoteService = $remoteService;
 		$this->pointService = $pointService;
 		$this->chunkService = $chunkService;
 	}
@@ -90,7 +103,8 @@ class PointDetails extends Base {
 
 		$this->setName('backup:point:details')
 			 ->setDescription('Details on a restoring point')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point');
+			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			 ->addArgument('instance', InputArgument::OPTIONAL, 'address of the remote instance');
 	}
 
 
@@ -104,7 +118,17 @@ class PointDetails extends Base {
 	 * @throws RestoringPointNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
+		$pointId = $input->getArgument('pointId');
+		$instance = $input->getArgument('instance');
+
+		if ($instance) {
+			$this->remoteDetails($instance, $pointId);
+
+			return 0;
+		}
+
+
+		$point = $this->pointService->getLocalRestoringPoint($pointId);
 		$this->pointService->initBaseFolder($point);
 
 		if ($input->getOption('output') === 'json') {
@@ -163,6 +187,22 @@ class PointDetails extends Base {
 		}
 
 		return 0;
+	}
+
+
+	/**
+	 * @param string $instance
+	 * @param string $pointId
+	 *
+	 * @throws RestoringPointNotFoundException
+	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
+	 */
+	private function remoteDetails(string $instance, string $pointId): void {
+		$point = $this->remoteService->getRestoringPoint($instance, $pointId, true);
+
+		echo json_encode($point);
 	}
 
 }

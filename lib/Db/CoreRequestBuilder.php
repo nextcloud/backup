@@ -169,6 +169,8 @@ class CoreRequestBuilder {
 	public function emptyTable(string $table): void {
 		$qb = $this->getQueryBuilder();
 		$qb->delete($table);
+
+		$qb->execute();
 	}
 
 }

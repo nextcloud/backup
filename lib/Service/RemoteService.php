@@ -46,9 +46,6 @@ use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringPoint;
-use OCP\Files\NotFoundException;
-use OCP\Files\NotPermittedException;
-use OCP\Files\SimpleFS\ISimpleFile;
 
 
 /**
@@ -202,7 +199,6 @@ class RemoteService {
 	 * @param string $instance
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
-	 * @param ISimpleFile $file
 	 *
 	 * @return bool
 	 * @throws RemoteInstanceException
@@ -219,15 +215,16 @@ class RemoteService {
 			RemoteInstance::RP_UPLOAD,
 			Request::TYPE_POST,
 			$chunk,
-			['pointId' => $point->getId()]
+			[
+				'pointId' => $point->getId(),
+				'chunkId' => $chunk->getName()
+			]
 		);
 
 //		echo '****** ' . json_Encode($result);
 
 		return true;
 	}
-
-
 
 
 	/**

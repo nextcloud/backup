@@ -176,7 +176,7 @@ class ConfigService {
 	 * @param bool $maintenance
 	 */
 	public function maintenanceMode(bool $maintenance = false): void {
-		//$this->setSystemValueBool(self::MAINTENANCE, $maintenance);
+		$this->setSystemValueBool(self::MAINTENANCE, $maintenance);
 	}
 
 	/**
