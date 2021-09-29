@@ -119,7 +119,14 @@ If it cannot be found, you will need to manually copy the folder that contains t
 
 ## Restoration
 
+You can restore a single file or the whole instance to a previous state:
 
+    ./occ backup:point:restore <pointId> [--file <filename>] [--data <dataPack>] [--chunk chunkName]
+
+Please note that you can go back to a previous backup of your instance from any Nextcloud compatible with the Backup App.
+There is no need to install the exact same version as it will be reverted to the one used when creating the Restoring Point.
+Meaning that you can fully restore your instance of Nextcloud even if you lost your harddrive, as long as you kept a copy of 
+the Restoring Point (upload to another remote instance)
 
 
 ## Exporting configuration
@@ -136,18 +143,19 @@ key means that your remote backup cannot be decrypted and are totally useless.**
 
 **Please note that creating a new identity will disable the sanity check on the metadata file.**
 
-    ./occ backup:setup:export > ~/backup_setup.json
+    ./occ backup:setup:export [--key] > ~/backup_setup.json
 
-    ./occ backup:setup:import < ~/backup_setup.json
+Using the `--key` option will generate a Key, used to encrypt/decrypt the data of your setup. 
+The key generated during the export of your setup needs to be stored somewhere safe!
+
+    ./occ backup:setup:import [--key <key>] < ~/backup_setup.json
 
 
 
 ### Known issues, missing features:
 
-- download does not work
 - files are not encrypted when uploading to a remote instance
 - cannot upload restoring point with file bigger than 100M
 - uploading a parent RP after a dependant incremental backup does not remove the 'orphan' tag
 - Importing a Restoring Point using `backup:point:scan` from an external folder
 - Add remote instance to `backup:point:details`
-- encrypting the exported setup with a passphrase
