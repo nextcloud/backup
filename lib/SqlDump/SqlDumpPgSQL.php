@@ -32,22 +32,26 @@ declare(strict_types=1);
 namespace OCA\Backup\SqlDump;
 
 
-use Ifsnop\Mysqldump\Mysqldump;
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\ISqlDump;
+use Spatie\DbDumper\Databases\PostgreSql;
 use Throwable;
 
 
 /**
- * Class SqlDumpMySQL
+ * Class SqlDumpPgSQL
  *
  * @package OCA\Backup\SqlDump
  */
-class SqlDumpMySQL implements ISqlDump {
+class SqlDumpPgSQL implements ISqlDump {
+
+
+	use TArrayTools;
 
 
 	/**
-	 * SqlDumpMySQL constructor.
+	 * SqlDumpPgSQL constructor.
 	 */
 	public function __construct() {
 	}
@@ -60,31 +64,19 @@ class SqlDumpMySQL implements ISqlDump {
 	 * @throws SqlDumpException
 	 */
 	public function export(array $data): string {
-		$connect = 'mysql:host=' . $data['dbhost'] . ';dbname=' . $data['dbname'];
-		$settings = [
-			'compress' => Mysqldump::NONE,
-			'no-data' => false,
-			'add-drop-table' => true,
-			'single-transaction' => true,
-			'lock-tables' => true,
-			'add-locks' => true,
-			'extended-insert' => true,
-			'disable-foreign-keys-check' => true,
-			'skip-triggers' => false,
-			'add-drop-trigger' => true,
-			'databases' => false,
-			'add-drop-database' => true,
-			'hex-blob' => true
-		];
-
 		$tmpPath = '';
 		try {
 			$tmp = tmpfile();
 			$tmpPath = stream_get_meta_data($tmp)['uri'];
 			fclose($tmp);
 
-			$dump = new Mysqldump($connect, $data['dbuser'], $data['dbpassword'], $settings);
-			$dump->start($tmpPath);
+			PostgreSql::create()
+					  ->setDbName($this->get('dbname', $data))
+					  ->setUserName($this->get('dbuser', $data))
+					  ->setPassword($this->get('dbpassword', $data))
+					  ->setHost($this->get('dbhost', $data))
+					  ->addExtraOption('--clean --inserts')
+					  ->dumpToFile($tmpPath);
 		} catch (Throwable $t) {
 			if ($tmpPath !== '') {
 				unlink($tmpPath);
@@ -104,22 +96,28 @@ class SqlDumpMySQL implements ISqlDump {
 	 * @return bool
 	 */
 	public function import(array $data, $read): bool {
-		$sql = mysqli_connect($data['dbhost'], $data['dbuser'], $data['dbpassword'], $data['dbname']);
+		$sql = pg_connect(
+			'host=' . $data['dbhost'] .
+			' dbname=' . $this->get('dbname', $data) .
+			' user=' . $this->get('dbuser', $data) .
+			' password=' . $this->get('dbpassword', $data)
+		);
+
 		$request = '';
 		while (($line = fgets($read)) !== false) {
-			$line = trim($line);
-			if (substr($line, 0, 2) === '--' || $line === '') {
+			$content = trim($line);
+			if (substr($content, 0, 2) === '--' || $content === '') {
 				continue;
 			}
 
 			$request .= $line;
-			if (substr($line, -1) === ';') {
-				mysqli_query($sql, $request);
+			if (substr($content, -1) === ';') {
+				pg_query($sql, $request);
 				$request = '';
 			}
 		}
 
-		mysqli_close($sql);
+		pg_close($sql);
 
 		return true;
 	}

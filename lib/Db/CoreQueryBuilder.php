@@ -82,5 +82,5 @@ class CoreQueryBuilder extends NC23ExtendedQueryBuilder {
 	public function limitToParent(string $parent): void {
 		$this->limit('parent', $parent);
 	}
-	
+
 }

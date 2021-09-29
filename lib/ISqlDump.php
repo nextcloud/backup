@@ -33,6 +33,15 @@ namespace OCA\Backup;
 
 interface ISqlDump {
 
+	const MYSQL = 'mysql';
+	const PGSQL = 'pgsql';
+
+	const DB_NAME = 'dbname';
+	const DB_HOST = 'dbhost';
+	const DB_PORT = 'dbport';
+	const DB_USER = 'dbuser';
+	const DB_PASS = 'dbpassword';
+
 
 	/**
 	 * @param array $data

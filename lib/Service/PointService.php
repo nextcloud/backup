@@ -46,16 +46,18 @@ use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
-use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\ParentRestoringPointNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlDumpException;
+use OCA\Backup\ISqlDump;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkHealth;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
+use OCA\Backup\SqlDump\SqlDumpPgSQL;
 use OCP\DB\Exception;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
@@ -377,13 +379,15 @@ class PointService {
 	 * @throws Throwable
 	 */
 	private function backupSql(RestoringPoint $point) {
-		if ($this->configService->getSystemValue(ConfigService::DB_TYPE) !== 'mysql') {
+		if ($this->configService->getSystemValue(ConfigService::DB_TYPE) !== ISqlDump::MYSQL
+			&& $this->configService->getSystemValue(ConfigService::DB_TYPE) !== ISqlDump::PGSQL
+		) {
 			return;
 		}
 
-		$path = '';
+		$sqlDump = $this->getSqlDump();
+		$path = $sqlDump->export($this->getSqlData());
 		try {
-			$path = $this->generateSqlDump();
 			$data = new RestoringData(RestoringData::SQL_DUMP, '', 'sqldump');
 			$this->chunkService->createSingleFileChunk(
 				$point,
@@ -392,10 +396,7 @@ class PointService {
 				$path
 			);
 		} catch (Throwable $t) {
-			if ($path !== '') {
-				unlink($path);
-			}
-
+			unlink($path);
 			throw $t;
 		}
 
@@ -404,23 +405,44 @@ class PointService {
 
 
 	/**
+	 * @return array
+	 */
+	public function getSqlData(): array {
+		return [
+			'dbname' => $this->configService->getSystemValue(ISqlDump::DB_NAME),
+			'dbhost' => $this->configService->getSystemValue(ISqlDump::DB_HOST),
+			'dbport' => $this->configService->getSystemValue(ISqlDump::DB_PORT),
+			'dbuser' => $this->configService->getSystemValue(ISqlDump::DB_USER),
+			'dbpassword' => $this->configService->getSystemValue(ISqlDump::DB_PASS)
+		];
+	}
+
+	/**
 	 * return temp file name/path
 	 *
-	 * @return string
+	 * @return ISqlDump
 	 * @throws SqlDumpException
 	 */
-	private function generateSqlDump(): string {
-		$data = [
-			'dbname' => $this->configService->getSystemValue('dbname'),
-			'dbhost' => $this->configService->getSystemValue('dbhost'),
-			'dbport' => $this->configService->getSystemValue('dbport'),
-			'dbuser' => $this->configService->getSystemValue('dbuser'),
-			'dbpassword' => $this->configService->getSystemValue('dbpassword')
-		];
+	public function getSqlDump(): ISqlDump {
+		switch ($this->configService->getSystemValue(ConfigService::DB_TYPE)) {
+			case ISqlDump::MYSQL:
+				$sqlDump = new SqlDumpMySQL();
+				break;
+			case ISqlDump::PGSQL:
+				$sqlDump = new SqlDumpPgSQL();
+				break;
 
-		$sqlDump = new SqlDumpMySQL();
+			default:
+				throw new SqlDumpException('unknown database type');
+		}
 
-		return $sqlDump->export($data);
+		return $sqlDump;
+	}
+
+
+	public function loadSqlDump() {
+		new SqlDumpMySQL();
+		new SqlDumpPgSQL();
 	}
 
 

@@ -38,8 +38,8 @@ use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
-use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoreChunkException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlImportException;
@@ -53,7 +53,6 @@ use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RestoreService;
-use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Exception\InvalidOptionException;
@@ -232,6 +231,7 @@ class PointRestore extends Base {
 	 * @param RestoringPoint $point
 	 */
 	public function restorePointComplete(RestoringPoint $point): void {
+		$this->pointService->loadSqlDump();
 		foreach ($point->getRestoringData() as $data) {
 			$this->output->writeln('');
 			$root = $data->getAbsolutePath();
@@ -284,6 +284,7 @@ class PointRestore extends Base {
 	 * @param RestoringData $data
 	 *
 	 * @throws SqlImportException
+	 * @throws \OCA\Backup\Exceptions\SqlDumpException
 	 */
 	private function importSqlDump(RestoringPoint $point, RestoringData $data): void {
 		$chunks = $data->getChunks();
@@ -306,9 +307,9 @@ class PointRestore extends Base {
 			throw new SqlImportException($e->getMessage());
 		}
 
-		$config = $this->extractDatabaseConfig();
-		$sqlDump = new SqlDumpMySQL();
-		$sqlDump->import($config, $read);
+//		$config = $this->extractDatabaseConfig();
+		$sqlDump = $this->pointService->getSqlDump();
+		$sqlDump->import($this->pointService->getSqlData(), $read);
 	}
 
 
