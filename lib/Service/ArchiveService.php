@@ -41,9 +41,9 @@ use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
-use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\RestoreChunkException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCA\Backup\Model\ArchiveFile;
 use OCA\Backup\Model\Backup;
@@ -432,6 +432,10 @@ class ArchiveService {
 		$zipSize = 0;
 		while (($filename = array_shift($files)) !== null) {
 			$fileSize = filesize($data->getAbsolutePath() . $filename);
+			if (is_bool($fileSize)) {
+				$fileSize = 1;
+			}
+
 			if ($zipSize > 0 && ($zipSize + $fileSize) > self::MAX_ZIP_SIZE) {
 				$this->finalizeZip($zip, $chunk->setCount()->setSize($zipSize));
 				array_unshift($files, $filename);

@@ -36,10 +36,10 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\PointRequest;
-use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringChunkHealth;
 use OCA\Backup\Model\RestoringHealth;
@@ -53,6 +53,7 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
@@ -119,7 +120,8 @@ class PointDownload extends Base {
 		$this->setName('backup:point:download')
 			 ->setDescription('Download restoring point from remote instance')
 			 ->addArgument('instance', InputArgument::REQUIRED, 'address of the remote instance')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point');
+			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			 ->addOption('no-check', '', InputOption::VALUE_NONE, 'do not check integrity of restoring point');
 	}
 
 
@@ -127,14 +129,15 @@ class PointDownload extends Base {
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
+	 * @throws RestoringChunkNotFoundException
 	 * @throws RestoringPointNotFoundException
-	 * @throws SignatoryException
 	 * @throws SignatureException
-	 * @throws NotFoundException
-	 * @throws NotPermittedException
+	 * @throws SignatoryException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$instance = $input->getArgument('instance');
@@ -147,7 +150,16 @@ class PointDownload extends Base {
 			$output->writeln('> downloading metadata');
 
 			$point = $this->remoteService->getRestoringPoint($instance, $pointId);
-			$this->remoteStreamService->verifyPoint($point);
+			if (!$input->getOption('no-check')) {
+				try {
+					$this->remoteStreamService->verifyPoint($point);
+				} catch (SignatureException $e) {
+					throw new SignatureException(
+						'Cannot confirm restoring point integrity.' . "\n"
+						. 'You can bypass this verification using --no-check'
+					);
+				}
+			}
 
 			$point->unsetHealth()
 				  ->setInstance('');

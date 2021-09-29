@@ -46,7 +46,7 @@ use OCP\Files\NotFoundException;
 
 
 /**
- * Class FileCreated
+ * Class NodeEvent
  *
  * @package OCA\Backup\Listeners
  */
@@ -61,7 +61,7 @@ class NodeEvent implements IEventListener {
 
 
 	/**
-	 * FileCreated constructor.
+	 * NodeEvent constructor.
 	 *
 	 * @param FilesService $filesService
 	 */
