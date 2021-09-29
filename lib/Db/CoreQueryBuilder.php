@@ -32,7 +32,6 @@ declare(strict_types=1);
 namespace OCA\Backup\Db;
 
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\NC23ExtendedQueryBuilder;
-use Doctrine\DBAL\Query\QueryBuilder;
 
 
 /**
@@ -83,26 +82,5 @@ class CoreQueryBuilder extends NC23ExtendedQueryBuilder {
 	public function limitToParent(string $parent): void {
 		$this->limit('parent', $parent);
 	}
-
-
-	/**
-	 *
-	 */
-	public function countIncremental(): void {
-		if ($this->getType() !== QueryBuilder::SELECT) {
-			return;
-		}
-
-		$expr = $this->expr();
-		$incremental = 'incremental';
-		$this->selectAlias(
-			$this->createFunction('COUNT(`' . $incremental . '`.`id`)'),
-			'count_incremental'
-		);
-		$this->leftJoin(
-			$this->getDefaultSelectAlias(), CoreRequestBuilder::TABLE_RESTORING_POINT, $incremental,
-			$expr->eq($this->getDefaultSelectAlias() . '.uid', $incremental . '.parent')
-		);
-	}
-
+	
 }

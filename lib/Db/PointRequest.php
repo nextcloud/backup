@@ -128,8 +128,6 @@ class PointRequest extends PointRequestBuilder {
 		$qb->limitToUid($pointId);
 		$qb->limitToInstance('');
 
-		$qb->countIncremental();
-
 		return $this->getItemFromRequest($qb);
 	}
 
@@ -147,7 +145,6 @@ class PointRequest extends PointRequestBuilder {
 		if ($instance !== '') {
 			$qb->limitToInstance($instance);
 		}
-		$qb->countIncremental();
 
 		return $this->getItemFromRequest($qb);
 	}
@@ -161,7 +158,6 @@ class PointRequest extends PointRequestBuilder {
 	public function getByInstance(string $instance): array {
 		$qb = $this->getPointSelectSql();
 		$qb->limitToInstance($instance);
-		$qb->countIncremental();
 
 		return $this->getItemsFromRequest($qb);
 	}

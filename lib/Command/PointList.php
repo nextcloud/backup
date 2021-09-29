@@ -130,7 +130,7 @@ class PointList extends Base {
 		$output = new ConsoleOutput();
 		$output = $output->section();
 		$table = new Table($output);
-		$table->setHeaders(['Id', 'Parent', 'Children', 'Date']);
+		$table->setHeaders(['Id', 'Parent', 'Date']);
 		$table->render();
 
 		foreach ($points as $point) {
@@ -138,7 +138,6 @@ class PointList extends Base {
 				[
 					$point->getId(),
 					$point->getParent(),
-					$point->getCountIncremental(),
 					date('Y-m-d H:i:s', $point->getDate())
 				]
 			);

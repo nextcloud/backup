@@ -91,8 +91,6 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/** @var bool */
 	private $package = false;
 
-	/** @var int */
-	private $countIncremental = 0;
 
 	/**
 	 * @param string $id
@@ -384,25 +382,6 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 
 	/**
-	 * @param int $count
-	 *
-	 * @return RestoringPoint
-	 */
-	public function setCountIncremental(int $count): self {
-		$this->countIncremental = $count;
-
-		return $this;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getCountIncremental(): int {
-		return $this->countIncremental;
-	}
-
-
-	/**
 	 * @param array $data
 	 *
 	 * @return INC23QueryRow
@@ -413,8 +392,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			 ->setInstance($this->get('instance', $data))
 			 ->setParent($this->get('parent', $data))
 			 ->setStatus($this->getInt('status', $data))
-			 ->setDate($this->getInt('date', $data))
-			 ->setCountIncremental($this->getInt('count_incremental', $data));
+			 ->setDate($this->getInt('date', $data));
 
 		if ($this->getId() === '') {
 			throw new InvalidItemException();
