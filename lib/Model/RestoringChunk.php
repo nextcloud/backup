@@ -59,6 +59,9 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	/** @var string[] */
 	private $files = [];
 
+	/** @var RestoringChunkPart */
+	private $parts = [];
+
 	/** @var int */
 	private $count = 0;
 
@@ -69,25 +72,22 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	private $checksum = '';
 
 	/** @var bool */
-	private $encrypted = false;
+	private $stored = false;
 
 	/** @var bool */
 	private $staticName = false;
 
-	/** @var string */
-	private $encryptedChecksum = '';
-
 
 	/**
-	 * only add $name for specific Chunk.
-	 *
 	 * RestoringChunk constructor.
 	 */
-	public function __construct(string $name = '') {
-		if ($name === '') {
-			$name = $this->uuid();
-		} else {
-			$this->staticName = true;
+	public function __construct(string $name = '', bool $staticName = false) {
+		$this->staticName = $staticName;
+		if (!$staticName) {
+			if ($name !== '') {
+				$name .= '-';
+			}
+			$name .= $this->uuid();
 		}
 
 		$this->name = $name;
@@ -95,16 +95,10 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 
 	/**
-	 * @param string $ext
-	 *
 	 * @return string
 	 */
-	public function getName(string $ext = ''): string {
-		if ($ext === '') {
-			return $this->name;
-		}
-
-		return $this->name . '.' . $ext;
+	public function getName(): string {
+		return $this->name;
 	}
 
 	/**
@@ -146,21 +140,10 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			return $this->getName();
 		}
 
-		if ($this->isEncrypted()) {
-			return $this->getName();
-		}
-
 		return $this->getName() . '.zip';
 	}
 
 
-//	/**
-//	 * @return int
-//	 */
-//	public function count(): int {
-//		return sizeof($this->files);
-//	}
-//
 	/**
 	 * @return int
 	 */
@@ -234,25 +217,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 
 	/**
-	 * @param bool $encrypted
-	 *
-	 * @return RestoringChunk
-	 */
-	public function setEncrypted(bool $encrypted): self {
-		$this->encrypted = $encrypted;
-
-		return $this;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isEncrypted(): bool {
-		return $this->encrypted;
-	}
-
-
-	/**
 	 * @return string
 	 */
 	public function getChecksum(): string {
@@ -270,36 +234,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this;
 	}
 
-	/**
-	 * @param string $checksum
-	 *
-	 * @return bool
-	 */
-	public function compareChecksum(string $checksum): bool {
-		if ($this->isEncrypted()) {
-			return ($this->getEncryptedChecksum() === $checksum);
-		}
-
-		return ($this->getChecksum() === $checksum);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getEncryptedChecksum(): string {
-		return $this->encryptedChecksum;
-	}
-
-	/**
-	 * @param string $encryptedChecksum
-	 *
-	 * @return RestoringChunk
-	 */
-	public function setEncryptedChecksum(string $encryptedChecksum): self {
-		$this->encryptedChecksum = $encryptedChecksum;
-
-		return $this;
-	}
 
 	/**
 	 * @param string $content
@@ -331,10 +265,8 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			 ->setCount($this->getInt('count', $data))
 			 ->setSize($this->getInt('size', $data))
 			 ->setContent($this->get('content', $data))
-			 ->setEncrypted($this->getBool('encrypted', $data))
 			 ->setStaticName($this->getBool('staticName', $data))
-			 ->setChecksum($this->get('checksum', $data))
-			 ->setEncryptedChecksum($this->get('encryptedChecksum', $data));
+			 ->setChecksum($this->get('checksum', $data));
 
 		return $this;
 	}
@@ -358,10 +290,8 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			'name' => $this->getName(),
 			'count' => $this->getCount(),
 			'size' => $this->getSize(),
-			'encrypted' => $this->isEncrypted(),
 			'staticName' => $this->isStaticName(),
-			'checksum' => $this->getChecksum(),
-			'encryptedChecksum' => $this->getEncryptedChecksum()
+			'checksum' => $this->getChecksum()
 		];
 
 		if ($this->getContent() !== '') {
@@ -370,7 +300,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 		return $arr;
 	}
-
 
 }
 

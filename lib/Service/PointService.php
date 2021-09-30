@@ -272,7 +272,7 @@ class PointService {
 
 		$point = new RestoringPoint();
 		$point->setDate(time());
-		$separator = ($complete) ? '-' : '_';
+		$separator = ($complete) ? '-full-' : '-incremental-';
 		$point->setId(date('YmdHis', $point->getDate()) . $separator . $this->token());
 		$point->setNC(Util::getVersion());
 

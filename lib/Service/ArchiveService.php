@@ -378,7 +378,7 @@ class ArchiveService {
 		string $filename,
 		string $path
 	): void {
-		$chunk = new RestoringChunk();
+		$chunk = new RestoringChunk($data->getName());
 		$chunk->setCount(1);
 		$chunk->addFile(new ArchiveFile($filename));
 		$chunk->setSize(filesize($path));
@@ -406,7 +406,7 @@ class ArchiveService {
 		string $filename,
 		string $path
 	): void {
-		$zip = $this->generateZip($point, $chunk->getName('zip'));
+		$zip = $this->generateZip($point, $chunk->getFilename());
 		$read = fopen($path, 'r');
 		$zip->addFileFromStream($read, $filename);
 		$zip->finalize();
@@ -426,9 +426,9 @@ class ArchiveService {
 		RestoringData $data,
 		array &$files
 	): RestoringChunk {
-		$chunk = new RestoringChunk();
+		$chunk = new RestoringChunk($data->getName());
 
-		$zip = $this->generateZip($point, $chunk->getName('zip'));
+		$zip = $this->generateZip($point, $chunk->getfilename());
 		$zipSize = 0;
 		while (($filename = array_shift($files)) !== null) {
 			$fileSize = filesize($data->getAbsolutePath() . $filename);
@@ -510,11 +510,7 @@ class ArchiveService {
 	 */
 	private function updateChecksum(RestoringPoint $point, RestoringChunk $chunk): void {
 		$sum = $this->getChecksum($point, $chunk);
-		if ($chunk->isEncrypted()) {
-			$chunk->setEncryptedChecksum($sum);
-		} else {
-			$chunk->setChecksum($sum);
-		}
+		$chunk->setChecksum($sum);
 	}
 
 
@@ -549,26 +545,26 @@ class ArchiveService {
 	}
 
 
-	/**
-	 * @param Backup $backup
-	 * @param RestoringChunk $archive
-	 * @param string $ext
-	 *
-	 * @throws ArchiveDeleteException
-	 */
-	public function deleteArchive(Backup $backup, RestoringChunk $archive, $ext = '') {
-		if ($backup->isLocal()) {
-			unlink('./' . $archive->getName($ext));
-		} else {
-			$folder = $backup->getBaseFolder();
-			try {
-				$file = $folder->getFile($archive->getName($ext));
-				$file->delete();
-			} catch (Exception $e) {
-				throw new ArchiveDeleteException('Could not delete Archive');
-			}
-		}
-	}
+//	/**
+//	 * @param Backup $backup
+//	 * @param RestoringChunk $archive
+//	 * @param string $ext
+//	 *
+//	 * @throws ArchiveDeleteException
+//	 */
+//	public function deleteArchive(Backup $backup, RestoringChunk $archive, $ext = '') {
+//		if ($backup->isLocal()) {
+//			unlink('./' . $archive->getName($ext));
+//		} else {
+//			$folder = $backup->getBaseFolder();
+//			try {
+//				$file = $folder->getFile($archive->getName($ext));
+//				$file->delete();
+//			} catch (Exception $e) {
+//				throw new ArchiveDeleteException('Could not delete Archive');
+//			}
+//		}
+//	}
 
 
 	/**
@@ -608,44 +604,44 @@ class ArchiveService {
 			}
 		}
 	}
-
-
-	/**
-	 * @param Backup $backup
-	 * @param RestoringChunk $archive
-	 *
-	 * @throws EncryptionKeyException
-	 * @throws ArchiveNotFoundException
-	 * @throws ArchiveNotFoundException
-	 */
-	public function decryptArchive(Backup $backup, RestoringChunk $archive) {
-		if ($backup->isLocal()) {
-			if (!file_exists('./' . $archive->getName())) {
-				throw new ArchiveNotFoundException('Archive not found');
-			}
-			$stream = fopen('./' . $archive->getName(''), 'r');
-			$write = fopen('./' . $archive->getName('zip'), 'w');
-		} else {
-			$folder = $backup->getBaseFolder();
-
-			try {
-				$encrypted = $folder->getFile($archive->getName());
-				$stream = $encrypted->read();
-			} catch (Exception $e) {
-				throw new ArchiveNotFoundException('Archive not found');
-			}
-
-			try {
-				$file = $folder->newFile($archive->getName('zip'));
-				$write = $file->write();
-			} catch (Exception $e) {
-				throw new ArchiveNotFoundException('Zip file not created');
-			}
-		}
-
-		$key = substr(sha1($backup->getEncryptionKey(), true), 0, 16);
-		$this->encryptService->decryptFile($stream, $write, $key);
-	}
+//
+//
+//	/**
+//	 * @param Backup $backup
+//	 * @param RestoringChunk $archive
+//	 *
+//	 * @throws EncryptionKeyException
+//	 * @throws ArchiveNotFoundException
+//	 * @throws ArchiveNotFoundException
+//	 */
+//	public function decryptArchive(Backup $backup, RestoringChunk $archive) {
+//		if ($backup->isLocal()) {
+//			if (!file_exists('./' . $archive->getName())) {
+//				throw new ArchiveNotFoundException('Archive not found');
+//			}
+//			$stream = fopen('./' . $archive->getName(''), 'r');
+//			$write = fopen('./' . $archive->getName('zip'), 'w');
+//		} else {
+//			$folder = $backup->getBaseFolder();
+//
+//			try {
+//				$encrypted = $folder->getFile($archive->getName());
+//				$stream = $encrypted->read();
+//			} catch (Exception $e) {
+//				throw new ArchiveNotFoundException('Archive not found');
+//			}
+//
+//			try {
+//				$file = $folder->newFile($archive->getName('zip'));
+//				$write = $file->write();
+//			} catch (Exception $e) {
+//				throw new ArchiveNotFoundException('Zip file not created');
+//			}
+//		}
+//
+//		$key = substr(sha1($backup->getEncryptionKey(), true), 0, 16);
+//		$this->encryptService->decryptFile($stream, $write, $key);
+//	}
 
 
 	/**
@@ -705,11 +701,11 @@ class ArchiveService {
 			RestoringData::INTERNAL
 		);
 
-		$chunk = new RestoringChunk(self::APP_ZIP);
+		$chunk = new RestoringChunk(self::APP_ZIP, true);
 		$this->updateChecksum($point, $chunk);
 		$data->addChunk($chunk);
 
-		$chunk = new RestoringChunk(self::BACKUP_SCRIPT);
+		$chunk = new RestoringChunk(self::BACKUP_SCRIPT, true);
 		$this->updateChecksum($point, $chunk);
 		$data->addChunk($chunk);
 

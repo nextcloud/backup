@@ -41,8 +41,6 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\NodeCreatedEvent;
 use OCP\Files\Events\Node\NodeRenamedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
-use OCP\Files\InvalidPathException;
-use OCP\Files\NotFoundException;
 
 
 /**
@@ -74,9 +72,6 @@ class NodeEvent implements IEventListener {
 
 	/**
 	 * @param Event $event
-	 *
-	 * @throws InvalidPathException
-	 * @throws NotFoundException
 	 */
 	public function handle(Event $event): void {
 		$node = null;
