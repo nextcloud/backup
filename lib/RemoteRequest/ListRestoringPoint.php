@@ -33,13 +33,11 @@ namespace OCA\Backup\RemoteRequest;
 
 
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
-use OCP\IL10N;
 
 
 /**

@@ -32,11 +32,11 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
+use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\EncryptService;
 use OCA\Backup\Service\RemoteService;
-use SodiumException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -96,7 +96,7 @@ class SetupExport extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws SodiumException
+	 * @throws Exception
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$setup = [

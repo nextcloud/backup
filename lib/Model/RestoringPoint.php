@@ -337,7 +337,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	 *
 	 * @return RestoringPoint
 	 */
-	public function setSignature(string $signature): self {
+	public function setSignature(string $signature): ISignedModel {
 		$this->signature = $signature;
 
 		return $this;
@@ -409,12 +409,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		} catch (InvalidItemException $e) {
 		}
 
-		try {
-			/** @var RestoringData[] $restoringData */
-			$restoringData = $this->deserializeArray($metadata->gArray('data'), RestoringData::class);
-			$this->setRestoringData($restoringData);
-		} catch (InvalidItemException $e) {
-		}
+		/** @var RestoringData[] $restoringData */
+		$restoringData = $this->deserializeArray($metadata->gArray('data'), RestoringData::class);
+		$this->setRestoringData($restoringData);
 
 		return $this;
 	}
@@ -439,12 +436,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			throw new InvalidItemException();
 		}
 
-		try {
-			/** @var RestoringData[] $restoringData */
-			$restoringData = $this->deserializeArray($this->getArray('data', $data), RestoringData::class);
-			$this->setRestoringData($restoringData);
-		} catch (InvalidItemException $e) {
-		}
+		/** @var RestoringData[] $restoringData */
+		$restoringData = $this->deserializeArray($this->getArray('data', $data), RestoringData::class);
+		$this->setRestoringData($restoringData);
 
 		try {
 			/** @var RestoringHealth $health */

@@ -33,19 +33,14 @@ namespace OCA\Backup\Command;
 
 
 use OC\Core\Command\Base;
-use OCA\Backup\Exceptions\ArchiveCreateException;
-use OCA\Backup\Exceptions\ArchiveNotFoundException;
-use OCA\Backup\Exceptions\BackupAppCopyException;
-use OCA\Backup\Exceptions\BackupScriptNotFoundException;
-use OCA\Backup\Exceptions\RestoringPointException;
-use OCA\Backup\Exceptions\SqlDumpException;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Service\PointService;
+use OCP\DB\Exception;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Throwable;
 
 
 /**
@@ -91,13 +86,8 @@ class PointDelete extends Base {
 	 * @return int
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws ArchiveCreateException
-	 * @throws ArchiveNotFoundException
-	 * @throws BackupAppCopyException
-	 * @throws BackupScriptNotFoundException
-	 * @throws SqlDumpException
-	 * @throws RestoringPointException
-	 * @throws Throwable
+	 * @throws RestoringPointNotFoundException
+	 * @throws Exception
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));

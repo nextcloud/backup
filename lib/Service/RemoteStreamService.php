@@ -189,12 +189,13 @@ class RemoteStreamService extends NC23Signature {
 	 * @throws RequestNetworkException
 	 * @throws SignatoryException
 	 * @throws WellKnownLinkNotFoundException
+	 * @throws SignatureException
 	 */
 	public function retrieveRemoteInstance(string $instance): RemoteInstance {
 		$resource = $this->getResourceData($instance, Application::APP_SUBJECT, Application::APP_REL);
 
 		/** @var RemoteInstance $remoteInstance */
-		$remoteInstance = $this->retrieveSignatory($resource->g('id'), true);
+		$remoteInstance = $this->retrieveSignatory($resource->g('id'));
 		$remoteInstance->setInstance($instance);
 
 		return $remoteInstance;
@@ -243,6 +244,7 @@ class RemoteStreamService extends NC23Signature {
 	 * @param int $type
 	 * @param JsonSerializable|null $object
 	 * @param array $params
+	 * @param bool $longTimeout
 	 *
 	 * @return array
 	 * @throws RemoteInstanceException
@@ -285,6 +287,7 @@ class RemoteStreamService extends NC23Signature {
 	 * @param int $type
 	 * @param JsonSerializable|null $object
 	 * @param array $params
+	 * @param bool $longTimeout
 	 *
 	 * @return NC23SignedRequest
 	 * @throws RemoteInstanceException

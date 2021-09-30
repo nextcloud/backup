@@ -31,7 +31,10 @@ declare(strict_types=1);
 namespace OCA\Backup\Exceptions;
 
 
-class BackupScriptNotFoundException extends \Exception {
+use Exception;
+
+
+class BackupScriptNotFoundException extends Exception {
 
 }
 

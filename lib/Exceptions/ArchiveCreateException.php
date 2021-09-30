@@ -31,7 +31,9 @@ declare(strict_types=1);
 namespace OCA\Backup\Exceptions;
 
 
-class ArchiveCreateException extends \Exception {
+use Exception;
+
+class ArchiveCreateException extends Exception {
 
 }
 

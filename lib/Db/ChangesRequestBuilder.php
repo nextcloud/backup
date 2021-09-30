@@ -32,6 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Db;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\ChangedFileNotFoundException;
@@ -107,7 +108,7 @@ class ChangesRequestBuilder extends CoreRequestBuilder {
 		/** @var ChangedFile $changed */
 		try {
 			$changed = $qb->asItem(ChangedFile::class);
-		} catch (RowNotFoundException $e) {
+		} catch (RowNotFoundException | InvalidItemException $e) {
 			throw new ChangedFileNotFoundException();
 		}
 

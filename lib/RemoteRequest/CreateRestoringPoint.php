@@ -38,7 +38,6 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
-use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
@@ -107,15 +106,12 @@ class CreateRestoringPoint extends CoreRequest implements IRemoteRequest {
 		} catch (RestoringPointNotFoundException $e) {
 		}
 
-		try {
-			$this->pointRequest->save($point);
-			$this->pointService->saveMetadata($point);
+		$this->pointRequest->save($point);
+		$this->pointService->saveMetadata($point);
 
-			$stored = $this->pointRequest->getById($point->getId(), $signatory->getInstance());
+		$stored = $this->pointRequest->getById($point->getId(), $signatory->getInstance());
 
-			$this->setOutcome($this->serialize($stored));
-		} catch (RestoringPointException $e) {
-		}
+		$this->setOutcome($this->serialize($stored));
 	}
 
 

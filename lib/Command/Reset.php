@@ -140,9 +140,9 @@ class Reset extends Base {
 		$this->coreRequestBuilder->cleanDatabase();
 		try {
 			$this->pointService->destroyBackupFS();
-		} catch (NotFoundException $e) {
-		} catch (NotPermittedException $e) {
+		} catch (NotFoundException | NotPermittedException $e) {
 		}
+
 		$this->configService->setAppValue(ConfigService::LAST_FULL_RP, '');
 		if ($action === 'uninstall') {
 			$this->coreRequestBuilder->uninstall();

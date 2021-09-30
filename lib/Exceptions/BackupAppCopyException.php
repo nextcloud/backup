@@ -31,7 +31,10 @@ declare(strict_types=1);
 namespace OCA\Backup\Exceptions;
 
 
-class BackupAppCopyException extends \Exception {
+use Exception;
+
+
+class BackupAppCopyException extends Exception {
 
 }
 

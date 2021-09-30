@@ -36,17 +36,14 @@ use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use OCA\Backup\Exceptions\ArchiveCreateException;
-use OCA\Backup\Exceptions\ArchiveDeleteException;
 use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
-use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCA\Backup\Model\ArchiveFile;
-use OCA\Backup\Model\Backup;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
@@ -81,23 +78,16 @@ class ArchiveService {
 	/** @var EncryptService */
 	private $encryptService;
 
-	/** @var MiscService */
-	private $miscService;
-
 
 	/**
 	 * ArchiveService constructor.
 	 *
 	 * @param FilesService $filesService
 	 * @param EncryptService $encryptService
-	 * @param MiscService $miscService
 	 */
-	public function __construct(
-		FilesService $filesService, EncryptService $encryptService, MiscService $miscService
-	) {
+	public function __construct(FilesService $filesService, EncryptService $encryptService) {
 		$this->filesService = $filesService;
 		$this->encryptService = $encryptService;
-		$this->miscService = $miscService;
 	}
 
 
@@ -320,28 +310,28 @@ class ArchiveService {
 	}
 
 
-	/**
-	 * @param Backup $backup
-	 * @param RestoringChunk $archive
-	 * @param bool $encrypted
-	 *
-	 * @return bool
-	 * @throws ArchiveNotFoundException
-	 */
-	public function verifyChecksum(Backup $backup, RestoringChunk $archive, bool $encrypted): bool {
-		$sum = $this->getChecksum($backup, $archive);
-
-		if (!$encrypted && $sum === $archive->getChecksum()) {
-			return true;
-		}
-
-		if ($encrypted && $sum === $archive->getEncryptedChecksum()) {
-			return true;
-		}
-
-		return false;
-	}
-
+//	/**
+//	 * @param Backup $backup
+//	 * @param RestoringChunk $archive
+//	 * @param bool $encrypted
+//	 *
+//	 * @return bool
+//	 * @throws ArchiveNotFoundException
+//	 */
+//	public function verifyChecksum(Backup $backup, RestoringChunk $archive, bool $encrypted): bool {
+//		$sum = $this->getChecksum($backup, $archive);
+//
+//		if (!$encrypted && $sum === $archive->getChecksum()) {
+//			return true;
+//		}
+//
+//		if ($encrypted && $sum === $archive->getEncryptedChecksum()) {
+//			return true;
+//		}
+//
+//		return false;
+//	}
+//
 
 	/**
 	 * @param RestoringPoint $point
@@ -354,9 +344,7 @@ class ArchiveService {
 		$files = $data->getFiles();
 		while (!empty($files)) {
 			$archive = $this->generateChunk($point, $data, $files);
-			$this->updateChecksum($point, $archive, false);
-//			$this->encryptArchive($backup, $archive, true);
-//			$this->updateChecksum($point, $archive, true);
+			$this->updateChecksum($point, $archive);
 
 			$data->addChunk($archive);
 		}
@@ -477,7 +465,7 @@ class ArchiveService {
 					'outstream' => $file->write(),
 					'zip64' => true,
 					'compress' => COMPR::STORE,
-					'level' => $this->assignCompressionLevel()
+					'level' => COMPR::NONE
 				]
 			);
 		} catch (Exception $e) {
@@ -566,44 +554,44 @@ class ArchiveService {
 //		}
 //	}
 
-
-	/**
-	 * @param Backup $backup
-	 * @param RestoringChunk $archive
-	 * @param bool $delete
-	 *
-	 * @throws ArchiveNotFoundException
-	 * @throws ArchiveDeleteException
-	 */
-	public function encryptArchive(Backup $backup, RestoringChunk $archive, bool $delete): void {
-		$folder = $backup->getBaseFolder();
-		try {
-			$file = $folder->getFile($archive->getName('zip'));
-		} catch (Exception $e) {
-			throw new ArchiveNotFoundException('Could not read Archive to encrypt');
-		}
-
-		try {
-			$encrypted = $folder->newFile($archive->getName());
-		} catch (Exception $e) {
-			throw new ArchiveNotFoundException('Could not write to encrypted Archive');
-		}
-
-		$key = substr(sha1($backup->getEncryptionKey(), true), 0, 16);
-		try {
-			$this->encryptService->encryptFile($file->read(), $encrypted->write(), $key);
-		} catch (Exception $e) {
-			throw new ArchiveNotFoundException('Could not encrypt Archive');
-		}
-
-		if ($delete) {
-			try {
-				$file->delete();
-			} catch (Exception $e) {
-				throw new ArchiveDeleteException('Could not delete non-encrypted Archive !');
-			}
-		}
-	}
+//
+//	/**
+//	 * @param Backup $backup
+//	 * @param RestoringChunk $archive
+//	 * @param bool $delete
+//	 *
+//	 * @throws ArchiveNotFoundException
+//	 * @throws ArchiveDeleteException
+//	 */
+//	public function encryptArchive(Backup $backup, RestoringChunk $archive, bool $delete): void {
+//		$folder = $backup->getBaseFolder();
+//		try {
+//			$file = $folder->getFile($archive->getName('zip'));
+//		} catch (Exception $e) {
+//			throw new ArchiveNotFoundException('Could not read Archive to encrypt');
+//		}
+//
+//		try {
+//			$encrypted = $folder->newFile($archive->getName());
+//		} catch (Exception $e) {
+//			throw new ArchiveNotFoundException('Could not write to encrypted Archive');
+//		}
+//
+//		$key = substr(sha1($backup->getEncryptionKey(), true), 0, 16);
+//		try {
+//			$this->encryptService->encryptFile($file->read(), $encrypted->write(), $key);
+//		} catch (Exception $e) {
+//			throw new ArchiveNotFoundException('Could not encrypt Archive');
+//		}
+//
+//		if ($delete) {
+//			try {
+//				$file->delete();
+//			} catch (Exception $e) {
+//				throw new ArchiveDeleteException('Could not delete non-encrypted Archive !');
+//			}
+//		}
+//	}
 //
 //
 //	/**
@@ -649,7 +637,6 @@ class ArchiveService {
 	 *
 	 * @throws BackupAppCopyException
 	 * @throws BackupScriptNotFoundException
-	 * @throws ArchiveNotFoundException
 	 */
 	public function copyApp(RestoringPoint $point): void {
 		$folder = $point->getBaseFolder();
@@ -659,8 +646,8 @@ class ArchiveService {
 				[
 					'outstream' => $file->write(),
 					'zip64' => false,
-					'compress' => COMPR::DEFLATE,
-					'level' => $this->assignCompressionLevel()
+					'compress' => COMPR::STORE,
+					'level' => COMPR::NONE
 				]
 			);
 		} catch (Exception $e) {
@@ -710,24 +697,6 @@ class ArchiveService {
 		$data->addChunk($chunk);
 
 		$point->addRestoringData($data);
-	}
-
-
-	/**
-	 * @return int
-	 */
-	private function assignCompressionLevel(): int {
-		try {
-			$extension = new \ReflectionExtension('http');
-		} catch (\ReflectionException $e) {
-			return COMPR::NONE;
-		}
-
-		if (version_compare($extension->getVersion(), '0.10.0', '>=')) {
-			return COMPR::MAXIMUM;
-		}
-
-		return COMPR::NONE;
 	}
 
 

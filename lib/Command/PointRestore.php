@@ -34,6 +34,7 @@ namespace OCA\Backup\Command;
 
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
+use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
@@ -42,6 +43,7 @@ use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\Exceptions\SqlImportException;
 use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
@@ -156,6 +158,7 @@ class PointRestore extends Base {
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotFoundException
 	 * @throws RestoringDataNotFoundException
+	 * @throws SqlDumpException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->output = $output;
@@ -202,7 +205,7 @@ class PointRestore extends Base {
 				'Your instance will come back to a previous state from '
 				. $this->getDateDiff($point->getDate(), time()) . ' ago.'
 			);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 		}
 
 		$output->writeln('');
@@ -229,6 +232,8 @@ class PointRestore extends Base {
 
 	/**
 	 * @param RestoringPoint $point
+	 *
+	 * @throws SqlDumpException
 	 */
 	public function restorePointComplete(RestoringPoint $point): void {
 		$this->pointService->loadSqlDump();
@@ -284,7 +289,7 @@ class PointRestore extends Base {
 	 * @param RestoringData $data
 	 *
 	 * @throws SqlImportException
-	 * @throws \OCA\Backup\Exceptions\SqlDumpException
+	 * @throws SqlDumpException
 	 */
 	private function importSqlDump(RestoringPoint $point, RestoringData $data): void {
 		$chunks = $data->getChunks();
@@ -310,43 +315,6 @@ class PointRestore extends Base {
 //		$config = $this->extractDatabaseConfig();
 		$sqlDump = $this->pointService->getSqlDump();
 		$sqlDump->import($this->pointService->getSqlData(), $read);
-	}
-
-
-	/**
-	 * @return array
-	 */
-	private function extractDatabaseConfig(): array {
-		if ($this->configService->getSystemValue('dbtype') !== 'mysql') {
-			return [];
-		}
-
-		return [
-			'dbname' => $this->configService->getSystemValue('dbname'),
-			'dbhost' => $this->configService->getSystemValue('dbhost'),
-			'dbport' => $this->configService->getSystemValue('dbport'),
-			'dbuser' => $this->configService->getSystemValue('dbuser'),
-			'dbpassword' => $this->configService->getSystemValue('dbpassword')
-		];
-
-//		$CONFIG = [];
-//		require($config);
-//
-//		$this->mustContains(['dbtype'], $CONFIG);
-//		if ($CONFIG['dbtype'] === 'mysql') {
-//			$this->mustContains(['dbname', 'dbport', 'dbhost', 'dbuser', 'dbpassword'], $CONFIG);
-//			$data = [
-//				'dbname' => $CONFIG['dbname'],
-//				'dbhost' => $CONFIG['dbhost'],
-//				'dbport' => $CONFIG['dbport'],
-//				'dbuser' => $CONFIG['dbuser'],
-//				'dbpassword' => $CONFIG['dbpassword']
-//			];
-//
-//			return $data;
-//		}
-//
-//		return [];
 	}
 
 

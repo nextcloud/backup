@@ -78,11 +78,11 @@ class ConfigService {
 	 * @return string
 	 */
 	public function getAppValue(string $key): string {
-		if (($value = $this->config->getAppValue(Application::APP_ID, $key, '')) !== '') {
+		if (($value = $this->config->getAppValue(Application::APP_ID, $key)) !== '') {
 			return $value;
 		}
 
-		if (($value = $this->config->getSystemValue(Application::APP_ID . '.' . $key, '')) !== '') {
+		if (($value = $this->config->getSystemValue(Application::APP_ID . '.' . $key)) !== '') {
 			return $value;
 		}
 
@@ -182,6 +182,7 @@ class ConfigService {
 
 	/**
 	 * @param NC23Request $request
+	 * @param bool $longTimeout
 	 */
 	public function configureRequest(NC23Request $request, bool $longTimeout = false): void {
 		$request->setVerifyPeer($this->getAppValue(self::SELF_SIGNED_CERT) !== '1');

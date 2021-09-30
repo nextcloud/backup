@@ -102,8 +102,6 @@ class WebfingerHandler implements IHandler {
 			return $response;
 		}
 
-		$token = $request->getParam('check', '');
-
 		if (!($response instanceof JrdResponse)) {
 			$response = new JrdResponse($subject);
 		}

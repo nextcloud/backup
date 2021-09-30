@@ -51,7 +51,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 
 	/** @var string */
-	private $name = '';
+	private $name;
 
 	/** @var string */
 	private $content = '';
@@ -75,7 +75,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	private $stored = false;
 
 	/** @var bool */
-	private $staticName = false;
+	private $staticName;
 
 
 	/**

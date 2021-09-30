@@ -33,7 +33,6 @@ namespace OCA\Backup\Db;
 
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
-use OCP\DB\Exception;
 
 
 /**
@@ -87,8 +86,6 @@ class PointRequest extends PointRequestBuilder {
 
 	/**
 	 * @param string $pointId
-	 *
-	 * @throws Exception
 	 */
 	public function deletePoint(string $pointId): void {
 		$qb = $this->getPointDeleteSql();

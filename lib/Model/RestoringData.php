@@ -32,7 +32,6 @@ declare(strict_types=1);
 namespace OCA\Backup\Model;
 
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
@@ -78,13 +77,13 @@ class RestoringData implements IDeserializable, JsonSerializable {
 
 
 	/** @var string */
-	private $name = '';
+	private $name;
 
 	/** @var int */
-	private $type = 0;
+	private $type;
 
 	/** @var string */
-	private $path = '';
+	private $path;
 
 	/** @var string */
 	private $root = '';
@@ -304,17 +303,14 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	 * @return RestoringData
 	 */
 	public function import(array $data): IDeserializable {
-		$this->setType($this->getInt('type', $data, 0));
-		$this->setName($this->get('name', $data, ''));
-		$this->setRoot($this->get('root', $data, ''));
-		$this->setPath($this->get('path', $data, ''));
+		$this->setType($this->getInt('type', $data));
+		$this->setName($this->get('name', $data));
+		$this->setRoot($this->get('root', $data));
+		$this->setPath($this->get('path', $data));
 
-		try {
-			/** @var RestoringChunk[] $chunks */
-			$chunks = $this->deserializeArray($this->getArray('chunks', $data), RestoringChunk::class);
-			$this->setChunks($chunks);
-		} catch (InvalidItemException $e) {
-		}
+		/** @var RestoringChunk[] $chunks */
+		$chunks = $this->deserializeArray($this->getArray('chunks', $data), RestoringChunk::class);
+		$this->setChunks($chunks);
 
 		return $this;
 	}

@@ -220,17 +220,6 @@ class RemoteController extends Controller {
 	}
 
 
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
-	 * @param string $pointId
-	 *
-	 * @return DataResponse
-	 */
-	public function partRestoringPoint(string $pointId): DataResponse {
-	}
-
 
 	/**
 	 * @PublicPage

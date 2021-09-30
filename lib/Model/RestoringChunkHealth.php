@@ -104,6 +104,8 @@ class RestoringChunkHealth implements IDeserializable, JsonSerializable {
 
 	/**
 	 * @param int $status
+	 *
+	 * @return RestoringChunkHealth
 	 */
 	public function setStatus(int $status): self {
 		$this->status = $status;

@@ -155,8 +155,7 @@ class RemoteService {
 	public function getRestoringPoints(string $instance): array {
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$instance,
-			RemoteInstance::RP_LIST,
-			Request::TYPE_GET
+			RemoteInstance::RP_LIST
 		);
 
 		return $this->deserializeArray($result, RestoringPoint::class);
@@ -234,10 +233,11 @@ class RemoteService {
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 *
+	 * @return RestoringChunk
+	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
 	 * @throws RestoringChunkNotFoundException
-	 * @throws RemoteInstanceException
 	 */
 	public function downloadChunk(
 		string $instance,
@@ -265,10 +265,11 @@ class RemoteService {
 
 	/**
 	 * @param string $instance
-	 * @param RestoringPoint $point
+	 * @param string $pointId
 	 *
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
 	 */
 	public function downloadPoint(string $instance, string $pointId): void {
 		$remoteInstance = $this->remoteRequest->getFromInstance($instance);
@@ -276,8 +277,6 @@ class RemoteService {
 			throw new RemoteInstanceException('instance not configured as outgoing');
 		}
 
-//		$this->remoteStreamService->signPoint($point);
-//
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$remoteInstance->getInstance(),
 			RemoteInstance::RP_DOWNLOAD,

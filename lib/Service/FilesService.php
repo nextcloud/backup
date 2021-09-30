@@ -34,8 +34,8 @@ namespace OCA\Backup\Service;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TPathTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
+use OC;
 use OCA\Backup\Db\ChangesRequest;
-use OCA\Backup\Model\BackupChunk;
 use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
 
@@ -62,25 +62,16 @@ class FilesService {
 	/** @var ConfigService */
 	private $configService;
 
-	/** @var MiscService */
-	private $miscService;
-
 
 	/**
 	 * FilesService constructor.
 	 *
 	 * @param ChangesRequest $changesRequest
 	 * @param ConfigService $configService
-	 * @param MiscService $miscService
 	 */
-	public function __construct(
-		ChangesRequest $changesRequest,
-		ConfigService $configService,
-		MiscService $miscService
-	) {
+	public function __construct(ChangesRequest $changesRequest, ConfigService $configService) {
 		$this->changesRequest = $changesRequest;
 		$this->configService = $configService;
-		$this->miscService = $miscService;
 	}
 
 
@@ -99,7 +90,7 @@ class FilesService {
 			$path .= '/';
 		}
 
-		if (file_exists($data->getAbsolutePath() . $path . BackupService::NOBACKUP_FILE)) {
+		if (file_exists($data->getAbsolutePath() . $path . PointService::NOBACKUP_FILE)) {
 			return;
 		}
 
@@ -119,20 +110,20 @@ class FilesService {
 	public function initRestoringData(RestoringData $data): void {
 		$root = '';
 		switch ($data->getType()) {
-			case BackupChunk::ROOT_DISK:
+			case RestoringData::ROOT_DISK:
 				$root = '/';
 				break;
 
-			case BackupChunk::ROOT_NEXTCLOUD:
-				$root = \OC::$SERVERROOT;
+			case RestoringData::ROOT_NEXTCLOUD:
+				$root = OC::$SERVERROOT;
 				break;
 
-			case BackupChunk::ROOT_DATA:
+			case RestoringData::ROOT_DATA:
 				$root = $this->configService->getSystemValue('datadirectory');
 				break;
 
-			case BackupChunk::FILE_CONFIG:
-				$root = \OC::$SERVERROOT;
+			case RestoringData::FILE_CONFIG:
+				$root = OC::$SERVERROOT;
 				$data->setPath('config/');
 				$data->setUniqueFile('config.php');
 				break;

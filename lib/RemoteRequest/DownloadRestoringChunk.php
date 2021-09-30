@@ -92,7 +92,6 @@ class DownloadRestoringChunk extends CoreRequest implements IRemoteRequest {
 			$signatory = $signedRequest->getSignatory();
 			$pointId = $signedRequest->getIncomingRequest()->getParam('pointId');
 
-			\OC::$server->getLogger()->log(3, '### A');
 			$point = $this->pointService->getRestoringPoint($pointId, $signatory->getInstance());
 			/** @var RestoringChunk $chunk */
 			$chunk = $this->deserializeJson($signedRequest->getBody(), RestoringChunk::class);

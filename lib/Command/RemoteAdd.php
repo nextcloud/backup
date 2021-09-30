@@ -245,6 +245,7 @@ class RemoteAdd extends Base {
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @param RemoteInstance $remoteInstance
+	 * @param RemoteInstance|null $knownInstance
 	 */
 	private function configureRemoteInstance(
 		InputInterface $input,

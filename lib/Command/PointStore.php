@@ -10,7 +10,7 @@ declare(strict_types=1);
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,34 +33,34 @@ namespace OCA\Backup\Command;
 
 
 use OC\Core\Command\Base;
-use OCA\Backup\Db\RemoteRequest;
-use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Service\PointService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- * Class RemoteRemove
+ * Class PointStore
  *
  * @package OCA\Backup\Command
  */
-class RemoteRemove extends Base {
+class PointStore extends Base {
 
 
-	/** @var RemoteRequest */
-	private $remoteRequest;
+	/** @var PointService */
+	private $pointService;
 
 
 	/**
-	 * RemoteRemove constructor.
+	 * PointStore constructor.
 	 *
-	 * @param RemoteRequest $remoteRequest
+	 * @param PointService $pointService
 	 */
-	public function __construct(RemoteRequest $remoteRequest) {
-		$this->remoteRequest = $remoteRequest;
-
+	public function __construct(PointService $pointService) {
 		parent::__construct();
+
+		$this->pointService = $pointService;
 	}
 
 
@@ -68,9 +68,11 @@ class RemoteRemove extends Base {
 	 *
 	 */
 	protected function configure() {
-		$this->setName('backup:remote:remove')
-			 ->setDescription('Removing remote instances from database')
-			 ->addArgument('address', InputArgument::REQUIRED, 'address of the remote instance of Nextcloud');
+		parent::configure();
+
+		$this->setName('backup:point:store')
+			 ->setDescription('Increase compression of a restoring point and prepare for upload')
+			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point');
 	}
 
 
@@ -79,21 +81,13 @@ class RemoteRemove extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws RemoteInstanceNotFoundException
+	 * @throws RestoringPointNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$address = $input->getArgument('address');
-
-		try {
-			$this->remoteRequest->getFromInstance($address);
-		} catch (RemoteInstanceNotFoundException $e) {
-			throw new RemoteInstanceNotFoundException('Unknown address');
-		}
-
-		$this->remoteRequest->remove($address);
-		$output->writeln('instance removed.');
+		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
 
 		return 0;
 	}
 
 }
+

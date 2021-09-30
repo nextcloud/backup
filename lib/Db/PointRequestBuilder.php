@@ -36,7 +36,6 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 
 /**
  * Class BackupRequestBuilder
@@ -93,7 +92,7 @@ class PointRequestBuilder extends CoreRequestBuilder {
 	/**
 	 * Base of the Sql Delete request
 	 *
-	 * @return IQueryBuilder
+	 * @return CoreQueryBuilder
 	 */
 	protected function getPointDeleteSql(): CoreQueryBuilder {
 		$qb = $this->getQueryBuilder();

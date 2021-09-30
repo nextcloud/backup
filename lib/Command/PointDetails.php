@@ -115,6 +115,9 @@ class PointDetails extends Base {
 	 * @return int
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
 	 * @throws RestoringPointNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {

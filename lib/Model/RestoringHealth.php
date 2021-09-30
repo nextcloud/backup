@@ -32,7 +32,6 @@ declare(strict_types=1);
 namespace OCA\Backup\Model;
 
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
@@ -132,16 +131,13 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	public function import(array $data): IDeserializable {
 		$this->setStatus($this->getInt('status', $data));
 
-		try {
-			/** @var RestoringChunkHealth[] $chunks */
-			$chunks = $this->deserializeArray(
-				$this->getArray('chunks', $data),
-				RestoringChunkHealth::class,
-				true
-			);
-			$this->setChunks($chunks);
-		} catch (InvalidItemException $e) {
-		}
+		/** @var RestoringChunkHealth[] $chunks */
+		$chunks = $this->deserializeArray(
+			$this->getArray('chunks', $data),
+			RestoringChunkHealth::class,
+			true
+		);
+		$this->setChunks($chunks);
 
 		return $this;
 	}

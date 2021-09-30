@@ -40,6 +40,8 @@ use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ArchiveService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -116,6 +118,9 @@ class PointScan extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
+	 * @throws RestoringPointNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$pointId = $input->getArgument('pointId');

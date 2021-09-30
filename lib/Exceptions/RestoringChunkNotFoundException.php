@@ -31,8 +31,10 @@ declare(strict_types=1);
 namespace OCA\Backup\Exceptions;
 
 
+use Exception;
 
-class RestoringChunkNotFoundException extends \Exception {
+
+class RestoringChunkNotFoundException extends Exception {
 
 }
 

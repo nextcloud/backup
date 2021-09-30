@@ -38,8 +38,7 @@ use Exception;
 use OC\Config;
 use OC\Logger;
 use OCA\Backup\Model\Backup;
-use OCA\Backup\Service\BackupService;
-use OCA\Backup\Service\CliService;
+use OCA\Backup\Service\PointService;
 use OCP\IConfig;
 use OCP\ILogger;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -82,12 +81,10 @@ if ($verbose) {
 
 $classes = [
 	'Service\ArchiveService',
-	'Service\BackupService',
 	'Service\CliService',
 	'Service\ConfigService',
 	'Service\EncryptService',
 	'Service\FilesService',
-	'Service\MiscService',
 
 	'Model\ArchiveFile',
 	'Model\Backup',
@@ -178,7 +175,7 @@ if ($verbose) {
 if ($verbose) {
 	echo 'Parsing backup.json.' . "\n";
 }
-$json = file_get_contents(BackupService::SUMMARY_FILE);
+$json = file_get_contents(PointService::METADATA_FILE);
 
 $backup = new Backup();
 $backup->import(json_decode($json, true));

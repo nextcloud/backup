@@ -51,7 +51,7 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 
 
 	/** @var string */
-	private $name = '';
+	private $name;
 
 	/** @var string */
 	private $content = '';

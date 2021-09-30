@@ -32,6 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Db;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
@@ -107,7 +108,7 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 		/** @var RemoteInstance $remote */
 		try {
 			$remote = $qb->asItem(RemoteInstance::class);
-		} catch (RowNotFoundException $e) {
+		} catch (RowNotFoundException | InvalidItemException $e) {
 			throw new RemoteInstanceNotFoundException();
 		}
 

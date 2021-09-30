@@ -31,6 +31,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
+use Exception;
 use OCA\Backup\Exceptions\EncryptException;
 use SodiumException;
 
@@ -60,7 +61,11 @@ class EncryptService {
 	 * @throws SodiumException
 	 */
 	public function encryptString(string $data, string $key): string {
-		$nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+		try {
+			$nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+		} catch (Exception $e) {
+			throw new SodiumException('random_bytes - ' . $e->getMessage());
+		}
 
 		$encrypted = $nonce . sodium_crypto_secretbox($data, $nonce, $key);
 		sodium_memzero($data);

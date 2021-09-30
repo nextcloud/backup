@@ -58,7 +58,6 @@ use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCA\Backup\SqlDump\SqlDumpPgSQL;
-use OCP\DB\Exception;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -220,7 +219,7 @@ class PointService {
 			$this->backupSql($point);
 		} catch (Throwable $t) {
 			if (!$maintenance) {
-				$this->configService->maintenanceMode(false);
+				$this->configService->maintenanceMode();
 			}
 			throw $t;
 		}
@@ -232,7 +231,7 @@ class PointService {
 
 		// maintenance mode off
 		if (!$maintenance) {
-			$this->configService->maintenanceMode(false);
+			$this->configService->maintenanceMode();
 		}
 
 		$this->saveMetadata($point);
@@ -247,7 +246,6 @@ class PointService {
 	 *
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws Exception
 	 */
 	public function delete(RestoringPoint $point): void {
 		$this->pointRequest->deletePoint($point->getId());
@@ -449,6 +447,7 @@ class PointService {
 	/**
 	 * @param string $pointId
 	 *
+	 * @return RestoringPoint
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotFoundException
@@ -524,10 +523,7 @@ class PointService {
 		}
 
 		$path = '/';
-		try {
-			$folder = $this->appData->getFolder($path);
-		} catch (NotFoundException $e) {
-		}
+		$folder = $this->appData->getFolder($path);
 
 		$temp = $folder->newFile(self::NOBACKUP_FILE);
 		$temp->putContent('');
@@ -693,11 +689,4 @@ class PointService {
 		return $this->chunkService->getChunkResource($point, $restoringChunk);
 	}
 
-
-	/**
-	 * @param string $output
-	 */
-	private function o(string $output): void {
-		$this->outputService->o($output);
-	}
 }

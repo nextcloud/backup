@@ -47,10 +47,10 @@ class ArchiveFile implements JsonSerializable {
 
 
 	/** @var string */
-	private $name = '';
+	private $name;
 
 	/** @var int */
-	private $filesize = 0;
+	private $filesize;
 
 
 	/** @var RestoringChunk */

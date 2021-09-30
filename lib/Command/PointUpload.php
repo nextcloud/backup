@@ -40,6 +40,7 @@ use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestorationPointUploadException;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringChunkHealth;
 use OCA\Backup\Model\RestoringHealth;
@@ -47,6 +48,8 @@ use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -278,13 +281,23 @@ class PointUpload extends Base {
 			}
 
 			$output->write('  * Uploading ' . $chunk->getDataName() . '/' . $chunk->getChunkName() . ': ');
-			$restoringChunk = $this->pointService->getChunkContent(
-				$point,
-				$chunk->getDataName(),
-				$chunk->getChunkName()
-			);
-			$this->remoteService->uploadChunk($instance, $point, $restoringChunk);
-			$output->writeln('<info>ok</info>');
+			try {
+				$restoringChunk = $this->pointService->getChunkContent(
+					$point,
+					$chunk->getDataName(),
+					$chunk->getChunkName()
+				);
+				$this->remoteService->uploadChunk($instance, $point, $restoringChunk);
+				$output->writeln('<info>ok</info>');
+			} catch (
+			RestoringChunkNotFoundException
+			| NotFoundException
+			| NotPermittedException
+			| RemoteInstanceException
+			| RemoteInstanceNotFoundException
+			| RemoteResourceNotFoundException $e) {
+				$output->writeln('<error>' . $e->getMessage() . '</error>');
+			}
 
 		}
 	}

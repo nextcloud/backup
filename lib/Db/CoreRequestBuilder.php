@@ -32,6 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Db;
 
 use Exception;
+use OC;
 use OC\DB\Connection;
 use OC\DB\SchemaWrapper;
 use OCA\Backup\Service\ConfigService;
@@ -103,9 +104,9 @@ class CoreRequestBuilder {
 
 
 	/**
-	 * @param bool $shares
+	 *
 	 */
-	public function cleanDatabase(bool $shares = false): void {
+	public function cleanDatabase(): void {
 		foreach (array_keys(self::$tables) as $table) {
 			$qb = $this->getQueryBuilder();
 			try {
@@ -128,7 +129,7 @@ class CoreRequestBuilder {
 	 * this just empty all tables from the app.
 	 */
 	public function uninstallAppTables() {
-		$dbConn = \OC::$server->get(Connection::class);
+		$dbConn = OC::$server->get(Connection::class);
 		$schema = new SchemaWrapper($dbConn);
 
 		foreach (array_keys(self::$tables) as $table) {
