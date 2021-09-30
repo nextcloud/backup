@@ -3,7 +3,7 @@
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>backup</id>
 	<name>Backup</name>
-	<description><![CDATA[Backup. Restore.]]></description>
+	<description><![CDATA[Backup today. Restore tomorrow.]]></description>
 	<licence>agpl</licence>
 	<author mail="maxence@artificial-owl.com">Maxence Lange</author>
 	<version>0.2.0</version>
@@ -36,8 +36,8 @@
 		<command>OCA\Backup\Command\PointScan</command>
 		<command>OCA\Backup\Command\PointUpload</command>
 
-		<command>OCA\Backup\Command\NodeHistory</command>
-		<command>OCA\Backup\Command\NodeSearch</command>
+		<command>OCA\Backup\Command\FileHistory</command>
+		<command>OCA\Backup\Command\FileSearch</command>
 
 		<command>OCA\Backup\Command\SetupExport</command>
 		<command>OCA\Backup\Command\SetupImport</command>

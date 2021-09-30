@@ -54,7 +54,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package OCA\Backup\Command
  */
-class NodeSearch extends Base {
+class FileSearch extends Base {
 
 
 	use TArrayTools;
@@ -88,7 +88,7 @@ class NodeSearch extends Base {
 	protected function configure() {
 		parent::configure();
 
-		$this->setName('backup:node:search')
+		$this->setName('backup:file:search')
 			 ->setDescription('Search a specific file in your restoring points')
 			 ->addArgument('search', InputArgument::REQUIRED, 'path/name to search')
 			 ->addOption(

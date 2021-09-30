@@ -52,7 +52,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package OCA\Backup\Command
  */
-class NodeHistory extends Base {
+class FileHistory extends Base {
 
 
 	/** @var PointService */
@@ -82,7 +82,7 @@ class NodeHistory extends Base {
 	protected function configure() {
 		parent::configure();
 
-		$this->setName('backup:node:history')
+		$this->setName('backup:file:history')
 			 ->setDescription('Get the history of a file')
 			 ->addArgument('data', InputArgument::REQUIRED, 'name of the data pack')
 			 ->addArgument('filename', InputArgument::REQUIRED, 'full path of the file')

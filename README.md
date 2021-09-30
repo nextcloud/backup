@@ -84,20 +84,20 @@ You can search and compare restoring point available locally and on configured r
 
 **Search for a specific file:**
 
-    ./occ backup:node:search [--since|--until|--point] <string>
+    ./occ backup:file:search [--since|--until|--point] <string>
 
 Search for a file, based on its name.
 
-example: `./occ backup:node:search test.jpg --since 2021-09-23`
+example: `./occ backup:file:search test.jpg --since 2021-09-23`
 
 
 **History of specific a file:**
 
-    ./occ backup:node:history [--since|--until] <dataPack> <fullPath>
+    ./occ backup:file:history [--since|--until] <dataPack> <fullPath>
 
 Display the history of a file.
 
-example: `./occ backup:node:history data cult/files/backup1.md`
+example: `./occ backup:file:history data cult/files/backup1.md`
 
 
 **Import a Restoring Point**
