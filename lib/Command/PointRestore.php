@@ -49,7 +49,7 @@ use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
-use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\OutputService;
@@ -80,8 +80,8 @@ class PointRestore extends Base {
 	/** @var PointService */
 	private $pointService;
 
-	/** @var ArchiveService */
-	private $archiveService;
+	/** @var ChunkService */
+	private $chunkService;
 
 	/** @var FilesService */
 	private $filesService;
@@ -107,7 +107,7 @@ class PointRestore extends Base {
 	 * PointRestore constructor.
 	 *
 	 * @param PointService $pointService
-	 * @param ArchiveService $archiveService
+	 * @param ChunkService $chunkService
 	 * @param FilesService $filesService
 	 * @param RestoreService $restoreService
 	 * @param ConfigService $configService
@@ -115,7 +115,7 @@ class PointRestore extends Base {
 	 */
 	public function __construct(
 		PointService $pointService,
-		ArchiveService $archiveService,
+		ChunkService $chunkService,
 		FilesService $filesService,
 		RestoreService $restoreService,
 		ConfigService $configService,
@@ -124,7 +124,7 @@ class PointRestore extends Base {
 		parent::__construct();
 
 		$this->pointService = $pointService;
-		$this->archiveService = $archiveService;
+		$this->chunkService = $chunkService;
 		$this->filesService = $filesService;
 		$this->restoreService = $restoreService;
 		$this->configService = $configService;
@@ -267,7 +267,7 @@ class PointRestore extends Base {
 				);
 
 				try {
-					$this->archiveService->restoreChunk($point, $chunk, $root);
+					$this->chunkService->restoreChunk($point, $chunk, $root);
 					$this->output->writeln('<info>ok</info>');
 				} catch (
 				ArchiveCreateException
@@ -299,7 +299,7 @@ class PointRestore extends Base {
 
 		$chunk = $chunks[0];
 		try {
-			$read = $this->archiveService->getStreamFromChunk(
+			$read = $this->chunkService->getStreamFromChunk(
 				$point,
 				$chunk,
 				PointService::SQL_DUMP_FILE
@@ -349,16 +349,16 @@ class PointRestore extends Base {
 		$this->pointService->initBaseFolder($point);
 		if (!is_null($chunkName)) {
 			if (is_null($dataName)) {
-				$data = $this->archiveService->getDataWithChunk($point, $chunkName);
+				$data = $this->chunkService->getDataWithChunk($point, $chunkName);
 			} else {
-				$data = $this->archiveService->getDataFromRP($point, $dataName);
+				$data = $this->chunkService->getDataFromRP($point, $dataName);
 			}
 
-			$chunk = $this->archiveService->getChunkFromRP($point, $chunkName, $data->getName());
-			$file = $this->archiveService->getArchiveFileFromChunk($point, $chunk, $filename);
+			$chunk = $this->chunkService->getChunkFromRP($point, $chunkName, $data->getName());
+			$file = $this->chunkService->getArchiveFileFromChunk($point, $chunk, $filename);
 		} else {
-			$data = $this->archiveService->getDataFromRP($point, $dataName);
-			$file = $this->archiveService->getArchiveFileFromData($point, $data, $filename);
+			$data = $this->chunkService->getDataFromRP($point, $dataName);
+			$file = $this->chunkService->getArchiveFileFromData($point, $data, $filename);
 		}
 
 		$root = $data->getAbsolutePath();
@@ -372,7 +372,7 @@ class PointRestore extends Base {
 		// TODO: display $root and add a confirmation step
 
 		try {
-			$this->archiveService->restoreUniqueFile($point, $chunk, $root, $file->getName());
+			$this->chunkService->restoreUniqueFile($point, $chunk, $root, $file->getName());
 			$this->output->writeln('<info>ok</info>');
 
 			// include restored file in next incremental backup

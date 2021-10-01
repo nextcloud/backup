@@ -38,7 +38,7 @@ use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
-use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -64,7 +64,7 @@ class FileSearch extends Base {
 	/** @var PointService */
 	private $pointService;
 
-	/** @var ArchiveService */
+	/** @var ChunkService */
 	private $chunkService;
 
 
@@ -72,9 +72,9 @@ class FileSearch extends Base {
 	 * NodeSearch constructor.
 	 *
 	 * @param PointService $pointService
-	 * @param ArchiveService $chunkService
+	 * @param ChunkService $chunkService
 	 */
-	public function __construct(PointService $pointService, ArchiveService $chunkService) {
+	public function __construct(PointService $pointService, ChunkService $chunkService) {
 		parent::__construct();
 
 		$this->pointService = $pointService;

@@ -37,7 +37,7 @@ use OC\Core\Command\Base;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
-use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
@@ -64,8 +64,8 @@ class PointScan extends Base {
 	/** @var PointService */
 	private $pointService;
 
-	/** @var ArchiveService */
-	private $archiveService;
+	/** @var ChunkService */
+	private $chunkService;
 
 	/** @var OutputService */
 	private $outputService;
@@ -83,17 +83,17 @@ class PointScan extends Base {
 	 *
 	 * @param PointRequest $pointRequest
 	 * @param PointService $pointService
-	 * @param ArchiveService $archiveService
+	 * @param ChunkService $chunkService
 	 */
 	public function __construct(
 		PointRequest $pointRequest,
 		PointService $pointService,
-		ArchiveService $archiveService
+		ChunkService $chunkService
 	) {
 		parent::__construct();
 
 		$this->pointRequest = $pointRequest;
-		$this->archiveService = $archiveService;
+		$this->chunkService = $chunkService;
 		$this->pointService = $pointService;
 	}
 

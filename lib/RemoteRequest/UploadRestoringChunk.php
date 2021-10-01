@@ -40,7 +40,7 @@ use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RestoringChunk;
-use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -61,7 +61,7 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 	/** @var PointService */
 	private $pointService;
 
-	/** @var ArchiveService */
+	/** @var ChunkService */
 	private $chunkService;
 
 
@@ -69,11 +69,11 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 	 * UploadRestoringChunk constructor.
 	 *
 	 * @param PointService $pointService
-	 * @param ArchiveService $chunkService
+	 * @param ChunkService $chunkService
 	 */
 	public function __construct(
 		PointService $pointService,
-		ArchiveService $chunkService
+		ChunkService $chunkService
 	) {
 		parent::__construct();
 

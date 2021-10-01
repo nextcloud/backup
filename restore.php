@@ -80,7 +80,7 @@ if ($verbose) {
 }
 
 $classes = [
-	'Service\ArchiveService',
+	'Service\ChunkService',
 	'Service\CliService',
 	'Service\ConfigService',
 	'Service\EncryptService',

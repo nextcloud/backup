@@ -44,7 +44,7 @@ use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringChunkHealth;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
-use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
@@ -71,7 +71,7 @@ class PointDownload extends Base {
 	/** @var PointService */
 	private $pointService;
 
-	/** @var ArchiveService */
+	/** @var ChunkService */
 	private $chunkService;
 
 	/** @var RemoteStreamService */
@@ -89,7 +89,7 @@ class PointDownload extends Base {
 	 *
 	 * @param PointRequest $pointRequest
 	 * @param PointService $pointService
-	 * @param ArchiveService $chunkService
+	 * @param ChunkService $chunkService
 	 * @param RemoteStreamService $remoteStreamService
 	 * @param RemoteService $remoteService
 	 * @param OutputService $outputService
@@ -97,7 +97,7 @@ class PointDownload extends Base {
 	public function __construct(
 		PointRequest $pointRequest,
 		PointService $pointService,
-		ArchiveService $chunkService,
+		ChunkService $chunkService,
 		RemoteStreamService $remoteStreamService,
 		RemoteService $remoteService,
 		OutputService $outputService

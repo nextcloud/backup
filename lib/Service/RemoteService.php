@@ -67,8 +67,8 @@ class RemoteService {
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
 
-	/** @var ArchiveService */
-	private $archiveService;
+	/** @var ChunkService */
+	private $chunkService;
 
 
 	/**
@@ -76,16 +76,16 @@ class RemoteService {
 	 *
 	 * @param RemoteRequest $remoteRequest
 	 * @param RemoteStreamService $remoteStreamService
-	 * @param ArchiveService $archiveService
+	 * @param ChunkService $chunkService
 	 */
 	public function __construct(
 		RemoteRequest $remoteRequest,
 		RemoteStreamService $remoteStreamService,
-		ArchiveService $archiveService
+		ChunkService $chunkService
 	) {
 		$this->remoteRequest = $remoteRequest;
 		$this->remoteStreamService = $remoteStreamService;
-		$this->archiveService = $archiveService;
+		$this->chunkService = $chunkService;
 
 		$this->setup('app', Application::APP_ID);
 	}

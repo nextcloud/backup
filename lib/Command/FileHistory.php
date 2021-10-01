@@ -35,7 +35,7 @@ namespace OCA\Backup\Command;
 use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
-use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -58,21 +58,21 @@ class FileHistory extends Base {
 	/** @var PointService */
 	private $pointService;
 
-	/** @var ArchiveService */
-	private $archiveService;
+	/** @var ChunkService */
+	private $chunkService;
 
 
 	/**
 	 * PointHistory constructor.
 	 *
 	 * @param PointService $pointService
-	 * @param ArchiveService $archiveService
+	 * @param ChunkService $chunkService
 	 */
-	public function __construct(PointService $pointService, ArchiveService $archiveService) {
+	public function __construct(PointService $pointService, ChunkService $chunkService) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
-		$this->archiveService = $archiveService;
+		$this->chunkService = $chunkService;
 	}
 
 
@@ -119,11 +119,11 @@ class FileHistory extends Base {
 				continue;
 			}
 
-			$data = $this->archiveService->getDataFromRP($point, $dataName);
+			$data = $this->chunkService->getDataFromRP($point, $dataName);
 
 			foreach ($data->getChunks() as $chunk) {
 				try {
-					$file = $this->archiveService->getArchiveFileFromChunk($point, $chunk, $filename);
+					$file = $this->chunkService->getArchiveFileFromChunk($point, $chunk, $filename);
 					$table->appendRow(
 						[
 							date('Y-m-d H:i:s', $point->getDate()),

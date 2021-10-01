@@ -41,7 +41,7 @@ use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringData;
-use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
 use OCP\Files\NotFoundException;
@@ -71,7 +71,7 @@ class PointDetails extends Base {
 	/** @var PointService */
 	private $pointService;
 
-	/** @var ArchiveService */
+	/** @var ChunkService */
 	private $chunkService;
 
 
@@ -80,12 +80,12 @@ class PointDetails extends Base {
 	 *
 	 * @param RemoteService $remoteService
 	 * @param PointService $pointService
-	 * @param ArchiveService $chunkService
+	 * @param ChunkService $chunkService
 	 */
 	public function __construct(
 		RemoteService $remoteService,
 		PointService $pointService,
-		ArchiveService $chunkService
+		ChunkService $chunkService
 	) {
 		parent::__construct();
 

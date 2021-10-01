@@ -94,7 +94,7 @@ class PointService {
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
 
-	/** @var ArchiveService */
+	/** @var ChunkService */
 	private $chunkService;
 
 	/** @var FilesService */
@@ -119,7 +119,7 @@ class PointService {
 	 * @param PointRequest $pointRequest
 	 * @param ChangesRequest $changesRequest
 	 * @param RemoteStreamService $remoteStreamService
-	 * @param ArchiveService $chunkService
+	 * @param ChunkService $chunkService
 	 * @param FilesService $filesService
 	 * @param OutputService $outputService
 	 * @param ConfigService $configService
@@ -128,7 +128,7 @@ class PointService {
 		PointRequest $pointRequest,
 		ChangesRequest $changesRequest,
 		RemoteStreamService $remoteStreamService,
-		ArchiveService $chunkService,
+		ChunkService $chunkService,
 		FilesService $filesService,
 		OutputService $outputService,
 		ConfigService $configService
@@ -359,12 +359,6 @@ class PointService {
 
 		$data->setLocked(true);
 		$point->addRestoringData($data);
-
-		// TODO:
-		// - get last complete RestoringPoint
-		// - generate metadata
-		// - get list of user files to add to the backup
-		// - get list of non-user files to add to the backup
 	}
 
 
@@ -564,17 +558,11 @@ class PointService {
 
 		$this->initBackupFS();
 
-//		$folder = $this->appData->getFolder('/');
-//		echo $folder->fileExists($point->getId()) . "\n";
-
 		try {
 			$folder = $this->appData->newFolder('/' . $point->getId());
 		} catch (NotPermittedException $e) {
 			$folder = $this->appData->getFolder('/' . $point->getId());
 		}
-
-//		$folder = $this->appData->getFolder('/');
-//		echo $folder->fileExists($point->getId()) . "\n";
 
 		$point->setBaseFolder($folder);
 	}
@@ -668,25 +656,6 @@ class PointService {
 		$this->chunkService->getChunkContent($point, $restoringChunk);
 
 		return $restoringChunk;
-	}
-
-
-	/**
-	 * @param RestoringPoint $point
-	 * @param string $data
-	 * @param string $chunk
-	 *
-	 * @return ISimpleFile
-	 * @throws RestoringChunkNotFoundException
-	 * @throws NotFoundException
-	 * @throws NotPermittedException
-	 */
-	public function getChunkResource(RestoringPoint $point, string $data, string $chunk): ISimpleFile {
-		$this->initBaseFolder($point);
-
-		$restoringChunk = clone $this->chunkService->getChunkFromRP($point, $chunk, $data);
-
-		return $this->chunkService->getChunkResource($point, $restoringChunk);
 	}
 
 }

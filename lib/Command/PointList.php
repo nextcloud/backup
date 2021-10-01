@@ -143,8 +143,6 @@ class PointList extends Base {
 			);
 		}
 
-//		echo 'RP: ' . json_encode($rp, JSON_PRETTY_PRINT);
-
 		return 0;
 	}
 

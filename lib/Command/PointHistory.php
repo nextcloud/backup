@@ -33,7 +33,7 @@ namespace OCA\Backup\Command;
 
 
 use OC\Core\Command\Base;
-use OCA\Backup\Service\ArchiveService;
+use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\PointService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -50,21 +50,21 @@ class PointHistory extends Base {
 	/** @var PointService */
 	private $pointService;
 
-	/** @var ArchiveService */
-	private $archiveService;
+	/** @var ChunkService */
+	private $chunkService;
 
 
 	/**
 	 * PointHistory constructor.
 	 *
 	 * @param PointService $pointService
-	 * @param ArchiveService $archiveService
+	 * @param ChunkService $chunkService
 	 */
-	public function __construct(PointService $pointService, ArchiveService $archiveService) {
+	public function __construct(PointService $pointService, ChunkService $chunkService) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
-		$this->archiveService = $archiveService;
+		$this->chunkService = $chunkService;
 	}
 
 

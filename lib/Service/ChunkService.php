@@ -56,11 +56,11 @@ use ZipStreamer\ZipStreamer;
 
 
 /**
- * Class ArchiveService
+ * Class ChunkService
  *
  * @package OCA\Backup\Service
  */
-class ArchiveService {
+class ChunkService {
 
 
 	use TArrayTools;
@@ -80,7 +80,7 @@ class ArchiveService {
 
 
 	/**
-	 * ArchiveService constructor.
+	 * ChunkService constructor.
 	 *
 	 * @param FilesService $filesService
 	 * @param EncryptService $encryptService
