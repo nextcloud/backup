@@ -43,6 +43,7 @@ use OCA\Backup\Exceptions\BackupScriptNotFoundException;
 use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointNotInitiatedException;
 use OCA\Backup\Model\ArchiveFile;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringData;
@@ -50,6 +51,7 @@ use OCA\Backup\Model\RestoringPoint;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
+use OCP\Files\SimpleFS\ISimpleFolder;
 use ZipArchive;
 use ZipStreamer\COMPR;
 use ZipStreamer\ZipStreamer;
@@ -190,17 +192,14 @@ class ChunkService {
 	 * @throws ArchiveNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	public function openZipArchive(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
 		bool $stream = false
 	): ZipArchive {
-		if (!$point->hasBaseFolder()) {
-			throw new ArchiveCreateException('Backup has no Base Folder');
-		}
-
-		$folder = $point->getBaseFolder();
+		$folder = $this->getChunkFolder($point, $chunk);
 		$file = $folder->getFile($chunk->getFilename());
 
 		$tmp = tmpfile();
@@ -387,6 +386,8 @@ class ChunkService {
 	 * @param string $path
 	 *
 	 * @throws ArchiveCreateException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	private function createSingleFileZip(
 		RestoringPoint $point,
@@ -394,7 +395,7 @@ class ChunkService {
 		string $filename,
 		string $path
 	): void {
-		$zip = $this->generateZip($point, $chunk->getFilename());
+		$zip = $this->generateZip($point, $chunk);
 		$read = fopen($path, 'r');
 		$zip->addFileFromStream($read, $filename);
 		$zip->finalize();
@@ -416,7 +417,7 @@ class ChunkService {
 	): RestoringChunk {
 		$chunk = new RestoringChunk($data->getName());
 
-		$zip = $this->generateZip($point, $chunk->getfilename());
+		$zip = $this->generateZip($point, $chunk);
 		$zipSize = 0;
 		while (($filename = array_shift($files)) !== null) {
 			$fileSize = filesize($data->getAbsolutePath() . $filename);
@@ -447,19 +448,18 @@ class ChunkService {
 
 	/**
 	 * @param RestoringPoint $point
-	 * @param string $filename
+	 * @param RestoringChunk $chunk
 	 *
 	 * @return ZipStreamer
 	 * @throws ArchiveCreateException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
 	 */
-	public function generateZip(RestoringPoint $point, string $filename): ZipStreamer {
-		if (!$point->hasBaseFolder()) {
-			throw new ArchiveCreateException('Backup has no Base Folder');
-		}
+	public function generateZip(RestoringPoint $point, RestoringChunk $chunk): ZipStreamer {
+		$folder = $this->getChunkFolder($point, $chunk);
 
-		$folder = $point->getBaseFolder();
 		try {
-			$file = $folder->newFile($filename);
+			$file = $folder->newFile($chunk->getFilename());
 			$zip = new ZipStreamer(
 				[
 					'outstream' => $file->write(),
@@ -517,12 +517,14 @@ class ChunkService {
 				}
 				$stream = fopen('./' . $chunk->getFilename(), 'r');
 			} else {
-				$folder = $point->getBaseFolder();
+				$folder = $this->getChunkFolder($point, $chunk);
 				$file = $folder->getFile($chunk->getFilename());
 				$stream = $file->read();
 			}
 		} catch (Exception $e) {
-			throw new ArchiveNotFoundException('Chunk ' . $chunk->getFilename() . ' not found');
+			throw new ArchiveNotFoundException(
+				'Chunk ' . $chunk->getPath() . $chunk->getFilename() . ' not found'
+			);
 		}
 
 		if (is_bool($stream)) {
@@ -908,6 +910,33 @@ class ChunkService {
 		$file->setRestoringChunk($chunk);
 
 		return $file;
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 *
+	 * @return ISimpleFolder
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
+	 */
+	private function getChunkFolder(RestoringPoint $point, RestoringChunk $chunk): ISimpleFolder {
+		if (!$point->hasBaseFolder() || !$point->hasRootFolder()) {
+			throw new RestoringPointNotInitiatedException('Restoring Point is not initiated');
+		}
+
+		$folder = $point->getBaseFolder();
+		if ($chunk->getPath() !== '') {
+			$root = $point->getRootFolder();
+			try {
+				$folder = $root->getFolder('/' . $folder->getName() . '/' . $chunk->getPath());
+			} catch (NotFoundException $e) {
+				$folder = $root->newFolder('/' . $folder->getName() . '/' . $chunk->getPath());
+			}
+		}
+
+		return $folder;
 	}
 
 }

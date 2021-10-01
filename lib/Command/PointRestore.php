@@ -263,7 +263,7 @@ class PointRestore extends Base {
 
 			foreach ($data->getChunks() as $chunk) {
 				$this->output->write(
-					'   > Chunk: ' . $chunk->getFilename() . ' (' . $chunk->getCount() . ' files) '
+					'   > Chunk: ' . $chunk->getPath() . $chunk->getFilename() . ' (' . $chunk->getCount() . ' files) '
 				);
 
 				try {
@@ -366,7 +366,7 @@ class PointRestore extends Base {
 		$this->output->write(
 			'   > restoring ' . $file->getName() . ' (' . $this->humanReadable($file->getFilesize())
 			. ') from <info>'
-			. $chunk->getName() . '</info>'
+			. $chunk->getPath() . $chunk->getName() . '</info>'
 		);
 
 		// TODO: display $root and add a confirmation step

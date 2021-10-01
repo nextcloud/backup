@@ -43,6 +43,7 @@ use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
+use OCP\Files\SimpleFS\ISimpleRoot;
 
 
 /**
@@ -78,6 +79,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 	/** @var ISimpleFolder */
 	private $baseFolder = null;
+
+	/** @var ISimpleRoot */
+	private $baseRoot = null;
 
 	/** @var RestoringData[] */
 	private $restoringData = [];
@@ -235,6 +239,32 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	 */
 	public function getBaseFolder(): ISimpleFolder {
 		return $this->baseFolder;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function hasRootFolder(): bool {
+		return !is_null($this->rootFolder);
+	}
+
+	/**
+	 * @param ISimpleRoot $root
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setRootFolder(ISimpleRoot $root): self {
+		$this->rootFolder = $root;
+
+		return $this;
+	}
+
+	/**
+	 * @return ISimpleRoot
+	 */
+	public function getRootFolder(): ISimpleRoot {
+		return $this->rootFolder;
 	}
 
 

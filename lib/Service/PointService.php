@@ -61,7 +61,6 @@ use OCA\Backup\SqlDump\SqlDumpPgSQL;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Util;
 use Throwable;
 
@@ -564,6 +563,7 @@ class PointService {
 			$folder = $this->appData->getFolder('/' . $point->getId());
 		}
 
+		$point->setRootFolder($this->appData);
 		$point->setBaseFolder($folder);
 	}
 

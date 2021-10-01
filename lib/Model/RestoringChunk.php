@@ -51,7 +51,10 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 
 	/** @var string */
-	private $name;
+	private $name = '';
+
+	/** @var string */
+	private $path = '';
 
 	/** @var string */
 	private $content = '';
@@ -83,11 +86,15 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 */
 	public function __construct(string $name = '', bool $staticName = false) {
 		$this->staticName = $staticName;
+		if ($name === '') {
+			return;
+		}
+
 		if (!$staticName) {
-			if ($name !== '') {
-				$name .= '-';
-			}
-			$name .= $this->uuid();
+			$name .= '-';
+			$uuid = $this->uuid();
+			$this->path = $name . substr($uuid, 0, 1) . '/' . substr($uuid, 0, 2) . '/';
+			$name .= $uuid;
 		}
 
 		$this->name = $name;
@@ -129,6 +136,25 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 */
 	public function isStaticName(): bool {
 		return $this->staticName;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getPath(): string {
+		return $this->path;
+	}
+
+	/**
+	 * @param string $path
+	 *
+	 * @return $this
+	 */
+	public function setPath(string $path): self {
+		$this->path = $path;
+
+		return $this;
 	}
 
 
@@ -261,6 +287,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setName($this->get('name', $data))
+			 ->setPath($this->get('path', $data))
 //			 ->setFiles($this->getArray('files', $data, []))
 			 ->setCount($this->getInt('count', $data))
 			 ->setSize($this->getInt('size', $data))
@@ -288,6 +315,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	public function jsonSerialize(): array {
 		$arr = [
 			'name' => $this->getName(),
+			'path' => $this->getPath(),
 			'count' => $this->getCount(),
 			'size' => $this->getSize(),
 			'staticName' => $this->isStaticName(),
