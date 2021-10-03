@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup
+ * Nextcloud - Backup now. Restore Later
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -188,7 +188,6 @@ class ChunkService {
 	 * @param bool $stream
 	 *
 	 * @return ZipArchive
-	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
@@ -396,7 +395,7 @@ class ChunkService {
 		string $path
 	): void {
 		$zip = $this->generateZip($point, $chunk);
-		$read = fopen($path, 'r');
+		$read = fopen($path, 'rb');
 		$zip->addFileFromStream($read, $filename);
 		$zip->finalize();
 	}
@@ -433,7 +432,7 @@ class ChunkService {
 			}
 
 			$zipSize += $fileSize;
-			$in = fopen($data->getAbsolutePath() . $filename, 'r');
+			$in = fopen($data->getAbsolutePath() . $filename, 'rb');
 
 			$zip->addFileFromStream($in, $filename);
 			$archiveFile = new ArchiveFile($filename, $fileSize);
@@ -483,7 +482,7 @@ class ChunkService {
 	 */
 	public function finalizeZip(ZipStreamer $zip, RestoringChunk $archive): void {
 		$str = json_encode($archive->getResume(), JSON_PRETTY_PRINT);
-		$read = fopen('data://text/plain,' . $str, 'r');
+		$read = fopen('data://text/plain,' . $str, 'rb');
 		$zip->addFileFromStream($read, '.backup.' . $archive->getName() . '.json');
 
 		$zip->finalize();
@@ -515,7 +514,7 @@ class ChunkService {
 				if (!file_exists('./' . $chunk->getFilename())) {
 					throw new ArchiveNotFoundException('Archive not found');
 				}
-				$stream = fopen('./' . $chunk->getFilename(), 'r');
+				$stream = fopen('./' . $chunk->getFilename(), 'rb');
 			} else {
 				$folder = $this->getChunkFolder($point, $chunk);
 				$file = $folder->getFile($chunk->getFilename());
@@ -609,8 +608,8 @@ class ChunkService {
 //			if (!file_exists('./' . $archive->getName())) {
 //				throw new ArchiveNotFoundException('Archive not found');
 //			}
-//			$stream = fopen('./' . $archive->getName(''), 'r');
-//			$write = fopen('./' . $archive->getName('zip'), 'w');
+//			$stream = fopen('./' . $archive->getName(''), 'rb');
+//			$write = fopen('./' . $archive->getName('zip'), 'wb');
 //		} else {
 //			$folder = $backup->getBaseFolder();
 //
@@ -781,12 +780,18 @@ class ChunkService {
 
 
 	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 *
+	 * @return ISimpleFile
 	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
 	 */
-	public function getChunkResource(RestoringPoint $point, RestoringChunk $restoringChunk): ISimpleFile {
-		$folder = $point->getBaseFolder();
+	public function getChunkResource(RestoringPoint $point, RestoringChunk $chunk): ISimpleFile {
+		$folder = $this->getChunkFolder($point, $chunk);
 
-		return $folder->getFile($restoringChunk->getFilename());
+		return $folder->getFile($chunk->getFilename());
 	}
 
 
@@ -914,6 +919,18 @@ class ChunkService {
 
 
 	/**
+	 * @throws RestoringPointNotInitiatedException
+	 * @throws NotPermittedException
+	 * @throws NotFoundException
+	 */
+	public function removeChunkFile(RestoringPoint $point, RestoringChunk $chunk) {
+		$folder = $this->getChunkFolder($point, $chunk);
+		$file = $folder->getFile($chunk->getFilename());
+		$file->delete();
+	}
+
+
+	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 *
@@ -921,7 +938,7 @@ class ChunkService {
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotInitiatedException
 	 */
-	private function getChunkFolder(RestoringPoint $point, RestoringChunk $chunk): ISimpleFolder {
+	public function getChunkFolder(RestoringPoint $point, RestoringChunk $chunk): ISimpleFolder {
 		if (!$point->hasBaseFolder() || !$point->hasRootFolder()) {
 			throw new RestoringPointNotInitiatedException('Restoring Point is not initiated');
 		}

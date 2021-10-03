@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup
+ * Nextcloud - Backup now. Restore Later
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,15 +45,21 @@ class ConfigService {
 
 
 	const MAINTENANCE = 'maintenance';
-	const DB_TYPE = 'dbtype';
+
 	const SELF_SIGNED_CERT = 'self_signed_cert';
 	const LAST_FULL_RP = 'last_full_rp';
+	const PACK_BACKUP = 'pack_backup';
+	const ENCRYPT_BACKUP = 'encrypt_backup';
+	const ENCRYPTION_KEY = 'encryption_key';
 
 
 	/** @var array */
 	public $defaults = [
 		self::SELF_SIGNED_CERT => '0',
-		self::LAST_FULL_RP => ''
+		self::LAST_FULL_RP => '',
+		self::PACK_BACKUP => '1',
+		self::ENCRYPT_BACKUP => '1',
+		self::ENCRYPTION_KEY => ''
 	];
 
 	/** @var IConfig */
@@ -196,5 +202,15 @@ class ConfigService {
 	}
 
 
-}
+	/**
+	 * @return string
+	 */
+	public function getTempFileName(): string {
+		$tmp = tmpfile();
+		$tmpPath = stream_get_meta_data($tmp)['uri'];
+		fclose($tmp);
 
+		return $tmpPath;
+	}
+
+}

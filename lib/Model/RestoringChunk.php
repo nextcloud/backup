@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup
+ * Nextcloud - Backup now. Restore Later
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ namespace OCA\Backup\Model;
 
 
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
@@ -48,6 +49,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 	use TArrayTools;
 	use TStringTools;
+	use TNC23Deserialize;
 
 
 	/** @var string */
@@ -62,7 +64,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	/** @var string[] */
 	private $files = [];
 
-	/** @var RestoringChunkPart */
+	/** @var RestoringChunkPart[] */
 	private $parts = [];
 
 	/** @var int */
@@ -224,6 +226,36 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 
 	/**
+	 * @return ArchiveFile[]
+	 */
+	public function getParts(): array {
+		return $this->parts;
+	}
+
+	/**
+	 * @param RestoringChunkPart[] $parts
+	 *
+	 * @return RestoringChunk
+	 */
+	public function setParts(array $parts): self {
+		$this->parts = $parts;
+
+		return $this;
+	}
+
+	/**
+	 * @param RestoringChunkPart $part
+	 *
+	 * @return RestoringChunk
+	 */
+	public function addPart(RestoringChunkPart $part): self {
+		$this->parts[] = $part;
+
+		return $this;
+	}
+
+
+	/**
 	 * @return int
 	 */
 	public function getSize(): int {
@@ -295,6 +327,11 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			 ->setStaticName($this->getBool('staticName', $data))
 			 ->setChecksum($this->get('checksum', $data));
 
+		/** @var RestoringChunkPart[] $parts */
+		$parts = $this->deserializeArray($this->getArray('parts', $data), RestoringChunkPart::class);
+		$this->setParts($parts);
+
+
 		return $this;
 	}
 
@@ -318,6 +355,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			'path' => $this->getPath(),
 			'count' => $this->getCount(),
 			'size' => $this->getSize(),
+			'parts' => $this->getParts(),
 			'staticName' => $this->isStaticName(),
 			'checksum' => $this->getChecksum()
 		];

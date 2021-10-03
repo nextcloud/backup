@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup
+ * Nextcloud - Backup now. Restore Later
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ namespace OCA\Backup\SqlDump;
 use Ifsnop\Mysqldump\Mysqldump;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\ISqlDump;
+use OCA\Backup\Service\ConfigService;
 use Throwable;
 
 
@@ -46,6 +47,10 @@ use Throwable;
 class SqlDumpMySQL implements ISqlDump {
 
 
+	/** @var ConfigService */
+	private $configService;
+
+
 	/**
 	 * SqlDumpMySQL constructor.
 	 */
@@ -55,11 +60,12 @@ class SqlDumpMySQL implements ISqlDump {
 
 	/**
 	 * @param array $data
+	 * @param string $filename
 	 *
 	 * @return string
 	 * @throws SqlDumpException
 	 */
-	public function export(array $data): string {
+	public function export(array $data, string $filename): void {
 		$connect = 'mysql:host=' . $data['dbhost'] . ';dbname=' . $data['dbname'];
 		$settings = [
 			'compress' => Mysqldump::NONE,
@@ -77,23 +83,12 @@ class SqlDumpMySQL implements ISqlDump {
 			'hex-blob' => true
 		];
 
-		$tmpPath = '';
 		try {
-			$tmp = tmpfile();
-			$tmpPath = stream_get_meta_data($tmp)['uri'];
-			fclose($tmp);
-
 			$dump = new Mysqldump($connect, $data['dbuser'], $data['dbpassword'], $settings);
-			$dump->start($tmpPath);
+			$dump->start($filename);
 		} catch (Throwable $t) {
-			if ($tmpPath !== '') {
-				unlink($tmpPath);
-			}
-
 			throw new SqlDumpException($t->getMessage());
 		}
-
-		return $tmpPath;
 	}
 
 

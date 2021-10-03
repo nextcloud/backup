@@ -34,36 +34,39 @@ namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
-use OCP\DB\Exception;
-use OCP\Files\NotFoundException;
-use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- * Class PointDelete
+ * Class PointStore
  *
  * @package OCA\Backup\Command
  */
-class PointDelete extends Base {
+class PointPack extends Base {
 
 
 	/** @var PointService */
 	private $pointService;
 
+	/** @var PackService */
+	private $packService;
+
 
 	/**
-	 * PointCreate constructor.
+	 * PointStore constructor.
 	 *
 	 * @param PointService $pointService
+	 * @param PackService $packService
 	 */
-	public function __construct(PointService $pointService) {
+	public function __construct(PointService $pointService, PackService $packService) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
+		$this->packService = $packService;
 	}
 
 
@@ -73,9 +76,9 @@ class PointDelete extends Base {
 	protected function configure() {
 		parent::configure();
 
-		$this->setName('backup:point:delete')
-			 ->setDescription('Locally delete a restoring point')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to delete');
+		$this->setName('backup:point:pack')
+			 ->setDescription('Increase compression of a restoring point and prepare for upload')
+			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point');
 	}
 
 
@@ -84,15 +87,14 @@ class PointDelete extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws NotFoundException
-	 * @throws NotPermittedException
 	 * @throws RestoringPointNotFoundException
-	 * @throws Exception
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
-
-		$this->pointService->delete($point);
+		$this->pointService->initBaseFolder($point);
+		$this->packService->packPoint($point);
 
 		return 0;
 	}

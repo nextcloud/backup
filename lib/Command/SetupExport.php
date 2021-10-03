@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup
+ * Nextcloud - Backup now. Restore Later
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -102,7 +102,7 @@ class SetupExport extends Base {
 		$setup = [
 			'signatory' => $this->configService->getAppValue('key_pairs'),
 			'remote' => $this->remoteService->getAll(true),
-			'encryption' => ''
+			'encryption' => $this->encryptService->getEncryptionKey()
 		];
 
 		$data = json_encode($setup);

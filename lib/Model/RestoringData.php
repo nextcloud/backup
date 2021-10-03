@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup
+ * Nextcloud - Backup now. Restore Later
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -295,6 +295,26 @@ class RestoringData implements IDeserializable, JsonSerializable {
 
 		return $this;
 	}
+
+
+//	/**
+//	 * @param RestoringChunk $chunk
+//	 *
+//	 * @return $this
+//	 */
+//	public function updateChunk(RestoringChunk $chunk): self {
+//		$new = [];
+//		foreach ($this->getChunks() as $restoringChunk) {
+//			if ($restoringChunk->getName() === $chunk->getName()) {
+//				$restoringChunk = $chunk;
+//			}
+//
+//			$new[] = $restoringChunk;
+//		}
+//		$this->setChunks($new);
+//
+//		return $this;
+//	}
 
 
 	/**

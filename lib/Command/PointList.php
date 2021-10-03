@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup
+ * Nextcloud - Backup now. Restore Later
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -47,10 +47,10 @@ use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
 use OCA\Backup\Service\RemoteStreamService;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 
 
 /**
@@ -100,7 +100,11 @@ class PointList extends Base {
 	 */
 	protected function configure() {
 		$this->setName('backup:point:list')
-			 ->setDescription('List restoring point');
+			 ->setDescription('List restoring point')
+			 ->addArgument(
+				 'instance', InputArgument::OPTIONAL,
+				 'list restoring point from a specific instance (or local)', ''
+			 );
 	}
 
 
@@ -114,98 +118,13 @@ class PointList extends Base {
 	 * @throws RemoteResourceNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$instance = $this->selectInstanceToBrowse($input, $output);
-
-		if ($instance === RemoteInstance::ALL) {
-			$this->displayAllInstances($output);
-
-			return 0;
-		}
-
-		$output->writeln('');
-		$output->writeln('Available Restoring Point on <info>' . $instance . '</info>:');
-
-		$points = $this->getRestoringPoints($instance, ($instance === RemoteInstance::LOCAL));
-
-		$output = new ConsoleOutput();
-		$output = $output->section();
-		$table = new Table($output);
-		$table->setHeaders(['Id', 'Parent', 'Date']);
-		$table->render();
-
-		foreach ($points as $point) {
-			$table->appendRow(
-				[
-					$point->getId(),
-					$point->getParent(),
-					date('Y-m-d H:i:s', $point->getDate())
-				]
-			);
-		}
-
-		return 0;
-	}
-
-
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 *
-	 * @return string
-	 */
-	private function selectInstanceToBrowse(InputInterface $input, OutputInterface $output): string {
-		$remote = array_filter(
-			array_map(
-				function (RemoteInstance $remoteInstance): ?string {
-					return $remoteInstance->getInstance();
-				}, $this->remoteService->getOutgoing()
-			)
-		);
-
-		$output->writeln('');
-		$helper = $this->getHelper('question');
-		$question = new ChoiceQuestion(
-			'Which location to browse ?',
-			array_merge([RemoteInstance::LOCAL], $remote, [RemoteInstance::ALL]),
-			0
-		);
-		$question->setErrorMessage('Instance %s is not known.');
-
-		return $helper->ask($input, $output, $question);
-	}
-
-
-	/**
-	 * @param string $instance
-	 * @param bool $local
-	 *
-	 * @return RestoringPoint[]
-	 * @throws RemoteInstanceException
-	 * @throws RemoteInstanceNotFoundException
-	 * @throws RemoteResourceNotFoundException
-	 */
-	private function getRestoringPoints(string $instance, bool $local = false): array {
-		if ($local) {
-			return $this->pointService->getRPLocal();
-		}
-
-		return $this->remoteService->getRestoringPoints($instance);
-	}
-
-
-	/**
-	 *
-	 */
-	private function displayAllInstances(OutputInterface $output): void {
-		$rp = $this->getRPFromAllInstances($output);
+		$rp = $this->getRPFromInstances($output, $input->getArgument('instance'));
 
 		$output = new ConsoleOutput();
 		$output = $output->section();
 
 		$table = new Table($output);
-		$table->setHeaders(
-			['Restoring Point', 'Date', 'Parent', 'Instance', 'Health']
-		);
+		$table->setHeaders(['Restoring Point', 'Date', 'Parent', 'Instance', 'Health']);
 		$table->render();
 
 		foreach ($rp as $pointId => $item) {
@@ -234,23 +153,30 @@ class PointList extends Base {
 				$fresh = false;
 			}
 		}
+
+		return 0;
 	}
 
 
 	/**
 	 * @param OutputInterface $output
+	 * @param string $instance
 	 *
 	 * @return array
 	 */
-	private function getRPFromAllInstances(OutputInterface $output): array {
-		$instances = array_merge(
-			[RemoteInstance::LOCAL],
-			array_map(
-				function (RemoteInstance $remoteInstance): ?string {
-					return $remoteInstance->getInstance();
-				}, $this->remoteService->getOutgoing()
-			)
-		);
+	private function getRPFromInstances(OutputInterface $output, string $instance = ''): array {
+		if ($instance === '') {
+			$instances = array_merge(
+				[RemoteInstance::LOCAL],
+				array_map(
+					function (RemoteInstance $remoteInstance): ?string {
+						return $remoteInstance->getInstance();
+					}, $this->remoteService->getOutgoing()
+				)
+			);
+		} else {
+			$instances = [$instance];
+		}
 
 		$points = $dates = [];
 		foreach ($instances as $instance) {

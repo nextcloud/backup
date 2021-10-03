@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -28,38 +29,18 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup;
+namespace OCA\Backup\Exceptions;
 
 
-interface ISqlDump {
-
-	const MYSQL = 'mysql';
-	const PGSQL = 'pgsql';
-
-	const DB_TYPE = 'dbtype';
-	const DB_NAME = 'dbname';
-	const DB_HOST = 'dbhost';
-	const DB_PORT = 'dbport';
-	const DB_USER = 'dbuser';
-	const DB_PASS = 'dbpassword';
+use Exception;
 
 
-	/**
-	 * @param array $data
-	 * @param string $filename
-	 *
-	 * @return string
-	 */
-	public function export(array $data, string $filename): void;
-
-
-	/**
-	 * @param array $data
-	 * @param resource $read
-	 *
-	 * @return bool
-	 */
-	public function import(array $data, $read): bool;
+/**
+ * Class EncryptionKeyException
+ *
+ * @package OCA\Backup\Exceptions
+ */
+class EncryptionKeyException extends Exception {
 
 }
 

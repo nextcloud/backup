@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup
+ * Nextcloud - Backup now. Restore Later
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -240,6 +240,10 @@ class PointService {
 	}
 
 
+	public function update(RestoringPoint $point, bool $updateMetadata = false): void {
+		$this->pointRequest->update($point, $updateMetadata);
+	}
+
 	/**
 	 * @param RestoringPoint $point
 	 *
@@ -370,24 +374,26 @@ class PointService {
 	 * @throws Throwable
 	 */
 	private function backupSql(RestoringPoint $point) {
-		if ($this->configService->getSystemValue(ConfigService::DB_TYPE) !== ISqlDump::MYSQL
-			&& $this->configService->getSystemValue(ConfigService::DB_TYPE) !== ISqlDump::PGSQL
+		if ($this->configService->getSystemValue(ISqlDump::DB_TYPE) !== ISqlDump::MYSQL
+			&& $this->configService->getSystemValue(ISqlDump::DB_TYPE) !== ISqlDump::PGSQL
 		) {
 			return;
 		}
 
 		$sqlDump = $this->getSqlDump();
-		$path = $sqlDump->export($this->getSqlData());
+		$tmp = $this->configService->getTempFileName();
 		try {
+			$sqlDump->export($this->getSqlData(), $tmp);
 			$data = new RestoringData(RestoringData::SQL_DUMP, '', 'sqldump');
 			$this->chunkService->createSingleFileChunk(
 				$point,
 				$data,
 				self::SQL_DUMP_FILE,
-				$path
+				$tmp
 			);
+			unlink($tmp);
 		} catch (Throwable $t) {
-			unlink($path);
+			unlink($tmp);
 			throw $t;
 		}
 
@@ -415,7 +421,7 @@ class PointService {
 	 * @throws SqlDumpException
 	 */
 	public function getSqlDump(): ISqlDump {
-		switch ($this->configService->getSystemValue(ConfigService::DB_TYPE)) {
+		switch ($this->configService->getSystemValue(ISqlDump::DB_TYPE)) {
 			case ISqlDump::MYSQL:
 				$sqlDump = new SqlDumpMySQL();
 				break;

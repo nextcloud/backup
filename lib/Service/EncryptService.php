@@ -1,15 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup
+ * Nextcloud - Backup now. Restore Later
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2019, Maxence Lange <maxence@artificial-owl.com>
+ * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,6 +34,7 @@ namespace OCA\Backup\Service;
 
 use Exception;
 use OCA\Backup\Exceptions\EncryptException;
+use OCA\Backup\Exceptions\EncryptionKeyException;
 use SodiumException;
 
 /**
@@ -44,12 +46,19 @@ class EncryptService {
 
 
 	const BLOCK_SIZE = 500;
+	const CUSTOM_CHUNK_SIZE = 8192;
+	const KEY_LENGTH = 32;
+
+
+	/** @var ConfigService */
+	private $configService;
 
 
 	/**
 	 * EncryptService constructor.
 	 */
-	public function __construct() {
+	public function __construct(ConfigService $configService) {
+		$this->configService = $configService;
 	}
 
 
@@ -110,6 +119,79 @@ class EncryptService {
 		sodium_memzero($key);
 
 		return $plain;
+	}
+
+
+	/**
+	 * @param string $input
+	 * @param string $output
+	 *
+	 * @throws SodiumException
+	 * @throws EncryptionKeyException
+	 */
+	public function encryptFile(string $input, string $output): void {
+		$key = $this->getEncryptionKey();
+		$read = fopen($input, 'rb');
+		$write = fopen($output, 'wb');
+		[$state, $header] = sodium_crypto_secretstream_xchacha20poly1305_init_push($key);
+
+		fwrite($write, $header, 24); // Write the header first:
+		$size = fstat($read)['size'];
+		for ($pos = 0; $pos < $size; $pos += self::CUSTOM_CHUNK_SIZE) {
+			$chunk = fread($read, self::CUSTOM_CHUNK_SIZE);
+			$encrypted = sodium_crypto_secretstream_xchacha20poly1305_push($state, $chunk);
+			fwrite($write, $encrypted, self::CUSTOM_CHUNK_SIZE + 17);
+			sodium_memzero($chunk);
+		}
+
+		fclose($read);
+		fclose($write);
+	}
+
+
+	/**
+	 * @param string $input
+	 * @param string $output
+	 *
+	 * @throws SodiumException
+	 * @throws EncryptionKeyException
+	 */
+	public function decryptFile(string $input, string $output): void {
+		$key = $this->getEncryptionKey();
+		$read = fopen($input, 'rb');
+		$write = fopen($output, 'wb');
+
+		$header = fread($read, 24);
+		$state = sodium_crypto_secretstream_xchacha20poly1305_init_pull($header, $key);
+		$size = fstat($read)['size'];
+		$readChunkSize = self::CUSTOM_CHUNK_SIZE + 17;
+		for ($pos = 24; $pos < $size; $pos += $readChunkSize) {
+			$chunk = fread($read, $readChunkSize);
+			[$plain, $tag] = sodium_crypto_secretstream_xchacha20poly1305_pull($state, $chunk);
+			fwrite($write, $plain, self::CUSTOM_CHUNK_SIZE);
+			sodium_memzero($plain);
+		}
+
+		fclose($read);
+		fclose($write);
+	}
+
+
+	/**
+	 * @throws EncryptionKeyException
+	 */
+	public function getEncryptionKey(): string {
+		$key = $this->configService->getAppValue(ConfigService::ENCRYPTION_KEY);
+		if ($key === '') {
+			try {
+				$key = base64_encode(random_bytes(SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES));
+			} catch (Exception $e) {
+				throw new EncryptionKeyException();
+			}
+			$this->configService->setAppValue(ConfigService::ENCRYPTION_KEY, $key);
+		}
+
+		return base64_decode($key);
 	}
 
 
