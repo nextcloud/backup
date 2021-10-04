@@ -29,65 +29,86 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\Settings;
-
+namespace OCA\Backup\Activity;
 
 use OCA\Backup\AppInfo\Application;
+use OCP\Activity\ISetting;
 use OCP\IL10N;
-use OCP\IURLGenerator;
-use OCP\Settings\IIconSection;
 
 
 /**
- * Class AdminSection
+ * Class Settings
  *
- * @package OCA\Backup\Settings
+ * @package OCA\Backup\Activity
  */
-class AdminSection implements IIconSection {
+class GlobalSetting implements ISetting {
 
 
 	/** @var IL10N */
 	private $l10n;
 
-	/** @var IURLGenerator */
-	private $urlGenerator;
-
 
 	/**
 	 * @param IL10N $l10n
-	 * @param IURLGenerator $urlGenerator
 	 */
-	public function __construct(IL10N $l10n, IURLGenerator $urlGenerator) {
+	public function __construct(IL10N $l10n) {
 		$this->l10n = $l10n;
-		$this->urlGenerator = $urlGenerator;
 	}
 
+
 	/**
-	 * {@inheritdoc}
+	 * @return string
 	 */
-	public function getID(): string {
+	public function getIdentifier(): string {
 		return Application::APP_ID;
 	}
 
+
 	/**
-	 * {@inheritdoc}
+	 * @return string
 	 */
 	public function getName(): string {
-		return $this->l10n->t('Backup');
+		return $this->l10n->t('Update on all Backup\'s event');
 	}
 
+
 	/**
-	 * {@inheritdoc}
+	 * @return int
 	 */
 	public function getPriority(): int {
-		return 90;
+		return 60;
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return bool
 	 */
-	public function getIcon(): string {
-		return '';
+	public function canChangeStream(): bool {
+		return $this->isAdmin();
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function isDefaultEnabledStream(): bool {
+		return $this->isAdmin();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function canChangeMail(): bool {
+		return $this->isAdmin();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isDefaultEnabledMail(): bool {
+		return $this->isAdmin();
+	}
+
+
+	private function isAdmin(): bool {
+		return true;
+	}
 }

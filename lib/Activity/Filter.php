@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup now. Restore later.
+ * Nextcloud - Backup now. Restore Later.
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -29,31 +29,33 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\Settings;
+namespace OCA\Backup\Activity;
 
 
 use OCA\Backup\AppInfo\Application;
+use OCP\Activity\IFilter;
 use OCP\IL10N;
 use OCP\IURLGenerator;
-use OCP\Settings\IIconSection;
 
 
 /**
- * Class AdminSection
+ * Class Filter
  *
- * @package OCA\Backup\Settings
+ * @package OCA\Backup\Activity
  */
-class AdminSection implements IIconSection {
+class Filter implements IFilter {
 
 
 	/** @var IL10N */
-	private $l10n;
+	protected $l10n;
 
 	/** @var IURLGenerator */
-	private $urlGenerator;
+	protected $urlGenerator;
 
 
 	/**
+	 * Filter constructor.
+	 *
 	 * @param IL10N $l10n
 	 * @param IURLGenerator $urlGenerator
 	 */
@@ -62,32 +64,59 @@ class AdminSection implements IIconSection {
 		$this->urlGenerator = $urlGenerator;
 	}
 
+
 	/**
-	 * {@inheritdoc}
+	 * @return string
 	 */
-	public function getID(): string {
+	public function getIdentifier(): string {
 		return Application::APP_ID;
 	}
 
+
 	/**
-	 * {@inheritdoc}
+	 * @return string
 	 */
 	public function getName(): string {
 		return $this->l10n->t('Backup');
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getPriority(): int {
-		return 90;
-	}
 
 	/**
-	 * {@inheritdoc}
+	 * @return int
+	 */
+	public function getPriority(): int {
+		return 70;
+	}
+
+
+	/**
+	 * @param string[] $types
+	 *
+	 * @return string[]
+	 */
+	public function filterTypes(array $types): array {
+		return $types;
+	}
+
+
+	/**
+	 * @return string
 	 */
 	public function getIcon(): string {
-		return '';
+		return $this->urlGenerator->getAbsoluteURL(
+			$this->urlGenerator->imagePath(
+				Application::APP_ID,
+				'app.svg'
+			)
+		);
+	}
+
+
+	/**
+	 * @return string[]
+	 */
+	public function allowedApps(): array {
+		return [Application::APP_ID];
 	}
 
 }

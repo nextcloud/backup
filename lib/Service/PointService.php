@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup now. Restore Later
+ * Nextcloud - Backup now. Restore later.
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -102,6 +102,9 @@ class PointService {
 	/** @var OutputService */
 	private $outputService;
 
+	/** @var ActivityService */
+	private $activityService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -121,6 +124,7 @@ class PointService {
 	 * @param ChunkService $chunkService
 	 * @param FilesService $filesService
 	 * @param OutputService $outputService
+	 * @param ActivityService $activityService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
@@ -130,6 +134,7 @@ class PointService {
 		ChunkService $chunkService,
 		FilesService $filesService,
 		OutputService $outputService,
+		ActivityService $activityService,
 		ConfigService $configService
 	) {
 		$this->pointRequest = $pointRequest;
@@ -138,6 +143,7 @@ class PointService {
 		$this->remoteStreamService = $remoteStreamService;
 		$this->filesService = $filesService;
 		$this->outputService = $outputService;
+		$this->activityService = $activityService;
 		$this->configService = $configService;
 
 		$this->setup('app', 'backup');
@@ -210,6 +216,7 @@ class PointService {
 		$this->chunkService->generateInternalData($point);
 
 		// maintenance mode on
+		$initTime = time();
 		$maintenance = $this->configService->getSystemValueBool(ConfigService::MAINTENANCE);
 		$this->configService->maintenanceMode(true);
 
@@ -235,6 +242,14 @@ class PointService {
 
 		$this->saveMetadata($point);
 		$this->pointRequest->save($point);
+
+		$this->activityService->newActivity(
+			'backup_create', [
+							   'id' => $point->getId(),
+							   'duration' => time() - $initTime,
+							   'status' => $point->getStatus()
+						   ]
+		);
 
 		return $point;
 	}

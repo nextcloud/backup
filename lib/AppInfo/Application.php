@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup now. Restore Later
+ * Nextcloud - Backup now. Restore later.
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -32,8 +32,10 @@ declare(strict_types=1);
 namespace OCA\Backup\AppInfo;
 
 
+use OCA\Backup\Activity\GlobalSetting;
 use OCA\Backup\Handlers\WebfingerHandler;
 use OCA\Backup\Listeners\NodeEvent;
+use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -86,6 +88,10 @@ class Application extends App implements IBootstrap {
 	 * @param IBootContext $context
 	 */
 	public function boot(IBootContext $context): void {
+		/** @var IActivityManager $activityManager */
+		$activityManager = $context->getServerContainer()->get(IActivityManager::class);
+
+		$activityManager->registerSetting(GlobalSetting::class);
 	}
 
 }

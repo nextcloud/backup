@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup now. Restore Later
+ * Nextcloud - Backup now. Restore later.
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -32,6 +32,13 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
+use OCA\Backup\AppInfo\Application;
+use OCP\Activity\IEvent;
+use OCP\Activity\IManager as IActivityManager;
+use OCP\IGroupManager;
+use OCP\IUser;
+
+
 /**
  * Class ActivityService
  *
@@ -40,7 +47,68 @@ namespace OCA\Backup\Service;
 class ActivityService {
 
 
-	public function __construct() {
+	const TYPE_GLOBAL = 'backup_global';
+	const CREATE = 'backup_create';
+
+	const LIMIT_TO_GROUP = 'admin';
+
+
+	/** @var IActivityManager */
+	private $activityManager;
+
+	/** @var IGroupManager */
+	private $groupManager;
+
+
+	/**
+	 * ActivityService constructor.
+	 *
+	 * @param IActivityManager $activityManager
+	 * @param IGroupManager $groupManager
+	 */
+	public function __construct(IActivityManager $activityManager, IGroupManager $groupManager) {
+		$this->activityManager = $activityManager;
+		$this->groupManager = $groupManager;
+	}
+
+
+	/**
+	 * @param string $subject
+	 * @param array $params
+	 */
+	public function newActivity(string $subject, array $params = []): void {
+		$type = ActivityService::TYPE_GLOBAL;
+		$activity = $this->generateActivity($type);
+		$activity->setSubject($subject, $params);
+
+		$adminGroup = $this->groupManager->get(self::LIMIT_TO_GROUP);
+		$this->publishActivity($activity, $adminGroup->getUsers());
+	}
+
+
+	/**
+	 * @param string $type
+	 *
+	 * @return IEvent
+	 */
+	private function generateActivity(string $type): IEvent {
+		$event = $this->activityManager->generateEvent();
+		$event->setApp(Application::APP_ID)
+			  ->setType($type);
+
+		return $event;
+	}
+
+
+	/**
+	 * @param IEvent $event
+	 * @param IUser[] $users
+	 */
+	private function publishActivity(IEvent $event, array $users) {
+		foreach ($users as $user) {
+			$event->setAffectedUser($user->getUID());
+			$this->activityManager->publish($event);
+		}
 	}
 
 }

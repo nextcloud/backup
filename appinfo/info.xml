@@ -52,4 +52,16 @@
 		<admin-section>OCA\Backup\Settings\AdminSection</admin-section>
 	</settings>
 
+		<activity>
+<!--			<settings>-->
+<!--				<setting>OCA\Backup\Activity\GlobalSetting</setting>-->
+<!--			</settings>-->
+			<filters>
+				<filter>OCA\Backup\Activity\Filter</filter>
+			</filters>
+			<providers>
+				<provider>OCA\Backup\Activity\Provider</provider>
+			</providers>
+		</activity>
+
 </info>

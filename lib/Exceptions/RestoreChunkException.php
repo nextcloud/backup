@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 /**
- * Nextcloud - Backup now. Restore Later
+ * Nextcloud - Backup now. Restore later.
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
