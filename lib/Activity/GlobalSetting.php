@@ -32,8 +32,10 @@ declare(strict_types=1);
 namespace OCA\Backup\Activity;
 
 use OCA\Backup\AppInfo\Application;
-use OCP\Activity\ISetting;
+use OCP\Activity\ActivitySettings;
+use OCP\IGroupManager;
 use OCP\IL10N;
+use OCP\IUserSession;
 
 
 /**
@@ -41,18 +43,28 @@ use OCP\IL10N;
  *
  * @package OCA\Backup\Activity
  */
-class GlobalSetting implements ISetting {
+class GlobalSetting extends ActivitySettings {
 
 
 	/** @var IL10N */
 	private $l10n;
 
+	/** @var IGroupManager */
+	private $groupManager;
+
+	/** @var IUserSession */
+	private $userSession;
+
 
 	/**
 	 * @param IL10N $l10n
+	 * @param IGroupManager $groupManager
+	 * @param IUserSession $userSession
 	 */
-	public function __construct(IL10N $l10n) {
+	public function __construct(IL10N $l10n, IGroupManager $groupManager, IUserSession $userSession) {
 		$this->l10n = $l10n;
+		$this->groupManager = $groupManager;
+		$this->userSession = $userSession;
 	}
 
 
@@ -100,6 +112,15 @@ class GlobalSetting implements ISetting {
 		return $this->isAdmin();
 	}
 
+
+	/**
+	 * @return bool
+	 */
+	public function canChangeNotification(): bool {
+		return $this->isAdmin();
+	}
+
+
 	/**
 	 * @return bool
 	 */
@@ -108,7 +129,26 @@ class GlobalSetting implements ISetting {
 	}
 
 
+	/**
+	 * @return bool
+	 */
 	private function isAdmin(): bool {
-		return true;
+		$user = $this->userSession->getUser();
+		return $this->groupManager->isAdmin($user->getUID());
+
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getGroupIdentifier(): string {
+		return 'other';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getGroupName(): string {
+		return '';
 	}
 }
