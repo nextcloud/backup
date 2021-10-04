@@ -205,11 +205,12 @@ class Provider implements IProvider {
 
 		$this->parseSimpleEvent(
 			$activity,
-			'The file {file} have restored based on a restoring point from {date} (estimated rewind: {rewind})',
+			'The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})',
 			$params
 		);
 	}
 
+	
 	/**
 	 * @param IEvent $activity
 	 * @param string $global
