@@ -95,14 +95,14 @@ class GlobalSetting extends ActivitySettings {
 	 * @return bool
 	 */
 	public function canChangeStream(): bool {
-		return $this->isAdmin();
+		return false;
 	}
 
 	/**
 	 * @return bool
 	 */
 	public function isDefaultEnabledStream(): bool {
-		return $this->isAdmin();
+		return true;
 	}
 
 	/**
@@ -125,7 +125,7 @@ class GlobalSetting extends ActivitySettings {
 	 * @return bool
 	 */
 	public function isDefaultEnabledMail(): bool {
-		return $this->isAdmin();
+		return false;
 	}
 
 
@@ -134,6 +134,7 @@ class GlobalSetting extends ActivitySettings {
 	 */
 	private function isAdmin(): bool {
 		$user = $this->userSession->getUser();
+
 		return $this->groupManager->isAdmin($user->getUID());
 
 	}
