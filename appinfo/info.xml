@@ -17,9 +17,10 @@
 		<nextcloud min-version="22" max-version="23"/>
 	</dependencies>
 
-	<!--	<background-jobs>-->
-	<!--		<job>OCA\Backup\Cron\Backup</job>-->
-	<!--	</background-jobs>-->
+	<background-jobs>
+		<job>OCA\Backup\Cron\Backup</job>
+		<job>OCA\Backup\Cron\Manage</job>
+	</background-jobs>
 
 	<commands>
 		<command>OCA\Backup\Command\RemoteAdd</command>
@@ -52,16 +53,16 @@
 		<admin-section>OCA\Backup\Settings\AdminSection</admin-section>
 	</settings>
 
-		<activity>
-			<settings>
-				<setting>OCA\Backup\Activity\GlobalSetting</setting>
-			</settings>
-			<filters>
-				<filter>OCA\Backup\Activity\Filter</filter>
-			</filters>
-			<providers>
-				<provider>OCA\Backup\Activity\Provider</provider>
-			</providers>
-		</activity>
+	<activity>
+		<settings>
+			<setting>OCA\Backup\Activity\GlobalSetting</setting>
+		</settings>
+		<filters>
+			<filter>OCA\Backup\Activity\Filter</filter>
+		</filters>
+		<providers>
+			<provider>OCA\Backup\Activity\Provider</provider>
+		</providers>
+	</activity>
 
 </info>

@@ -33,6 +33,7 @@ namespace OCA\Backup\Activity;
 
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
+use Exception;
 use InvalidArgumentException;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Service\ActivityService;
@@ -169,7 +170,7 @@ class Provider implements IProvider {
 					'days' => $this->l10n->t('days')
 				]
 			);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 		}
 
 		$this->parseSimpleEvent(
@@ -210,7 +211,7 @@ class Provider implements IProvider {
 		);
 	}
 
-	
+
 	/**
 	 * @param IEvent $activity
 	 * @param string $global
@@ -256,7 +257,7 @@ class Provider implements IProvider {
 					'days' => $this->l10n->t('days')
 				]
 			);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 		}
 	}
 
