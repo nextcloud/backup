@@ -49,6 +49,8 @@ class ActivityService {
 
 	const TYPE_GLOBAL = 'backup_global';
 	const CREATE = 'backup_create';
+	const RESTORE = 'backup_restore';
+	const RESTORE_FILE = 'backup_restore_file';
 
 	const LIMIT_TO_GROUP = 'admin';
 

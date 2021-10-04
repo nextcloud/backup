@@ -92,9 +92,7 @@ class Provider implements IProvider {
 	 */
 	public function parse($lang, IEvent $event, IEvent $previousEvent = null): IEvent {
 		$params = $event->getSubjectParameters();
-		\OC::$server->getLogger()->log(3, json_encode($params));
 		$this->initActivityParser($event, $params);
-
 		$this->setIcon($event);
 
 		if ($event->getType() !== ActivityService::TYPE_GLOBAL) {
@@ -105,6 +103,15 @@ class Provider implements IProvider {
 			case ActivityService::CREATE;
 				$this->parseCreate($event, $params);
 				break;
+
+			case ActivityService::RESTORE;
+				$this->parseRestore($event, $params);
+				break;
+
+			case ActivityService::RESTORE_FILE;
+				$this->parseRestoreFile($event, $params);
+				break;
+
 		}
 
 		return $event;
@@ -146,25 +153,62 @@ class Provider implements IProvider {
 	 * @param array $params
 	 */
 	private function parseCreate(IEvent $activity, array $params): void {
-		$params['downtime'] = $this->getDateDiff(
-			$this->getInt('duration', $params),
-			0,
-			false,
-			[
-				'seconds' => $this->l10n->t('seconds'),
-				'minutes' => $this->l10n->t('minutes'),
-				'hours' => $this->l10n->t('hours'),
-				'days' => $this->l10n->t('days')
-			]
-		);
+		$params['type'] = ($this->getBool('complete', $params)) ?
+			$this->l10n->t('complete') :
+			$this->l10n->t('partial');
+
+		try {
+			$params['downtime'] = $this->getDateDiff(
+				$this->getInt('duration', $params),
+				0,
+				false,
+				[
+					'seconds' => $this->l10n->t('seconds'),
+					'minutes' => $this->l10n->t('minutes'),
+					'hours' => $this->l10n->t('hours'),
+					'days' => $this->l10n->t('days')
+				]
+			);
+		} catch (\Exception $e) {
+		}
+
 		$this->parseSimpleEvent(
 			$activity,
-			'A new restoring point have been generated, ' .
+			'A new restoring point ({type}) have been generated, ' .
 			'requiring maintenance mode for {downtime}. (id: {id}, status: {status})',
 			$params
 		);
 	}
 
+
+	/**
+	 * @param IEvent $activity
+	 * @param array $params
+	 */
+	private function parseRestore(IEvent $activity, array $params): void {
+		$this->readableRewing($params);
+
+		$this->parseSimpleEvent(
+			$activity,
+			'Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})',
+			$params
+		);
+	}
+
+
+	/**
+	 * @param IEvent $activity
+	 * @param array $params
+	 */
+	private function parseRestoreFile(IEvent $activity, array $params): void {
+		$this->readableRewing($params);
+
+		$this->parseSimpleEvent(
+			$activity,
+			'The file {file} have restored based on a restoring point from {date} (estimated rewind: {rewind})',
+			$params
+		);
+	}
 
 	/**
 	 * @param IEvent $activity
@@ -190,6 +234,29 @@ class Provider implements IProvider {
 	protected function setSubject(IEvent $event, string $line) {
 		$event->setParsedSubject($line);
 		$event->setRichSubject($line);
+	}
+
+
+	/**
+	 * @param array $params
+	 */
+	private function readableRewing(array &$params): void {
+		$params['date'] = date('Y-m-d H:i:s', $this->getInt('date', $params));
+
+		try {
+			$params['rewind'] = $this->getDateDiff(
+				$this->getInt('rewind', $params),
+				0,
+				false,
+				[
+					'seconds' => $this->l10n->t('seconds'),
+					'minutes' => $this->l10n->t('minutes'),
+					'hours' => $this->l10n->t('hours'),
+					'days' => $this->l10n->t('days')
+				]
+			);
+		} catch (\Exception $e) {
+		}
 	}
 
 }

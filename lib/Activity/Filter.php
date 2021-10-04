@@ -33,6 +33,7 @@ namespace OCA\Backup\Activity;
 
 
 use OCA\Backup\AppInfo\Application;
+use OCA\Backup\Service\ActivityService;
 use OCP\Activity\IFilter;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -95,7 +96,7 @@ class Filter implements IFilter {
 	 * @return string[]
 	 */
 	public function filterTypes(array $types): array {
-		return $types;
+		return array_merge($types, [ActivityService::TYPE_GLOBAL]);
 	}
 
 

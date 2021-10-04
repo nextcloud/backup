@@ -830,10 +830,11 @@ class ChunkService {
 			$this->listFilesFromChunk($point, $chunk);
 		}
 
+		$search = strtolower($search);
 		return array_filter(
 			array_map(
 				function (ArchiveFile $file) use ($search): ?ArchiveFile {
-					if (strpos($file->getName(), $search) !== false) {
+					if (strpos(strtolower($file->getName()), $search) !== false) {
 						return $file;
 					}
 

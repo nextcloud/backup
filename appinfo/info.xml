@@ -53,9 +53,9 @@
 	</settings>
 
 		<activity>
-<!--			<settings>-->
-<!--				<setting>OCA\Backup\Activity\GlobalSetting</setting>-->
-<!--			</settings>-->
+			<settings>
+				<setting>OCA\Backup\Activity\GlobalSetting</setting>
+			</settings>
 			<filters>
 				<filter>OCA\Backup\Activity\Filter</filter>
 			</filters>

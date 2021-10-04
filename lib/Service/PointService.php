@@ -247,7 +247,8 @@ class PointService {
 			'backup_create', [
 							   'id' => $point->getId(),
 							   'duration' => time() - $initTime,
-							   'status' => $point->getStatus()
+							   'status' => $point->getStatus(),
+							   'complete' => $complete
 						   ]
 		);
 

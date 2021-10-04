@@ -49,6 +49,7 @@ use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Service\ActivityService;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\FilesService;
@@ -89,6 +90,9 @@ class PointRestore extends Base {
 	/** @var RestoreService */
 	private $restoreService;
 
+	/** @var ActivityService */
+	private $activityService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -110,6 +114,7 @@ class PointRestore extends Base {
 	 * @param ChunkService $chunkService
 	 * @param FilesService $filesService
 	 * @param RestoreService $restoreService
+	 * @param ActivityService $activityService
 	 * @param ConfigService $configService
 	 * @param OutputService $outputService
 	 */
@@ -118,6 +123,7 @@ class PointRestore extends Base {
 		ChunkService $chunkService,
 		FilesService $filesService,
 		RestoreService $restoreService,
+		ActivityService $activityService,
 		ConfigService $configService,
 		OutputService $outputService
 	) {
@@ -127,6 +133,7 @@ class PointRestore extends Base {
 		$this->chunkService = $chunkService;
 		$this->filesService = $filesService;
 		$this->restoreService = $restoreService;
+		$this->activityService = $activityService;
 		$this->configService = $configService;
 		$this->outputService = $outputService;
 	}
@@ -226,6 +233,15 @@ class PointRestore extends Base {
 		$this->restorePointComplete($point);
 		$this->configService->maintenanceMode(false);
 
+		$this->activityService->newActivity(
+			ActivityService::RESTORE,
+			[
+				'id' => $point->getId(),
+				'date' => $point->getDate(),
+				'rewind' => time() - $point->getDate()
+			]
+		);
+
 		return 0;
 	}
 
@@ -263,7 +279,8 @@ class PointRestore extends Base {
 
 			foreach ($data->getChunks() as $chunk) {
 				$this->output->write(
-					'   > Chunk: ' . $chunk->getPath() . $chunk->getFilename() . ' (' . $chunk->getCount() . ' files) '
+					'   > Chunk: ' . $chunk->getPath() . $chunk->getFilename() . ' (' . $chunk->getCount()
+					. ' files) '
 				);
 
 				try {
@@ -374,6 +391,16 @@ class PointRestore extends Base {
 		try {
 			$this->chunkService->restoreUniqueFile($point, $chunk, $root, $file->getName());
 			$this->output->writeln('<info>ok</info>');
+
+			$this->activityService->newActivity(
+				ActivityService::RESTORE_FILE,
+				[
+					'id' => $point->getId(),
+					'file' => $file->getName(),
+					'date' => $point->getDate(),
+					'rewind' => time() - $point->getDate()
+				]
+			);
 
 			// include restored file in next incremental backup
 			$changedFile = new ChangedFile($file->getName());
