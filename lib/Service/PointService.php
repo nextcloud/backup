@@ -233,6 +233,10 @@ class PointService {
 		if ($complete) {
 			$this->changesRequest->reset();
 			$this->configService->setAppValue(ConfigService::LAST_FULL_RP, $point->getId());
+			$this->configService->setAppValueInt(ConfigService::DATE_FULL_RP, $point->getDate());
+		} else {
+			$this->configService->setAppValue(ConfigService::LAST_PARTIAL_RP, $point->getId());
+			$this->configService->setAppValueInt(ConfigService::DATE_PARTIAL_RP, $point->getDate());
 		}
 
 		// maintenance mode off

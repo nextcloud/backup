@@ -32,9 +32,11 @@ declare(strict_types=1);
 namespace OCA\Backup\Cron;
 
 
-use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\PointService;
+use Throwable;
 
 
 /**
@@ -45,6 +47,15 @@ use OCA\Backup\Service\ConfigService;
 class Backup extends TimedJob {
 
 
+	use TNC23Logger;
+
+
+	const MARGIN = 1800;
+
+
+	/** @var PointService */
+	private $pointService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -52,11 +63,14 @@ class Backup extends TimedJob {
 	/**
 	 * Backup constructor.
 	 *
+	 * @param PointService $pointService
 	 * @param ConfigService $configService
 	 */
-	public function __construct(ConfigService $configService) {
-		$this->setInterval(1800);
+	public function __construct(PointService $pointService, ConfigService $configService) {
+		$this->setInterval(900);
+//		$this->setInterval(1);
 
+		$this->pointService = $pointService;
 		$this->configService = $configService;
 	}
 
@@ -65,66 +79,132 @@ class Backup extends TimedJob {
 	 * @param $argument
 	 */
 	protected function run($argument) {
-		$this->runBackup();
+		$time = time();
+		if (!$this->verifyTime($time)) {
+			return;
+		}
+
+		$this->runBackup($time);
 	}
 
 
 	/**
 	 *
 	 */
-	private function runBackup(): void {
-//		$last = new SimpleDataStore();
-//		$last->json($this->configService->getAppValue(ConfigService::MAINTENANCE_UPDATE));
-//
-//		$last->sInt('maximum', $this->maximumLevelBasedOnTime(($last->gInt('5') === 0)));
-//		for ($i = 5; $i > 0; $i--) {
-//			if ($this->canRunLevel($i, $last)) {
-//				try {
-//					$this->maintenanceService->runMaintenance($i);
-//				} catch (MaintenanceException $e) {
-//					continue;
-//				}
-//				$last->sInt((string)$i, time());
-//			}
-//		}
-//
-//		$this->configService->setAppValue(ConfigService::MAINTENANCE_UPDATE, json_encode($last));
+	private function runBackup(int $time): void {
+		if ($this->verifyFullBackup($time)) {
+			$this->runFullBackup();
+		} else if ($this->verifyIncrementalBackup($time)) {
+			$this->runIncrementalBackup();
+		}
 	}
 
 
 	/**
-	 * @param bool $force
+	 * @param int $time
 	 *
-	 * @return int
+	 * @return bool
 	 */
-	private function maximumLevelBasedOnTime(bool $force = false): int {
-		$currentHour = (int)date('H');
-		$currentDay = (int)date('N');
-		$isWeekEnd = ($currentDay >= 6);
+	private function verifyTime(int $time): bool {
+		[$st, $end] = explode('-', $this->configService->getAppValue(ConfigService::TIME_SLOTS));
 
-		if ($currentHour > 2 && $currentHour < 5 && ($isWeekEnd || $force)) {
-			return 5;
-		}
+		if (!is_numeric($st) || !is_numeric($end)) {
+			$this->log(3, 'Issue with Time Slots format, please check configuration');
 
-		if ($currentHour > 1 && $currentHour < 6) {
-			return 4;
-		}
-
-		return 3;
-	}
-
-
-	private function canRunLevel(int $level, SimpleDataStore $last): bool {
-		if ($last->gInt('maximum') < $level) {
 			return false;
 		}
 
-		$now = time();
-		$timeLastRun = $last->gInt((string)$level);
-		if ($timeLastRun === 0) {
-			return true;
+		$st = (int)$st;
+		$end = (int)$end;
+
+		$timeStart = mktime(
+			$st,
+			0,
+			0,
+			(int)date('n', $time),
+			// we go back one day in time under some condition
+			(int)date('j', $time) - ($st >= $end) * ((int)date('H', $time) < $end),
+			(int)date('Y', $time)
+		);
+
+		$timeEnd = mktime(
+			$end,
+			0,
+			0,
+			(int)date('n', $time),
+			// we go one day forward on a night-day configuration (ie. 23-5)
+			(int)date('j', $time) + ($st >= $end) * ((int)date('H', $time) > $end),
+			(int)date('Y', $time)
+		);
+
+		return ($timeStart < $time && $time < $timeEnd);
+	}
+
+
+	/**
+	 * @param int $time
+	 *
+	 * @return bool
+	 */
+	private function verifyFullBackup(int $time): bool {
+		if (!$this->configService->getAppValueBool(ConfigService::ALLOW_WEEKDAY)
+			&& !$this->isWeekEnd($time)) {
+			return false;
 		}
 
-		return ($timeLastRun + self::$DELAY[$level] < $now);
+		$last = $this->configService->getAppValueInt(ConfigService::DATE_FULL_RP);
+		$delay = $this->configService->getAppValueInt(ConfigService::DELAY_FULL_RP);
+		$delayUnit = $this->configService->getAppValue(ConfigService::DELAY_UNIT);
+		$delay = $delay * 3600 * (($delayUnit !== 'h') ? 24 : 1);
+
+		return ($last + $delay - self::MARGIN < $time);
 	}
+
+
+	private function runFullBackup(): void {
+		try {
+			$this->pointService->create(true);
+		} catch (Throwable $e) {
+		}
+	}
+
+
+	/**
+	 * @param int $time
+	 *
+	 * @return bool
+	 */
+	private function verifyIncrementalBackup(int $time): bool {
+		$last = max(
+			$this->configService->getAppValueInt(ConfigService::DATE_PARTIAL_RP),
+			$this->configService->getAppValueInt(ConfigService::DATE_FULL_RP)
+		);
+		$delay = $this->configService->getAppValueInt(ConfigService::DELAY_FULL_RP);
+		$delayUnit = $this->configService->getAppValue(ConfigService::DELAY_UNIT);
+		$delay = $delay * 3600 * (($delayUnit !== 'h') ? 24 : 1);
+
+		return ($last + $delay - self::MARGIN < $time);
+	}
+
+
+	/**
+	 *
+	 */
+	private function runIncrementalBackup(): void {
+		try {
+			$this->pointService->create(false);
+		} catch (Throwable $e) {
+		}
+	}
+
+
+	/**
+	 * @param int $time
+	 *
+	 * @return bool
+	 */
+	private function isWeekEnd(int $time): bool {
+		return ((int)date('N', $time) >= 6);
+	}
+
 }

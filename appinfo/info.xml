@@ -6,7 +6,7 @@
 	<description><![CDATA[Backup now. Restore later.]]></description>
 	<licence>agpl</licence>
 	<author mail="maxence@artificial-owl.com">Maxence Lange</author>
-	<version>0.2.1</version>
+	<version>0.2.2</version>
 	<namespace>Backup</namespace>
 	<category>tools</category>
 	<website>https://github.com/nextcloud/backup</website>

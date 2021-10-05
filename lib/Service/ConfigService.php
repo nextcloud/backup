@@ -47,19 +47,35 @@ class ConfigService {
 	const MAINTENANCE = 'maintenance';
 
 	const SELF_SIGNED_CERT = 'self_signed_cert';
+	const DELAY_FULL_RP = 'delay_full_rp';
+	const DELAY_PARTIAL_RP = 'delay_partial_rp';
+	const DELAY_UNIT = 'delay_unit';
+	const ALLOW_WEEKDAY = 'allow_weekday';
+	const DATE_FULL_RP = 'date_full_rp';
+	const DATE_PARTIAL_RP = 'date_partial_rp';
 	const LAST_FULL_RP = 'last_full_rp';
+	const LAST_PARTIAL_RP = 'last_partial_rp';
 	const PACK_BACKUP = 'pack_backup';
 	const ENCRYPT_BACKUP = 'encrypt_backup';
 	const ENCRYPTION_KEY = 'encryption_key';
+	const TIME_SLOTS = 'time_slots';
 
 
 	/** @var array */
 	public $defaults = [
 		self::SELF_SIGNED_CERT => '0',
 		self::LAST_FULL_RP => '',
+		self::LAST_PARTIAL_RP => '',
+		self::DATE_FULL_RP => 0,
+		self::DATE_PARTIAL_RP => 0,
+		self::DELAY_FULL_RP => 14,
+		self::DELAY_PARTIAL_RP => 3,
+		self::DELAY_UNIT => 'd',
+		self::ALLOW_WEEKDAY => 0,
 		self::PACK_BACKUP => '1',
 		self::ENCRYPT_BACKUP => '1',
-		self::ENCRYPTION_KEY => ''
+		self::ENCRYPTION_KEY => '',
+		self::TIME_SLOTS => '23-5'
 	];
 
 	/** @var IConfig */
@@ -123,6 +139,18 @@ class ConfigService {
 	 * @return void
 	 */
 	public function setAppValue(string $key, string $value): void {
+		$this->config->setAppValue(Application::APP_ID, $key, $value);
+	}
+
+	/**
+	 * Set a value by key
+	 *
+	 * @param string $key
+	 * @param int $value
+	 *
+	 * @return void
+	 */
+	public function setAppValueInt(string $key, int $value): void {
 		$this->config->setAppValue(Application::APP_ID, $key, $value);
 	}
 
