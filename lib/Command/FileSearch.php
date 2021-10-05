@@ -144,12 +144,15 @@ class FileSearch extends Base {
 
 						$empty = false;
 						foreach ($files as $file) {
-							$output->writeln(
-								'   found <info>' . $file->getName() . '</info> ('
+							$output->writeln('');
+							$output->write(
+								'   > found <info>' . $file->getName() . '</info> ('
 								. $this->humanReadable($file->getFilesize()) . ') in <info>'
 								. $data->getName() . '</info>/<info>' . $chunk->getName() . '</info>'
 							);
+							$progressBar->setProgress(0);
 						}
+						$output->writeln('');
 					} catch
 					(ArchiveCreateException
 					| ArchiveNotFoundException

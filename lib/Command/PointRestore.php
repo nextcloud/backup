@@ -381,9 +381,9 @@ class PointRestore extends Base {
 		$root = $data->getAbsolutePath();
 		$chunk = $file->getRestoringChunk();
 		$this->output->write(
-			'   > restoring ' . $file->getName() . ' (' . $this->humanReadable($file->getFilesize())
-			. ') from <info>'
-			. $chunk->getPath() . $chunk->getName() . '</info>'
+			'   > restoring ' . $file->getName() . ' (' . $this->humanReadable($file->getFilesize()) .
+			') from <info>' . $chunk->getPath() . $chunk->getName() . '</info>' .
+			' (rewind: ' . $this->getDateDiff($point->getDate(), time()) . '): '
 		);
 
 		// TODO: display $root and add a confirmation step
