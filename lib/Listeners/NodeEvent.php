@@ -35,12 +35,14 @@ namespace OCA\Backup\Listeners;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Model\ChangedFile;
+use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\FilesService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\NodeCreatedEvent;
 use OCP\Files\Events\Node\NodeRenamedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
+use OCP\Files\NotFoundException;
 
 
 /**
@@ -57,14 +59,19 @@ class NodeEvent implements IEventListener {
 	/** @var FilesService */
 	private $filesService;
 
+	/** @var ConfigService */
+	private $configService;
+
 
 	/**
 	 * NodeEvent constructor.
 	 *
 	 * @param FilesService $filesService
+	 * @param ConfigService $configService
 	 */
-	public function __construct(FilesService $filesService) {
+	public function __construct(FilesService $filesService, ConfigService $configService) {
 		$this->filesService = $filesService;
+		$this->configService = $configService;
 
 		$this->setup('app', Application::APP_ID);
 	}
@@ -87,8 +94,24 @@ class NodeEvent implements IEventListener {
 			return;
 		}
 
-		$file = new ChangedFile($node->getPath());
-		$this->filesService->changedFile($file);
+		try {
+			$storage = $node->getStorage();
+			if (!$storage->isLocal()) {
+				return;
+			}
+
+			$filepath = $storage->getLocalFile($node->getInternalPath());
+			$root = $this->configService->getSystemValue('datadirectory');
+
+			if (strpos($filepath, $root) !== 0) {
+				return;
+			}
+
+			$filepath = substr($filepath, strlen($root));
+			$file = new ChangedFile($filepath);
+			$this->filesService->changedFile($file);
+		} catch (NotFoundException $e) {
+		}
 	}
 
 }
