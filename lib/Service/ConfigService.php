@@ -45,6 +45,7 @@ class ConfigService {
 
 
 	const MAINTENANCE = 'maintenance';
+	const DATA_DIRECTORY = 'datadirectory';
 
 	const SELF_SIGNED_CERT = 'self_signed_cert';
 	const DELAY_FULL_RP = 'delay_full_rp';

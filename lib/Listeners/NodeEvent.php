@@ -101,8 +101,7 @@ class NodeEvent implements IEventListener {
 			}
 
 			$filepath = $storage->getLocalFile($node->getInternalPath());
-			$root = $this->configService->getSystemValue('datadirectory');
-
+			$root = $this->configService->getSystemValue(ConfigService::DATA_DIRECTORY);
 			if (strpos($filepath, $root) !== 0) {
 				return;
 			}

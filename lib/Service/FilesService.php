@@ -119,7 +119,7 @@ class FilesService {
 				break;
 
 			case RestoringData::ROOT_DATA:
-				$root = $this->configService->getSystemValue('datadirectory');
+				$root = $this->configService->getSystemValue(ConfigService::DATA_DIRECTORY);
 				break;
 
 			case RestoringData::FILE_CONFIG:
