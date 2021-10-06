@@ -32,9 +32,18 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OC\Core\Command\Base;
+use OC\Files\FileInfo;
+use OC\Files\Node\Folder;
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\PointService;
+use OCA\Files_External\Lib\StorageConfig;
+use OCA\Files_External\Service\GlobalStoragesService;
+use OCP\Files\Config\IUserMountCache;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -47,11 +56,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PointHistory extends Base {
 
 
+	use TNC23Logger;
+
+
 	/** @var PointService */
 	private $pointService;
 
 	/** @var ChunkService */
 	private $chunkService;
+
+	/** @var GlobalStoragesService */
+	private $externalGlobalService;
 
 
 	/**
@@ -86,10 +101,33 @@ class PointHistory extends Base {
 	 * @return int
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$output->writeln('not yet available, use ./occ backup:point:list to get available restoring point');
+		$output->writeln('not yet available.');
+		$output->writeln(
+			'visit the Activity App or use ./occ backup:point:list to get available restoring point'
+		);
 
+
+		$storageId = 6;
+		$root = 'backup_restoring_point/i001';
+		$this->uploadToExternalFS($storageId, $root);
+
+
+		$this->externalGlobalService = \OC::$server->get(GlobalStoragesService::class);
+
+//		$mountId = 1;
+//		$mount = $this->getStorage($mountId);
+
+//		$mount->get
 		return 0;
 	}
 
+
+	private function getStorage(int $mountId): StorageConfig {
+		$mounts = $this->externalGlobalService->getStorageForAllUsers();
+		foreach ($mounts as $mount) {
+			echo '-' . $mount->getId();
+		}
+
+	}
 }
 

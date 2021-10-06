@@ -161,6 +161,42 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 
 
 		/**
+		 * BACKUP_EXTERNAL
+		 */
+		if (!$schema->hasTable('backup_external')) {
+			$table = $schema->createTable('backup_external');
+			$table->addColumn(
+				'id', 'integer', [
+						'autoincrement' => true,
+						'notnull' => true,
+						'length' => 4,
+						'unsigned' => true,
+					]
+			);
+			$table->addColumn(
+				'storage_id', 'integer', [
+								'notnull' => false,
+								'length' => 4,
+							]
+			);
+			$table->addColumn(
+				'root', 'string', [
+						  'notnull' => false,
+						  'length' => 255,
+					  ]
+			);
+			$table->addColumn(
+				'creation', 'datetime', [
+							  'notnull' => false,
+						  ]
+			);
+
+			$table->setPrimaryKey(['id']);
+			$table->addIndex(['storage_id']);
+		}
+
+
+		/**
 		 * BACKUP_REMOTE
 		 */
 		if (!$schema->hasTable('backup_remote')) {

@@ -49,6 +49,7 @@ class CoreRequestBuilder {
 	public const TABLE_FILE_CHANGES = 'backup_changes';
 	public const TABLE_RESTORING_POINT = 'backup_point';
 	public const TABLE_REMOTE = 'backup_remote';
+	public const TABLE_EXTERNAL = 'backup_external';
 
 	public const TABLE_AUTHTOKEN = 'authtoken';
 
@@ -67,6 +68,10 @@ class CoreRequestBuilder {
 			'href',
 			'exchange',
 			'item'
+		],
+		self::TABLE_EXTERNAL => [
+			'storage_id',
+			'root'
 		],
 		self::TABLE_RESTORING_POINT => [
 			'id',
