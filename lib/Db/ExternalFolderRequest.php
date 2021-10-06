@@ -32,6 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Db;
 
 
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Model\ExternalFolder;
 
 /**
@@ -55,12 +56,37 @@ class ExternalFolderRequest extends ExternalFolderRequestBuilder {
 
 
 	/**
+	 * @param int $storageId
+	 */
+	public function remove(int $storageId): void {
+		$qb = $this->getExternalFolderDeleteSql();
+		$qb->limitInt('storage_id', $storageId);
+
+		$qb->execute();
+	}
+
+
+	/**
 	 * @return ExternalFolder[]
 	 */
 	public function getAll(): array {
 		$qb = $this->getExternalFolderSelectSql();
 
 		return $this->getItemsFromRequest($qb);
+	}
+
+
+	/**
+	 * @param int $storageId
+	 *
+	 * @return ExternalFolder
+	 * @throws ExternalFolderNotFoundException
+	 */
+	public function getFromStorageId(int $storageId): ExternalFolder {
+		$qb = $this->getExternalFolderSelectSql();
+		$qb->limitInt('storage_id', $storageId);
+
+		return $this->getItemFromRequest($qb);
 	}
 
 }

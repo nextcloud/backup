@@ -32,24 +32,20 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23WellKnown;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\ExternalFolderRequest;
-use OCA\Backup\Model\ExternalFolder;
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- * Class ExternalAdd
+ * Class ExternalRemove
  *
  * @package OCA\Backup\Command
  */
-class ExternalAdd extends Base {
-
-
-	use TNC23WellKnown;
+class ExternalRemove extends Base {
 
 
 	/** @var ExternalFolderRequest */
@@ -57,14 +53,14 @@ class ExternalAdd extends Base {
 
 
 	/**
-	 * ExternalAdd constructor.
+	 * ExternalRemove constructor.
 	 *
 	 * @param ExternalFolderRequest $externalFolderRequest
 	 */
 	public function __construct(ExternalFolderRequest $externalFolderRequest) {
-		parent::__construct();
-
 		$this->externalFolderRequest = $externalFolderRequest;
+
+		parent::__construct();
 	}
 
 
@@ -72,10 +68,9 @@ class ExternalAdd extends Base {
 	 *
 	 */
 	protected function configure() {
-		$this->setName('backup:external:add')
-			 ->setDescription('Add external filesystem to store your backups')
-			 ->addArgument('storage_id', InputArgument::REQUIRED, 'storage_id from oc_storage')
-			 ->addArgument('root', InputArgument::REQUIRED, 'folder');
+		$this->setName('backup:external:remove')
+			 ->setDescription('Removing external filesystem from database')
+			 ->addArgument('storage_id', InputArgument::REQUIRED, 'storageId');
 	}
 
 
@@ -84,19 +79,21 @@ class ExternalAdd extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
+	 * @throws ExternalFolderNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$storageId = (int)$input->getArgument('storage_id');
-		$root = $input->getArgument('root');
 
-		$folder = new ExternalFolder();
-		$folder->setStorageId($storageId);
-		$folder->setRoot($root);
+		try {
+			$this->externalFolderRequest->getFromStorageId($storageId);
+		} catch (ExternalFolderNotFoundException $e) {
+			throw new ExternalFolderNotFoundException('Unknown external folder');
+		}
 
-		$this->externalFolderRequest->save($folder);
+		$this->externalFolderRequest->remove($storageId);
+		$output->writeln('external filesystem removed.');
 
 		return 0;
 	}
 
 }
-
