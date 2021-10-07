@@ -47,7 +47,7 @@ Backup.prototype = {
 			name: 'ScanBackupFolder',
 			displayName: t('backup', 'Scan Backup Folder'),
 			mime: 'file',
-			filename: 'backup.point.metadata',
+			filename: 'restoring-point.data',
 			order: -50,
 			iconClass: 'icon-folder',
 			permissions: OC.PERMISSION_READ,

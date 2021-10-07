@@ -50,6 +50,7 @@ class CoreRequestBuilder {
 	public const TABLE_RESTORING_POINT = 'backup_point';
 	public const TABLE_REMOTE = 'backup_remote';
 	public const TABLE_EXTERNAL = 'backup_external';
+	public const TABLE_EVENT = 'backup_event';
 
 	public const TABLE_AUTHTOKEN = 'authtoken';
 
@@ -82,6 +83,14 @@ class CoreRequestBuilder {
 			'metadata',
 			'health',
 			'date'
+		],
+		self::TABLE_EVENT => [
+			'id',
+			'author',
+			'type',
+			'status',
+			'data',
+			'result'
 		]
 	];
 

@@ -251,6 +251,52 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table->addIndex(['href']);
 		}
 
+
+		/**
+		 * BACKUP_EVENT
+		 */
+		if (!$schema->hasTable('backup_event')) {
+			$table = $schema->createTable('backup_event');
+			$table->addColumn(
+				'id', 'integer', [
+						'autoincrement' => true,
+						'notnull' => true,
+						'length' => 4,
+						'unsigned' => true,
+					]
+			);
+			$table->addColumn(
+				'author', 'string', [
+							'notnull' => false,
+							'length' => 127,
+						]
+			);
+			$table->addColumn(
+				'type', 'string', [
+						  'notnull' => false,
+						  'length' => 127,
+					  ]
+			);
+			$table->addColumn(
+				'status', 'integer', [
+							'notnull' => false,
+							'unsigned' => true,
+							'length' => 1,
+						]
+			);
+			$table->addColumn(
+				'data', 'text', [
+					  ]
+			);
+			$table->addColumn(
+				'result', 'string', [
+						]
+			);
+
+			$table->setPrimaryKey(['id']);
+			$table->addIndex(['type']);
+		}
+
 		return $schema;
 	}
 }

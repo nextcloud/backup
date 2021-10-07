@@ -19,6 +19,7 @@
 
 	<background-jobs>
 		<job>OCA\Backup\Cron\Backup</job>
+		<job>OCA\Backup\Cron\Event</job>
 		<job>OCA\Backup\Cron\Manage</job>
 	</background-jobs>
 

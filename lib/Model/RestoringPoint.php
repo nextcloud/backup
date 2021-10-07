@@ -457,7 +457,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		$this->setId($this->get('id', $data))
 			 ->setInstance($this->get('instance', $data))
 			 ->setParent($this->get('parent', $data))
-			 ->setStatus($this->getInt('status', $data))
+			 ->setStatus($this->getInt('status', $data, -1))
 			 ->setDate($this->getInt('date', $data))
 			 ->setSignature($this->get('signature', $data));
 		$this->setNc($this->getArray('nc', $data));

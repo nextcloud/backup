@@ -80,7 +80,7 @@ class PointService {
 
 
 	const NOBACKUP_FILE = '.nobackup';
-	const METADATA_FILE = 'backup.point.metadata';
+	const METADATA_FILE = 'restoring-point.data';
 	const SQL_DUMP_FILE = 'backup.sql';
 
 

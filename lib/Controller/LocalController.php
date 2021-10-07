@@ -32,13 +32,26 @@ declare(strict_types=1);
 namespace OCA\Backup\Controller;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Controller;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
-use OCP\AppFramework\Http;
+use Exception;
+use OC\AppFramework\Http;
+use OC\Files\Node\File;
+use OCA\Backup\Db\EventRequest;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Model\BackupEvent;
+use OCA\Backup\Model\RestoringPoint;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
+use OCP\Files\FileInfo;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotPermittedException;
 use OCP\IRequest;
+use OCP\IUserSession;
+use OCP\Lock\LockedException;
 
 
 /**
@@ -51,6 +64,17 @@ class LocalController extends OcsController {
 
 	use TNC23Controller;
 	use TNC23Logger;
+	use TNC23Deserialize;
+
+
+	/** @var IUserSession */
+	private $userSession;
+
+	/** @var IRootFolder */
+	private $rootFolder;
+
+	/** @var EventRequest */
+	private $eventRequest;
 
 
 	/**
@@ -58,9 +82,22 @@ class LocalController extends OcsController {
 	 *
 	 * @param string $appName
 	 * @param IRequest $request
+	 * @param IUserSession $userSession
+	 * @param IRootFolder $rootFolder
+	 * @param EventRequest $eventRequest
 	 */
-	public function __construct(string $appName, IRequest $request) {
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		IUserSession $userSession,
+		IRootFolder $rootFolder,
+		EventRequest $eventRequest
+	) {
 		parent::__construct($appName, $request);
+
+		$this->userSession = $userSession;
+		$this->rootFolder = $rootFolder;
+		$this->eventRequest = $eventRequest;
 	}
 
 
@@ -71,9 +108,54 @@ class LocalController extends OcsController {
 	 * @throws OCSException
 	 */
 	public function scanLocalFolder(int $fileId): DataResponse {
-		throw new OcsException('fail + ' . $fileId, Http::STATUS_BAD_REQUEST);
+		try {
+			$point = $this->getPointFromFileId($fileId);
+			$event = new BackupEvent();
+			$event->setAuthor($this->userSession->getUser()->getUID());
+			$event->setData(['fileId' => $fileId]);
+			$event->setType('ScanLocalFolder');
 
-		return new DataResponse(['message' => 'ouila ' . $fileId]);
+			$this->eventRequest->save($event);
+		} catch (RestoringPointNotFoundException $e) {
+			throw new OcsException(
+				'file does not seems to be a valid restoring point',
+				Http::STATUS_BAD_REQUEST
+			);
+		} catch (Exception $e) {
+			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse(['message' => 'The restoring point have been scheduled for a scan.']);
+	}
+
+	/**
+	 * @param int $fileId
+	 *
+	 * @return RestoringPoint
+	 * @throws RestoringPointNotFoundException
+	 */
+	private function getPointFromFileId(int $fileId): RestoringPoint {
+		$nodes = $this->rootFolder->getById($fileId);
+		foreach ($nodes as $node) {
+			if ($node->getType() !== FileInfo::TYPE_FILE) {
+				continue;
+			}
+
+			/** @var File $node */
+			/** @var RestoringPoint $point */
+			try {
+				$point = $this->deserializeJson($node->getContent(), RestoringPoint::class);
+
+				return $point;
+			} catch (InvalidItemException
+			| NotPermittedException
+			| LockedException $e) {
+				continue;
+			}
+
+		}
+
+		throw new RestoringPointNotFoundException();
 	}
 
 }
