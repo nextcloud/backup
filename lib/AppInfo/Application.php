@@ -34,7 +34,9 @@ namespace OCA\Backup\AppInfo;
 
 use OCA\Backup\Activity\Filter;
 use OCA\Backup\Handlers\WebfingerHandler;
+use OCA\Backup\Listeners\FilesAdditionalScripts;
 use OCA\Backup\Listeners\NodeEvent;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -83,6 +85,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(NodeRenamedEvent::class, NodeEvent::class);
 
 		$context->registerWellKnownHandler(WebfingerHandler::class);
+
+		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesAdditionalScripts::class);
 	}
 
 

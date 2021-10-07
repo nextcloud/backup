@@ -1,6 +1,11 @@
 <?php
 
 return [
+
+	'ocs' => [
+		['name' => 'Local#scanLocalFolder', 'url' => '/scan/{fileId}', 'verb' => 'PUT']
+	],
+
 	'routes' => [
 		['name' => 'Remote#appService', 'url' => '/', 'verb' => 'GET'],
 		['name' => 'Remote#test', 'url' => '/test', 'verb' => 'GET'],
@@ -11,7 +16,7 @@ return [
 		['name' => 'Remote#downloadRestoringPoint', 'url' => '/rp/{pointId}/download', 'verb' => 'GET'],
 		['name' => 'Remote#createRestoringPoint', 'url' => '/rp', 'verb' => 'PUT'],
 		['name' => 'Remote#updateRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'PUT'],
-//		['name' => 'Remote#uploadRestoringChunk', 'url' => '/rp/{pointId}', 'verb' => 'POST']
+		//		['name' => 'Remote#uploadRestoringChunk', 'url' => '/rp/{pointId}', 'verb' => 'POST']
 		['name' => 'Remote#uploadRestoringChunk', 'url' => '/rp/{pointId}/{chunkId}', 'verb' => 'POST']
 	]
 ];
