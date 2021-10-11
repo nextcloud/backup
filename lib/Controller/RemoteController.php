@@ -253,11 +253,11 @@ class RemoteController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * @param string $pointId
-	 * @param string $chunkId
+	 * @param string $chunkName
 	 *
 	 * @return DataResponse
 	 */
-	public function uploadRestoringChunk(string $pointId, string $chunkId): DataResponse {
+	public function uploadRestoringChunk(string $pointId, string $chunkName): DataResponse {
 		try {
 			$request = $this->extractRequest(UploadRestoringChunk::class);
 		} catch (Exception $e) {

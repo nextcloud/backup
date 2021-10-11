@@ -33,6 +33,7 @@ namespace OCA\Backup\Service;
 
 
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Request;
+use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\AppInfo\Application;
 use OCP\IConfig;
@@ -57,9 +58,14 @@ class ConfigService {
 	const LAST_FULL_RP = 'last_full_rp';
 	const LAST_PARTIAL_RP = 'last_partial_rp';
 	const PACK_BACKUP = 'pack_backup';
-	const ENCRYPT_BACKUP = 'encrypt_backup';
+
+	const PACK_ENCRYPT = 'pack_encrypt';
+	const PACK_COMPRESS = 'pack_compress';
+	const PACK_INDEX = 'pack_index';
+
 	const ENCRYPTION_KEY = 'encryption_key';
 	const TIME_SLOTS = 'time_slots';
+	const MOCKUP_DATE = 'mockup_date';
 
 
 	/** @var array */
@@ -74,10 +80,15 @@ class ConfigService {
 		self::DELAY_UNIT => 'd',
 		self::ALLOW_WEEKDAY => 0,
 		self::PACK_BACKUP => '1',
-		self::ENCRYPT_BACKUP => '1',
 		self::ENCRYPTION_KEY => '',
-		self::TIME_SLOTS => '23-5'
+		self::TIME_SLOTS => '23-5',
+		self::MOCKUP_DATE => 0,
+
+		self::PACK_ENCRYPT => '1',
+		self::PACK_COMPRESS => '1',
+		self::PACK_INDEX => '1'
 	];
+
 
 	/** @var IConfig */
 	private $config;
@@ -144,8 +155,6 @@ class ConfigService {
 	}
 
 	/**
-	 * Set a value by key
-	 *
 	 * @param string $key
 	 * @param int $value
 	 *
@@ -153,6 +162,14 @@ class ConfigService {
 	 */
 	public function setAppValueInt(string $key, int $value): void {
 		$this->config->setAppValue(Application::APP_ID, $key, $value);
+	}
+
+	/**
+	 * @param string $key
+	 * @param bool $value
+	 */
+	public function setAppValueBool(string $key, bool $value): void {
+		$this->config->setAppValue(Application::APP_ID, $key, ($value) ? 1 : 0);
 	}
 
 
@@ -240,6 +257,53 @@ class ConfigService {
 		fclose($tmp);
 
 		return $tmpPath;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getSettings(): array {
+		return [
+			self::DATE_FULL_RP => $this->getAppValueInt(self::DATE_FULL_RP),
+			self::DATE_PARTIAL_RP => $this->getAppValueInt(self::DATE_PARTIAL_RP),
+			self::TIME_SLOTS => $this->getAppValue(self::TIME_SLOTS),
+			self::DELAY_FULL_RP => $this->getAppValueInt(self::DELAY_FULL_RP),
+			self::DELAY_PARTIAL_RP => $this->getAppValueInt(self::DELAY_PARTIAL_RP),
+			self::ALLOW_WEEKDAY => $this->getAppValueBool(self::ALLOW_WEEKDAY),
+			self::PACK_BACKUP => $this->getAppValueBool(self::PACK_BACKUP),
+			self::PACK_COMPRESS => $this->getAppValueBool(self::PACK_COMPRESS),
+			self::PACK_ENCRYPT => $this->getAppValueBool(self::PACK_ENCRYPT)
+		];
+	}
+
+
+	public function setSettings(array $settings): array {
+		$data = new SimpleDataStore($settings);
+
+		if ($data->hasKey(self::TIME_SLOTS)) {
+			$this->setAppValue(self::TIME_SLOTS, $data->g(self::TIME_SLOTS));
+		}
+		if ($data->hasKey(self::DELAY_FULL_RP)) {
+			$this->setAppValueInt(self::DELAY_FULL_RP, $data->gInt(self::DELAY_FULL_RP));
+		}
+		if ($data->hasKey(self::DELAY_PARTIAL_RP)) {
+			$this->setAppValueInt(self::DELAY_PARTIAL_RP, $data->gInt(self::DELAY_PARTIAL_RP));
+		}
+		if ($data->hasKey(self::ALLOW_WEEKDAY)) {
+			$this->setAppValueBool(self::ALLOW_WEEKDAY, $data->gBool(self::ALLOW_WEEKDAY));
+		}
+		if ($data->hasKey(self::PACK_BACKUP)) {
+			$this->setAppValueBool(self::PACK_BACKUP, $data->gBool(self::PACK_BACKUP));
+		}
+		if ($data->hasKey(self::PACK_COMPRESS)) {
+			$this->setAppValueBool(self::PACK_COMPRESS, $data->gBool(self::PACK_COMPRESS));
+		}
+		if ($data->hasKey(self::PACK_ENCRYPT)) {
+			$this->setAppValueBool(self::PACK_ENCRYPT, $data->gBool(self::PACK_ENCRYPT));
+		}
+
+		return $this->getSettings();
 	}
 
 }

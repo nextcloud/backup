@@ -132,7 +132,7 @@ class RemoteAdd extends Base {
 		}
 
 		try {
-			$duplicateInstance = $this->remoteRequest->getFromInstance($address);
+			$duplicateInstance = $this->remoteRequest->getByInstance($address);
 			if ($duplicateInstance->getId() !== $remoteSignatory->getId()) {
 				throw new RemoteInstanceDuplicateException(
 					'There is already a known instance with same ADDRESS but different HREF. Please remove it first!'

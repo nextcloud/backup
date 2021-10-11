@@ -158,6 +158,18 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getCurrentChecksum(): string {
+		if ($this->isEncrypted()) {
+			return $this->getEncryptedChecksum();
+		}
+
+		return $this->getChecksum();
+	}
+
+
+	/**
 	 * @param string $content
 	 *
 	 * @return RestoringChunkPart
@@ -190,7 +202,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 
 		return $this;
 	}
-
 
 
 	/**

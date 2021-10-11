@@ -184,7 +184,7 @@ class PointList extends Base {
 
 			try {
 				if ($instance === RemoteInstance::LOCAL) {
-					$list = $this->pointService->getRPLocal();
+					$list = $this->pointService->getLocalRestoringPoints();
 				} else {
 					$list = $this->remoteService->getRestoringPoints($instance);
 				}

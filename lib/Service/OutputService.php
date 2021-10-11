@@ -32,7 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
-use OCA\Backup\Model\RestoringChunkHealth;
+use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -49,14 +49,42 @@ class OutputService {
 	/** @var OutputInterface */
 	private $output;
 
+	/** @var bool */
+	private $debug = false;
+
 
 	/**
 	 * @param string $line
+	 * @param bool $ln
 	 */
-	public function o(string $line): void {
-		if ($this->hasOutput()) {
-			$this->output->writeln($line);
+	public function o(string $line, bool $ln = true): void {
+		if ($this->isDebug()) {
+			echo $line . (($ln) ? "\n" : '');
 		}
+		if (!$this->hasOutput()) {
+			return;
+		}
+
+		if ($ln) {
+			$this->output->writeln($line);
+		} else {
+			$this->output->write($line);
+		}
+	}
+
+
+	/**
+	 * @param bool $debug
+	 */
+	public function setDebug(bool $debug): void {
+		$this->debug = $debug;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isDebug(): bool {
+		return $this->debug;
 	}
 
 
@@ -88,18 +116,18 @@ class OutputService {
 		}
 
 		$unknown = $good = $missing = $faulty = 0;
-		foreach ($health->getChunks() as $chunk) {
+		foreach ($health->getParts() as $chunk) {
 			switch ($chunk->getStatus()) {
-				case RestoringChunkHealth::STATUS_UNKNOWN:
+				case ChunkPartHealth::STATUS_UNKNOWN:
 					$unknown++;
 					break;
-				case RestoringChunkHealth::STATUS_OK:
+				case ChunkPartHealth::STATUS_OK:
 					$good++;
 					break;
-				case RestoringChunkHealth::STATUS_MISSING:
+				case ChunkPartHealth::STATUS_MISSING:
 					$missing++;
 					break;
-				case RestoringChunkHealth::STATUS_CHECKSUM:
+				case ChunkPartHealth::STATUS_CHECKSUM:
 					$faulty++;
 					break;
 			}

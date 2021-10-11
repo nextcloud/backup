@@ -34,6 +34,10 @@ namespace OCA\Backup\Cron;
 
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\PackService;
+use OCA\Backup\Service\PointService;
+use OCA\Backup\Service\UploadService;
+use Throwable;
 
 
 /**
@@ -44,6 +48,15 @@ use OCA\Backup\Service\ConfigService;
 class Manage extends TimedJob {
 
 
+	/** @var PointService */
+	private $pointService;
+
+	/** @var PackService */
+	private $packService;
+
+	/** @var UploadService */
+	private $uploadService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -51,11 +64,23 @@ class Manage extends TimedJob {
 	/**
 	 * Manage constructor.
 	 *
+	 * @param PointService $pointService
+	 * @param PackService $packService
+	 * @param UploadService $uploadService
 	 * @param ConfigService $configService
 	 */
-	public function __construct(ConfigService $configService) {
-		$this->setInterval(1800);
+	public function __construct(
+		PointService $pointService,
+		PackService $packService,
+		UploadService $uploadService,
+		ConfigService $configService
+	) {
+		$this->setInterval(1);
+//		$this->setInterval(3600*3); // 3 hours
 
+		$this->pointService = $pointService;
+		$this->packService = $packService;
+		$this->uploadService = $uploadService;
 		$this->configService = $configService;
 	}
 
@@ -64,6 +89,22 @@ class Manage extends TimedJob {
 	 * @param $argument
 	 */
 	protected function run($argument) {
+		// packing
+		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
+			try {
+				$this->pointService->initBaseFolder($point);
+				$this->packService->packPoint($point);
+			} catch (Throwable $e) {
+			}
+		}
+
+		// uploading
+		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
+			try {
+				$this->uploadService->uploadPoint($point);
+			} catch (Throwable $e) {
+			}
+		}
 	}
 
 }

@@ -31,13 +31,22 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TPathTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC;
+use OC\Files\Node\File;
 use OCA\Backup\Db\ChangesRequest;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
+use OCA\Backup\Model\RestoringPoint;
+use OCP\Files\FileInfo;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotPermittedException;
+use OCP\Lock\LockedException;
 
 
 /**
@@ -51,10 +60,14 @@ class FilesService {
 	use TArrayTools;
 	use TStringTools;
 	use TPathTools;
+	use TNC23Deserialize;
 
 
 	const APP_ROOT = __DIR__ . '/../../';
 
+
+	/** @var IRootFolder */
+	private $rootFolder;
 
 	/** @var ChangesRequest */
 	private $changesRequest;
@@ -66,10 +79,16 @@ class FilesService {
 	/**
 	 * FilesService constructor.
 	 *
+	 * @param IRootFolder $rootFolder
 	 * @param ChangesRequest $changesRequest
 	 * @param ConfigService $configService
 	 */
-	public function __construct(ChangesRequest $changesRequest, ConfigService $configService) {
+	public function __construct(
+		IRootFolder $rootFolder,
+		ChangesRequest $changesRequest,
+		ConfigService $configService
+	) {
+		$this->rootFolder = $rootFolder;
 		$this->changesRequest = $changesRequest;
 		$this->configService = $configService;
 	}
@@ -164,6 +183,37 @@ class FilesService {
 	 */
 	public function changedFile(ChangedFile $file): void {
 		$this->changesRequest->insertIfNotFound($file);
+	}
+
+
+	/**
+	 * @param int $fileId
+	 *
+	 * @return RestoringPoint
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function getPointFromFileId(int $fileId): RestoringPoint {
+		$nodes = $this->rootFolder->getById($fileId);
+		foreach ($nodes as $node) {
+			if ($node->getType() !== FileInfo::TYPE_FILE) {
+				continue;
+			}
+
+			try {
+				/** @var File $node */
+				/** @var RestoringPoint $point */
+				$point = $this->deserializeJson($node->getContent(), RestoringPoint::class);
+
+				return $point;
+			} catch (InvalidItemException
+			| NotPermittedException
+			| LockedException $e) {
+				continue;
+			}
+
+		}
+
+		throw new RestoringPointNotFoundException();
 	}
 
 

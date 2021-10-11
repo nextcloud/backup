@@ -3,7 +3,10 @@
 return [
 
 	'ocs' => [
-		['name' => 'Local#scanLocalFolder', 'url' => '/scan/{fileId}', 'verb' => 'PUT']
+		['name' => 'Local#scanLocalFolder', 'url' => '/scan/{fileId}', 'verb' => 'PUT'],
+		['name' => 'Local#getSettings', 'url' => '/settings', 'verb' => 'GET'],
+		['name' => 'Local#setSettings', 'url' => '/settings', 'verb' => 'PUT'],
+		['name' => 'Local#getRestoringPoint', 'url' => '/rp', 'verb' => 'GET']
 	],
 
 	'routes' => [
@@ -17,6 +20,6 @@ return [
 		['name' => 'Remote#createRestoringPoint', 'url' => '/rp', 'verb' => 'PUT'],
 		['name' => 'Remote#updateRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'PUT'],
 		//		['name' => 'Remote#uploadRestoringChunk', 'url' => '/rp/{pointId}', 'verb' => 'POST']
-		['name' => 'Remote#uploadRestoringChunk', 'url' => '/rp/{pointId}/{chunkId}', 'verb' => 'POST']
+		['name' => 'Remote#uploadRestoringChunk', 'url' => '/rp/{pointId}/{chunkName}', 'verb' => 'POST']
 	]
 ];

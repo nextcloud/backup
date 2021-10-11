@@ -77,6 +77,20 @@ class ExternalFolderRequest extends ExternalFolderRequestBuilder {
 
 
 	/**
+	 * @param int $mountId
+	 *
+	 * @return ExternalFolder
+	 * @throws ExternalFolderNotFoundException
+	 */
+	public function getById(int $mountId): ExternalFolder {
+		$qb = $this->getExternalFolderSelectSql();
+		$qb->limitToId($mountId);
+
+		return $this->getItemFromRequest($qb);
+	}
+
+
+	/**
 	 * @param int $storageId
 	 *
 	 * @return ExternalFolder

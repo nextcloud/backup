@@ -59,6 +59,13 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	use TNC23Logger;
 
 
+	const STATUS_PACKED = 1;
+	const STATUS_COMPRESSED = 2;
+	const STATUS_ENCRYPTED = 4;
+
+	const STATUS_ISSUE = 32;
+
+
 	/** @var string */
 	private $id = '';
 
@@ -70,6 +77,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 	/** @var int */
 	private $status = 0;
+
+	/** @var SimpleDataStore */
+	private $notes;
 
 	/** @var int */
 	private $date = 0;
@@ -94,6 +104,14 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 	/** @var bool */
 	private $package = false;
+
+
+	/**
+	 * RestoringPoint constructor.
+	 */
+	public function __construct() {
+		$this->notes = new SimpleDataStore();
+	}
 
 
 	/**
@@ -171,6 +189,94 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		return $this->status;
 	}
 
+	/**
+	 * @param int $flag
+	 *
+	 * @return $this
+	 */
+	public function addStatus(int $flag): self {
+		$this->status |= $flag;
+
+		return $this;
+	}
+
+	/**
+	 * @param int $flag
+	 *
+	 * @return $this
+	 */
+	public function removeStatus(int $flag): self {
+		$this->addStatus($flag);
+		$this->status -= $flag;
+
+		return $this;
+	}
+
+	/**
+	 * @param int $flag
+	 *
+	 * @return bool
+	 */
+	public function isStatus(int $flag): bool {
+		return (($this->getStatus() & $flag) !== 0);
+	}
+
+
+	/**
+	 * @param SimpleDataStore $notes
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setNotes(SimpleDataStore $notes): self {
+		$this->notes = $notes;
+
+		return $this;
+	}
+
+	/**
+	 * @return SimpleDataStore
+	 */
+	public function getNotes(): SimpleDataStore {
+		return $this->notes;
+	}
+
+//
+//	/**
+//	 * @param string $key
+//	 * @param string $note
+//	 *
+//	 * @return $this
+//	 */
+//	public function setNote(string $key, string $note = ''): self {
+//		if ($note === '') {
+//			if (array_key_exists($key, $this->notes)) {
+//				unset($this->notes[$key]);
+//			}
+//		} else {
+//			$this->notes[$key] = $note;
+//		}
+//
+//		return $this;
+//	}
+//
+//	/**
+//	 * @param string $key
+//	 *
+//	 * @return string
+//	 */
+//	public function getNote(string $key): string {
+//		return $this->get($key, $this->notes);
+//	}
+//
+//	/**
+//	 * @param string $key
+//	 *
+//	 * @return int
+//	 */
+//	public function getNoteInt(string $key): int {
+//		return $this->getInt($key, $this->notes);
+//	}
+
 
 	/**
 	 * @param int $date
@@ -204,6 +310,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		return $this->nc;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getNCVersion(): string {
 		return implode('.', $this->getNc());
 	}
@@ -246,7 +355,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	 * @return bool
 	 */
 	public function hasRootFolder(): bool {
-		return !is_null($this->rootFolder);
+		return !is_null($this->baseRoot);
 	}
 
 	/**
@@ -255,7 +364,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	 * @return RestoringPoint
 	 */
 	public function setRootFolder(ISimpleRoot $root): self {
-		$this->rootFolder = $root;
+		$this->baseRoot = $root;
 
 		return $this;
 	}
@@ -264,7 +373,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	 * @return ISimpleRoot
 	 */
 	public function getRootFolder(): ISimpleRoot {
-		return $this->rootFolder;
+		return $this->baseRoot;
 	}
 
 
@@ -422,6 +531,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			 ->setInstance($this->get('instance', $data))
 			 ->setParent($this->get('parent', $data))
 			 ->setStatus($this->getInt('status', $data))
+			 ->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
 			 ->setDate($this->getInt('date', $data));
 
 		if ($this->getId() === '') {
@@ -458,6 +568,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			 ->setInstance($this->get('instance', $data))
 			 ->setParent($this->get('parent', $data))
 			 ->setStatus($this->getInt('status', $data, -1))
+			 ->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
 			 ->setDate($this->getInt('date', $data))
 			 ->setSignature($this->get('signature', $data));
 		$this->setNc($this->getArray('nc', $data));
@@ -505,6 +616,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			'nc' => $this->getNC(),
 			'parent' => $this->getParent(),
 			'status' => $this->getStatus(),
+			'notes' => $this->getNotes(),
 			'data' => $this->getRestoringData(),
 			'signature' => $this->getSignature(),
 			'date' => $this->getDate()

@@ -116,7 +116,7 @@ class FileSearch extends Base {
 		if ($input->getOption('point')) {
 			$points = [$this->pointService->getLocalRestoringPoint($input->getOption('point'))];
 		} else {
-			$points = $this->pointService->getRPLocal($since, $until);
+			$points = $this->pointService->getLocalRestoringPoints($since, $until);
 		}
 
 		foreach ($points as $point) {

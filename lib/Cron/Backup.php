@@ -80,6 +80,11 @@ class Backup extends TimedJob {
 	 */
 	protected function run($argument) {
 		$time = time();
+		if ($this->configService->getAppValueInt(ConfigService::MOCKUP_DATE) > 0) {
+			$time = $this->configService->getAppValueInt(ConfigService::MOCKUP_DATE);
+			$this->configService->setAppValueInt(ConfigService::MOCKUP_DATE, 0);
+		}
+
 		if (!$this->verifyTime($time)) {
 			return;
 		}

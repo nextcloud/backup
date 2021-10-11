@@ -156,7 +156,7 @@ class RemoteStreamService extends NC23Signature {
 		$app->setRPUpload(
 			urldecode(
 				$this->urlGenerator->linkToRouteAbsolute(
-					'backup.Remote.uploadRestoringChunk', ['pointId' => '{pointId}', 'chunkId' => '{chunkId}']
+					'backup.Remote.uploadRestoringChunk', ['pointId' => '{pointId}', 'chunkName' => '{chunkName}']
 				)
 			)
 		);
@@ -341,7 +341,7 @@ class RemoteStreamService extends NC23Signature {
 	 * @throws RemoteResourceNotFoundException
 	 */
 	private function getRemoteInstanceEntry(string $instance, string $item, array $params = []): string {
-		$remote = $this->remoteRequest->getFromInstance($instance);
+		$remote = $this->remoteRequest->getByInstance($instance);
 
 		$value = $this->get($item, $remote->getOrigData());
 		if ($value === '') {

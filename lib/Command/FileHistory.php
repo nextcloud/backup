@@ -110,7 +110,7 @@ class FileHistory extends Base {
 
 		$since = ($input->getOption('since')) ? (int)strtotime($input->getOption('since')) : 0;
 		$until = ($input->getOption('until')) ? (int)strtotime($input->getOption('until')) : 0;
-		$points = $this->pointService->getRPLocal($since, $until);
+		$points = $this->pointService->getLocalRestoringPoints($since, $until);
 
 		foreach ($points as $point) {
 			try {

@@ -32,26 +32,22 @@ declare(strict_types=1);
 namespace OCA\Backup\Controller;
 
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Controller;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use Exception;
 use OC\AppFramework\Http;
-use OC\Files\Node\File;
 use OCA\Backup\Db\EventRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
-use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\FilesService;
+use OCA\Backup\Service\PointService;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
-use OCP\Files\FileInfo;
-use OCP\Files\IRootFolder;
-use OCP\Files\NotPermittedException;
 use OCP\IRequest;
 use OCP\IUserSession;
-use OCP\Lock\LockedException;
 
 
 /**
@@ -70,11 +66,17 @@ class LocalController extends OcsController {
 	/** @var IUserSession */
 	private $userSession;
 
-	/** @var IRootFolder */
-	private $rootFolder;
-
 	/** @var EventRequest */
 	private $eventRequest;
+
+	/** @var PointService */
+	private $pointService;
+
+	/** @var FilesService */
+	private $filesService;
+
+	/** @var ConfigService */
+	private $configService;
 
 
 	/**
@@ -83,21 +85,27 @@ class LocalController extends OcsController {
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param IUserSession $userSession
-	 * @param IRootFolder $rootFolder
 	 * @param EventRequest $eventRequest
+	 * @param PointService $pointService
+	 * @param FilesService $filesService
+	 * @param ConfigService $configService
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		IUserSession $userSession,
-		IRootFolder $rootFolder,
-		EventRequest $eventRequest
+		EventRequest $eventRequest,
+		PointService $pointService,
+		FilesService $filesService,
+		ConfigService $configService
 	) {
 		parent::__construct($appName, $request);
 
 		$this->userSession = $userSession;
-		$this->rootFolder = $rootFolder;
 		$this->eventRequest = $eventRequest;
+		$this->pointService = $pointService;
+		$this->filesService = $filesService;
+		$this->configService = $configService;
 	}
 
 
@@ -109,7 +117,7 @@ class LocalController extends OcsController {
 	 */
 	public function scanLocalFolder(int $fileId): DataResponse {
 		try {
-			$point = $this->getPointFromFileId($fileId);
+			$point = $this->filesService->getPointFromFileId($fileId);
 			$event = new BackupEvent();
 			$event->setAuthor($this->userSession->getUser()->getUID());
 			$event->setData(['fileId' => $fileId]);
@@ -125,37 +133,40 @@ class LocalController extends OcsController {
 			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse(['message' => 'The restoring point have been scheduled for a scan.']);
+		return new DataResponse(
+			['message' => 'The restoring point have been scheduled for a scan. (id: ' . $point->getId() . ')']
+		);
+	}
+
+
+	/**
+	 * @return DataResponse
+	 */
+	public function getRestoringPoint(): DataResponse {
+		$points = $this->pointService->getLocalRestoringPoints();
+
+		return new DataResponse($points);
 	}
 
 	/**
-	 * @param int $fileId
-	 *
-	 * @return RestoringPoint
-	 * @throws RestoringPointNotFoundException
+	 * @return DataResponse
 	 */
-	private function getPointFromFileId(int $fileId): RestoringPoint {
-		$nodes = $this->rootFolder->getById($fileId);
-		foreach ($nodes as $node) {
-			if ($node->getType() !== FileInfo::TYPE_FILE) {
-				continue;
-			}
+	public function getSettings(): DataResponse {
+		$settings = $this->configService->getSettings();
 
-			/** @var File $node */
-			/** @var RestoringPoint $point */
-			try {
-				$point = $this->deserializeJson($node->getContent(), RestoringPoint::class);
+		return new DataResponse($settings);
+	}
 
-				return $point;
-			} catch (InvalidItemException
-			| NotPermittedException
-			| LockedException $e) {
-				continue;
-			}
 
-		}
+	/**
+	 * @param array $settings
+	 *
+	 * @return DataResponse
+	 */
+	public function setSettings(array $settings): DataResponse {
+		$settings = $this->configService->setSettings($settings);
 
-		throw new RestoringPointNotFoundException();
+		return new DataResponse($settings);
 	}
 
 }

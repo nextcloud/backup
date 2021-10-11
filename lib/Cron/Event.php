@@ -32,10 +32,13 @@ declare(strict_types=1);
 namespace OCA\Backup\Cron;
 
 
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Db\EventRequest;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\FilesService;
 
 
 /**
@@ -46,8 +49,14 @@ use OCA\Backup\Service\ConfigService;
 class Event extends TimedJob {
 
 
+	use TArrayTools;
+
+
 	/** @var EventRequest */
 	private $eventRequest;
+
+	/** @var FilesService */
+	private $filesService;
 
 	/** @var ConfigService */
 	private $configService;
@@ -56,12 +65,19 @@ class Event extends TimedJob {
 	/**
 	 * Event constructor.
 	 *
+	 * @param EventRequest $eventRequest
+	 * @param FilesService $filesService
 	 * @param ConfigService $configService
 	 */
-	public function __construct(EventRequest $eventRequest, ConfigService $configService) {
+	public function __construct(
+		EventRequest $eventRequest,
+		FilesService $filesService,
+		ConfigService $configService
+	) {
 		$this->setInterval(1);
 
 		$this->eventRequest = $eventRequest;
+		$this->filesService = $filesService;
 		$this->configService = $configService;
 	}
 
@@ -70,7 +86,7 @@ class Event extends TimedJob {
 	 * @param $argument
 	 */
 	protected function run($argument) {
-		foreach($this->eventRequest->getQueue() as $event) {
+		foreach ($this->eventRequest->getQueue() as $event) {
 			if ($event->getType() === 'ScanLocalFolder') {
 				$this->scanLocalFolder($event);
 			}
@@ -82,8 +98,53 @@ class Event extends TimedJob {
 	 * @param BackupEvent $event
 	 */
 	private function scanLocalFolder(BackupEvent $event): void {
-		$event->setResult(['ok']);
-		$event->setStatus(BackupEvent::STATUS_DONE);
+		$data = $event->getData();
+		try {
+			$point = $this->filesService->getPointFromFileId($this->getInt('fileId', $data));
+			$this->failEvent($event, 'A similar restoring point already exists (id=' . $point->getId() . ')');
+
+			return;
+		} catch (RestoringPointNotFoundException $e) {
+		}
+
+
+////		$scan = $this->pointService->scanPoint($pointId);
+//
+//		$point = new RestoringPoint();
+//		$point->setId($pointId);
+////			$this->scanBaseFolder($point);
+//
+//
+//		$point = $this->pointService->generatePointFromBackupFS($pointId);
+//		// TODO: display info about the RP and ask for a confirmation before saving into database
+//
+////		echo json_encode($point) . "\n";
+//		$this->pointRequest->save($point);
+
+
+		$this->successEvent($event);
+	}
+
+
+	/**
+	 * @param BackupEvent $event
+	 * @param string $message
+	 */
+	private function failEvent(BackupEvent $event, string $message): void {
+		$event->setResult(['status' => 0, 'message' => $message])
+			  ->setStatus(BackupEvent::STATUS_DONE);
+
+		$this->eventRequest->update($event);
+	}
+
+
+	/**
+	 * @param BackupEvent $event
+	 * @param string $message
+	 */
+	private function successEvent(BackupEvent $event, string $message = ''): void {
+		$event->setResult(['status' => 1, 'message' => $message])
+			  ->setStatus(BackupEvent::STATUS_DONE);
 
 		$this->eventRequest->update($event);
 	}

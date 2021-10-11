@@ -51,8 +51,9 @@ use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\ISqlDump;
+use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringChunk;
-use OCA\Backup\Model\RestoringChunkHealth;
+use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
@@ -80,7 +81,6 @@ class PointService {
 
 
 	const NOBACKUP_FILE = '.nobackup';
-	const METADATA_FILE = 'restoring-point.data';
 	const SQL_DUMP_FILE = 'backup.sql';
 
 
@@ -95,6 +95,12 @@ class PointService {
 
 	/** @var ChunkService */
 	private $chunkService;
+
+	/** @var PackService */
+	private $packService;
+
+	/** @var MetadataService */
+	private $metadataService;
 
 	/** @var FilesService */
 	private $filesService;
@@ -122,6 +128,8 @@ class PointService {
 	 * @param ChangesRequest $changesRequest
 	 * @param RemoteStreamService $remoteStreamService
 	 * @param ChunkService $chunkService
+	 * @param PackService $packService
+	 * @param MetadataService $metadataService
 	 * @param FilesService $filesService
 	 * @param OutputService $outputService
 	 * @param ActivityService $activityService
@@ -132,6 +140,8 @@ class PointService {
 		ChangesRequest $changesRequest,
 		RemoteStreamService $remoteStreamService,
 		ChunkService $chunkService,
+		PackService $packService,
+		MetadataService $metadataService,
 		FilesService $filesService,
 		OutputService $outputService,
 		ActivityService $activityService,
@@ -139,8 +149,10 @@ class PointService {
 	) {
 		$this->pointRequest = $pointRequest;
 		$this->changesRequest = $changesRequest;
-		$this->chunkService = $chunkService;
 		$this->remoteStreamService = $remoteStreamService;
+		$this->chunkService = $chunkService;
+		$this->packService = $packService;
+		$this->metadataService = $metadataService;
 		$this->filesService = $filesService;
 		$this->outputService = $outputService;
 		$this->activityService = $activityService;
@@ -182,7 +194,7 @@ class PointService {
 	 *
 	 * @return RestoringPoint[]
 	 */
-	public function getRPLocal(int $since = 0, int $until = 0): array {
+	public function getLocalRestoringPoints(int $since = 0, int $until = 0): array {
 		return $this->pointRequest->getLocal($since, $until);
 	}
 
@@ -244,7 +256,7 @@ class PointService {
 			$this->configService->maintenanceMode();
 		}
 
-		$this->saveMetadata($point);
+		$this->metadataService->saveMetadata($point);
 		$this->pointRequest->save($point);
 
 		$this->activityService->newActivity(
@@ -479,7 +491,7 @@ class PointService {
 		$folder = $tmp->getBaseFolder();
 
 		try {
-			$file = $folder->getFile(self::METADATA_FILE);
+			$file = $folder->getFile(MetadataService::METADATA_FILE);
 		} catch (NotFoundException $e) {
 			throw new RestoringPointNotFoundException('could not find restoring point in appdata');
 		}
@@ -490,33 +502,12 @@ class PointService {
 		} catch (InvalidItemException $e) {
 			throw new RestoringPointNotFoundException('invalid metadata');
 		} catch (NotFoundException $e) {
-			throw new RestoringPointNotFoundException('cannot access ' . self::METADATA_FILE);
+			throw new RestoringPointNotFoundException('cannot access ' . MetadataService::METADATA_FILE);
 		} catch (NotPermittedException $e) {
-			throw new RestoringPointNotFoundException('cannot read ' . self::METADATA_FILE);
+			throw new RestoringPointNotFoundException('cannot read ' . MetadataService::METADATA_FILE);
 		}
 
 		return $point;
-	}
-
-
-	/**
-	 * @param RestoringPoint $point
-	 *
-	 * @throws NotPermittedException
-	 * @throws NotFoundException
-	 */
-	public function saveMetadata(RestoringPoint $point) {
-		$this->initBaseFolder($point);
-
-		$folder = $point->getBaseFolder();
-
-		try {
-			$file = $folder->getFile(self::METADATA_FILE);
-		} catch (NotFoundException $e) {
-			$file = $folder->newFile(self::METADATA_FILE);
-		}
-
-		$file->putContent(json_encode($point, JSON_PRETTY_PRINT));
 	}
 
 
@@ -610,19 +601,24 @@ class PointService {
 
 		$health = new RestoringHealth();
 		$globalStatus = RestoringHealth::STATUS_OK;
-		foreach ($point->getRestoringData() as $restoringData) {
-			foreach ($restoringData->getChunks() as $chunk) {
-				$chunkHealth = new RestoringChunkHealth();
+		foreach ($point->getRestoringData() as $data) {
+			foreach ($data->getChunks() as $chunk) {
+				if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
+					$this->generateHealthPacked($health, $point, $data, $chunk, $globalStatus);
+					continue;
+				}
+
+				$chunkHealth = new ChunkPartHealth();
 
 				$status = $this->generateChunkHealthStatus($point, $chunk);
-				if ($status !== RestoringChunkHealth::STATUS_OK) {
+				if ($status !== ChunkPartHealth::STATUS_OK) {
 					$globalStatus = 0;
 				}
 
-				$chunkHealth->setDataName($restoringData->getName())
-							->setChunkName($chunk->getName())
+				$chunkHealth->setDataName($data->getName())
+							->setPartName($chunk->getName())
 							->setStatus($status);
-				$health->addChunk($chunkHealth);
+				$health->addPart($chunkHealth);
 			}
 		}
 
@@ -645,6 +641,30 @@ class PointService {
 	}
 
 
+	private function generateHealthPacked(
+		RestoringHealth $health,
+		RestoringPoint $point,
+		RestoringData $data,
+		RestoringChunk $chunk,
+		int &$globalStatus
+	): void {
+
+		foreach ($chunk->getParts() as $part) {
+			$partHealth = new ChunkPartHealth(true);
+			$status = $this->generatePartHealthStatus($point, $chunk, $part);
+			if ($status !== ChunkPartHealth::STATUS_OK) {
+				$globalStatus = 0;
+			}
+
+			$partHealth->setDataName($data->getName())
+					   ->setChunkName($chunk->getName())
+					   ->setPartName($part->getName())
+					   ->setStatus($status);
+			$health->addPart($partHealth);
+		}
+	}
+
+
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -655,12 +675,37 @@ class PointService {
 		try {
 			$checksum = $this->chunkService->getChecksum($point, $chunk);
 			if ($checksum !== $chunk->getChecksum()) {
-				return RestoringChunkHealth::STATUS_CHECKSUM;
+				return ChunkPartHealth::STATUS_CHECKSUM;
 			}
 
-			return RestoringChunkHealth::STATUS_OK;
+			return ChunkPartHealth::STATUS_OK;
 		} catch (ArchiveNotFoundException $e) {
-			return RestoringChunkHealth::STATUS_MISSING;
+			return ChunkPartHealth::STATUS_MISSING;
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param RestoringChunkPart $part
+	 *
+	 * @return int
+	 */
+	private function generatePartHealthStatus(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		RestoringChunkPart $part
+	): int {
+		try {
+			$checksum = $this->packService->getChecksum($point, $chunk, $part);
+			if ($checksum !== $part->getCurrentChecksum()) {
+				return ChunkPartHealth::STATUS_CHECKSUM;
+			}
+
+			return ChunkPartHealth::STATUS_OK;
+		} catch (ArchiveNotFoundException $e) {
+			return ChunkPartHealth::STATUS_MISSING;
 		}
 	}
 
@@ -675,13 +720,27 @@ class PointService {
 	 * @throws NotPermittedException
 	 * @throws RestoringChunkNotFoundException
 	 */
-	public function getChunkContent(RestoringPoint $point, string $data, string $chunk): RestoringChunk {
+	public function getChunkContent(
+		RestoringPoint $point, string $data, string $chunk
+	): RestoringChunk {
 		$this->initBaseFolder($point);
 
 		$restoringChunk = clone $this->chunkService->getChunkFromRP($point, $chunk, $data);
 		$this->chunkService->getChunkContent($point, $restoringChunk);
 
 		return $restoringChunk;
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	public function saveMetadata(RestoringPoint $point): void {
+		$this->initBaseFolder($point);
+		$this->metadataService->saveMetadata($point);
 	}
 
 }

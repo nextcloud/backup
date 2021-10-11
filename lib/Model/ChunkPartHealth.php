@@ -38,11 +38,11 @@ use JsonSerializable;
 
 
 /**
- * Class RestoringChunkHealth
+ * Class ChunkPartHealth
  *
  * @package OCA\Backup\Model
  */
-class RestoringChunkHealth implements IDeserializable, JsonSerializable {
+class ChunkPartHealth implements IDeserializable, JsonSerializable {
 
 
 	use TArrayTools;
@@ -53,6 +53,12 @@ class RestoringChunkHealth implements IDeserializable, JsonSerializable {
 	const STATUS_MISSING = 2;
 	const STATUS_CHECKSUM = 3;
 
+
+	/** @var bool */
+	private $packed;
+
+	/** @var string */
+	private $partName = '';
 
 	/** @var string */
 	private $chunkName = '';
@@ -65,9 +71,57 @@ class RestoringChunkHealth implements IDeserializable, JsonSerializable {
 
 
 	/**
+	 * ChunkPartHealth constructor.
+	 *
+	 * @param bool $packed
+	 */
+	public function __construct(bool $packed = false) {
+		$this->packed = $packed;
+	}
+
+
+	/**
+	 * @param bool $packed
+	 *
+	 * @return ChunkPartHealth
+	 */
+	public function setPacked(bool $packed): self {
+		$this->packed = $packed;
+
+		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isPacked(): bool {
+		return $this->packed;
+	}
+
+
+	/**
+	 * @param string $partName
+	 *
+	 * @return ChunkPartHealth
+	 */
+	public function setPartName(string $partName): self {
+		$this->partName = $partName;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPartName(): string {
+		return $this->partName;
+	}
+
+
+	/**
 	 * @param string $chunkName
 	 *
-	 * @return RestoringChunkHealth
+	 * @return ChunkPartHealth
 	 */
 	public function setChunkName(string $chunkName): self {
 		$this->chunkName = $chunkName;
@@ -86,7 +140,7 @@ class RestoringChunkHealth implements IDeserializable, JsonSerializable {
 	/**
 	 * @param string $dataName
 	 *
-	 * @return RestoringChunkHealth
+	 * @return ChunkPartHealth
 	 */
 	public function setDataName(string $dataName): self {
 		$this->dataName = $dataName;
@@ -105,7 +159,7 @@ class RestoringChunkHealth implements IDeserializable, JsonSerializable {
 	/**
 	 * @param int $status
 	 *
-	 * @return RestoringChunkHealth
+	 * @return ChunkPartHealth
 	 */
 	public function setStatus(int $status): self {
 		$this->status = $status;
@@ -128,6 +182,8 @@ class RestoringChunkHealth implements IDeserializable, JsonSerializable {
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setStatus($this->getInt('status', $data))
+			 ->setPacked($this->getBool('packed', $data))
+			 ->setPartName($this->get('part', $data))
 			 ->setChunkName($this->get('chunk', $data))
 			 ->setDataName($this->get('data', $data));
 
@@ -140,6 +196,8 @@ class RestoringChunkHealth implements IDeserializable, JsonSerializable {
 	 */
 	public function jsonSerialize(): array {
 		return [
+			'packed' => $this->isPacked(),
+			'part' => $this->getPartName(),
 			'chunk' => $this->getChunkName(),
 			'data' => $this->getDataName(),
 			'status' => $this->getStatus()

@@ -40,8 +40,11 @@ use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringData;
+use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
+use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
 use OCP\Files\NotFoundException;
@@ -74,6 +77,9 @@ class PointDetails extends Base {
 	/** @var ChunkService */
 	private $chunkService;
 
+	/** @var PackService */
+	private $packService;
+
 
 	/**
 	 * PointDetails constructor.
@@ -81,17 +87,20 @@ class PointDetails extends Base {
 	 * @param RemoteService $remoteService
 	 * @param PointService $pointService
 	 * @param ChunkService $chunkService
+	 * @param PackService $packService
 	 */
 	public function __construct(
 		RemoteService $remoteService,
 		PointService $pointService,
-		ChunkService $chunkService
+		ChunkService $chunkService,
+		PackService $packService
 	) {
 		parent::__construct();
 
 		$this->remoteService = $remoteService;
 		$this->pointService = $pointService;
 		$this->chunkService = $chunkService;
+		$this->packService = $packService;
 	}
 
 
@@ -125,7 +134,8 @@ class PointDetails extends Base {
 		$instance = $input->getArgument('instance');
 
 		if ($instance) {
-			$this->remoteDetails($instance, $pointId);
+			$point = $this->remoteService->getRestoringPoint($instance, $pointId, true);
+			$output->writeln(json_encode($point, JSON_PRETTY_PRINT));
 
 			return 0;
 		}
@@ -135,7 +145,7 @@ class PointDetails extends Base {
 		$this->pointService->initBaseFolder($point);
 
 		if ($input->getOption('output') === 'json') {
-			$this->pointService->generateHealth($point);
+			$this->pointService->generateHealth($point, true);
 			$output->writeln(json_encode($point) . "\n");
 			$output->writeln(json_encode($point, JSON_PRETTY_PRINT));
 
@@ -163,11 +173,15 @@ class PointDetails extends Base {
 			}
 
 			$table = new Table($output);
-			$table->setHeaders(['Id', 'Size', 'Count', 'Checksum', 'verified']);
+			$table->setHeaders(['Chunk Id', 'Size', 'Count', 'Part Id', 'Checksum', 'verified']);
 			$table->render();
 
-
 			foreach ($data->getChunks() as $chunk) {
+				if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
+					$this->displayDetailsPacked($table, $point, $chunk);
+
+					continue;
+				}
 				try {
 					$checked = $this->chunkService->getChecksum($point, $chunk);
 				} catch (ArchiveNotFoundException $e) {
@@ -182,6 +196,7 @@ class PointDetails extends Base {
 						$chunk->getName(),
 						$this->humanReadable($chunk->getSize()),
 						$chunk->getCount(),
+						'not packed',
 						$chunk->getChecksum(),
 						$checked
 					]
@@ -194,19 +209,39 @@ class PointDetails extends Base {
 
 
 	/**
-	 * @param string $instance
-	 * @param string $pointId
-	 *
-	 * @throws RestoringPointNotFoundException
-	 * @throws RemoteInstanceException
-	 * @throws RemoteInstanceNotFoundException
-	 * @throws RemoteResourceNotFoundException
+	 * @param Table $table
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
 	 */
-	private function remoteDetails(string $instance, string $pointId): void {
-		$point = $this->remoteService->getRestoringPoint($instance, $pointId, true);
+	private function displayDetailsPacked(
+		Table $table,
+		RestoringPoint $point,
+		RestoringChunk $chunk
+	): void {
+		$fresh = true;
+		foreach ($chunk->getParts() as $part) {
+			try {
+				$checked = $this->packService->getChecksum($point, $chunk, $part);
+			} catch (ArchiveNotFoundException $e) {
+				$checked = '<error>missing chunk</error>';
+			}
 
-		echo json_encode($point);
+			$color = ($checked === $part->getCurrentChecksum()) ? 'info' : 'error';
+			$checked = '<' . $color . '>' . $checked . '</' . $color . '>';
+
+			$table->appendRow(
+				[
+					($fresh) ? $chunk->getName() : '',
+					($fresh) ? $this->humanReadable($chunk->getSize()) : '',
+					($fresh) ? $chunk->getCount() : '',
+					$part->getName(),
+					$part->getCurrentChecksum(),
+					$checked
+				]
+			);
+
+			$fresh = false;
+		}
 	}
-
 }
 

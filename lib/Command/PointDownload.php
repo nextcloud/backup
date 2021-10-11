@@ -41,7 +41,7 @@ use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
-use OCA\Backup\Model\RestoringChunkHealth;
+use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
@@ -229,16 +229,16 @@ class PointDownload extends Base {
 		RestoringHealth $health,
 		OutputInterface $output
 	): void {
-		foreach ($health->getChunks() as $chunk) {
-			if ($chunk->getStatus() === RestoringChunkHealth::STATUS_OK) {
+		foreach ($health->getParts() as $chunk) {
+			if ($chunk->getStatus() === ChunkPartHealth::STATUS_OK) {
 				continue;
 			}
 
-			$output->write('  * Downloading ' . $chunk->getDataName() . '/' . $chunk->getChunkName() . ': ');
+			$output->write('  * Downloading ' . $chunk->getDataName() . '/' . $chunk->getPartName() . ': ');
 			$restoringChunk = $this->pointService->getChunkContent(
 				$point,
 				$chunk->getDataName(),
-				$chunk->getChunkName()
+				$chunk->getPartName()
 			);
 
 			$chunk = $this->remoteService->downloadChunk($instance, $point, $restoringChunk);

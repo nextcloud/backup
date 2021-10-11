@@ -239,10 +239,10 @@ class ChunkService {
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 *
-	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	public function listFilesFromChunk(RestoringPoint $point, RestoringChunk $chunk): void {
 		$zip = $this->openZipArchive($point, $chunk);
@@ -831,6 +831,7 @@ class ChunkService {
 		}
 
 		$search = strtolower($search);
+
 		return array_filter(
 			array_map(
 				function (ArchiveFile $file) use ($search): ?ArchiveFile {
@@ -939,18 +940,23 @@ class ChunkService {
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotInitiatedException
 	 */
-	public function getChunkFolder(RestoringPoint $point, RestoringChunk $chunk): ISimpleFolder {
+	public function getChunkFolder(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		string &$path = ''
+	): ISimpleFolder {
 		if (!$point->hasBaseFolder() || !$point->hasRootFolder()) {
 			throw new RestoringPointNotInitiatedException('Restoring Point is not initiated');
 		}
 
 		$folder = $point->getBaseFolder();
 		if ($chunk->getPath() !== '') {
+			$path = '/' . $folder->getName() . '/' . $chunk->getPath();
 			$root = $point->getRootFolder();
 			try {
-				$folder = $root->getFolder('/' . $folder->getName() . '/' . $chunk->getPath());
+				$folder = $root->getFolder($path);
 			} catch (NotFoundException $e) {
-				$folder = $root->newFolder('/' . $folder->getName() . '/' . $chunk->getPath());
+				$folder = $root->newFolder($path);
 			}
 		}
 

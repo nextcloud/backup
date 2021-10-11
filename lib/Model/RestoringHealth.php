@@ -32,12 +32,14 @@ declare(strict_types=1);
 namespace OCA\Backup\Model;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
 use OCA\Backup\AppInfo\Application;
+use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 
 
 /**
@@ -68,8 +70,8 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	/** @var int */
 	private $status = 0;
 
-	/** @var RestoringChunkHealth[] */
-	private $chunks = [];
+	/** @var ChunkPartHealth[] */
+	private $parts = [];
 
 
 	/**
@@ -96,30 +98,46 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 
 
 	/**
-	 * @param RestoringChunkHealth[] $chunks
+	 * @param ChunkPartHealth[] $parts
 	 */
-	public function setChunks(array $chunks): self {
-		$this->chunks = $chunks;
+	public function setParts(array $parts): self {
+		$this->parts = $parts;
 
 		return $this;
 	}
 
 	/**
-	 * @return RestoringChunkHealth[]
+	 * @return ChunkPartHealth[]
 	 */
-	public function getChunks(): array {
-		return $this->chunks;
+	public function getParts(): array {
+		return $this->parts;
 	}
 
 	/**
-	 * @param RestoringChunkHealth $chunk
+	 * @param ChunkPartHealth $part
 	 *
 	 * @return $this
 	 */
-	public function addChunk(RestoringChunkHealth $chunk): self {
-		$this->chunks[$chunk->getChunkName()] = $chunk;
+	public function addPart(ChunkPartHealth $part): self {
+		$this->parts[$part->getChunkName() . '-' . $part->getPartName()] = $part;
 
 		return $this;
+	}
+
+
+	/**
+	 * @param string $chunkName
+	 * @param string $partName
+	 *
+	 * @return ChunkPartHealth
+	 * @throws RestoringChunkPartNotFoundException
+	 */
+	public function getPart(string $chunkName, string $partName): ChunkPartHealth {
+		if (!array_key_exists($chunkName . '-' . $partName, $this->parts)) {
+			throw new RestoringChunkPartNotFoundException();
+		}
+
+		return $this->parts[$chunkName . '-' . $partName];
 	}
 
 
@@ -127,17 +145,23 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	 * @param array $data
 	 *
 	 * @return RestoringHealth
+	 * @throws InvalidItemException
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setStatus($this->getInt('status', $data));
 
-		/** @var RestoringChunkHealth[] $chunks */
-		$chunks = $this->deserializeArray(
-			$this->getArray('chunks', $data),
-			RestoringChunkHealth::class,
+		/** @var ChunkPartHealth[] $parts */
+		$parts = $this->deserializeArray(
+			$this->getArray('parts', $data),
+			ChunkPartHealth::class,
 			true
 		);
-		$this->setChunks($chunks);
+
+		if (empty($parts)) {
+			throw new InvalidItemException();
+		}
+
+		$this->setParts($parts);
 
 		return $this;
 	}
@@ -149,7 +173,7 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	public function jsonSerialize(): array {
 		return [
 			'status' => $this->getStatus(),
-			'chunks' => $this->getChunks()
+			'parts' => $this->getParts()
 		];
 	}
 

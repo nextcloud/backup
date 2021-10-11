@@ -95,7 +95,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		if (!$staticName) {
 			$name .= '-';
 			$uuid = $this->uuid();
-			$this->path = $name . substr($uuid, 0, 1) . '/' . substr($uuid, 0, 2) . '/';
+			$this->setPath($name . substr($uuid, 0, 1) . '/' . substr($uuid, 0, 2) . '/');
 			$name .= $uuid;
 		}
 

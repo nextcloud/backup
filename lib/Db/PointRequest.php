@@ -55,6 +55,7 @@ class PointRequest extends PointRequestBuilder {
 		   ->setValue('instance', $qb->createNamedParameter($point->getInstance()))
 		   ->setValue('parent', $qb->createNamedParameter($point->getParent()))
 		   ->setValue('status', $qb->createNamedParameter($point->getStatus()))
+		   ->setValue('notes', $qb->createNamedParameter(json_encode($point->getNotes())))
 		   ->setValue('metadata', $qb->createNamedParameter(json_encode($point->getMetadata())))
 		   ->setValue('date', $qb->createNamedParameter($point->getDate()));
 
@@ -73,7 +74,8 @@ class PointRequest extends PointRequestBuilder {
 	public function update(RestoringPoint $point, bool $updateMetadata = false): void {
 		$qb = $this->getPointUpdateSql();
 
-		$qb->setValue('status', $qb->createNamedParameter($point->getStatus()));
+		$qb->set('status', $qb->createNamedParameter($point->getStatus()));
+		$qb->set('notes', $qb->createNamedParameter(json_encode($point->getNotes())));
 
 		if ($updateMetadata) {
 			$qb->set('metadata', $qb->createNamedParameter(json_encode($point->getMetadata())));
@@ -82,7 +84,6 @@ class PointRequest extends PointRequestBuilder {
 		if ($point->hasHealth()) {
 			$qb->set('health', $qb->createNamedParameter(json_encode($point->getHealth())));
 		}
-
 
 		$qb->limitToUid($point->getId());
 		$qb->limitToInstance($point->getInstance());
@@ -96,18 +97,32 @@ class PointRequest extends PointRequestBuilder {
 	 */
 	public function deletePoint(string $pointId): void {
 		$qb = $this->getPointDeleteSql();
-		$qb->limitToUid($pointId);
+
+		$qb->andWhere(
+			$qb->expr()->orX(
+				$qb->exprLimit('point_id', $pointId),
+				$qb->exprLimit('parent', $pointId)
+			)
+		);
 
 		$qb->execute();
 	}
 
+
 	/**
-	 * @return RestoringPoint[]
+	 * @param int $since
+	 * @param int $until
+	 *
+	 * @return array
 	 */
 	public function getLocal(int $since = 0, int $until = 0): array {
 		$qb = $this->getPointSelectSql();
 		$qb->limitToInstance('');
 		$qb->orderBy('date', 'asc');
+
+//		if ($fullOnly) {
+//			$qb->limitEmpty('parent', true);
+//		}
 
 		if ($since > 0) {
 			$qb->gt('date', $since, true);

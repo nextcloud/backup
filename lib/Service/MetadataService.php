@@ -29,18 +29,43 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup\Exceptions;
+namespace OCA\Backup\Service;
 
 
-use Exception;
-
+use OCA\Backup\Model\RestoringPoint;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 
 /**
- * Class RestorationPointUploadException
+ * Class MetadataService
  *
- * @package OCA\Backup\Exceptions
+ * @package OCA\Backup\Service
  */
-class RestorationPointUploadException extends Exception {
+class MetadataService {
+
+
+	const METADATA_FILE = 'restoring-point.data';
+
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws NotPermittedException
+	 * @throws NotFoundException
+	 */
+	public function saveMetadata(RestoringPoint $point) {
+		$folder = $point->getBaseFolder();
+
+		try {
+			$file = $folder->getFile(self::METADATA_FILE);
+		} catch (NotFoundException $e) {
+			$file = $folder->newFile(self::METADATA_FILE);
+		}
+
+		$file->putContent(json_encode($point, JSON_PRETTY_PRINT));
+	}
+
+
 
 }
 

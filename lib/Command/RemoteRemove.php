@@ -85,7 +85,7 @@ class RemoteRemove extends Base {
 		$address = $input->getArgument('address');
 
 		try {
-			$this->remoteRequest->getFromInstance($address);
+			$this->remoteRequest->getByInstance($address);
 		} catch (RemoteInstanceNotFoundException $e) {
 			throw new RemoteInstanceNotFoundException('Unknown address');
 		}

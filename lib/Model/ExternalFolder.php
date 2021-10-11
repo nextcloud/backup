@@ -37,6 +37,7 @@ use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
+use OC\Files\Node\Folder;
 
 
 /**
@@ -56,6 +57,9 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 
 	/** @var string */
 	private $root = '';
+
+	/** @var Folder */
+	private $rootFolder;
 
 
 	/**
@@ -100,6 +104,32 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 	 */
 	public function getRoot(): string {
 		return $this->root;
+	}
+
+
+	/**
+	 * @param Folder $rootFolder
+	 *
+	 * @return ExternalFolder
+	 */
+	public function setRootFolder(Folder $rootFolder): self {
+		$this->rootFolder = $rootFolder;
+
+		return $this;
+	}
+
+	/**
+	 * @return Folder
+	 */
+	public function getRootFolder(): Folder {
+		return $this->rootFolder;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function hasRootFolder(): bool {
+		return !is_null($this->rootFolder);
 	}
 
 

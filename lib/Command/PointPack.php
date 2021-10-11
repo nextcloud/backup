@@ -33,12 +33,18 @@ namespace OCA\Backup\Command;
 
 
 use OC\Core\Command\Base;
+use OCA\Backup\Exceptions\EncryptionKeyException;
+use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
+use SodiumException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 
 /**
@@ -87,14 +93,15 @@ class PointPack extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointPackException
 	 * @throws RestoringPointNotFoundException
-	 * @throws \OCP\Files\NotFoundException
-	 * @throws \OCP\Files\NotPermittedException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
 		$this->pointService->initBaseFolder($point);
-		$this->packService->packPoint($point);
+		$this->packService->packPoint($point, true);
 
 		return 0;
 	}

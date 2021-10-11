@@ -115,7 +115,7 @@ class RemoteRequest extends RemoteRequestBuilder {
 	/**
 	 * @throws RemoteInstanceNotFoundException
 	 */
-	public function getFromInstance(string $instance): RemoteInstance {
+	public function getByInstance(string $instance): RemoteInstance {
 		$qb = $this->getRemoteSelectSql();
 		$qb->limit('instance', $instance, '', false);
 

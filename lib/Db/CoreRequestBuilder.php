@@ -80,6 +80,7 @@ class CoreRequestBuilder {
 			'instance',
 			'parent',
 			'status',
+			'notes',
 			'metadata',
 			'health',
 			'date'
