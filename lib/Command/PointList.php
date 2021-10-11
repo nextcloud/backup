@@ -37,18 +37,21 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OC\Core\Command\Base;
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
+use OCA\Backup\Model\ExternalFolder;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
 use OCA\Backup\Service\RemoteStreamService;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -71,6 +74,9 @@ class PointList extends Base {
 	/** @var RemoteService */
 	private $remoteService;
 
+	/** @var ExternalFolderService */
+	private $externalFolderService;
+
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
 
@@ -80,15 +86,18 @@ class PointList extends Base {
 	 *
 	 * @param PointService $pointService
 	 * @param RemoteService $remoteService
+	 * @param ExternalFolderService $externalFolderService
 	 * @param RemoteStreamService $remoteStreamService
 	 */
 	public function __construct(
 		PointService $pointService,
 		RemoteService $remoteService,
+		ExternalFolderService $externalFolderService,
 		RemoteStreamService $remoteStreamService
 	) {
 		$this->pointService = $pointService;
 		$this->remoteService = $remoteService;
+		$this->externalFolderService = $externalFolderService;
 		$this->remoteStreamService = $remoteStreamService;
 
 		parent::__construct();
@@ -101,9 +110,17 @@ class PointList extends Base {
 	protected function configure() {
 		$this->setName('backup:point:list')
 			 ->setDescription('List restoring point')
-			 ->addArgument(
-				 'instance', InputArgument::OPTIONAL,
-				 'list restoring point from a specific instance (or local)', ''
+			 ->addOption(
+				 'local', '', InputOption::VALUE_NONE,
+				 'list restoring point from local only'
+			 )
+			 ->addOption(
+				 'remote', '', InputOption::VALUE_REQUIRED,
+				 'list restoring point from a remote instance (or local)', ''
+			 )
+			 ->addOption(
+				 'external', '', InputOption::VALUE_REQUIRED,
+				 'list restoring point from an external folder', ''
 			 );
 	}
 
@@ -118,13 +135,18 @@ class PointList extends Base {
 	 * @throws RemoteResourceNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$rp = $this->getRPFromInstances($output, $input->getArgument('instance'));
+		$rp = $this->getRPFromInstances(
+			$output,
+			$input->getOption('local'),
+			$input->getOption('remote'),
+			$input->getOption('external')
+		);
 
 		$output = new ConsoleOutput();
 		$output = $output->section();
 
 		$table = new Table($output);
-		$table->setHeaders(['Restoring Point', 'Date', 'Parent', 'Instance', 'Health']);
+		$table->setHeaders(['Restoring Point', 'Date', 'Status', 'Parent', 'Instance', 'Health']);
 		$table->render();
 
 		foreach ($rp as $pointId => $item) {
@@ -139,10 +161,21 @@ class PointList extends Base {
 					$displayPointId = '<options=bold>' . $pointId . '</>';
 				}
 
+				$status = [];
+				if ($point->getStatus() === 0) {
+					$status[] = 'not packed';
+				} else {
+					foreach (RestoringPoint::$DEF_STATUS as $k => $v) {
+						if ($point->isStatus($k)) {
+							$status[] = $v;
+						}
+					}
+				}
 				$table->appendRow(
 					[
 						($fresh) ? $displayPointId : '',
 						($fresh) ? date('Y-m-d H:i:s', $point->getDate()) : '',
+						($fresh) ? implode(',', $status) : '',
 						($fresh) ? $point->getParent() : '',
 						$instance,
 						$this->displayStyleHealth($point),
@@ -160,39 +193,63 @@ class PointList extends Base {
 
 	/**
 	 * @param OutputInterface $output
-	 * @param string $instance
+	 * @param bool $local
+	 * @param string $remote
+	 * @param string $external
 	 *
 	 * @return array
 	 */
-	private function getRPFromInstances(OutputInterface $output, string $instance = ''): array {
-		if ($instance === '') {
+	private function getRPFromInstances(OutputInterface $output, bool $local, string $remote, string $external
+	): array {
+		if ($local) {
+			$instances = [RemoteInstance::LOCAL];
+		} else if ($remote !== '') {
+			$instances = ['remote:' . $remote];
+		} else if ($external !== '') {
+			$instances = ['external:' . $external];
+		} else {
 			$instances = array_merge(
 				[RemoteInstance::LOCAL],
 				array_map(
-					function (RemoteInstance $remoteInstance): ?string {
-						return $remoteInstance->getInstance();
+					function (RemoteInstance $remoteInstance): string {
+						return 'remote:' . $remoteInstance->getInstance();
 					}, $this->remoteService->getOutgoing()
+				),
+				array_map(
+					function (ExternalFolder $externalFolder): string {
+						return 'external:' . $externalFolder->getStorageId();
+					}, $this->externalFolderService->getAll()
 				)
 			);
-		} else {
-			$instances = [$instance];
 		}
 
 		$points = $dates = [];
 		foreach ($instances as $instance) {
 			$output->writeln('- retreiving data from <info>' . $instance . '</info>');
 
+			$list = [];
 			try {
 				if ($instance === RemoteInstance::LOCAL) {
 					$list = $this->pointService->getLocalRestoringPoints();
 				} else {
-					$list = $this->remoteService->getRestoringPoints($instance);
+
+					[$source, $id] = explode(':', $instance, 2);
+					if ($source === 'remote') {
+						$list = $this->remoteService->getRestoringPoints($id);
+					} else if ($source === 'external') {
+						try {
+							$external = $this->externalFolderService->getByStorageId((int)$id);
+							$list = $this->externalFolderService->getRestoringPoints($external);
+						} catch (ExternalFolderNotFoundException $e) {
+						}
+					}
 				}
 			} catch (RemoteInstanceException
 			| RemoteInstanceNotFoundException
 			| RemoteResourceNotFoundException $e) {
 				continue;
 			}
+
 			foreach ($list as $item) {
 				$output->writeln(' > found RestoringPoint <info>' . $item->getId() . '</info>');
 				if (!array_key_exists($item->getId(), $points)) {
@@ -252,7 +309,7 @@ class PointList extends Base {
 	 * @return string
 	 */
 	private function displayStyleHealth(RestoringPoint $point): string {
-		if ($point->getInstance() === '') {
+		if (!$point->hasHealth()) {
 			return 'not checked';
 		}
 

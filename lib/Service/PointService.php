@@ -256,6 +256,7 @@ class PointService {
 			$this->configService->maintenanceMode();
 		}
 
+		$this->remoteStreamService->signPoint($point);
 		$this->metadataService->saveMetadata($point);
 		$this->pointRequest->save($point);
 

@@ -96,7 +96,7 @@ class ExternalFolderRequest extends ExternalFolderRequestBuilder {
 	 * @return ExternalFolder
 	 * @throws ExternalFolderNotFoundException
 	 */
-	public function getFromStorageId(int $storageId): ExternalFolder {
+	public function getByStorageId(int $storageId): ExternalFolder {
 		$qb = $this->getExternalFolderSelectSql();
 		$qb->limitInt('storage_id', $storageId);
 

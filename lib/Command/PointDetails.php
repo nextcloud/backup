@@ -36,22 +36,29 @@ use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
+use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
+use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -74,6 +81,9 @@ class PointDetails extends Base {
 	/** @var PointService */
 	private $pointService;
 
+	/** @var ExternalFolderService */
+	private $externalFolderService;
+
 	/** @var ChunkService */
 	private $chunkService;
 
@@ -86,12 +96,14 @@ class PointDetails extends Base {
 	 *
 	 * @param RemoteService $remoteService
 	 * @param PointService $pointService
+	 * @param ExternalFolderService $externalFolderService
 	 * @param ChunkService $chunkService
 	 * @param PackService $packService
 	 */
 	public function __construct(
 		RemoteService $remoteService,
 		PointService $pointService,
+		ExternalFolderService $externalFolderService,
 		ChunkService $chunkService,
 		PackService $packService
 	) {
@@ -99,6 +111,7 @@ class PointDetails extends Base {
 
 		$this->remoteService = $remoteService;
 		$this->pointService = $pointService;
+		$this->externalFolderService = $externalFolderService;
 		$this->chunkService = $chunkService;
 		$this->packService = $packService;
 	}
@@ -113,7 +126,8 @@ class PointDetails extends Base {
 		$this->setName('backup:point:details')
 			 ->setDescription('Details on a restoring point')
 			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
-			 ->addArgument('instance', InputArgument::OPTIONAL, 'address of the remote instance');
+			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
+			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder');
 	}
 
 
@@ -128,30 +142,36 @@ class PointDetails extends Base {
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
 	 * @throws RestoringPointNotFoundException
+	 * @throws ExternalFolderNotFoundException
+	 * @throws RestoringChunkPartNotFoundException
+	 * @throws RestoringPointException
+	 * @throws RestoringPointPackException
+	 * @throws GenericFileException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$pointId = $input->getArgument('pointId');
-		$instance = $input->getArgument('instance');
+		$remote = $input->getOption('remote');
+		$external = $input->getOption('external');
 
-		if ($instance) {
-			$point = $this->remoteService->getRestoringPoint($instance, $pointId, true);
-			$output->writeln(json_encode($point, JSON_PRETTY_PRINT));
-
-			return 0;
+		if ($remote) {
+			$point = $this->remoteService->getRestoringPoint($remote, $pointId, true);
+		} else if ($external) {
+			$externalFolder = $this->externalFolderService->getByStorageId((int)$external);
+			$point = $this->externalFolderService->getRestoringPoint($externalFolder, $pointId, true);
+		} else {
+			$point = $this->pointService->getLocalRestoringPoint($pointId);
+			$this->pointService->generateHealth($point, true);
+//			$this->pointService->initBaseFolder($point);
 		}
-
-
-		$point = $this->pointService->getLocalRestoringPoint($pointId);
-		$this->pointService->initBaseFolder($point);
 
 		if ($input->getOption('output') === 'json') {
-			$this->pointService->generateHealth($point, true);
-			$output->writeln(json_encode($point) . "\n");
-			$output->writeln(json_encode($point, JSON_PRETTY_PRINT));
+//			$output->writeln(json_encode($point) . "\n");
+			$output->writeln(json_encode($point, JSON_PRETTY_PRINT)) . "\n";
 
 			return 0;
 		}
 
+		echo json_encode($point);
 		$output = new ConsoleOutput();
 		$output = $output->section();
 
@@ -175,7 +195,7 @@ class PointDetails extends Base {
 			$table = new Table($output);
 			$table->setHeaders(['Chunk Id', 'Size', 'Count', 'Part Id', 'Checksum', 'verified']);
 			$table->render();
-
+echo '-';
 			foreach ($data->getChunks() as $chunk) {
 				if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
 					$this->displayDetailsPacked($table, $point, $chunk);

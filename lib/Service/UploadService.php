@@ -236,21 +236,20 @@ class UploadService {
 
 	/**
 	 * @param RestoringPoint $point
-	 * @param int $mountId
+	 * @param int $storageId
 	 *
 	 * @throws ExternalFolderNotFoundException
 	 */
-	public function uploadToExternalFolder(RestoringPoint $point, int $mountId = 0): void {
+	public function uploadToExternalFolder(RestoringPoint $point, int $storageId = 0): void {
 		$this->o('- uploading ' . $point->getId() . ' to external folders');
 
-		if ($mountId > 0) {
-			$externals = [$this->externalFolderService->getById($mountId)];
+		if ($storageId > 0) {
+			$externals = [$this->externalFolderService->getByStorageId($storageId)];
 		} else {
 			$externals = $this->externalFolderService->getAll();
 		}
 
 		foreach ($externals as $external) {
-//				$this->externalFolderService->uploadToExternalFolder($point, $mount);
 			try {
 				$this->o(
 					' - checking external folder <info>' . $external->getStorageId() . '</info>:<info>'
@@ -276,7 +275,6 @@ class UploadService {
 					}
 				}
 
-				$health = $stored->getHealth();
 				$this->o('  > Health status: ' . $this->outputService->displayHealth($stored));
 				$this->uploadMissingFilesToExternalFolder($external, $stored);
 			} catch (Exception $e) {
@@ -290,6 +288,8 @@ class UploadService {
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
 	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 */
 	private function uploadMissingFilesToExternalFolder(
 		ExternalFolder $external,
@@ -320,10 +320,10 @@ class UploadService {
 				$this->externalFolderService->uploadPart($external, $point, $chunk, $part);
 				$this->o('<info>ok</info>');
 			} catch (
-			RestoringChunkNotFoundException
-			| RestoringChunkPartNotFoundException
-			| Exception
-			| RestoringPointNotInitiatedException $e) {
+			RestoringChunkNotFoundException |
+			RestoringChunkPartNotFoundException |
+			Exception |
+			 RestoringPointNotInitiatedException $e) {
 				$this->o('<error>' . get_class($e) . $e->getMessage() . '</error>');
 			}
 		}

@@ -278,6 +278,11 @@ class ConfigService {
 	}
 
 
+	/**
+	 * @param array $settings
+	 *
+	 * @return array
+	 */
 	public function setSettings(array $settings): array {
 		$data = new SimpleDataStore($settings);
 

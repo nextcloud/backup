@@ -37,6 +37,7 @@ use OC\Core\Command\Base;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\EncryptService;
 use OCA\Backup\Service\RemoteService;
+use OCA\Backup\Service\RemoteStreamService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -54,6 +55,9 @@ class SetupExport extends Base {
 	/** @var RemoteService */
 	private $remoteService;
 
+	/** @var RemoteStreamService */
+	private $remoteStreamService;
+
 	/** @var EncryptService */
 	private $encryptService;
 
@@ -65,17 +69,20 @@ class SetupExport extends Base {
 	 * SetupExport constructor.
 	 *
 	 * @param RemoteService $remoteService
+	 * @param RemoteStreamService $remoteStreamService
 	 * @param EncryptService $encryptService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
 		RemoteService $remoteService,
+		RemoteStreamService $remoteStreamService,
 		EncryptService $encryptService,
 		ConfigService $configService
 	) {
 		parent::__construct();
 
 		$this->remoteService = $remoteService;
+		$this->remoteStreamService = $remoteStreamService;
 		$this->encryptService = $encryptService;
 		$this->configService = $configService;
 	}
@@ -99,6 +106,8 @@ class SetupExport extends Base {
 	 * @throws Exception
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$this->remoteStreamService->getAppSignatory(true);
+
 		$setup = [
 			'signatory' => $this->configService->getAppValue('key_pairs'),
 			'remote' => $this->remoteService->getAll(true),

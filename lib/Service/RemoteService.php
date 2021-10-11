@@ -197,8 +197,6 @@ class RemoteService {
 		}
 
 		try {
-			$this->remoteStreamService->signPoint($point);
-
 			$result = $this->remoteStreamService->resultRequestRemoteInstance(
 				$remote->getInstance(),
 				RemoteInstance::RP_CREATE,

@@ -79,6 +79,9 @@ class PackService {
 	/** @var MetadataService */
 	private $metadataService;
 
+	/** @var RemoteStreamService */
+	private $remoteStreamService;
+
 	/** @var ChunkService */
 	private $chunkService;
 
@@ -97,6 +100,7 @@ class PackService {
 	 *
 	 * @param PointRequest $pointRequest
 	 * @param MetadataService $metadataService
+	 * @param RemoteStreamService $remoteStreamService
 	 * @param ChunkService $chunkService
 	 * @param EncryptService $encryptService
 	 * @param OutputService $outputService
@@ -105,6 +109,7 @@ class PackService {
 	public function __construct(
 		PointRequest $pointRequest,
 		MetadataService $metadataService,
+		RemoteStreamService $remoteStreamService,
 		ChunkService $chunkService,
 		EncryptService $encryptService,
 		OutputService $outputService,
@@ -112,6 +117,7 @@ class PackService {
 	) {
 		$this->pointRequest = $pointRequest;
 		$this->metadataService = $metadataService;
+		$this->remoteStreamService = $remoteStreamService;
 		$this->chunkService = $chunkService;
 		$this->encryptService = $encryptService;
 		$this->outputService = $outputService;
@@ -163,6 +169,7 @@ class PackService {
 			  ->u('pack_error')
 			  ->u('pack_date');
 
+		$this->remoteStreamService->signPoint($point);
 		$this->pointRequest->update($point, true);
 		try {
 			$this->metadataService->saveMetadata($point);

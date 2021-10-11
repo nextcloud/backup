@@ -85,7 +85,7 @@ class ExternalRemove extends Base {
 		$storageId = (int)$input->getArgument('storage_id');
 
 		try {
-			$this->externalFolderRequest->getFromStorageId($storageId);
+			$this->externalFolderRequest->getByStorageId($storageId);
 		} catch (ExternalFolderNotFoundException $e) {
 			throw new ExternalFolderNotFoundException('Unknown external folder');
 		}
