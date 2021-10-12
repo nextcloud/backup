@@ -271,8 +271,8 @@ class ExternalFolderService {
 		RestoringChunkPart $part
 	): void {
 		$folder = $this->getExternalChunkFolder($external, $point, $chunk, true);
+
 		/** @var File $file */
-		$file = $folder->get($part->getName());
 		$file = $folder->get($part->getName());
 		if ($file->getType() !== FileInfo::TYPE_FILE) {
 			throw new RestoringChunkPartNotFoundException('remote part is not a file');

@@ -193,8 +193,8 @@ class PointDownload extends Base {
 				}
 			}
 
-			$point->unsetHealth();
-//				  ->setInstance('');
+			$point->setInstance()
+				  ->unsetHealth();
 
 			$this->pointRequest->save($point);
 			$this->pointService->saveMetadata($point);
@@ -290,9 +290,6 @@ class PointDownload extends Base {
 			);
 
 			$part = clone $this->packService->getPartFromChunk($chunk, $partHealth->getPartName());
-//			$this->packService->getChunkPartContent($point, $chunk, $part);
-//
-//			$this->remoteService->uploadPart($instance, $point, $chunk, $part);
 
 			if (!is_null($remote)) {
 				$this->remoteService->downloadPart($remote, $point, $chunk, $part);

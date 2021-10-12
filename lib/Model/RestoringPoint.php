@@ -145,7 +145,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	 *
 	 * @return RestoringPoint
 	 */
-	public function setInstance(string $instance): self {
+	public function setInstance(string $instance = ''): self {
 		$this->instance = $instance;
 
 		return $this;

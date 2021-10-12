@@ -278,7 +278,7 @@ class RemoteService {
 		RestoringPoint $point,
 		RestoringChunk $chunk,
 		RestoringChunkPart $part
-	): RestoringChunkPart {
+	): void {
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$instance,
 			RemoteInstance::RP_DOWNLOAD,
@@ -291,11 +291,10 @@ class RemoteService {
 		try {
 			/** @var RestoringChunkPart $downloaded */
 			$downloaded = $this->deserialize($result, RestoringChunkPart::class);
+			$part->setContent($downloaded->getContent());
 		} catch (InvalidItemException $e) {
 			throw new RestoringChunkPartNotFoundException();
 		}
-
-		return $downloaded;
 	}
 
 

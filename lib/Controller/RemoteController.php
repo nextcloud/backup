@@ -220,16 +220,16 @@ class RemoteController extends Controller {
 	}
 
 
-
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
 	 * @param string $pointId
+	 * @param string $chunkName
 	 *
 	 * @return DataResponse
 	 */
-	public function downloadRestoringPoint(string $pointId): DataResponse {
+	public function downloadRestoringPoint(string $pointId, string $chunkName): DataResponse {
 		try {
 			$request = $this->extractRequest(DownloadRestoringChunk::class);
 		} catch (Exception $e) {

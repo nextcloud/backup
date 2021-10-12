@@ -37,10 +37,13 @@ use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
+use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointNotInitiatedException;
 use OCA\Backup\IRemoteRequest;
-use OCA\Backup\Model\RestoringChunk;
+use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Service\ChunkService;
+use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -64,6 +67,9 @@ class DownloadRestoringChunk extends CoreRequest implements IRemoteRequest {
 	/** @var ChunkService */
 	private $chunkService;
 
+	/** @var PackService */
+	private $packService;
+
 
 	/**
 	 * DownloadRestoringChunk constructor.
@@ -73,33 +79,40 @@ class DownloadRestoringChunk extends CoreRequest implements IRemoteRequest {
 	 */
 	public function __construct(
 		PointService $pointService,
-		ChunkService $chunkService
+		ChunkService $chunkService,
+		PackService $packService
 	) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
 		$this->chunkService = $chunkService;
+		$this->packService = $packService;
 
 		$this->setup('app', Application::APP_ID);
 	}
 
 
 	/**
+	 * @throws RestoringPointNotInitiatedException
+	 * @throws RestoringChunkNotFoundException
 	 */
 	public function execute(): void {
 		try {
 			$signedRequest = $this->getSignedRequest();
 			$signatory = $signedRequest->getSignatory();
 			$pointId = $signedRequest->getIncomingRequest()->getParam('pointId');
+			$chunkName = $signedRequest->getIncomingRequest()->getParam('chunkName');
 
 			$point = $this->pointService->getRestoringPoint($pointId, $signatory->getInstance());
-			/** @var RestoringChunk $chunk */
-			$chunk = $this->deserializeJson($signedRequest->getBody(), RestoringChunk::class);
+			$chunk = $this->chunkService->getChunkFromRP($point, $chunkName);
+
+			/** @var RestoringChunkPart $part */
+			$part = $this->deserializeJson($signedRequest->getBody(), RestoringChunkPart::class);
 
 			$this->pointService->initBaseFolder($point);
-			$this->chunkService->getChunkContent($point, $chunk);
+			$this->packService->getChunkPartContent($point, $chunk, $part);
 
-			$this->setOutcome($this->serialize($chunk));
+			$this->setOutcome($this->serialize($part));
 
 		} catch (RestoringPointNotFoundException
 		| InvalidItemException
