@@ -32,6 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Service;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
@@ -143,13 +144,15 @@ class PackService {
 		}
 
 		foreach ($point->getRestoringData() as $data) {
-			if ($data->getType() === RestoringData::INTERNAL_DATA) {
-				continue;
-			}
-
 			foreach ($data->getChunks() as $chunk) {
 				try {
-					$this->packChunk($point, $chunk);
+					if ($data->getType() === RestoringData::INTERNAL_DATA) {
+						$chunkPart = new RestoringChunkPart($chunk->getFilename());
+						$chunkPart->setChecksum($this->chunkService->getChecksum($point, $chunk));
+						$chunk->addPart($chunkPart);
+					} else {
+						$this->packChunk($point, $chunk);
+					}
 				} catch (Throwable $t) {
 					$point->setStatus(RestoringPoint::STATUS_ISSUE)
 						  ->getNotes()
@@ -169,7 +172,11 @@ class PackService {
 			  ->u('pack_error')
 			  ->u('pack_date');
 
-		$this->remoteStreamService->signPoint($point);
+		try {
+			$this->remoteStreamService->signPoint($point);
+		} catch (SignatoryException $e) {
+		}
+
 		$this->pointRequest->update($point, true);
 		try {
 			$this->metadataService->saveMetadata($point);
@@ -341,7 +348,7 @@ class PackService {
 
 			} catch (Throwable $t) {
 				foreach ($parts as $item) {
-					unlink($item);
+					unlink($item->getName());
 				}
 				throw $t;
 			}
@@ -356,6 +363,7 @@ class PackService {
 	 * @return array
 	 * @throws EncryptionKeyException
 	 * @throws SodiumException
+	 * @throws ArchiveNotFoundException
 	 */
 	private function wrapPackEncrypt(RestoringPoint $point, array $parts): array {
 		if ($this->configService->getAppValueBool(ConfigService::PACK_ENCRYPT)) {
@@ -367,7 +375,10 @@ class PackService {
 				$parts = $encrypted;
 			} catch (Throwable $t) { // in case of crash from the ZipArchive
 				foreach ($parts as $item) {
-					unlink($item->getName());
+					try {
+						unlink($item->getName());
+					} catch (Throwable $t) {
+					}
 				}
 				throw $t;
 			}
@@ -390,12 +401,11 @@ class PackService {
 		$encrypted = [];
 
 		foreach ($parts as $item) {
-			$tmpPath = $this->configService->getTempFileName();
-			$this->encryptService->encryptFile($item->getName(), $tmpPath);
 			$new = clone $item;
-			$new->setName($tmpPath)
-				->setEncrypted(true)
-				->setEncryptedChecksum($this->getTempChecksum($tmpPath));
+			$new->setName($this->configService->getTempFileName());
+			$this->encryptService->encryptFile($item->getName(), $new->getName());
+			$new->setEncrypted(true)
+				->setEncryptedChecksum($this->getTempChecksum($new->getName()));
 
 			$encrypted[] = $new;
 		}
@@ -411,15 +421,17 @@ class PackService {
 	 *
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotInitiatedException
-	 * @throws ArchiveNotFoundException
 	 */
 	private function wrapStoreParts(RestoringPoint $point, RestoringChunk $chunk, array $parts): void {
 		try {
 			$this->storeParts($point, $chunk, $parts);
 		} catch (Throwable $t) {
-//			foreach ($parts as $item) {
-//				unlink($item->getName());
-//			}
+			foreach ($parts as $item) {
+				try {
+					unlink($item->getName());
+				} catch (Throwable $t) {
+				}
+			}
 			throw $t;
 		}
 
@@ -564,22 +576,33 @@ class PackService {
 		return $folder->getFile($part->getName());
 	}
 
+
 	/**
 	 * @param RestoringPoint $point
+	 *
+	 * @throws Throwable
 	 */
 	public function unpackPoint(RestoringPoint $point): void {
+		if (!$point->isStatus(RestoringPoint::STATUS_PACKED)) {
+			throw new RestoringPointPackException('restoring point is not packed');
+		}
+
 		foreach ($point->getRestoringData() as $data) {
 			if ($data->getType() === RestoringData::INTERNAL_DATA) {
 				continue;
 			}
 
 			foreach ($data->getChunks() as $chunk) {
-				try {
-					$this->unpackChunk($point, $chunk);
-				} catch (RestoringPointNotInitiatedException | NotPermittedException $e) {
-				}
+				$this->unpackChunk($point, $chunk);
 			}
 		}
+
+		$point->setStatus(RestoringPoint::STATUS_UNPACKED)
+			  ->unsetNotes();
+
+		$this->remoteStreamService->signPoint($point);
+		$this->pointRequest->update($point, true);
+		$this->metadataService->saveMetadata($point);
 	}
 
 
@@ -587,26 +610,17 @@ class PackService {
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 *
-	 * @throws RestoringPointNotInitiatedException
-	 * @throws NotPermittedException
+	 * @throws Throwable
 	 */
 	public function unpackChunk(RestoringPoint $point, RestoringChunk $chunk): void {
 		$parts = $this->putOutParts($point, $chunk);
-		$decrypted = $this->packDecrypt($parts);
-		foreach ($parts as $part) {
-			unlink($part);
-		}
+		$parts = $this->wrapPackDecrypt($point, $parts);
+		$temp = $this->wrapPackImplode($parts);
+		$temp = $this->wrapPackChunkExtract($point, $temp);
+		$this->wrapRecreateChunk($point, $chunk, $temp);
 
-		$zip = $this->packImplode($decrypted);
-		foreach ($decrypted as $item) {
-			unlink($item);
-		}
-
-		$temp = $this->packChunkExtract($zip);
-		unlink($zip);
-
-		$this->recreateChunk($point, $chunk, $temp);
-		unlink($temp);
+		$this->removeChunkPartFiles($point, $chunk);
+		$chunk->setParts([]);
 	}
 
 
@@ -614,13 +628,13 @@ class PackService {
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 *
-	 * @return array
+	 * @return RestoringChunkPart[]
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotInitiatedException
 	 */
 	private function putOutParts(RestoringPoint $point, RestoringChunk $chunk): array {
 		$temp = [];
-		$folder = $this->chunkService->getChunkFolder($point, $chunk);
+		$folder = $this->getPackFolder($point, $chunk);
 		foreach ($chunk->getParts() as $part) {
 			try {
 				$file = $folder->getFile($part->getName());
@@ -630,8 +644,9 @@ class PackService {
 			}
 
 			$read = $file->read();
-			$tmp = $this->configService->getTempFileName();
-			$write = fopen($tmp, 'wb');
+			$new = clone $part;
+			$new->setName($this->configService->getTempFileName());
+			$write = fopen($new->getName(), 'wb');
 			while (($r = fgets($read, 4096)) !== false) {
 				fputs($write, $r);
 			}
@@ -639,7 +654,7 @@ class PackService {
 			fclose($write);
 			fclose($read);
 
-			$temp[] = $tmp;
+			$temp[] = $new;
 		}
 
 		return $temp;
@@ -647,39 +662,96 @@ class PackService {
 
 
 	/**
-	 * @param array $parts
+	 * @param RestoringPoint $point
+	 * @param RestoringChunkPart[] $parts
 	 *
-	 * @return array
+	 * @return RestoringChunkPart[]
+	 * @throws ArchiveNotFoundException
+	 * @throws EncryptionKeyException
+	 * @throws SodiumException
+	 * @throws Throwable
+	 */
+	private function wrapPackDecrypt(RestoringPoint $point, array $parts): array {
+		if ($this->configService->getAppValueBool(ConfigService::PACK_ENCRYPT)) {
+			try {
+				$encrypted = $this->packDecrypt($parts);
+				foreach ($parts as $item) {
+					unlink($item->getName());
+				}
+				$parts = $encrypted;
+			} catch (Throwable $t) { // in case of crash from the ZipArchive
+				foreach ($parts as $item) {
+					try {
+						unlink($item->getName());
+					} catch (Throwable $t) {
+					}
+				}
+				throw $t;
+			}
+
+			$point->removeStatus(RestoringPoint::STATUS_ENCRYPTED);
+		}
+
+		return $parts;
+	}
+
+	/**
+	 * @param RestoringChunkPart[] $parts
+	 *
+	 * @return RestoringChunkPart[]
 	 */
 	private function packDecrypt(array $parts): array {
 		$decrypted = [];
-		foreach ($parts as $filename) {
-			$tmp = $this->configService->getTempFileName();
+		foreach ($parts as $part) {
+			$new = clone $part;
+			$new->setName($this->configService->getTempFileName());
 			try {
-				$this->encryptService->decryptFile($filename, $tmp);
+				$this->encryptService->decryptFile($part->getName(), $new->getName());
+				// TODO check checksums
+//				echo '-checksum: ' . $this->getTempChecksum($new->getName()) . "\n";
 			} catch (SodiumException
 			| EncryptionKeyException $e) {
 				echo '### ' . $e->getMessage();
 			}
 
-			$decrypted[] = $tmp;
+			$decrypted[] = $new;
 		}
 
 		return $decrypted;
 	}
 
+	/**
+	 * @param RestoringChunkPart[] $parts
+	 *
+	 * @return string
+	 * @throws Throwable
+	 */
+	private function wrapPackImplode(array $parts): string {
+		try {
+			return $this->packImplode($parts);
+		} catch (Throwable $t) { // in case of issue during the exploding of the file
+			foreach ($parts as $item) {
+				try {
+					unlink($item->getName());
+				} catch (Throwable $t) {
+				}
+			}
+			throw $t;
+		}
+	}
+
 
 	/**
-	 * @param array $parts
+	 * @param RestoringChunkPart[] $parts
 	 *
 	 * @return string
 	 */
 	private function packImplode(array $parts): string {
-		$tmp = $this->configService->getTempFileName();
-		$write = fopen($tmp, 'wb');
+		$tmpPath = $this->configService->getTempFileName();
+		$write = fopen($tmpPath, 'wb');
 
 		foreach ($parts as $part) {
-			$read = fopen($part, 'rb');
+			$read = fopen($part->getName(), 'rb');
 			while (($r = fgets($read, 4096)) !== false) {
 				fputs($write, $r);
 			}
@@ -687,9 +759,33 @@ class PackService {
 		}
 		fclose($write);
 
-		return $tmp;
+		return $tmpPath;
 	}
 
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param string $filename
+	 *
+	 * @return string
+	 * @throws Throwable
+	 */
+	private function wrapPackChunkExtract(RestoringPoint $point, string $filename): string {
+		if ($this->configService->getAppValueBool(ConfigService::PACK_COMPRESS)) {
+			try {
+				$zip = $this->packChunkExtract($filename);
+				unlink($filename);
+				$filename = $zip;
+			} catch (Throwable $t) { // in case of crash from the ZipArchive
+				unlink($filename);
+				throw $t;
+			}
+
+			$point->removeStatus(RestoringPoint::STATUS_COMPRESSED);
+		}
+
+		return $filename;
+	}
 
 	/**
 	 * @param string $zipName
@@ -756,9 +852,28 @@ class PackService {
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotInitiatedException
 	 */
+	private function wrapRecreateChunk(RestoringPoint $point, RestoringChunk $chunk, string $temp): void {
+		try {
+			$this->recreateChunk($point, $chunk, $temp);
+			unlink($temp);
+		} catch (Throwable $t) {
+			unlink($temp);
+			throw $t;
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param string $temp
+	 *
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
+	 */
 	private function recreateChunk(RestoringPoint $point, RestoringChunk $chunk, string $temp): void {
 		$read = fopen($temp, 'rb');
-		$folder = $this->getPackFolder($point, $chunk);
+		$folder = $this->chunkService->getChunkFolder($point, $chunk);
 		try {
 			$file = $folder->getFile($chunk->getFilename());
 		} catch (NotFoundException $e) {
@@ -772,6 +887,26 @@ class PackService {
 
 		fclose($write);
 		fclose($read);
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 *
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
+	 */
+	private function removeChunkPartFiles(RestoringPoint $point, RestoringChunk $chunk): void {
+		$folder = $this->getPackFolder($point, $chunk);
+		foreach ($chunk->getParts() as $part) {
+			try {
+				$file = $folder->getFile($part->getName());
+				$file->delete();
+			} catch (NotFoundException $e) {
+				continue;
+			}
+		}
 	}
 
 

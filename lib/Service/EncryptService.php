@@ -93,7 +93,8 @@ class EncryptService {
 	 * @throws SodiumException
 	 */
 	public function decryptString(string $encrypted, string $key): string {
-		$encrypted = base64_decode($encrypted);
+		$key = base64_decode($key);
+
 		if ($encrypted === false) {
 			throw new EncryptException('invalid data');
 		}
@@ -115,6 +116,7 @@ class EncryptService {
 		if ($plain === false) {
 			throw new EncryptException('invalid data');
 		}
+
 		sodium_memzero($ciphertext);
 		sodium_memzero($key);
 
@@ -130,7 +132,7 @@ class EncryptService {
 	 * @throws EncryptionKeyException
 	 */
 	public function encryptFile(string $input, string $output): void {
-		$key = $this->getEncryptionKey();
+		$key = base64_decode($this->getEncryptionKey());
 		$read = fopen($input, 'rb');
 		$write = fopen($output, 'wb');
 		[$state, $header] = sodium_crypto_secretstream_xchacha20poly1305_init_push($key);
@@ -157,7 +159,7 @@ class EncryptService {
 	 * @throws EncryptionKeyException
 	 */
 	public function decryptFile(string $input, string $output): void {
-		$key = $this->getEncryptionKey();
+		$key = base64_decode($this->getEncryptionKey());
 		$read = fopen($input, 'rb');
 		$write = fopen($output, 'wb');
 
@@ -191,7 +193,7 @@ class EncryptService {
 			$this->configService->setAppValue(ConfigService::ENCRYPTION_KEY, $key);
 		}
 
-		return base64_decode($key);
+		return $key;
 	}
 
 

@@ -42,6 +42,7 @@ use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
@@ -119,6 +120,7 @@ class PointUpload extends Base {
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RestoringPointNotFoundException
 	 * @throws ExternalFolderNotFoundException
+	 * @throws RestoringPointPackException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('point'));

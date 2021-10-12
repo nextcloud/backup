@@ -226,7 +226,7 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 
 	/**
-	 * @return ArchiveFile[]
+	 * @return RestoringChunkPart[]
 	 */
 	public function getParts(): array {
 		return $this->parts;

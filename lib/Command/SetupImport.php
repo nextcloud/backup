@@ -37,9 +37,12 @@ use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\RemoteRequest;
+use OCA\Backup\Exceptions\EncryptException;
+use OCA\Backup\Exceptions\RemoteInstanceUidException;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\EncryptService;
+use SodiumException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -102,7 +105,9 @@ class SetupImport extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws Exception
+	 * @throws RemoteInstanceUidException
+	 * @throws EncryptException
+	 * @throws SodiumException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$json = '';
@@ -112,8 +117,11 @@ class SetupImport extends Base {
 
 		$key = $input->getOption('key');
 		if ($key !== '') {
-			$key = base64_decode($key);
-			$json = $this->encryptService->decryptString($json, $key);
+			try {
+				$json = $this->encryptService->decryptString(base64_decode($json), $key);
+			} catch (EncryptException $e) {
+				throw new EncryptException('Invalid Key');
+			}
 		}
 
 		$setup = json_decode($json, true);
@@ -132,6 +140,8 @@ class SetupImport extends Base {
 		foreach ($remotes as $remote) {
 			$this->remoteRequest->insertOrUpdate($remote, true);
 		}
+
+		$output->writeln('Setup imported.');
 
 		return 0;
 	}

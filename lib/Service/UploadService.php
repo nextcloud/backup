@@ -277,6 +277,8 @@ class UploadService {
 
 				$this->o('  > Health status: ' . $this->outputService->displayHealth($stored));
 				$this->uploadMissingFilesToExternalFolder($external, $stored);
+				$this->externalFolderService->getRestoringPoint($external, $stored->getId(), true);
+
 			} catch (Exception $e) {
 				continue;
 			}

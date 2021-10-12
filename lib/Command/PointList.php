@@ -130,9 +130,6 @@ class PointList extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws RemoteInstanceException
-	 * @throws RemoteInstanceNotFoundException
-	 * @throws RemoteResourceNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$rp = $this->getRPFromInstances(
@@ -146,7 +143,7 @@ class PointList extends Base {
 		$output = $output->section();
 
 		$table = new Table($output);
-		$table->setHeaders(['Restoring Point', 'Date', 'Status', 'Parent', 'Instance', 'Health']);
+		$table->setHeaders(['Restoring Point', 'Date', 'Parent', 'Status', 'Instance', 'Health']);
 		$table->render();
 
 		foreach ($rp as $pointId => $item) {
@@ -175,8 +172,8 @@ class PointList extends Base {
 					[
 						($fresh) ? $displayPointId : '',
 						($fresh) ? date('Y-m-d H:i:s', $point->getDate()) : '',
-						($fresh) ? implode(',', $status) : '',
 						($fresh) ? $point->getParent() : '',
+						implode(',', $status),
 						$instance,
 						$this->displayStyleHealth($point),
 						'<error>' . $issue . '</error>'
@@ -199,7 +196,11 @@ class PointList extends Base {
 	 *
 	 * @return array
 	 */
-	private function getRPFromInstances(OutputInterface $output, bool $local, string $remote, string $external
+	private function getRPFromInstances(
+		OutputInterface $output,
+		bool $local,
+		string $remote,
+		string $external
 	): array {
 		if ($local) {
 			$instances = [RemoteInstance::LOCAL];

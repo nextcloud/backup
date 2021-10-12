@@ -173,6 +173,9 @@ class PointRestore extends Base {
 
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
 
+		if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
+			throw new RestoringPointNotFoundException('the restoring point is packed, please unpack first');
+		}
 		$file = $input->getOption('file');
 		$data = $input->getOption('data');
 		$chunk = $input->getOption('chunk');

@@ -59,6 +59,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	use TNC23Logger;
 
 
+	const STATUS_UNPACKED = 0;
 	const STATUS_PACKED = 1;
 	const STATUS_COMPRESSED = 2;
 	const STATUS_ENCRYPTED = 4;
@@ -241,48 +242,20 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	}
 
 	/**
+	 * @return $this
+	 */
+	public function unsetNotes(): self {
+		$this->notes = new SimpleDataStore();
+
+		return $this;
+	}
+
+	/**
 	 * @return SimpleDataStore
 	 */
 	public function getNotes(): SimpleDataStore {
 		return $this->notes;
 	}
-
-//
-//	/**
-//	 * @param string $key
-//	 * @param string $note
-//	 *
-//	 * @return $this
-//	 */
-//	public function setNote(string $key, string $note = ''): self {
-//		if ($note === '') {
-//			if (array_key_exists($key, $this->notes)) {
-//				unset($this->notes[$key]);
-//			}
-//		} else {
-//			$this->notes[$key] = $note;
-//		}
-//
-//		return $this;
-//	}
-//
-//	/**
-//	 * @param string $key
-//	 *
-//	 * @return string
-//	 */
-//	public function getNote(string $key): string {
-//		return $this->get($key, $this->notes);
-//	}
-//
-//	/**
-//	 * @param string $key
-//	 *
-//	 * @return int
-//	 */
-//	public function getNoteInt(string $key): int {
-//		return $this->getInt($key, $this->notes);
-//	}
 
 
 	/**

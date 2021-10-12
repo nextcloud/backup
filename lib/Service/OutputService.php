@@ -133,10 +133,15 @@ class OutputService {
 			}
 		}
 
-		return '<comment>'
+		$color = 'comment';
+		if ($unknown + $missing + $faulty === 0) {
+			$color = 'info';
+		}
+
+		return '<' . $color . '>'
 			   . $good . ' correct, '
 			   . $missing . ' missing and '
-			   . $faulty . ' faulty files</comment>';
+			   . $faulty . ' faulty files</' . $color . '>';
 	}
 
 }
