@@ -44,6 +44,7 @@ use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
+use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
@@ -171,7 +172,6 @@ class PointDetails extends Base {
 			return 0;
 		}
 
-		echo json_encode($point);
 		$output = new ConsoleOutput();
 		$output = $output->section();
 
@@ -195,7 +195,7 @@ class PointDetails extends Base {
 			$table = new Table($output);
 			$table->setHeaders(['Chunk Id', 'Size', 'Count', 'Part Id', 'Checksum', 'verified']);
 			$table->render();
-echo '-';
+
 			foreach ($data->getChunks() as $chunk) {
 				if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
 					$this->displayDetailsPacked($table, $point, $chunk);
@@ -239,15 +239,19 @@ echo '-';
 		RestoringChunk $chunk
 	): void {
 		$fresh = true;
+		$health = $point->getHealth();
 		foreach ($chunk->getParts() as $part) {
-			try {
-				$checked = $this->packService->getChecksum($point, $chunk, $part);
-			} catch (ArchiveNotFoundException $e) {
-				$checked = '<error>missing chunk</error>';
-			}
+			$partHealth = $health->getPart($chunk->getName(), $part->getName());
+			$status = ChunkPartHealth::$DEF_STATUS[$partHealth->getStatus()];
+//
+//			try {
+//				$checked = $this->packService->getChecksum($point, $chunk, $part);
+//			} catch (ArchiveNotFoundException $e) {
+//				$checked = '<error>missing chunk</error>';
+//			}
 
-			$color = ($checked === $part->getCurrentChecksum()) ? 'info' : 'error';
-			$checked = '<' . $color . '>' . $checked . '</' . $color . '>';
+			$color = ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) ? 'info' : 'error';
+			$status = '<' . $color . '>' . $status . '</' . $color . '>';
 
 			$table->appendRow(
 				[
@@ -256,7 +260,7 @@ echo '-';
 					($fresh) ? $chunk->getCount() : '',
 					$part->getName(),
 					$part->getCurrentChecksum(),
-					$checked
+					$status
 				]
 			);
 

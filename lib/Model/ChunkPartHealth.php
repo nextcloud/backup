@@ -54,6 +54,13 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 	const STATUS_CHECKSUM = 3;
 
 
+	public static $DEF_STATUS = [
+		self::STATUS_UNKNOWN => 'unknown',
+		self::STATUS_OK => 'ok',
+		self::STATUS_MISSING => 'missing',
+		self::STATUS_CHECKSUM => 'checksum'
+	];
+
 	/** @var bool */
 	private $packed;
 
