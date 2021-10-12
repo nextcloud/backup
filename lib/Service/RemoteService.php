@@ -43,7 +43,7 @@ use OCA\Backup\Db\RemoteRequest;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
-use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointUploadException;
 use OCA\Backup\Model\RemoteInstance;
@@ -265,65 +265,39 @@ class RemoteService {
 	 * @param string $instance
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
+	 * @param RestoringChunkPart $part
 	 *
-	 * @return RestoringChunk
+	 * @return RestoringChunkPart
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
-	 * @throws RestoringChunkNotFoundException
+	 * @throws RestoringChunkPartNotFoundException
 	 */
-	public function downloadChunk(
+	public function downloadPart(
 		string $instance,
 		RestoringPoint $point,
-		RestoringChunk $chunk
-	): RestoringChunk {
+		RestoringChunk $chunk,
+		RestoringChunkPart $part
+	): RestoringChunkPart {
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$instance,
 			RemoteInstance::RP_DOWNLOAD,
 			Request::TYPE_GET,
-			$chunk,
-			['pointId' => $point->getId()],
+			$part,
+			['pointId' => $point->getId(), 'chunkName' => $chunk->getName()],
 			true
 		);
 
 		try {
-			/** @var RestoringChunk $downloaded */
-			$downloaded = $this->deserialize($result, RestoringChunk::class);
+			/** @var RestoringChunkPart $downloaded */
+			$downloaded = $this->deserialize($result, RestoringChunkPart::class);
 		} catch (InvalidItemException $e) {
-			throw new RestoringChunkNotFoundException();
+			throw new RestoringChunkPartNotFoundException();
 		}
 
 		return $downloaded;
 	}
 
-	/**
-	 * @param string $instance
-	 * @param string $pointId
-	 *
-	 * @throws RemoteInstanceException
-	 * @throws RemoteInstanceNotFoundException
-	 * @throws RemoteResourceNotFoundException
-	 */
-	public function downloadPoint(string $instance, string $pointId): void {
-		$remoteInstance = $this->remoteRequest->getByInstance($instance);
-		if (!$remoteInstance->isOutgoing()) {
-			throw new RemoteInstanceException('instance not configured as outgoing');
-		}
-
-		$result = $this->remoteStreamService->resultRequestRemoteInstance(
-			$remoteInstance->getInstance(),
-			RemoteInstance::RP_DOWNLOAD,
-			Request::TYPE_GET,
-			null,
-			['pointId' => $pointId]
-		);
-
-//
-//		/** @var RestoringPoint $remote */
-//		$remote = $this->deserialize($this->getArray($point->getId(), $result), RestoringPoint::class);
-//
-//		return $remote;
-	}
 
 	/**
 	 * @param RestoringPoint $point

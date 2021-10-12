@@ -748,7 +748,10 @@ class ChunkService {
 	 * @return RestoringChunk
 	 * @throws RestoringChunkNotFoundException
 	 */
-	public function getChunkFromRP(RestoringPoint $point, string $chunk, string $dataName = ''
+	public function getChunkFromRP(
+		RestoringPoint $point,
+		string $chunk,
+		string $dataName = ''
 	): RestoringChunk {
 		foreach ($point->getRestoringData() as $restoringData) {
 			if ($dataName !== '' && $restoringData->getName() !== $dataName) {
@@ -792,25 +795,6 @@ class ChunkService {
 		$folder = $this->getChunkFolder($point, $chunk);
 
 		return $folder->getFile($chunk->getFilename());
-	}
-
-
-	/**
-	 * @param RestoringPoint $point
-	 * @param RestoringChunk $chunk
-	 */
-	public function saveChunkContent(RestoringPoint $point, RestoringChunk $chunk) {
-		$folder = $point->getBaseFolder();
-		try {
-			try {
-				$file = $folder->getFile($chunk->getFilename());
-			} catch (NotFoundException $e) {
-				$file = $folder->newFile($chunk->getFilename());
-			}
-
-			$file->putContent(base64_decode($chunk->getContent()));
-		} catch (NotPermittedException | NotFoundException $e) {
-		}
 	}
 
 

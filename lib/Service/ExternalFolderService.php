@@ -248,6 +248,40 @@ class ExternalFolderService {
 		$this->updateMetadataFile($external, $point);
 	}
 
+
+	/**
+	 * @param ExternalFolder $external
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param RestoringChunkPart $part
+	 *
+	 * @return RestoringChunkPart
+	 * @throws ExternalFolderNotFoundException
+	 * @throws GenericFileException
+	 * @throws LockedException
+	 * @throws NotPermittedException
+	 * @throws RestoringChunkPartNotFoundException
+	 * @throws RestoringPointException
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function downloadPart(
+		ExternalFolder $external,
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		RestoringChunkPart $part
+	): void {
+		$folder = $this->getExternalChunkFolder($external, $point, $chunk, true);
+		/** @var File $file */
+		$file = $folder->get($part->getName());
+		$file = $folder->get($part->getName());
+		if ($file->getType() !== FileInfo::TYPE_FILE) {
+			throw new RestoringChunkPartNotFoundException('remote part is not a file');
+		}
+
+		$part->setContent(base64_encode($file->getContent()));
+	}
+
+
 	/**
 	 * @param ExternalFolder $external
 	 *
@@ -483,7 +517,7 @@ class ExternalFolderService {
 				}
 			}
 		}
-		
+
 		if ($globalStatus === RestoringHealth::STATUS_OK && $point->getParent() !== '') {
 			try {
 				$this->getRestoringPoint($external, $point->getParent());

@@ -141,7 +141,8 @@ class RemoteStreamService extends NC23Signature {
 		$app->setRPDownload(
 			urldecode(
 				$this->urlGenerator->linkToRouteAbsolute(
-					'backup.Remote.downloadRestoringPoint', ['pointId' => '{pointId}']
+					'backup.Remote.downloadRestoringPoint',
+					['pointId' => '{pointId}', 'chunkName' => '{chunkName}']
 				)
 			)
 		);
@@ -156,7 +157,8 @@ class RemoteStreamService extends NC23Signature {
 		$app->setRPUpload(
 			urldecode(
 				$this->urlGenerator->linkToRouteAbsolute(
-					'backup.Remote.uploadRestoringChunk', ['pointId' => '{pointId}', 'chunkName' => '{chunkName}']
+					'backup.Remote.uploadRestoringChunk',
+					['pointId' => '{pointId}', 'chunkName' => '{chunkName}']
 				)
 			)
 		);

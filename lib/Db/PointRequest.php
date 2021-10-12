@@ -100,7 +100,7 @@ class PointRequest extends PointRequestBuilder {
 
 		$qb->andWhere(
 			$qb->expr()->orX(
-				$qb->exprLimit('point_id', $pointId),
+				$qb->exprLimit('uid', $pointId),
 				$qb->exprLimit('parent', $pointId)
 			)
 		);
