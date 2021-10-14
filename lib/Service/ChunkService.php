@@ -70,7 +70,6 @@ class ChunkService {
 	use TFileTools;
 
 
-	const MAX_ZIP_SIZE = 100000000;
 	const BACKUP_SCRIPT = 'restore.php';
 	const APP_ZIP = 'app.zip';
 
@@ -80,16 +79,25 @@ class ChunkService {
 	/** @var EncryptService */
 	private $encryptService;
 
+	/** @var ConfigService */
+	private $configService;
+
 
 	/**
 	 * ChunkService constructor.
 	 *
 	 * @param FilesService $filesService
 	 * @param EncryptService $encryptService
+	 * @param ConfigService $configService
 	 */
-	public function __construct(FilesService $filesService, EncryptService $encryptService) {
+	public function __construct(
+		FilesService $filesService,
+		EncryptService $encryptService,
+		ConfigService $configService
+	) {
 		$this->filesService = $filesService;
 		$this->encryptService = $encryptService;
+		$this->configService = $configService;
 	}
 
 
@@ -155,6 +163,7 @@ class ChunkService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws RestoreChunkException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	public function restoreChunk(
 		RestoringPoint $point,
@@ -415,6 +424,7 @@ class ChunkService {
 		array &$files
 	): RestoringChunk {
 		$chunk = new RestoringChunk($data->getName());
+		$chunkSize = $this->configService->getAppValueInt(ConfigService::CHUNK_SIZE) * 1024 * 1024;
 
 		$zip = $this->generateZip($point, $chunk);
 		$zipSize = 0;
@@ -424,7 +434,7 @@ class ChunkService {
 				$fileSize = 1;
 			}
 
-			if ($zipSize > 0 && ($zipSize + $fileSize) > self::MAX_ZIP_SIZE) {
+			if ($zipSize > 0 && ($zipSize + $fileSize) > $chunkSize) {
 				$this->finalizeZip($zip, $chunk->setCount()->setSize($zipSize));
 				array_unshift($files, $filename);
 

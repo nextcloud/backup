@@ -35,6 +35,7 @@ namespace OCA\Backup\Cron;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\PointService;
 use Throwable;
 
@@ -50,11 +51,12 @@ class Backup extends TimedJob {
 	use TNC23Logger;
 
 
-	const MARGIN = 1800;
-
 
 	/** @var PointService */
 	private $pointService;
+
+	/** @var CronService */
+	private $cronService;
 
 	/** @var ConfigService */
 	private $configService;
@@ -64,13 +66,19 @@ class Backup extends TimedJob {
 	 * Backup constructor.
 	 *
 	 * @param PointService $pointService
+	 * @param CronService $cronService
 	 * @param ConfigService $configService
 	 */
-	public function __construct(PointService $pointService, ConfigService $configService) {
+	public function __construct(
+		PointService $pointService,
+		CronService $cronService,
+		ConfigService $configService
+	) {
 		$this->setInterval(900);
 //		$this->setInterval(1);
 
 		$this->pointService = $pointService;
+		$this->cronService = $cronService;
 		$this->configService = $configService;
 	}
 
@@ -85,7 +93,7 @@ class Backup extends TimedJob {
 			$this->configService->setAppValueInt(ConfigService::MOCKUP_DATE, 0);
 		}
 
-		if (!$this->verifyTime($time)) {
+		if (!$this->cronService->verifyTime($time)) {
 			return;
 		}
 
@@ -97,72 +105,11 @@ class Backup extends TimedJob {
 	 *
 	 */
 	private function runBackup(int $time): void {
-		if ($this->verifyFullBackup($time)) {
+		if ($this->cronService->verifyFullBackup($time)) {
 			$this->runFullBackup();
-		} else if ($this->verifyIncrementalBackup($time)) {
+		} else if ($this->cronService->verifyIncrementalBackup($time)) {
 			$this->runIncrementalBackup();
 		}
-	}
-
-
-	/**
-	 * @param int $time
-	 *
-	 * @return bool
-	 */
-	private function verifyTime(int $time): bool {
-		[$st, $end] = explode('-', $this->configService->getAppValue(ConfigService::TIME_SLOTS));
-
-		if (!is_numeric($st) || !is_numeric($end)) {
-			$this->log(3, 'Issue with Time Slots format, please check configuration');
-
-			return false;
-		}
-
-		$st = (int)$st;
-		$end = (int)$end;
-
-		$timeStart = mktime(
-			$st,
-			0,
-			0,
-			(int)date('n', $time),
-			// we go back one day in time under some condition
-			(int)date('j', $time) - ($st >= $end) * ((int)date('H', $time) < $end),
-			(int)date('Y', $time)
-		);
-
-		$timeEnd = mktime(
-			$end,
-			0,
-			0,
-			(int)date('n', $time),
-			// we go one day forward on a night-day configuration (ie. 23-5)
-			(int)date('j', $time) + ($st >= $end) * ((int)date('H', $time) > $end),
-			(int)date('Y', $time)
-		);
-
-		return ($timeStart < $time && $time < $timeEnd);
-	}
-
-
-	/**
-	 * @param int $time
-	 *
-	 * @return bool
-	 */
-	private function verifyFullBackup(int $time): bool {
-		if (!$this->configService->getAppValueBool(ConfigService::ALLOW_WEEKDAY)
-			&& !$this->isWeekEnd($time)) {
-			return false;
-		}
-
-		$last = $this->configService->getAppValueInt(ConfigService::DATE_FULL_RP);
-		$delay = $this->configService->getAppValueInt(ConfigService::DELAY_FULL_RP);
-		$delayUnit = $this->configService->getAppValue(ConfigService::DELAY_UNIT);
-		$delay = $delay * 3600 * (($delayUnit !== 'h') ? 24 : 1);
-
-		return ($last + $delay - self::MARGIN < $time);
 	}
 
 
@@ -171,24 +118,6 @@ class Backup extends TimedJob {
 			$this->pointService->create(true);
 		} catch (Throwable $e) {
 		}
-	}
-
-
-	/**
-	 * @param int $time
-	 *
-	 * @return bool
-	 */
-	private function verifyIncrementalBackup(int $time): bool {
-		$last = max(
-			$this->configService->getAppValueInt(ConfigService::DATE_PARTIAL_RP),
-			$this->configService->getAppValueInt(ConfigService::DATE_FULL_RP)
-		);
-		$delay = $this->configService->getAppValueInt(ConfigService::DELAY_FULL_RP);
-		$delayUnit = $this->configService->getAppValue(ConfigService::DELAY_UNIT);
-		$delay = $delay * 3600 * (($delayUnit !== 'h') ? 24 : 1);
-
-		return ($last + $delay - self::MARGIN < $time);
 	}
 
 
@@ -202,14 +131,5 @@ class Backup extends TimedJob {
 		}
 	}
 
-
-	/**
-	 * @param int $time
-	 *
-	 * @return bool
-	 */
-	private function isWeekEnd(int $time): bool {
-		return ((int)date('N', $time) >= 6);
-	}
 
 }

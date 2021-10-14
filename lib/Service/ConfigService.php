@@ -67,6 +67,8 @@ class ConfigService {
 	const TIME_SLOTS = 'time_slots';
 	const MOCKUP_DATE = 'mockup_date';
 
+	const CHUNK_SIZE = 'chunk_size';
+	const CHUNK_PART_SIZE = 'chunk_part_size';
 
 	/** @var array */
 	public $defaults = [
@@ -86,7 +88,10 @@ class ConfigService {
 
 		self::PACK_ENCRYPT => '1',
 		self::PACK_COMPRESS => '1',
-		self::PACK_INDEX => '1'
+		self::PACK_INDEX => '1',
+
+		self::CHUNK_SIZE => 4000,
+		self::CHUNK_PART_SIZE => 100
 	];
 
 

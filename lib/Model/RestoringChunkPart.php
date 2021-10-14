@@ -53,6 +53,9 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	/** @var string */
 	private $name;
 
+	/** @var int */
+	private $order;
+
 	/** @var string */
 	private $content = '';
 
@@ -70,9 +73,11 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	 * RestoringChunkPart constructor.
 	 *
 	 * @param string $name
+	 * @param int $order
 	 */
-	public function __construct(string $name = '') {
+	public function __construct(string $name = '', int $order = 0) {
 		$this->name = $name;
+		$this->order = $order;
 	}
 
 
@@ -98,6 +103,25 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 		$this->name = $name;
 
 		return $this;
+	}
+
+
+	/**
+	 * @param int $order
+	 *
+	 * @return RestoringChunkPart
+	 */
+	public function setOrder(int $order): self {
+		$this->order = $order;
+
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getOrder(): int {
+		return $this->order;
 	}
 
 
@@ -158,9 +182,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	}
 
 
-
-
-
 	/**
 	 * @return string
 	 */
@@ -199,6 +220,7 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setName($this->get('name', $data))
+			 ->setOrder($this->getInt('order', $data))
 			 ->setContent($this->get('content', $data))
 			 ->setEncrypted($this->getBool('encrypted', $data))
 			 ->setChecksum($this->get('checksum', $data))
@@ -214,6 +236,7 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	public function jsonSerialize(): array {
 		$arr = [
 			'name' => $this->getName(),
+			'order' => $this->getOrder(),
 			'encrypted' => $this->isEncrypted(),
 			'checksum' => $this->getChecksum(),
 			'encryptedChecksum' => $this->getEncryptedChecksum()

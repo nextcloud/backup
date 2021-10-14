@@ -252,8 +252,8 @@ class UploadService {
 		foreach ($externals as $external) {
 			try {
 				$this->o(
-					' - checking external folder <info>' . $external->getStorageId() . '</info>:<info>'
-					. $external->getRoot() . '</info>'
+					' - checking external folder <info>' . $external->getStorageId() .
+					'</info>:<info>' . $external->getRoot() . '</info>'
 				);
 
 				$stored = $this->externalFolderService->confirmPoint($external, $point);
@@ -325,7 +325,7 @@ class UploadService {
 			RestoringChunkNotFoundException |
 			RestoringChunkPartNotFoundException |
 			Exception |
-			 RestoringPointNotInitiatedException $e) {
+			RestoringPointNotInitiatedException $e) {
 				$this->o('<error>' . get_class($e) . $e->getMessage() . '</error>');
 			}
 		}

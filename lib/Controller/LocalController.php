@@ -41,6 +41,7 @@ use OCA\Backup\Db\EventRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\PointService;
 use OCP\AppFramework\Http\DataResponse;
@@ -75,6 +76,9 @@ class LocalController extends OcsController {
 	/** @var FilesService */
 	private $filesService;
 
+	/** @var CronService */
+	private $cronService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -88,6 +92,7 @@ class LocalController extends OcsController {
 	 * @param EventRequest $eventRequest
 	 * @param PointService $pointService
 	 * @param FilesService $filesService
+	 * @param CronService $cronService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
@@ -97,6 +102,7 @@ class LocalController extends OcsController {
 		EventRequest $eventRequest,
 		PointService $pointService,
 		FilesService $filesService,
+		CronService $cronService,
 		ConfigService $configService
 	) {
 		parent::__construct($appName, $request);
@@ -105,6 +111,7 @@ class LocalController extends OcsController {
 		$this->eventRequest = $eventRequest;
 		$this->pointService = $pointService;
 		$this->filesService = $filesService;
+		$this->cronService = $cronService;
 		$this->configService = $configService;
 	}
 
@@ -153,6 +160,7 @@ class LocalController extends OcsController {
 	 */
 	public function getSettings(): DataResponse {
 		$settings = $this->configService->getSettings();
+		$settings = array_merge($settings, $this->cronService->nextBackups());
 
 		return new DataResponse($settings);
 	}

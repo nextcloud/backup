@@ -70,7 +70,6 @@ class PackService {
 	use TFileTools;
 
 
-	const PACK_SIZE = 1000000;
 	const CHUNK_ENTRY = 'pack';
 
 
@@ -316,14 +315,16 @@ class PackService {
 	 */
 	private function packExplode(string $filename): array {
 		$read = fopen($filename, 'rb');
-		$parts = [];
+		$maxSize = $this->configService->getAppValueInt(ConfigService::CHUNK_PART_SIZE) * 1024 * 1024;
 
+		$i = 1;
+		$parts = [];
 		while (true) {
 			try {
 				$tmpPath = $this->configService->getTempFileName();
 
 				$write = fopen($tmpPath, 'wb');
-				$chunkPart = new RestoringChunkPart($tmpPath);
+				$chunkPart = new RestoringChunkPart($tmpPath, $i++);
 				$size = 0;
 				while (true) {
 					$r = fgets($read, 4096);
@@ -337,7 +338,7 @@ class PackService {
 					$size += strlen($r);
 					fputs($write, $r);
 
-					if ($size >= self::PACK_SIZE) {
+					if ($size >= $maxSize) {
 						fclose($write);
 						$parts[] = $chunkPart->setChecksum($this->getTempChecksum($tmpPath));
 
@@ -451,7 +452,8 @@ class PackService {
 	private function storeParts(RestoringPoint $point, RestoringChunk $chunk, array $parts): void {
 		$folder = $this->getPackFolder($point, $chunk);
 		foreach ($parts as $item) {
-			$filename = $this->token();
+			$prefix = str_pad((string)$item->getOrder(), 5, '0', STR_PAD_LEFT) . '-';
+			$filename = $prefix . $this->token();
 			$file = $folder->newFile($filename);
 			$read = fopen($item->getName(), 'rb');
 			$write = $file->write();
