@@ -43,6 +43,7 @@ class CronService {
 
 
 	const MARGIN = 1800;
+	const HOURS_FOR_NEXT = 4000;
 
 
 	/** @var ConfigService */
@@ -66,21 +67,21 @@ class CronService {
 		$partialETA = $fullETA = -1;
 
 		try {
-			[$st, $end] = $this->getTime();
+			$this->getTime();
 			$time = time() - 3600; // we start checking now.
-			for ($h = 0; $h < 4000; $h++) {
+			for ($h = 0; $h <= self::HOURS_FOR_NEXT; $h++) {
 				$time += 3600;
-				\OC::$server->getLogger()->log(3, '??' . $time);
 				if (!$this->verifyTime($time)) {
 					continue;
 				}
-				if ($partialETA === -1 && $this->verifyIncrementalBackup($time)) {
-					\OC::$server->getLogger()->log(3, '#### partial ' . $time);
-					$partialETA = $time;
-				}
 				if ($fullETA === -1 && $this->verifyFullBackup($time)) {
-					\OC::$server->getLogger()->log(3, '#### full ' . $time);
 					$fullETA = $time;
+				} else if ($partialETA === -1
+						   && $this->verifyIncrementalBackup($time)
+						   && ($this->configService->getAppValueInt(ConfigService::DATE_FULL_RP) > 0
+							   || $fullETA
+								  > 0)) { // we also check that the incremental backup can have a parent
+					$partialETA = $time;
 				}
 
 				if ($fullETA > 0 && $partialETA > 0) {
