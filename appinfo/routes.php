@@ -3,10 +3,10 @@
 return [
 
 	'ocs' => [
-		['name' => 'Local#scanLocalFolder', 'url' => '/scan/{fileId}', 'verb' => 'PUT'],
 		['name' => 'Local#getSettings', 'url' => '/settings', 'verb' => 'GET'],
 		['name' => 'Local#setSettings', 'url' => '/settings', 'verb' => 'PUT'],
-		['name' => 'Local#getRestoringPoint', 'url' => '/rp', 'verb' => 'GET']
+		['name' => 'Local#getRestoringPoint', 'url' => '/rp', 'verb' => 'GET'],
+		['name' => 'Local#initAction', 'url' => '/action/{type}/{param}', 'verb' => 'POST']
 	],
 
 	'routes' => [
@@ -16,7 +16,10 @@ return [
 		['name' => 'Remote#listRestoringPoint', 'url' => '/rp', 'verb' => 'GET'],
 		['name' => 'Remote#getRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'GET'],
 		['name' => 'Remote#healthRestoringPoint', 'url' => '/rp/{pointId}/health', 'verb' => 'GET'],
-		['name' => 'Remote#downloadRestoringPoint', 'url' => '/rp/{pointId}/{chunkName}download', 'verb' => 'GET'],
+		[
+			'name' => 'Remote#downloadRestoringPoint', 'url' => '/rp/{pointId}/{chunkName}download',
+			'verb' => 'GET'
+		],
 		['name' => 'Remote#createRestoringPoint', 'url' => '/rp', 'verb' => 'PUT'],
 		['name' => 'Remote#updateRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'POST'],
 		['name' => 'Remote#deleteRestoringPoint', 'url' => '/rp/{pointId}', 'verb' => 'DELETE'],

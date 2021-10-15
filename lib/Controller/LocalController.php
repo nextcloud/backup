@@ -117,32 +117,26 @@ class LocalController extends OcsController {
 
 
 	/**
-	 * @param int $fileId
+	 * @param string $type
+	 * @param string $param
 	 *
 	 * @return DataResponse
 	 * @throws OCSException
 	 */
-	public function scanLocalFolder(int $fileId): DataResponse {
-		try {
-			$point = $this->filesService->getPointFromFileId($fileId);
-			$event = new BackupEvent();
-			$event->setAuthor($this->userSession->getUser()->getUID());
-			$event->setData(['fileId' => $fileId]);
-			$event->setType('ScanLocalFolder');
+	public function initAction(string $type, string $param = ''): DataResponse {
+		switch ($type) {
+			case 'scan':
+				return $this->initActionScanLocalFolder((int)$param);
 
-			$this->eventRequest->save($event);
-		} catch (RestoringPointNotFoundException $e) {
-			throw new OcsException(
-				'file does not seems to be a valid restoring point',
-				Http::STATUS_BAD_REQUEST
-			);
-		} catch (Exception $e) {
-			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
+			case 'backup':
+				if ($param === 'complete') {
+					return $this->initActionForceFullBackup();
+				} else if ($param === 'partial') {
+					return $this->initActionForceIncrementalBackup();
+				}
 		}
 
-		return new DataResponse(
-			['message' => 'The restoring point have been scheduled for a scan. (id: ' . $point->getId() . ')']
-		);
+		throw new OCSException('unknown action', Http::STATUS_BAD_REQUEST);
 	}
 
 
@@ -175,6 +169,45 @@ class LocalController extends OcsController {
 		$settings = $this->configService->setSettings($settings);
 
 		return new DataResponse($settings);
+	}
+
+
+	/**
+	 * @param int $fileId
+	 *
+	 * @return DataResponse
+	 * @throws OCSException
+	 */
+	private function initActionScanLocalFolder(int $fileId): DataResponse {
+		try {
+			$point = $this->filesService->getPointFromFileId($fileId);
+			$event = new BackupEvent();
+			$event->setAuthor($this->userSession->getUser()->getUID());
+			$event->setData(['fileId' => $fileId]);
+			$event->setType('ScanLocalFolder');
+
+			$this->eventRequest->save($event);
+		} catch (RestoringPointNotFoundException $e) {
+			throw new OcsException(
+				'file does not seems to be a valid restoring point',
+				Http::STATUS_BAD_REQUEST
+			);
+		} catch (Exception $e) {
+			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse(
+			['message' => 'The restoring point have been scheduled for a scan. (id: ' . $point->getId() . ')']
+		);
+	}
+
+
+	private function initActionForceFullBackup() {
+		return new DataResponse(['message' => 'action full backup not yet implemented)']);
+	}
+
+	private function initActionForceIncrementalBackup() {
+		return new DataResponse(['message' => 'action partial backup not yet implemented)']);
 	}
 
 }
