@@ -33,6 +33,7 @@ namespace OCA\Backup\Service;
 
 
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Signatory;
@@ -273,9 +274,27 @@ class PointService {
 	}
 
 
+	/**
+	 * @param RestoringPoint $point
+	 * @param bool $updateMetadata
+	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws SignatoryException
+	 */
 	public function update(RestoringPoint $point, bool $updateMetadata = false): void {
+		$this->initBaseFolder($point);
+		if ($point->getInstance() === '') {
+			$this->remoteStreamService->signPoint($point);
+			$this->remoteStreamService->subSignPoint($point);
+		}
+
 		$this->pointRequest->update($point, $updateMetadata);
+		if ($updateMetadata) {
+			$this->metadataService->saveMetadata($point);
+		}
 	}
+
 
 	/**
 	 * @param RestoringPoint $point
@@ -595,6 +614,7 @@ class PointService {
 	 * @return RestoringHealth
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws SignatoryException
 	 */
 	public function generateHealth(RestoringPoint $point, bool $updateDb = false): RestoringHealth {
 		$this->initBackupFS();
@@ -635,7 +655,7 @@ class PointService {
 		$point->setHealth($health);
 
 		if ($updateDb) {
-			$this->pointRequest->update($point);
+			$this->update($point, true);
 		}
 
 		return $health;

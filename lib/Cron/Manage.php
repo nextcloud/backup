@@ -75,8 +75,8 @@ class Manage extends TimedJob {
 		UploadService $uploadService,
 		ConfigService $configService
 	) {
-		$this->setInterval(1);
-//		$this->setInterval(3600*3); // 3 hours
+//		$this->setInterval(1);
+		$this->setInterval(3600);
 
 		$this->pointService = $pointService;
 		$this->packService = $packService;
@@ -102,6 +102,15 @@ class Manage extends TimedJob {
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
 			try {
 				$this->uploadService->uploadPoint($point);
+			} catch (Throwable $e) {
+			}
+		}
+
+		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
+			try {
+//				$this->pointService->initBaseFolder($point);
+				$this->pointService->generateHealth($point, true);
+//				$this->packService->packPoint($point);
 			} catch (Throwable $e) {
 			}
 		}

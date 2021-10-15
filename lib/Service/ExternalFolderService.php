@@ -43,6 +43,7 @@ use OC\Files\Node\Folder;
 use OCA\Backup\Db\ExternalFolderRequest;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
+use OCA\Backup\Exceptions\MetadataException;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
@@ -431,22 +432,51 @@ class ExternalFolderService {
 
 
 	/**
+	 * @param RestoringPoint $point
+	 */
+	public function updateMetadata(RestoringPoint $point): void {
+		foreach ($this->getAll() as $external) {
+			try {
+				$this->o(
+					'updating metadata on <info>' . $external->getStorageId()
+					. '</info>:<info>' . $external->getRoot() . '</info>',
+					false
+				);
+				$this->updateMetadataFile($external, $point);
+				$this->o('<info>ok</info>');
+			} catch (Exception $e) {
+				$this->o('<error>failed</error> ' . $e->getMessage());
+			}
+		}
+	}
+
+
+	/**
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
+	 * @param bool $create
 	 *
 	 * @return File
 	 * @throws ExternalFolderNotFoundException
 	 * @throws GenericFileException
 	 * @throws LockedException
+	 * @throws MetadataException
 	 * @throws NotPermittedException
 	 * @throws RestoringPointException
 	 * @throws RestoringPointNotFoundException
 	 */
-	public function updateMetadataFile(ExternalFolder $external, RestoringPoint $point): File {
+	public function updateMetadataFile(
+		ExternalFolder $external,
+		RestoringPoint $point,
+		bool $create = true
+	): File {
 		$folder = $this->getExternalPointFolder($external, $point->getId());
 		try {
 			$metadataFile = $folder->get(MetadataService::METADATA_FILE);
 		} catch (NotFoundException $e) {
+			if (!$create) {
+				throw new MetadataException('metadata file not found');
+			}
 			$metadataFile = $folder->newFile(MetadataService::METADATA_FILE);
 		}
 

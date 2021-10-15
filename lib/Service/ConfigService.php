@@ -58,6 +58,7 @@ class ConfigService {
 	const LAST_FULL_RP = 'last_full_rp';
 	const LAST_PARTIAL_RP = 'last_partial_rp';
 	const PACK_BACKUP = 'pack_backup';
+	const BACKUP_DAYS = 'backup_days';
 
 	const PACK_ENCRYPT = 'pack_encrypt';
 	const PACK_COMPRESS = 'pack_compress';
@@ -85,6 +86,7 @@ class ConfigService {
 		self::ENCRYPTION_KEY => '',
 		self::TIME_SLOTS => '23-5',
 		self::MOCKUP_DATE => 0,
+		self::BACKUP_DAYS => 60,
 
 		self::PACK_ENCRYPT => '1',
 		self::PACK_COMPRESS => '1',

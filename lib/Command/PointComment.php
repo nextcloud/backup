@@ -32,54 +32,54 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
-use OCA\Backup\Service\ExternalFolderService;
+use OCA\Backup\Service\MetadataService;
+use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
-use OCA\Backup\Service\RemoteService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- * Class PointDelete
+ * Class PointComment
  *
  * @package OCA\Backup\Command
  */
-class PointDelete extends Base {
+class PointComment extends Base {
 
 
 	/** @var PointService */
 	private $pointService;
 
-	/** @var RemoteService */
-	private $remoteService;
+	/** @var MetadataService */
+	private $metadataService;
 
-	/** @var ExternalFolderService */
-	private $externalFolderService;
+	/** @var OutputService */
+	private $outputService;
 
 
 	/**
-	 * PointCreate constructor.
+	 * PointComment constructor.
 	 *
 	 * @param PointService $pointService
-	 * @param RemoteService $remoteService
-	 * @param ExternalFolderService $externalFolderService
+	 * @param MetadataService $metadataService
+	 * @param OutputService $outputService
 	 */
 	public function __construct(
 		PointService $pointService,
-		RemoteService $remoteService,
-		ExternalFolderService $externalFolderService
+		MetadataService $metadataService,
+		OutputService $outputService
 	) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
-		$this->remoteService = $remoteService;
-		$this->externalFolderService = $externalFolderService;
+		$this->metadataService = $metadataService;
+		$this->outputService = $outputService;
 	}
 
 
@@ -89,17 +89,10 @@ class PointDelete extends Base {
 	protected function configure() {
 		parent::configure();
 
-		$this->setName('backup:point:delete')
-			 ->setDescription('Locally delete a restoring point')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to delete')
-			 ->addOption(
-				 'remote', '', InputOption::VALUE_REQUIRED,
-				 'remove a restoring point from a remote instance (or local)', ''
-			 )
-			 ->addOption(
-				 'external', '', InputOption::VALUE_REQUIRED,
-				 'remove a restoring point from an external folder', ''
-			 );
+		$this->setName('backup:point:comment')
+			 ->setDescription('Add a description to a restoring point')
+			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to comment')
+			 ->addArgument('comment', InputArgument::REQUIRED, 'comment');
 	}
 
 
@@ -108,35 +101,23 @@ class PointDelete extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
+	 * @throws RestoringPointNotFoundException
+	 * @throws SignatoryException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws RestoringPointNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		if ($input->getOption('remote')) {
-			$remote = $this->remoteService->getByInstance($input->getOption('remote'));
-			$this->remoteService->deletePointRemote($remote, $input->getArgument('pointId'));
-
-			return 0;
-		}
-
-		if ($input->getOption('external')) {
-			$external = $this->externalFolderService->getByStorageId((int)$input->getOption('external'));
-			$point = $this->externalFolderService->getRestoringPoint(
-				$external,
-				$input->getArgument('pointId')
-			);
-
-			return 0;
-		}
-
+		$this->outputService->setOutput($output);
 
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
+		$point->setComment($input->getArgument('comment'));
 
-		$this->pointService->delete($point);
+		$this->pointService->update($point, true);
+		$this->metadataService->globalUpdate($point);
 
 		return 0;
 	}
+
 
 }
 

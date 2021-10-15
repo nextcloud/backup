@@ -95,6 +95,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/** @var array */
 	private $nc = [];
 
+	/** @var string */
+	private $comment = '';
+
 	/** @var ISimpleFolder */
 	private $baseFolder = null;
 
@@ -109,6 +112,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 	/** @var string */
 	private $signature = '';
+
+	/** @var string */
+	private $subSignature = '';
 
 	/** @var bool */
 	private $package = false;
@@ -306,6 +312,25 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 
 	/**
+	 * @param string $comment
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setComment(string $comment): self {
+		$this->comment = $comment;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getComment(): string {
+		return $this->comment;
+	}
+
+
+	/**
 	 * @return bool
 	 */
 	public function hasBaseFolder(): bool {
@@ -471,6 +496,25 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 
 	/**
+	 * @param string $subSignature
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setSubSignature(string $subSignature): ISignedModel {
+		$this->subSignature = $subSignature;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSubSignature(): string {
+		return $this->subSignature;
+	}
+
+
+	/**
 	 * @param bool $package
 	 *
 	 * @return RestoringPoint
@@ -521,6 +565,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		$metadata = new SimpleDataStore($this->getArray('metadata', $data));
 		$this->setNc($metadata->gArray('nc'));
 		$this->setSignature($metadata->g('signature'));
+		$this->setSubSignature($metadata->g('subSignature'));
+		$this->setComment($metadata->g('comment'));
 
 		try {
 			/** @var RestoringHealth $health */
@@ -550,8 +596,10 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			 ->setStatus($this->getInt('status', $data, -1))
 			 ->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
 			 ->setDate($this->getInt('date', $data))
-			 ->setSignature($this->get('signature', $data));
-		$this->setNc($this->getArray('nc', $data));
+			 ->setSignature($this->get('signature', $data))
+			 ->setSubSignature($this->get('subSignature', $data))
+			 ->setComment($this->get('comment', $data))
+			 ->setNc($this->getArray('nc', $data));
 
 		if ($this->getId() === '' || $this->getStatus() === -1) {
 			throw new InvalidItemException();
@@ -589,16 +637,31 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/**
 	 * @return array
 	 */
+	public function subSignedData(): array {
+		return [
+			'id' => $this->getId(),
+			'nc' => $this->getNC(),
+			'date' => $this->getDate(),
+			'comment' => $this->getComment()
+		];
+	}
+
+
+	/**
+	 * @return array
+	 */
 	public function jsonSerialize(): array {
 		$arr = [
 			'id' => $this->getId(),
 			'instance' => $this->getInstance(),
 			'nc' => $this->getNC(),
+			'comment' => $this->getComment(),
 			'parent' => $this->getParent(),
 			'status' => $this->getStatus(),
 			'notes' => $this->getNotes(),
 			'data' => $this->getRestoringData(),
 			'signature' => $this->getSignature(),
+			'subSignature' => $this->getSubSignature(),
 			'date' => $this->getDate()
 		];
 

@@ -79,8 +79,7 @@ class CronService {
 				} else if ($partialETA === -1
 						   && $this->verifyIncrementalBackup($time)
 						   && ($this->configService->getAppValueInt(ConfigService::DATE_FULL_RP) > 0
-							   || $fullETA
-								  > 0)) { // we also check that the incremental backup can have a parent
+							   || $fullETA > 0)) { // we check that the incremental backup can have a parent
 					$partialETA = $time;
 				}
 

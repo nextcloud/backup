@@ -104,7 +104,6 @@ class RemoteList extends Base {
 
 			/** @var RemoteInstance $current */
 			try {
-				echo $remoteInstance->getId() . "\n";
 				$current = $this->remoteStreamService->retrieveSignatory($remoteInstance->getId());
 				$currentUid = $current->getUid(true);
 				if ($remoteInstance->getUid(true) === $currentUid) {

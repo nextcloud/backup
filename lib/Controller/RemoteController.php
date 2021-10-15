@@ -48,9 +48,11 @@ use OCA\Backup\Exceptions\RemoteRequestException;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\RemoteRequest\CreateRestoringPoint;
+use OCA\Backup\RemoteRequest\DeleteRestoringPoint;
 use OCA\Backup\RemoteRequest\DownloadRestoringChunk;
 use OCA\Backup\RemoteRequest\GetRestoringPoint;
 use OCA\Backup\RemoteRequest\ListRestoringPoint;
+use OCA\Backup\RemoteRequest\UpdateRestoringPoint;
 use OCA\Backup\RemoteRequest\UploadRestoringChunk;
 use OCA\Backup\Service\RemoteStreamService;
 use OCP\AppFramework\Controller;
@@ -191,6 +193,63 @@ class RemoteController extends Controller {
 			return $this->exceptionResponse($e);
 		}
 	}
+
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @param string $pointId
+	 *
+	 * @return DataResponse
+	 */
+	public function updateRestoringPoint(string $pointId): DataResponse {
+		try {
+			$request = $this->extractRequest(UpdateRestoringPoint::class);
+		} catch (Exception $e) {
+			return $this->exceptionResponse($e, Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$request->execute();
+
+			return new DataResponse($request->getOutcome());
+		} catch (Exception $e) {
+			$this->e($e, ['request' => $request]);
+
+			return $this->exceptionResponse($e);
+		}
+	}
+
+
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @param string $pointId
+	 *
+	 * @return DataResponse
+	 */
+	public function deleteRestoringPoint(string $pointId): DataResponse {
+		try {
+			$request = $this->extractRequest(DeleteRestoringPoint::class);
+		} catch (Exception $e) {
+			return $this->exceptionResponse($e, Http::STATUS_UNAUTHORIZED);
+		}
+
+		try {
+			$request->execute();
+
+			return new DataResponse($request->getOutcome());
+		} catch (Exception $e) {
+			$this->e($e, ['request' => $request]);
+
+			return $this->exceptionResponse($e);
+		}
+	}
+
+
 
 	/**
 	 * @PublicPage

@@ -116,8 +116,6 @@ class UploadService {
 		$this->externalFolderService = $externalFolderService;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
-
-//		$this->outputService->setDebug(true);
 	}
 
 
@@ -173,7 +171,6 @@ class UploadService {
 							$this->o('<error>' . $e->getMessage() . '</error>');
 							continue;
 						}
-
 					} catch (Exception $e) {
 						continue;
 					}

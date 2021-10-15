@@ -47,6 +47,7 @@ use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringData;
+use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\ExternalFolderService;
@@ -223,6 +224,26 @@ class PointDetails extends Base {
 				);
 			}
 		}
+
+		$source = '';
+		if ($remote) {
+			$source = ' on <info>' . $remote . '</info>';
+		} else if ($external) {
+			$source = ' at <info>' . $externalFolder->getStorageId() . '</info>:<info>' .
+					  $externalFolder->getRoot() . '</info>';
+		}
+		$output->writeln('');
+
+		$color = 'info';
+		if ($point->getHealth()->getStatus() !== RestoringHealth::STATUS_OK) {
+			$color = 'error';
+		}
+
+		$output->writeln(
+			'Status of the restoring point ' . $source . ': <' . $color . '>' .
+			RestoringHealth::$DEF[$point->getHealth()->getStatus()] . '</' . $color . '>'
+		);
+
 
 		return 0;
 	}

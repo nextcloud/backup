@@ -154,6 +154,13 @@ class RemoteStreamService extends NC23Signature {
 				)
 			)
 		);
+		$app->setRPDelete(
+			urldecode(
+				$this->urlGenerator->linkToRouteAbsolute(
+					'backup.Remote.deleteRestoringPoint', ['pointId' => '{pointId}']
+				)
+			)
+		);
 		$app->setRPUpload(
 			urldecode(
 				$this->urlGenerator->linkToRouteAbsolute(
@@ -387,6 +394,7 @@ class RemoteStreamService extends NC23Signature {
 	 */
 	public function signPoint(RestoringPoint $point) {
 		$this->signModel($point, $this->getAppSignatory(false));
+		$this->subSignPoint($point);
 	}
 
 	/**
@@ -398,5 +406,29 @@ class RemoteStreamService extends NC23Signature {
 	public function verifyPoint(RestoringPoint $point) {
 		$this->verifyModel($point, $this->getAppSignatory()->getPublicKey());
 	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws SignatoryException
+	 */
+	public function subSignPoint(RestoringPoint $point): void {
+		$string = json_encode($point->subSignedData());
+		$signature = $this->signString($string, $this->getAppSignatory(false));
+		$point->setSubSignature($signature);
+	}
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws SignatoryException
+	 * @throws SignatureException
+	 */
+	public function verifySubSign(RestoringPoint $point) {
+		$string = json_encode($point->subSignedData());
+		$this->verifyString($string, $point->getSubSignature(), $this->getAppSignatory()->getPublicKey());
+	}
+
 
 }

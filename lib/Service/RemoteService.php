@@ -227,6 +227,104 @@ class RemoteService {
 
 
 	/**
+	 * @param RestoringPoint $point
+	 */
+	public function updateMetadata(RestoringPoint $point): void {
+		foreach ($this->getOutgoing() as $remote) {
+			try {
+				$this->o('updating metadata on <info>' . $remote->getInstance() . '</info>: ', false);
+				$this->updateMetadataFile($remote, $point);
+				$this->o('<info>ok</info>');
+			} catch (Exception $e) {
+				$this->o('<error>failed</error> ' . $e->getMessage());
+			}
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 */
+	public function deletePoint(RestoringPoint $point): void {
+		foreach ($this->getOutgoing() as $remote) {
+			$this->deletePointRemote($remote, $point);
+		}
+	}
+
+
+	/**
+	 * @param RemoteInstance $remote
+	 * @param RestoringPoint $point
+	 *
+	 * @throws RemoteInstanceException
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function deletePointRemote(RemoteInstance $remote, string $pointId): void {
+		if (!$remote->isOutgoing()) {
+			throw new RemoteInstanceException('instance not configured as outgoing');
+		}
+
+		try {
+			$result = $this->remoteStreamService->resultRequestRemoteInstance(
+				$remote->getInstance(),
+				RemoteInstance::RP_DELETE,
+				Request::TYPE_DELETE,
+				null,
+				['pointId' => $pointId]
+			);
+
+//			/** @var RestoringPoint $stored */
+//			try {
+//				$stored = $this->deserialize($result, RestoringPoint::class);
+//			} catch (InvalidItemException $e) {
+//				throw new RestoringPointNotFoundException('');
+//			}
+
+		} catch (RemoteInstanceException
+		| RemoteResourceNotFoundException
+		| RestoringPointNotFoundException
+		| RemoteInstanceNotFoundException $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * @param RemoteInstance $remote
+	 * @param RestoringPoint $point
+	 *
+	 * @throws RemoteInstanceException
+	 * @throws RestoringPointNotFoundException
+	 */
+	public function updateMetadataFile(RemoteInstance $remote, RestoringPoint $point): void {
+		if (!$remote->isOutgoing()) {
+			throw new RemoteInstanceException('instance not configured as outgoing');
+		}
+
+		try {
+			$result = $this->remoteStreamService->resultRequestRemoteInstance(
+				$remote->getInstance(),
+				RemoteInstance::RP_UPDATE,
+				Request::TYPE_POST,
+				$point,
+				['pointId' => $point->getId()]
+			);
+
+			/** @var RestoringPoint $stored */
+			try {
+				$stored = $this->deserialize($result, RestoringPoint::class);
+			} catch (InvalidItemException $e) {
+				throw new RestoringPointNotFoundException('restoring point not updated');
+			}
+
+		} catch (RemoteInstanceException
+		| RemoteResourceNotFoundException
+		| RestoringPointNotFoundException
+		| RemoteInstanceNotFoundException $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * @param string $instance
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk

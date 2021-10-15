@@ -174,6 +174,10 @@ class PointDownload extends Base {
 		$remote = $input->getOption('remote');
 		$external = (int)$input->getOption('external');
 
+		if (!$remote && !$external) {
+			throw new InvalidOptionException('use --remote or --external');
+		}
+
 		try {
 			$point = $this->pointService->getRestoringPoint($pointId);
 			$output->writeln('> found a local restoring point');

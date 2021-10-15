@@ -65,6 +65,7 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 	public const AUTH_SIGNED = 'auth-signed';
 	public const RP_LIST = 'restoringPoint.list';
 	public const RP_GET = 'restoringPoint.get';
+	public const RP_DELETE = 'restoringPoint.delete';
 	public const RP_CREATE = 'restoringPoint.create';
 	public const RP_UPDATE = 'restoringPoint.update';
 	public const RP_HEALTH = 'restoringPoint.health';
@@ -95,6 +96,9 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 
 	/** @var string */
 	private $RPCreate = '';
+
+	/** @var string */
+	private $RPDelete = '';
 
 	/** @var string */
 	private $RPUpdate = '';
@@ -310,6 +314,27 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 	}
 
 
+
+
+	/**
+	 * @param string $RPDelete
+	 *
+	 * @return RemoteInstance
+	 */
+	public function setRPDelete(string $RPDelete): self {
+		$this->RPDelete = $RPDelete;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRPDelete(): string {
+		return $this->RPDelete;
+	}
+
+
 	/**
 	 * @param string $RPUpdate
 	 *
@@ -455,6 +480,7 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 		$this->setRoot($this->get(self::ROOT, $data))
 			 ->setRPList($this->get(self::RP_LIST, $data))
 			 ->setRPCreate($this->get(self::RP_CREATE, $data))
+			 ->setRPDelete($this->get(self::RP_DELETE, $data))
 			 ->setRPUpdate($this->get(self::RP_UPDATE, $data))
 			 ->setRPGet($this->get(self::RP_GET, $data))
 			 ->setRPHealth($this->get(self::RP_HEALTH, $data))
@@ -486,6 +512,7 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 				[
 					'list' => $this->getRPList(),
 					'create' => $this->getRPCreate(),
+					'delete' => $this->getRPDelete(),
 					'get' => $this->getRPGet(),
 					'health' => $this->getRPHealth(),
 					'update' => $this->getRPUpdate(),
