@@ -621,7 +621,8 @@ class ExternalFolderService {
 			}
 		}
 
-		$health->setStatus($globalStatus);
+		$health->setChecked(time())
+			   ->setStatus($globalStatus);
 		$point->setHealth($health);
 
 		return $health;

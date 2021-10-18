@@ -34,20 +34,12 @@ namespace OCA\Backup\Command;
 
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
-use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
-use OCA\Backup\Exceptions\RemoteInstanceException;
-use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
-use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
-use OCA\Backup\Model\ExternalFolder;
-use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
-use OCA\Backup\Service\ExternalFolderService;
-use OCA\Backup\Service\PointService;
-use OCA\Backup\Service\RemoteService;
+use OCA\Backup\Service\CronService;
+use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\RemoteStreamService;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -64,18 +56,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PointList extends Base {
 
 
-	use TArrayTools;
-	use TNC23Deserialize;
+	use TStringTools;
 
 
-	/** @var PointService */
-	private $pointService;
+	/** @var CronService */
+	private $cronService;
 
-	/** @var RemoteService */
-	private $remoteService;
-
-	/** @var ExternalFolderService */
-	private $externalFolderService;
+	/** @var OutputService */
+	private $outputService;
 
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
@@ -84,20 +72,17 @@ class PointList extends Base {
 	/**
 	 * PointList constructor.
 	 *
-	 * @param PointService $pointService
-	 * @param RemoteService $remoteService
-	 * @param ExternalFolderService $externalFolderService
+	 * @param OutputService $outputService
+	 * @param CronService $cronService
 	 * @param RemoteStreamService $remoteStreamService
 	 */
 	public function __construct(
-		PointService $pointService,
-		RemoteService $remoteService,
-		ExternalFolderService $externalFolderService,
+		OutputService $outputService,
+		CronService $cronService,
 		RemoteStreamService $remoteStreamService
 	) {
-		$this->pointService = $pointService;
-		$this->remoteService = $remoteService;
-		$this->externalFolderService = $externalFolderService;
+		$this->outputService = $outputService;
+		$this->cronService = $cronService;
 		$this->remoteStreamService = $remoteStreamService;
 
 		parent::__construct();
@@ -132,8 +117,8 @@ class PointList extends Base {
 	 * @return int
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$rp = $this->getRPFromInstances(
-			$output,
+		$this->outputService->setOutput($output);
+		$rp = $this->cronService->getRPFromInstances(
 			$input->getOption('local'),
 			$input->getOption('remote'),
 			$input->getOption('external')
@@ -151,7 +136,7 @@ class PointList extends Base {
 		foreach ($rp as $pointId => $item) {
 			$fresh = true;
 			foreach ($item as $instance => $data) {
-				$point = $data['rp'];
+				$point = $data['point'];
 				$issue = $data['issue'];
 
 				/** @var RestoringPoint $point */
@@ -200,122 +185,6 @@ class PointList extends Base {
 
 
 	/**
-	 * @param OutputInterface $output
-	 * @param bool $local
-	 * @param string $remote
-	 * @param string $external
-	 *
-	 * @return array
-	 */
-	private function getRPFromInstances(
-		OutputInterface $output,
-		bool $local,
-		string $remote,
-		string $external
-	): array {
-		if ($local) {
-			$instances = [RemoteInstance::LOCAL];
-		} else if ($remote !== '') {
-			$instances = ['remote:' . $remote];
-		} else if ($external !== '') {
-			$instances = ['external:' . $external];
-		} else {
-			$instances = array_merge(
-				[RemoteInstance::LOCAL],
-				array_map(
-					function (RemoteInstance $remoteInstance): string {
-						return 'remote:' . $remoteInstance->getInstance();
-					}, $this->remoteService->getOutgoing()
-				),
-				array_map(
-					function (ExternalFolder $externalFolder): string {
-						return 'external:' . $externalFolder->getStorageId();
-					}, $this->externalFolderService->getAll()
-				)
-			);
-		}
-
-		$points = $dates = [];
-		foreach ($instances as $instance) {
-			$output->writeln('- retreiving data from <info>' . $instance . '</info>');
-
-			$list = [];
-			try {
-				if ($instance === RemoteInstance::LOCAL) {
-					$list = $this->pointService->getLocalRestoringPoints();
-				} else {
-
-					[$source, $id] = explode(':', $instance, 2);
-					if ($source === 'remote') {
-						$list = $this->remoteService->getRestoringPoints($id);
-					} else if ($source === 'external') {
-						try {
-							$external = $this->externalFolderService->getByStorageId((int)$id);
-							$list = $this->externalFolderService->getRestoringPoints($external);
-						} catch (ExternalFolderNotFoundException $e) {
-						}
-					}
-				}
-			} catch (RemoteInstanceException
-			| RemoteInstanceNotFoundException
-			| RemoteResourceNotFoundException $e) {
-				continue;
-			}
-
-			foreach ($list as $item) {
-				$output->writeln(' > found RestoringPoint <info>' . $item->getId() . '</info>');
-				if (!array_key_exists($item->getId(), $points)) {
-					$points[$item->getId()] = [];
-				}
-
-				$issue = '';
-				if ($instance !== RemoteInstance::LOCAL) {
-					$storedDate = $this->getInt($item->getId(), $dates);
-					if ($storedDate > 0 && $storedDate !== $item->getDate()) {
-						$output->writeln('  <error>! different date</error>');
-						$issue = 'different date';
-					}
-
-					try {
-						$this->remoteStreamService->verifyPoint($item);
-					} catch (SignatoryException | SignatureException $e) {
-						$output->writeln('  <error>! cannot confirm integrity</error>');
-						$issue = 'cannot confirm integrity';
-					}
-				}
-
-				$points[$item->getId()][$instance] = [
-					'rp' => $item,
-					'issue' => $issue
-				];
-
-				$dates[$item->getId()] = $item->getDate();
-			}
-		}
-
-		return $this->orderByDate($points, $dates);
-	}
-
-
-	/**
-	 * @param array $points
-	 * @param array $dates
-	 *
-	 * @return array
-	 */
-	private function orderByDate(array $points, array $dates): array {
-		asort($dates);
-
-		$result = [];
-		foreach ($dates as $pointId => $date) {
-			$result[$pointId] = $points[$pointId];
-		}
-
-		return $result;
-	}
-
-
-	/**
 	 * @param RestoringPoint $point
 	 *
 	 * @return string
@@ -325,9 +194,10 @@ class PointList extends Base {
 			return 'not checked';
 		}
 
-		$status = $point->getHealth()->getStatus();
 		$embed = '';
-		switch ($status) {
+		$health = $point->getHealth();
+		$def = RestoringHealth::$DEF[$health->getStatus()];
+		switch ($health->getStatus()) {
 			case RestoringHealth::STATUS_ISSUE:
 				$embed = 'error';
 				break;
@@ -336,10 +206,12 @@ class PointList extends Base {
 				break;
 			case RestoringHealth::STATUS_OK:
 				$embed = 'info';
+
+				$def = $this->getDateDiff($health->getChecked(), time(), true) . ' ago';
 				break;
 		}
 
-		return '<' . $embed . '>' . RestoringHealth::$DEF[$status] . '</' . $embed . '>';
+		return '<' . $embed . '>' . $def . '</' . $embed . '>';
 	}
 
 }

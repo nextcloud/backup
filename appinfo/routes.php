@@ -5,7 +5,7 @@ return [
 	'ocs' => [
 		['name' => 'Local#getSettings', 'url' => '/settings', 'verb' => 'GET'],
 		['name' => 'Local#setSettings', 'url' => '/settings', 'verb' => 'PUT'],
-		['name' => 'Local#getRestoringPoint', 'url' => '/rp', 'verb' => 'GET'],
+		['name' => 'Local#getRestoringPoints', 'url' => '/rp', 'verb' => 'GET'],
 		['name' => 'Local#getExternalFolder', 'url' => '/external', 'verb' => 'GET'],
 		['name' => 'Local#setExternalFolder', 'url' => '/external', 'verb' => 'POST'],
 		['name' => 'Local#initAction', 'url' => '/action/{type}/{param}', 'verb' => 'POST']

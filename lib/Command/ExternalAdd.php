@@ -105,19 +105,6 @@ class ExternalAdd extends Base {
 	 * @return int
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-
-
-//		$storages = array_map(function (StorageConfig $storageConfig) use ($user) {
-//			try {
-//				$this->prepareStorageConfig($storageConfig, $user);
-//				return $this->constructStorage($storageConfig);
-//			} catch (\Exception $e) {
-//				// propagate exception into filesystem
-//				return new FailedStorage(['exception' => $e]);
-//			}
-//		}, $storageConfigs);
-
-
 		$storageId = (int)$input->getArgument('storage_id');
 		$root = $input->getArgument('root');
 

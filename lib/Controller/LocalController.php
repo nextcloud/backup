@@ -150,9 +150,8 @@ class LocalController extends OcsController {
 	/**
 	 * @return DataResponse
 	 */
-	public function getRestoringPoint(): DataResponse {
-		$points = $this->pointService->getLocalRestoringPoints();
-
+	public function getRestoringPoints(): DataResponse {
+		$points =$this->cronService->getRPFromInstances();
 		return new DataResponse($points);
 	}
 
