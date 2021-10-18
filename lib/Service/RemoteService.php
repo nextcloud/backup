@@ -228,9 +228,16 @@ class RemoteService {
 
 	/**
 	 * @param RestoringPoint $point
+	 * @param RemoteInstance|null $remote
 	 */
-	public function updateMetadata(RestoringPoint $point): void {
-		foreach ($this->getOutgoing() as $remote) {
+	public function updateMetadata(RestoringPoint $point, ?RemoteInstance $remote = null): void {
+		if (is_null($remote)) {
+			$remotes = $this->getOutgoing();
+		} else {
+			$remotes = [$remote];
+		}
+
+		foreach ($remotes as $remote) {
 			try {
 				$this->o('updating metadata on <info>' . $remote->getInstance() . '</info>: ', false);
 				$this->updateMetadataFile($remote, $point);
@@ -243,20 +250,25 @@ class RemoteService {
 
 
 	/**
-	 * @param RestoringPoint $point
+	 * @param string $pointId
 	 */
-	public function deletePoint(RestoringPoint $point): void {
+	public function deletePoint(string $pointId): void {
 		foreach ($this->getOutgoing() as $remote) {
-			$this->deletePointRemote($remote, $point);
+			try {
+				$this->deletePointRemote($remote, $pointId);
+			} catch (Exception $e) {
+			}
 		}
 	}
 
 
 	/**
 	 * @param RemoteInstance $remote
-	 * @param RestoringPoint $point
+	 * @param string $pointId
 	 *
 	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
 	 * @throws RestoringPointNotFoundException
 	 */
 	public function deletePointRemote(RemoteInstance $remote, string $pointId): void {

@@ -48,6 +48,7 @@ class ConfigService {
 	const MAINTENANCE = 'maintenance';
 	const DATA_DIRECTORY = 'datadirectory';
 
+	const LOCK = 'lock';
 	const SELF_SIGNED_CERT = 'self_signed_cert';
 	const DELAY_FULL_RP = 'delay_full_rp';
 	const DELAY_PARTIAL_RP = 'delay_partial_rp';
@@ -73,6 +74,7 @@ class ConfigService {
 
 	/** @var array */
 	public $defaults = [
+		self::LOCK => 0,
 		self::SELF_SIGNED_CERT => '0',
 		self::LAST_FULL_RP => '',
 		self::LAST_PARTIAL_RP => '',

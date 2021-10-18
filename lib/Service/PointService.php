@@ -257,6 +257,7 @@ class PointService {
 			$this->configService->maintenanceMode();
 		}
 
+		$point->setDuration(time() - $initTime);
 		$this->remoteStreamService->signPoint($point);
 		$this->metadataService->saveMetadata($point);
 		$this->pointRequest->save($point);
@@ -264,7 +265,7 @@ class PointService {
 		$this->activityService->newActivity(
 			'backup_create', [
 							   'id' => $point->getId(),
-							   'duration' => time() - $initTime,
+							   'duration' => $point->getDuration(),
 							   'status' => $point->getStatus(),
 							   'complete' => $complete
 						   ]
@@ -293,6 +294,35 @@ class PointService {
 		if ($updateMetadata) {
 			$this->metadataService->saveMetadata($point);
 		}
+	}
+
+
+	/**
+	 * update small complementary infos like Commend and Archive flag
+	 *
+	 * @param RestoringPoint $point
+	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws SignatoryException
+	 */
+	public function updateSubInfos(RestoringPoint $point): void {
+		$this->initBaseFolder($point);
+		$this->remoteStreamService->subSignPoint($point);
+
+		try {
+			$stored = $this->getLocalRestoringPoint($point->getId());
+		} catch (RestoringPointNotFoundException $e) {
+			return;
+		}
+
+		$this->initBaseFolder($stored);
+		$stored->setComment($point->getComment())
+			   ->setArchive($point->isArchive())
+			   ->setSubSignature($point->getSubSignature());
+
+		$this->pointRequest->update($stored, true);
+		$this->metadataService->saveMetadata($stored);
 	}
 
 

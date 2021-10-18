@@ -118,7 +118,11 @@ class CronService {
 	 *
 	 * @return bool
 	 */
-	public function verifyTime(int $time): bool {
+	public function verifyTime(int $time = 0): bool {
+		if ($time === 0) {
+			$time = time();
+		}
+
 		try {
 			[$st, $end] = $this->getTime();
 		} catch (SettingsException $e) {

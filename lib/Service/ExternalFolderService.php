@@ -37,6 +37,8 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
 use Exception;
+use OC;
+use OC\Files\Cache\Storage;
 use OC\Files\FileInfo;
 use OC\Files\Node\File;
 use OC\Files\Node\Folder;
@@ -55,10 +57,16 @@ use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
+use OCA\Files_External\Lib\StorageConfig;
+use OCA\Files_External\Service\GlobalStoragesService;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\GenericFileException;
+use OCP\Files\InvalidPathException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Files\Storage\IStorage;
+use OCP\Files\StorageNotAvailableException;
 use OCP\Lock\LockedException;
 
 
@@ -75,6 +83,8 @@ class ExternalFolderService {
 	use TFileTools;
 
 
+	private $globalStoragesService;
+
 	/** @var ExternalFolderRequest */
 	private $externalFolderRequest;
 
@@ -88,15 +98,18 @@ class ExternalFolderService {
 	/**
 	 * ExternalFolderService constructor.
 	 *
+	 * @param GlobalStoragesService $globalStoragesService
 	 * @param ExternalFolderRequest $externalFolderRequest
 	 * @param OutputService $outputService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
+		GlobalStoragesService $globalStoragesService,
 		ExternalFolderRequest $externalFolderRequest,
 		OutputService $outputService,
 		ConfigService $configService
 	) {
+		$this->globalStoragesService = $globalStoragesService;
 		$this->externalFolderRequest = $externalFolderRequest;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
@@ -294,7 +307,7 @@ class ExternalFolderService {
 		}
 
 		/** @var IUserMountCache $mountCache */
-		$mountCache = \OC::$server->get(IUserMountCache::class);
+		$mountCache = OC::$server->get(IUserMountCache::class);
 		$mounts = $mountCache->getMountsForStorageId($external->getStorageId());
 
 		foreach ($mounts as $mount) {
@@ -381,6 +394,41 @@ class ExternalFolderService {
 
 
 	/**
+	 * @param string $pointId
+	 */
+	public function deletePoint(string $pointId): void {
+		foreach ($this->getAll() as $external) {
+			try {
+				$this->deletePointExternal($external, $pointId);
+			} catch (Exception $e) {
+			}
+		}
+	}
+
+
+	/**
+	 * @param ExternalFolder $external
+	 * @param string $pointId
+	 *
+	 * @throws ExternalFolderNotFoundException
+	 * @throws GenericFileException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringChunkPartNotFoundException
+	 * @throws RestoringPointException
+	 * @throws RestoringPointNotFoundException
+	 * @throws RestoringPointPackException
+	 * @throws InvalidPathException
+	 */
+	public function deletePointExternal(ExternalFolder $external, string $pointId): void {
+		$this->getRestoringPoint($external, $pointId);
+
+		$this->initRootFolder($external);
+		$external->getRootFolder()->delete();
+	}
+
+
+	/**
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
 	 *
@@ -433,16 +481,23 @@ class ExternalFolderService {
 
 	/**
 	 * @param RestoringPoint $point
+	 * @param ExternalFolder|null $external
 	 */
-	public function updateMetadata(RestoringPoint $point): void {
-		foreach ($this->getAll() as $external) {
+	public function updateMetadata(RestoringPoint $point, ?ExternalFolder $external = null): void {
+		if (is_null($external)) {
+			$externals = $this->getAll();
+		} else {
+			$externals = [$external];
+		}
+
+		foreach ($externals as $external) {
 			try {
 				$this->o(
 					'updating metadata on <info>' . $external->getStorageId()
-					. '</info>:<info>' . $external->getRoot() . '</info>',
+					. '</info>:<info>' . $external->getRoot() . '</info>: ',
 					false
 				);
-				$this->updateMetadataFile($external, $point);
+				$this->updateMetadataFile($external, $point, false);
 				$this->o('<info>ok</info>');
 			} catch (Exception $e) {
 				$this->o('<error>failed</error> ' . $e->getMessage());
@@ -480,7 +535,17 @@ class ExternalFolderService {
 			$metadataFile = $folder->newFile(MetadataService::METADATA_FILE);
 		}
 
-		$metadataFile->putContent(json_encode($point, JSON_PRETTY_PRINT));
+		try {
+			/** @var RestoringPoint $stored */
+			$stored = $this->deserializeJson($metadataFile->getContent(), RestoringPoint::class);
+			$stored->setComment($point->getComment())
+				   ->setArchive($point->isArchive())
+				   ->setSubSignature($point->getSubSignature());
+		} catch (Exception $e) {
+			$stored = $point;
+		}
+
+		$metadataFile->putContent(json_encode($stored, JSON_PRETTY_PRINT));
 
 		return $metadataFile;
 	}
@@ -605,8 +670,6 @@ class ExternalFolderService {
 	): int {
 		try {
 			$checksum = $this->getChecksum($external, $point, $chunk, $part);
-//			echo '___ ' . $checksum . '-' . $part->getCurrentChecksum() . "\n";
-//			$checksum = $this->packService->getChecksum($point, $chunk, $part);
 			if ($checksum !== $part->getCurrentChecksum()) {
 				return ChunkPartHealth::STATUS_CHECKSUM;
 			}
@@ -747,12 +810,69 @@ class ExternalFolderService {
 		return $sub;
 	}
 
+
+	/**
+	 * @return ExternalFolder[]
+	 * @throws InsufficientDataForMeaningfulAnswerException
+	 * @throws StorageNotAvailableException
+	 */
+	public function getStorages(): array {
+		$externals = $this->getAll();
+		foreach ($this->globalStoragesService->getAllStorages() as $globalStorage) {
+			$storage = $this->constructStorage($globalStorage);
+			$storageId = Storage::getNumericStorageId($storage->getId());
+
+			$itemFound = false;
+			foreach ($externals as $external) {
+				if ($external->getStorageId() === $storageId) {
+					$external->setStorage($storage->getId());
+					$itemFound = true;
+					break;
+				}
+			}
+
+			if (!$itemFound) {
+				$externals[] = new ExternalFolder($storageId, $storage->getId());
+			}
+		}
+
+		return $externals;
+	}
+
+
+	/**
+	 * Construct the storage implementation
+	 * based on apps/files_external/lib/Config/ConfigAdapter.php
+	 *
+	 * @param StorageConfig $storageConfig
+	 *
+	 * @return IStorage
+	 * @throws InsufficientDataForMeaningfulAnswerException
+	 * @throws StorageNotAvailableException
+	 */
+	private function constructStorage(StorageConfig $storageConfig): IStorage {
+		$class = $storageConfig->getBackend()->getStorageClass();
+		$storage = new $class($storageConfig->getBackendOptions());
+		$storage = $storageConfig->getBackend()->wrapStorage($storage);
+
+		return $storageConfig->getAuthMechanism()->wrapStorage($storage);
+	}
+
+
 	/**
 	 * @param string $line
 	 * @param bool $ln
 	 */
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
+	}
+
+
+	/**
+	 * @param ExternalFolder $storage
+	 */
+	public function save(ExternalFolder $storage) {
+		$this->externalFolderRequest->save($storage);
 	}
 
 }

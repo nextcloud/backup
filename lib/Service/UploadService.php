@@ -178,7 +178,12 @@ class UploadService {
 
 				$health = $stored->getHealth();
 				$this->o('  > Health status: ' . $this->outputService->displayHealth($stored));
+				if ($stored->getHealth()->getStatus() === RestoringHealth::STATUS_OK) {
+					continue;
+				}
+
 				$this->uploadMissingFilesToRemoteInstance($remote->getInstance(), $point, $health);
+				$this->remoteService->getRestoringPoint($remote->getInstance(), $stored->getId(), true);
 			} catch (Exception $e) {
 				continue;
 			}
@@ -273,6 +278,10 @@ class UploadService {
 				}
 
 				$this->o('  > Health status: ' . $this->outputService->displayHealth($stored));
+				if ($stored->getHealth()->getStatus() === RestoringHealth::STATUS_OK) {
+					continue;
+				}
+
 				$this->uploadMissingFilesToExternalFolder($external, $stored);
 				$this->externalFolderService->getRestoringPoint($external, $stored->getId(), true);
 

@@ -179,6 +179,7 @@ class PointDetails extends Base {
 		$output->writeln('<info>Restoring Point ID</info>: ' . $point->getId());
 		$output->writeln('<info>Date</info>: ' . date('Y-m-d H:i:s', $point->getDate()));
 		$output->writeln('<info>Version</info>: ' . $point->getNCVersion());
+		$output->writeln('<info>Maintenance Duration</info>: ' . $this->getDateDiff($point->getDuration()));
 		$output->writeln(
 			'<info>Parent</info>: ' . ($point->getParent() === '' ? '(none)' : $point->getParent())
 		);

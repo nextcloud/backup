@@ -86,6 +86,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/** @var int */
 	private $status = 0;
 
+	/** @var int */
+	private $duration = 0;
+
 	/** @var SimpleDataStore */
 	private $notes;
 
@@ -97,6 +100,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 	/** @var string */
 	private $comment = '';
+
+	/** @var bool */
+	private $archive = false;
 
 	/** @var ISimpleFolder */
 	private $baseFolder = null;
@@ -237,6 +243,44 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 
 	/**
+	 * @param int $duration
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setDuration(int $duration): self {
+		$this->duration = $duration;
+
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getDuration(): int {
+		return $this->duration;
+	}
+
+
+	/**
+	 * @param bool $archive
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setArchive(bool $archive): self {
+		$this->archive = $archive;
+
+		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isArchive(): bool {
+		return $this->archive;
+	}
+
+
+	/**
 	 * @param SimpleDataStore $notes
 	 *
 	 * @return RestoringPoint
@@ -284,9 +328,13 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 	/**
 	 * @param array $nc
+	 *
+	 * @return RestoringPoint
 	 */
-	public function setNC(array $nc): void {
+	public function setNC(array $nc): self {
 		$this->nc = $nc;
+
+		return $this;
 	}
 
 	/**
@@ -554,6 +602,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		$this->setId($this->get('uid', $data))
 			 ->setInstance($this->get('instance', $data))
 			 ->setParent($this->get('parent', $data))
+			 ->setArchive($this->getBool('archive', $data))
 			 ->setStatus($this->getInt('status', $data))
 			 ->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
 			 ->setDate($this->getInt('date', $data));
@@ -563,10 +612,11 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		}
 
 		$metadata = new SimpleDataStore($this->getArray('metadata', $data));
-		$this->setNc($metadata->gArray('nc'));
-		$this->setSignature($metadata->g('signature'));
-		$this->setSubSignature($metadata->g('subSignature'));
-		$this->setComment($metadata->g('comment'));
+		$this->setNc($metadata->gArray('nc'))
+			 ->setSignature($metadata->g('signature'))
+			 ->setSubSignature($metadata->g('subSignature'))
+			 ->setComment($metadata->g('comment'))
+			 ->setDuration($metadata->gInt('duration'));
 
 		try {
 			/** @var RestoringHealth $health */
@@ -593,7 +643,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		$this->setId($this->get('id', $data))
 			 ->setInstance($this->get('instance', $data))
 			 ->setParent($this->get('parent', $data))
+			 ->setArchive($this->getBool('archive', $data))
 			 ->setStatus($this->getInt('status', $data, -1))
+			 ->setDuration($this->getInt('duration', $data))
 			 ->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
 			 ->setDate($this->getInt('date', $data))
 			 ->setSignature($this->get('signature', $data))
@@ -627,6 +679,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		return [
 			'id' => $this->getId(),
 			'nc' => $this->getNC(),
+			'duration' => $this->getDuration(),
 			'parent' => $this->getParent(),
 			'data' => $this->getRestoringData(),
 			'date' => $this->getDate()
@@ -642,7 +695,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			'id' => $this->getId(),
 			'nc' => $this->getNC(),
 			'date' => $this->getDate(),
-			'comment' => $this->getComment()
+			'comment' => $this->getComment(),
+			'archive' => $this->isArchive()
 		];
 	}
 
@@ -658,6 +712,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			'comment' => $this->getComment(),
 			'parent' => $this->getParent(),
 			'status' => $this->getStatus(),
+			'duration' => $this->getDuration(),
+			'archive' => $this->isArchive(),
 			'notes' => $this->getNotes(),
 			'data' => $this->getRestoringData(),
 			'signature' => $this->getSignature(),

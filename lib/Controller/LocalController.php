@@ -42,6 +42,7 @@ use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
+use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\PointService;
 use OCP\AppFramework\Http\DataResponse;
@@ -79,6 +80,9 @@ class LocalController extends OcsController {
 	/** @var CronService */
 	private $cronService;
 
+	/** @var ExternalFolderService */
+	private $externalFolderService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -93,6 +97,7 @@ class LocalController extends OcsController {
 	 * @param PointService $pointService
 	 * @param FilesService $filesService
 	 * @param CronService $cronService
+	 * @param ExternalFolderService $externalFolderService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
@@ -103,6 +108,7 @@ class LocalController extends OcsController {
 		PointService $pointService,
 		FilesService $filesService,
 		CronService $cronService,
+		ExternalFolderService $externalFolderService,
 		ConfigService $configService
 	) {
 		parent::__construct($appName, $request);
@@ -112,6 +118,7 @@ class LocalController extends OcsController {
 		$this->pointService = $pointService;
 		$this->filesService = $filesService;
 		$this->cronService = $cronService;
+		$this->externalFolderService = $externalFolderService;
 		$this->configService = $configService;
 	}
 
@@ -173,6 +180,48 @@ class LocalController extends OcsController {
 
 
 	/**
+	 * @return DataResponse
+	 * @throws OCSException
+	 */
+	public function getExternalFolder(): DataResponse {
+		try {
+			return new DataResponse($this->externalFolderService->getStorages());
+		} catch (Exception $e) {
+			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+
+	/**
+	 * @param int $storageId
+	 * @param string $root
+	 *
+	 * @return DataResponse
+	 * @throws OCSException
+	 */
+	public function setExternalFolder(int $storageId, string $root): DataResponse {
+		try {
+			$storages = $this->externalFolderService->getStorages();
+			foreach ($storages as $storage) {
+				if ($storage->getStorageId() === $storageId) {
+					if ($storage->getRoot() !== '') {
+						throw new OcsException('storage is already configured');
+					}
+					$storage->setRoot($root);
+					$this->externalFolderService->save($storage);
+
+					return new DataResponse($storage);
+				}
+			}
+
+			throw new OcsException('Unknown storage id');
+		} catch (Exception $e) {
+			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+
+	/**
 	 * @param int $fileId
 	 *
 	 * @return DataResponse
@@ -202,11 +251,25 @@ class LocalController extends OcsController {
 	}
 
 
-	private function initActionForceFullBackup() {
-		return new DataResponse(['message' => 'action full backup not yet implemented)']);
+	/**
+	 * @return DataResponse
+	 * @throws OCSException
+	 */
+	private function initActionForceFullBackup(): DataResponse {
+		$next = $this->cronService->nextBackups();
+		if ($this->getInt('full', $next) === -1) {
+			throw new OcsException('cannot emulate time for next backup');
+		}
+		$this->configService->setAppValueInt(ConfigService::MOCKUP_DATE, $this->getInt('full', $next));
+
+		return new DataResponse(['message' => 'full backup should be initiate in the next few minutes']);
 	}
 
-	private function initActionForceIncrementalBackup() {
+
+	/**
+	 * @return DataResponse
+	 */
+	private function initActionForceIncrementalBackup(): DataResponse {
 		return new DataResponse(['message' => 'action partial backup not yet implemented)']);
 	}
 

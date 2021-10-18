@@ -32,19 +32,20 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
+use OCA\Backup\Exceptions\MetadataException;
+use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
-use OCA\Backup\Service\ExternalFolderService;
-use OCA\Backup\Service\PointService;
-use OCA\Backup\Service\RemoteService;
+use OCA\Backup\Service\OccService;
+use OCA\Backup\Service\OutputService;
 use OCP\Files\GenericFileException;
-use OCP\Files\InvalidPathException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -54,40 +55,34 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- * Class PointDelete
+ * Class PointUnarchive
  *
  * @package OCA\Backup\Command
  */
-class PointDelete extends Base {
+class PointUnarchive extends Base {
 
 
-	/** @var PointService */
-	private $pointService;
+	/** @var OccService */
+	private $occService;
 
-	/** @var RemoteService */
-	private $remoteService;
-
-	/** @var ExternalFolderService */
-	private $externalFolderService;
+	/** @var OutputService */
+	private $outputService;
 
 
 	/**
-	 * PointCreate constructor.
+	 * PointUnarchive constructor.
 	 *
-	 * @param PointService $pointService
-	 * @param RemoteService $remoteService
-	 * @param ExternalFolderService $externalFolderService
+	 * @param OccService $occService
+	 * @param OutputService $outputService
 	 */
 	public function __construct(
-		PointService $pointService,
-		RemoteService $remoteService,
-		ExternalFolderService $externalFolderService
+		OccService $occService,
+		OutputService $outputService
 	) {
 		parent::__construct();
 
-		$this->pointService = $pointService;
-		$this->remoteService = $remoteService;
-		$this->externalFolderService = $externalFolderService;
+		$this->occService = $occService;
+		$this->outputService = $outputService;
 	}
 
 
@@ -97,20 +92,13 @@ class PointDelete extends Base {
 	protected function configure() {
 		parent::configure();
 
-		$this->setName('backup:point:delete')
-			 ->setDescription('Locally delete a restoring point')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to delete')
-			 ->addOption(
-				 'all-storage', '', InputOption::VALUE_NONE, 'remove restoring point from all storage'
-			 )
-			 ->addOption(
-				 'remote', '', InputOption::VALUE_REQUIRED,
-				 'remove a restoring point from a remote instance (or local)', ''
-			 )
-			 ->addOption(
-				 'external', '', InputOption::VALUE_REQUIRED,
-				 'remove a restoring point from an external folder', ''
-			 );
+		$this->setName('backup:point:unarchive')
+			 ->setDescription('Unarchive a restoring point')
+			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to comment')
+			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
+			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder')
+			 ->addOption('all-storage', '', InputOption::VALUE_NONE, 'duplicate action on all storages');
+
 	}
 
 
@@ -119,53 +107,32 @@ class PointDelete extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
+	 * @throws MetadataException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws RestoringPointNotFoundException
+	 * @throws SignatoryException
 	 * @throws ExternalFolderNotFoundException
+	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
 	 * @throws RestoringChunkPartNotFoundException
 	 * @throws RestoringPointException
 	 * @throws RestoringPointPackException
 	 * @throws GenericFileException
-	 * @throws InvalidPathException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$pointId = $input->getArgument('pointId');
+		$this->outputService->setOutput($output);
+		$point = $this->occService->getRestoringPointBasedOnParams($input);
 
-		if ($input->getOption('all-storage')) {
-			$this->remoteService->deletePoint($pointId);
-			$this->externalFolderService->deletePoint($pointId);
-		}
+		$point->setInstance()
+			  ->setArchive(false);
 
-		if ($input->getOption('remote')) {
-			$remote = $this->remoteService->getByInstance($input->getOption('remote'));
-			$this->remoteService->deletePointRemote($remote, $pointId);
-
-			$output->writeln('Restoring point deleted');
-
-			return 0;
-		}
-
-		if ($input->getOption('external')) {
-			$external = $this->externalFolderService->getByStorageId((int)$input->getOption('external'));
-			$this->externalFolderService->deletePointExternal($external, $pointId);
-
-			$output->writeln('Restoring point deleted');
-
-			return 0;
-		}
-
-		try {
-			$point = $this->pointService->getLocalRestoringPoint($pointId);
-			$this->pointService->delete($point);
-		} catch (RestoringPointNotFoundException $e) {
-		}
-
-		$output->writeln('Restoring point deleted');
+		$this->occService->updatePointBasedOnParams($point, $input);
 
 		return 0;
 	}
+
 
 }
 

@@ -74,8 +74,8 @@ class Backup extends TimedJob {
 		CronService $cronService,
 		ConfigService $configService
 	) {
-		$this->setInterval(900);
-//		$this->setInterval(1);
+//		$this->setInterval(900);
+		$this->setInterval(1);
 
 		$this->pointService = $pointService;
 		$this->cronService = $cronService;

@@ -32,6 +32,7 @@
 		<command>OCA\Backup\Command\ExternalList</command>
 		<command>OCA\Backup\Command\ExternalRemove</command>
 
+		<command>OCA\Backup\Command\PointArchive</command>
 		<command>OCA\Backup\Command\PointComment</command>
 		<command>OCA\Backup\Command\PointCreate</command>
 		<command>OCA\Backup\Command\PointDelete</command>
@@ -42,6 +43,7 @@
 		<command>OCA\Backup\Command\PointPack</command>
 		<command>OCA\Backup\Command\PointRestore</command>
 		<command>OCA\Backup\Command\PointScan</command>
+		<command>OCA\Backup\Command\PointUnarchive</command>
 		<command>OCA\Backup\Command\PointUnpack</command>
 		<command>OCA\Backup\Command\PointUpload</command>
 

@@ -53,7 +53,10 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 
 
 	/** @var int */
-	private $storageId = 0;
+	private $storageId;
+
+	/** @var string */
+	private $storage;
 
 	/** @var string */
 	private $root = '';
@@ -65,7 +68,9 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 	/**
 	 * ExternalFolder constructor.
 	 */
-	public function __construct() {
+	public function __construct(int $storageId = 0, string $storage = '') {
+		$this->storageId = $storageId;
+		$this->storage = $storage;
 	}
 
 
@@ -85,6 +90,25 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 	 */
 	public function getStorageId(): int {
 		return $this->storageId;
+	}
+
+
+	/**
+	 * @param string $storage
+	 *
+	 * @return ExternalFolder
+	 */
+	public function setStorage(string $storage): self {
+		$this->storage = $storage;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getStorage(): string {
+		return $this->storage;
 	}
 
 
@@ -153,6 +177,7 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setStorageId($this->getInt('storageId', $data))
+			 ->setStorage($this->get('storage', $data))
 			 ->setRoot($this->get('root', $data));
 
 		return $this;
@@ -165,6 +190,7 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 	public function jsonSerialize(): array {
 		return [
 			'storageId' => $this->getStorageId(),
+			'storage' => $this->getStorage(),
 			'root' => $this->getRoot()
 		];
 	}

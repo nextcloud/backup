@@ -94,15 +94,16 @@ class UpdateRestoringPoint extends CoreRequest implements IRemoteRequest {
 		$signatory = $this->getSignedRequest()->getSignatory();
 		$pointId = $this->getSignedRequest()->getIncomingRequest()->getParam('pointId');
 
-		$point = $this->pointRequest->getById($pointId, $signatory->getInstance());
+		$stored = $this->pointRequest->getById($pointId, $signatory->getInstance());
 
 		/** @var RestoringPoint $incoming */
 		$incoming = $this->deserializeJson($this->getSignedRequest()->getBody(), RestoringPoint::class);
-		$point->setComment($incoming->getComment());
-		$point->setSubSignature($incoming->getSubSignature());
+		$stored->setComment($incoming->getComment());
+		$stored->setArchive($incoming->isArchive());
+		$stored->setSubSignature($incoming->getSubSignature());
 
-		$this->pointService->update($point, true);
-		$this->setOutcome($this->serialize($point));
+		$this->pointService->update($stored, true);
+		$this->setOutcome($this->serialize($stored));
 	}
 
 

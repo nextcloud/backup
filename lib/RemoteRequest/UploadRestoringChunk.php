@@ -114,10 +114,7 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 			$this->pointService->initBaseFolder($point);
 			$this->packService->saveChunkPartContent($point, $chunk, $part);
 
-			// TODO: make it lighter, update Health at the end of the process, on request
-			$health = $this->pointService->generateHealth($point, true);
-
-			$this->setOutcome($this->serialize($health));
+			$this->setOutcome($this->serialize($point));
 		} catch (RestoringPointNotFoundException
 		| InvalidItemException
 		| NotFoundException

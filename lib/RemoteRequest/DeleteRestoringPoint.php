@@ -32,8 +32,6 @@ declare(strict_types=1);
 namespace OCA\Backup\RemoteRequest;
 
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
@@ -42,7 +40,6 @@ use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
-use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -85,18 +82,17 @@ class DeleteRestoringPoint extends CoreRequest implements IRemoteRequest {
 	/**
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws InvalidItemException
-	 * @throws SignatoryException
-	 * @throws RestoringPointNotFoundException
 	 */
 	public function execute(): void {
 		/** @var RemoteInstance $signatory */
 		$signatory = $this->getSignedRequest()->getSignatory();
 		$pointId = $this->getSignedRequest()->getIncomingRequest()->getParam('pointId');
 
-		$point = $this->pointRequest->getById($pointId, $signatory->getInstance());
-
-		$this->pointService->delete($point);
+		try {
+			$point = $this->pointRequest->getById($pointId, $signatory->getInstance());
+			$this->pointService->delete($point);
+		} catch (RestoringPointNotFoundException $e) {
+		}
 //		$this->setOutcome($this->serialize($point));
 	}
 

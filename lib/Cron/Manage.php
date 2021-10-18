@@ -33,7 +33,10 @@ namespace OCA\Backup\Cron;
 
 
 use OC\BackgroundJob\TimedJob;
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\CronService;
+use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\UploadService;
@@ -48,6 +51,9 @@ use Throwable;
 class Manage extends TimedJob {
 
 
+	/** @var CronService */
+	private $cronService;
+
 	/** @var PointService */
 	private $pointService;
 
@@ -57,6 +63,9 @@ class Manage extends TimedJob {
 	/** @var UploadService */
 	private $uploadService;
 
+	/** @var ExternalFolderService */
+	private $externalFolderService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -64,23 +73,29 @@ class Manage extends TimedJob {
 	/**
 	 * Manage constructor.
 	 *
+	 * @param CronService $cronService
 	 * @param PointService $pointService
 	 * @param PackService $packService
 	 * @param UploadService $uploadService
+	 * @param ExternalFolderService $externalFolderService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
+		CronService $cronService,
 		PointService $pointService,
 		PackService $packService,
 		UploadService $uploadService,
+		ExternalFolderService $externalFolderService,
 		ConfigService $configService
 	) {
-//		$this->setInterval(1);
-		$this->setInterval(3600);
+		$this->setInterval(1);
+//		$this->setInterval(3600 * 3); // 3 hours ?
 
+		$this->cronService = $cronService;
 		$this->pointService = $pointService;
 		$this->packService = $packService;
 		$this->uploadService = $uploadService;
+		$this->externalFolderService = $externalFolderService;
 		$this->configService = $configService;
 	}
 
@@ -89,6 +104,14 @@ class Manage extends TimedJob {
 	 * @param $argument
 	 */
 	protected function run($argument) {
+		// uploading
+		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
+			try {
+				$this->uploadService->uploadPoint($point);
+			} catch (Throwable $e) {
+			}
+		}
+
 		// packing
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
 			try {
@@ -98,20 +121,30 @@ class Manage extends TimedJob {
 			}
 		}
 
-		// uploading
+		// next step are only executed during the night shift
+		if (!$this->cronService->verifyTime()) {
+			return;
+		}
+
+
+		// regenerate local health
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
 			try {
-				$this->uploadService->uploadPoint($point);
+				$this->pointService->generateHealth($point, true);
 			} catch (Throwable $e) {
 			}
 		}
 
-		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
+		// regenerate health on ExternalFolder
+		foreach ($this->externalFolderService->getAll() as $external) {
 			try {
-//				$this->pointService->initBaseFolder($point);
-				$this->pointService->generateHealth($point, true);
-//				$this->packService->packPoint($point);
-			} catch (Throwable $e) {
+				foreach ($this->externalFolderService->getRestoringPoints($external) as $point) {
+					try {
+						$this->externalFolderService->getCurrentHealth($external, $point);
+					} catch (Throwable $e) {
+					}
+				}
+			} catch (ExternalFolderNotFoundException $e) {
 			}
 		}
 	}

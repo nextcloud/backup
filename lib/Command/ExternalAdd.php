@@ -32,10 +32,12 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23WellKnown;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\ExternalFolderRequest;
 use OCA\Backup\Model\ExternalFolder;
+use OCA\Files_External\Service\GlobalStoragesService;
+use OCA\Files_External\Service\UserStoragesService;
+use OCP\Files\Mount\IMountManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -49,8 +51,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ExternalAdd extends Base {
 
 
-	use TNC23WellKnown;
+	/** @var IMountManager */
+	private $mountManager;
 
+	/** @var GlobalStoragesService */
+	private $globalStoragesService;
+
+	/** @var UserStoragesService */
+	private $userStoragesService;
 
 	/** @var ExternalFolderRequest */
 	private $externalFolderRequest;
@@ -59,11 +67,22 @@ class ExternalAdd extends Base {
 	/**
 	 * ExternalAdd constructor.
 	 *
+	 * @param GlobalStoragesService $globalStoragesService
+	 * @param UserStoragesService $userStoragesService
 	 * @param ExternalFolderRequest $externalFolderRequest
 	 */
-	public function __construct(ExternalFolderRequest $externalFolderRequest) {
+	public function __construct(
+		IMountManager $mountManager,
+		GlobalStoragesService $globalStoragesService,
+		UserStoragesService $userStoragesService,
+		ExternalFolderRequest $externalFolderRequest
+	) {
 		parent::__construct();
 
+
+		$this->mountManager = $mountManager;
+		$this->globalStoragesService = $globalStoragesService;
+		$this->userStoragesService = $userStoragesService;
 		$this->externalFolderRequest = $externalFolderRequest;
 	}
 
@@ -86,6 +105,19 @@ class ExternalAdd extends Base {
 	 * @return int
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+
+
+//		$storages = array_map(function (StorageConfig $storageConfig) use ($user) {
+//			try {
+//				$this->prepareStorageConfig($storageConfig, $user);
+//				return $this->constructStorage($storageConfig);
+//			} catch (\Exception $e) {
+//				// propagate exception into filesystem
+//				return new FailedStorage(['exception' => $e]);
+//			}
+//		}, $storageConfigs);
+
+
 		$storageId = (int)$input->getArgument('storage_id');
 		$root = $input->getArgument('root');
 

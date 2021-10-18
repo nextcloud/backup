@@ -77,6 +77,7 @@ class CoreRequestBuilder {
 		self::TABLE_RESTORING_POINT => [
 			'id',
 			'uid',
+			'archive',
 			'instance',
 			'parent',
 			'status',

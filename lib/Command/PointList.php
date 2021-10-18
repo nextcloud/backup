@@ -143,7 +143,9 @@ class PointList extends Base {
 		$output = $output->section();
 
 		$table = new Table($output);
-		$table->setHeaders(['Restoring Point', 'Date', 'Parent', 'Comment', 'Status', 'Instance', 'Health']);
+		$table->setHeaders(
+			['Restoring Point', 'Date', 'Parent', 'Comment', 'Status', 'Instance', 'Health']
+		);
 		$table->render();
 
 		foreach ($rp as $pointId => $item) {
@@ -178,7 +180,7 @@ class PointList extends Base {
 
 				$table->appendRow(
 					[
-						($fresh) ? $displayPointId : '',
+						(($point->isArchive()) ? 'A ' : '  ') . (($fresh) ? $displayPointId : ''),
 						($fresh) ? date('Y-m-d H:i:s', $point->getDate()) : '',
 						($fresh) ? $point->getParent() : '',
 						$comment,

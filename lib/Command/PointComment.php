@@ -34,14 +34,23 @@ namespace OCA\Backup\Command;
 
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OC\Core\Command\Base;
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
+use OCA\Backup\Exceptions\MetadataException;
+use OCA\Backup\Exceptions\RemoteInstanceException;
+use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
+use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
+use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
-use OCA\Backup\Service\MetadataService;
+use OCA\Backup\Exceptions\RestoringPointPackException;
+use OCA\Backup\Service\OccService;
 use OCA\Backup\Service\OutputService;
-use OCA\Backup\Service\PointService;
+use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
@@ -53,32 +62,26 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PointComment extends Base {
 
 
-	/** @var PointService */
-	private $pointService;
-
-	/** @var MetadataService */
-	private $metadataService;
+	/** @var OccService */
+	private $occService;
 
 	/** @var OutputService */
 	private $outputService;
 
 
 	/**
-	 * PointComment constructor.
+	 * PointUnarchive constructor.
 	 *
-	 * @param PointService $pointService
-	 * @param MetadataService $metadataService
+	 * @param OccService $occService
 	 * @param OutputService $outputService
 	 */
 	public function __construct(
-		PointService $pointService,
-		MetadataService $metadataService,
+		OccService $occService,
 		OutputService $outputService
 	) {
 		parent::__construct();
 
-		$this->pointService = $pointService;
-		$this->metadataService = $metadataService;
+		$this->occService = $occService;
 		$this->outputService = $outputService;
 	}
 
@@ -92,7 +95,10 @@ class PointComment extends Base {
 		$this->setName('backup:point:comment')
 			 ->setDescription('Add a description to a restoring point')
 			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to comment')
-			 ->addArgument('comment', InputArgument::REQUIRED, 'comment');
+			 ->addArgument('comment', InputArgument::REQUIRED, 'comment')
+			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
+			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder')
+			 ->addOption('all-storage', '', InputOption::VALUE_NONE, 'duplicate action on all storages');
 	}
 
 
@@ -101,23 +107,30 @@ class PointComment extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws RestoringPointNotFoundException
-	 * @throws SignatoryException
+	 * @throws MetadataException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws RestoringPointNotFoundException
+	 * @throws SignatoryException
+	 * @throws ExternalFolderNotFoundException
+	 * @throws RemoteInstanceException
+	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteResourceNotFoundException
+	 * @throws RestoringChunkPartNotFoundException
+	 * @throws RestoringPointException
+	 * @throws RestoringPointPackException
+	 * @throws GenericFileException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->outputService->setOutput($output);
+		$point = $this->occService->getRestoringPointBasedOnParams($input);
 
-		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
 		$point->setComment($input->getArgument('comment'));
 
-		$this->pointService->update($point, true);
-		$this->metadataService->globalUpdate($point);
+		$this->occService->updatePointBasedOnParams($point, $input);
 
 		return 0;
 	}
-
 
 }
 

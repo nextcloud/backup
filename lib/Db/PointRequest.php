@@ -55,6 +55,7 @@ class PointRequest extends PointRequestBuilder {
 		   ->setValue('instance', $qb->createNamedParameter($point->getInstance()))
 		   ->setValue('parent', $qb->createNamedParameter($point->getParent()))
 		   ->setValue('status', $qb->createNamedParameter($point->getStatus()))
+		   ->setValue('archive', $qb->createNamedParameter(($point->isArchive()) ? 1 : 0))
 		   ->setValue('notes', $qb->createNamedParameter(json_encode($point->getNotes())))
 		   ->setValue('metadata', $qb->createNamedParameter(json_encode($point->getMetadata())))
 		   ->setValue('date', $qb->createNamedParameter($point->getDate()));
@@ -76,6 +77,7 @@ class PointRequest extends PointRequestBuilder {
 
 		$qb->set('status', $qb->createNamedParameter($point->getStatus()));
 		$qb->set('notes', $qb->createNamedParameter(json_encode($point->getNotes())));
+		$qb->set('archive', $qb->createNamedParameter(($point->isArchive()) ? 1 : 0));
 
 		if ($updateMetadata) {
 			$qb->set('metadata', $qb->createNamedParameter(json_encode($point->getMetadata())));
