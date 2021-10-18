@@ -876,4 +876,12 @@ class ExternalFolderService {
 		$this->externalFolderRequest->save($storage);
 	}
 
+
+	/**
+	 * @param int $storageId
+	 */
+	public function remove(int $storageId) {
+		$this->externalFolderRequest->remove($storageId);
+	}
+
 }

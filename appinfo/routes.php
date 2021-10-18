@@ -8,6 +8,7 @@ return [
 		['name' => 'Local#getRestoringPoints', 'url' => '/rp', 'verb' => 'GET'],
 		['name' => 'Local#getExternalFolder', 'url' => '/external', 'verb' => 'GET'],
 		['name' => 'Local#setExternalFolder', 'url' => '/external', 'verb' => 'POST'],
+		['name' => 'Local#unsetExternalFolder', 'url' => '/external/{storageId}', 'verb' => 'DELETE'],
 		['name' => 'Local#initAction', 'url' => '/action/{type}/{param}', 'verb' => 'POST']
 	],
 

@@ -151,7 +151,8 @@ class LocalController extends OcsController {
 	 * @return DataResponse
 	 */
 	public function getRestoringPoints(): DataResponse {
-		$points =$this->cronService->getRPFromInstances();
+		$points = $this->cronService->getRPFromInstances();
+
 		return new DataResponse($points);
 	}
 
@@ -213,7 +214,7 @@ class LocalController extends OcsController {
 			if ($root === '') {
 				throw new OcsException('empty root');
 			}
-			
+
 			$storages = $this->externalFolderService->getStorages();
 			foreach ($storages as $storage) {
 				if ($storage->getStorageId() === $storageId) {
@@ -228,6 +229,23 @@ class LocalController extends OcsController {
 			}
 
 			throw new OcsException('Unknown storage id');
+		} catch (Exception $e) {
+			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+
+	/**
+	 * @param int $storageId
+	 *
+	 * @return DataResponse
+	 * @throws OCSException
+	 */
+	public function unsetExternalFolder(int $storageId): DataResponse {
+		try {
+			$this->externalFolderService->remove($storageId);
+
+			return new DataResponse();
 		} catch (Exception $e) {
 			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		}
