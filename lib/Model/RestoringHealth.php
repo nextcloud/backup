@@ -73,6 +73,9 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	/** @var ChunkPartHealth[] */
 	private $parts = [];
 
+	/** @var int */
+	private $checked = 0;
+
 
 	/**
 	 * RestoringHealth constructor.
@@ -84,9 +87,13 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 
 	/**
 	 * @param int $status
+	 *
+	 * @return RestoringHealth
 	 */
-	public function setStatus(int $status): void {
+	public function setStatus(int $status): self {
 		$this->status = $status;
+
+		return $this;
 	}
 
 	/**
@@ -94,6 +101,25 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	 */
 	public function getStatus(): int {
 		return $this->status;
+	}
+
+
+	/**
+	 * @param int $checked
+	 *
+	 * @return RestoringHealth
+	 */
+	public function setChecked(int $checked): self {
+		$this->checked = $checked;
+
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getChecked(): int {
+		return $this->checked;
 	}
 
 
@@ -149,6 +175,7 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setStatus($this->getInt('status', $data));
+		$this->setChecked($this->getInt('checked', $data));
 
 		/** @var ChunkPartHealth[] $parts */
 		$parts = $this->deserializeArray(
@@ -173,6 +200,7 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	public function jsonSerialize(): array {
 		return [
 			'status' => $this->getStatus(),
+			'checked' => $this->getChecked(),
 			'parts' => $this->getParts()
 		];
 	}

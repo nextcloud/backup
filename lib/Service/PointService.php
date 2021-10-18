@@ -681,7 +681,8 @@ class PointService {
 			}
 		}
 
-		$health->setStatus($globalStatus);
+		$health->setStatus($globalStatus)
+			   ->setChecked(time());
 		$point->setHealth($health);
 
 		if ($updateDb) {
