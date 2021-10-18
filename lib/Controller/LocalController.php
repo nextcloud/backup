@@ -210,6 +210,10 @@ class LocalController extends OcsController {
 	 */
 	public function setExternalFolder(int $storageId, string $root): DataResponse {
 		try {
+			if ($root === '') {
+				throw new OcsException('empty root');
+			}
+			
 			$storages = $this->externalFolderService->getStorages();
 			foreach ($storages as $storage) {
 				if ($storage->getStorageId() === $storageId) {
