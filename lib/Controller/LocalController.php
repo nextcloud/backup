@@ -36,7 +36,9 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Controller;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use Exception;
+use OC;
 use OC\AppFramework\Http;
+use OC\Files\Node\Folder;
 use OCA\Backup\Db\EventRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
@@ -48,6 +50,7 @@ use OCA\Backup\Service\PointService;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
+use OCP\Files\Config\IUserMountCache;
 use OCP\IRequest;
 use OCP\IUserSession;
 
@@ -262,7 +265,7 @@ class LocalController extends OcsController {
 		}
 		$this->configService->setAppValueInt(ConfigService::MOCKUP_DATE, $this->getInt('full', $next));
 
-		return new DataResponse(['message' => 'full backup should be initiate in the next few minutes']);
+		return new DataResponse(['message' => 'full backup should be initiated in the next few minutes']);
 	}
 
 

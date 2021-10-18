@@ -282,7 +282,8 @@ class ConfigService {
 			self::ALLOW_WEEKDAY => $this->getAppValueBool(self::ALLOW_WEEKDAY),
 			self::PACK_BACKUP => $this->getAppValueBool(self::PACK_BACKUP),
 			self::PACK_COMPRESS => $this->getAppValueBool(self::PACK_COMPRESS),
-			self::PACK_ENCRYPT => $this->getAppValueBool(self::PACK_ENCRYPT)
+			self::PACK_ENCRYPT => $this->getAppValueBool(self::PACK_ENCRYPT),
+			self::MOCKUP_DATE => $this->getAppValueInt(self::MOCKUP_DATE)
 		];
 	}
 

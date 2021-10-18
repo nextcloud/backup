@@ -286,6 +286,7 @@ class UploadService {
 				$this->externalFolderService->getRestoringPoint($external, $stored->getId(), true);
 
 			} catch (Exception $e) {
+				$this->o(' ! issue while checking external folder: <error>' . get_class($e) . ' ' . $e->getMessage() . '</error>');
 				continue;
 			}
 		}
