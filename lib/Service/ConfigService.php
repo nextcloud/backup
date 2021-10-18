@@ -49,6 +49,7 @@ class ConfigService {
 	const DATA_DIRECTORY = 'datadirectory';
 
 	const LOCK = 'lock';
+	const REMOTE_ENABLED = 'remote_enabled';
 	const SELF_SIGNED_CERT = 'self_signed_cert';
 	const DELAY_FULL_RP = 'delay_full_rp';
 	const DELAY_PARTIAL_RP = 'delay_partial_rp';
@@ -72,9 +73,11 @@ class ConfigService {
 	const CHUNK_SIZE = 'chunk_size';
 	const CHUNK_PART_SIZE = 'chunk_part_size';
 
+
 	/** @var array */
 	public $defaults = [
 		self::LOCK => 0,
+		self::REMOTE_ENABLED => 0,
 		self::SELF_SIGNED_CERT => '0',
 		self::LAST_FULL_RP => '',
 		self::LAST_PARTIAL_RP => '',
@@ -268,6 +271,10 @@ class ConfigService {
 		return $tmpPath;
 	}
 
+
+	public function isRemoteEnabled(): bool {
+		return $this->getAppValueBool(self::REMOTE_ENABLED);
+	}
 
 	/**
 	 * @return array

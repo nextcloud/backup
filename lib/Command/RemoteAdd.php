@@ -46,6 +46,7 @@ use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceUidException;
 use OCA\Backup\Model\RemoteInstance;
+use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\RemoteStreamService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -68,21 +69,27 @@ class RemoteAdd extends Base {
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
 
+	/** @var ConfigService */
+	private $configService;
+
 
 	/**
 	 * RemoteAdd constructor.
 	 *
 	 * @param RemoteRequest $remoteRequest
 	 * @param RemoteStreamService $remoteStreamService
+	 * @param ConfigService $configService
 	 */
 	public function __construct(
 		RemoteRequest $remoteRequest,
-		RemoteStreamService $remoteStreamService
+		RemoteStreamService $remoteStreamService,
+		ConfigService $configService
 	) {
-		parent::__construct();
-
 		$this->remoteRequest = $remoteRequest;
 		$this->remoteStreamService = $remoteStreamService;
+		$this->configService = $configService;
+
+		parent::__construct();
 	}
 
 
@@ -90,6 +97,10 @@ class RemoteAdd extends Base {
 	 *
 	 */
 	protected function configure() {
+		if (!$this->configService->isRemoteEnabled()) {
+			$this->setHidden(true);
+		}
+
 		$this->setName('backup:remote:add')
 			 ->setDescription('Add remote instances to store your backups')
 			 ->addArgument('address', InputArgument::REQUIRED, 'address of the remote instance of Nextcloud');
@@ -110,6 +121,10 @@ class RemoteAdd extends Base {
 	 * @throws RemoteInstanceException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		if (!$this->configService->isRemoteEnabled()) {
+			throw new RemoteInstanceException('not enabled');
+		}
+
 		$address = $input->getArgument('address');
 		if (strtolower($address) === RemoteInstance::LOCAL || strtolower($address) === RemoteInstance::ALL) {
 			throw new RemoteInstanceException($address . ' is a reserved name');
@@ -314,12 +329,18 @@ class RemoteAdd extends Base {
 		$output->writeln('');
 		$output->writeln('<error>Important note</error>: ');
 		$output->writeln('Uploaded backup are encrypted which is good, don\'t you think ?');
-		$output->writeln('However, it also means that <options=bold>if you loose the Encryption Key, your backup will be totally useless</>');
+		$output->writeln(
+			'However, it also means that <options=bold>if you loose the Encryption Key, your backup will be totally useless</>'
+		);
 		$output->writeln('');
 		$output->writeln('It is advised to export the setup of the Backup App in the file of your choice.');
-		$output->writeln('Keep in mind that with this file, any installation of Nextcloud can access your backup,');
+		$output->writeln(
+			'Keep in mind that with this file, any installation of Nextcloud can access your backup,'
+		);
 		$output->writeln('restore them and access the data of your users');
-		$output->writeln('While this is an option, ts is also advised to force the creation of a key to encrypt the content of the file:');
+		$output->writeln(
+			'While this is an option, ts is also advised to force the creation of a key to encrypt the content of the file:'
+		);
 		$output->writeln('');
 		$output->writeln('   ./occ backup:setup:export [--key] > ~/backup_setup.json');
 		$output->writeln('');

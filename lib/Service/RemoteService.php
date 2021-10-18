@@ -76,6 +76,9 @@ class RemoteService {
 	/** @var OutputService */
 	private $outputService;
 
+	/** @var ConfigService */
+	private $configService;
+
 
 	/**
 	 * RemoteService constructor.
@@ -84,17 +87,20 @@ class RemoteService {
 	 * @param RemoteStreamService $remoteStreamService
 	 * @param ChunkService $chunkService
 	 * @param OutputService $outputService
+	 * @param ConfigService $configService
 	 */
 	public function __construct(
 		RemoteRequest $remoteRequest,
 		RemoteStreamService $remoteStreamService,
 		ChunkService $chunkService,
-		OutputService $outputService
+		OutputService $outputService,
+		ConfigService $configService
 	) {
 		$this->remoteRequest = $remoteRequest;
 		$this->remoteStreamService = $remoteStreamService;
 		$this->chunkService = $chunkService;
 		$this->outputService = $outputService;
+		$this->configService = $configService;
 
 		$this->setup('app', Application::APP_ID);
 	}
@@ -104,6 +110,10 @@ class RemoteService {
 	 * @return RemoteInstance[]
 	 */
 	public function getOutgoing(): array {
+		if (!$this->configService->isRemoteEnabled()) {
+			return [];
+		}
+
 		return $this->remoteRequest->getOutgoing();
 	}
 
@@ -113,6 +123,10 @@ class RemoteService {
 	 * @return array
 	 */
 	public function getAll(bool $includeExtraDataOnSerialize = false): array {
+		if (!$this->configService->isRemoteEnabled()) {
+			return [];
+		}
+
 		return $this->remoteRequest->getAll($includeExtraDataOnSerialize);
 	}
 
@@ -124,6 +138,10 @@ class RemoteService {
 	 * @throws RemoteInstanceNotFoundException
 	 */
 	public function getByInstance(string $instance): RemoteInstance {
+		if (!$this->configService->isRemoteEnabled()) {
+			throw new RemoteInstanceNotFoundException();
+		}
+
 		return $this->remoteRequest->getByInstance($instance);
 	}
 
@@ -143,6 +161,10 @@ class RemoteService {
 		string $pointId,
 		bool $current = false
 	): RestoringPoint {
+		if (!$this->configService->isRemoteEnabled()) {
+			throw new RemoteInstanceNotFoundException();
+		}
+
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$instance,
 			($current) ? RemoteInstance::RP_HEALTH : RemoteInstance::RP_GET,
@@ -172,6 +194,10 @@ class RemoteService {
 	 * @throws RemoteResourceNotFoundException
 	 */
 	public function getRestoringPoints(string $instance): array {
+		if (!$this->configService->isRemoteEnabled()) {
+			return [];
+		}
+
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$instance,
 			RemoteInstance::RP_LIST
@@ -190,6 +216,10 @@ class RemoteService {
 	 * @throws RestoringPointNotFoundException
 	 */
 	public function createPoint(RemoteInstance $remote, RestoringPoint $point): RestoringPoint {
+		if (!$this->configService->isRemoteEnabled()) {
+			throw new RemoteInstanceException();
+		}
+
 		$this->o('  * Creating Restoring Point on remote instance: ', false);
 
 		if (!$remote->isOutgoing()) {
@@ -231,6 +261,10 @@ class RemoteService {
 	 * @param RemoteInstance|null $remote
 	 */
 	public function updateMetadata(RestoringPoint $point, ?RemoteInstance $remote = null): void {
+		if (!$this->configService->isRemoteEnabled()) {
+			return;
+		}
+
 		if (is_null($remote)) {
 			$remotes = $this->getOutgoing();
 		} else {
@@ -253,6 +287,10 @@ class RemoteService {
 	 * @param string $pointId
 	 */
 	public function deletePoint(string $pointId): void {
+		if (!$this->configService->isRemoteEnabled()) {
+			return;
+		}
+
 		foreach ($this->getOutgoing() as $remote) {
 			try {
 				$this->deletePointRemote($remote, $pointId);
@@ -272,6 +310,10 @@ class RemoteService {
 	 * @throws RestoringPointNotFoundException
 	 */
 	public function deletePointRemote(RemoteInstance $remote, string $pointId): void {
+		if (!$this->configService->isRemoteEnabled()) {
+			return;
+		}
+
 		if (!$remote->isOutgoing()) {
 			throw new RemoteInstanceException('instance not configured as outgoing');
 		}
@@ -308,6 +350,10 @@ class RemoteService {
 	 * @throws RestoringPointNotFoundException
 	 */
 	public function updateMetadataFile(RemoteInstance $remote, RestoringPoint $point): void {
+		if (!$this->configService->isRemoteEnabled()) {
+			return;
+		}
+
 		if (!$remote->isOutgoing()) {
 			throw new RemoteInstanceException('instance not configured as outgoing');
 		}
@@ -352,7 +398,11 @@ class RemoteService {
 		RestoringPoint $point,
 		RestoringChunk $chunk,
 		RestoringChunkPart $part
-	): bool {
+	): void {
+		if (!$this->configService->isRemoteEnabled()) {
+			return;
+		}
+
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$instance,
 			RemoteInstance::RP_UPLOAD,
@@ -367,7 +417,7 @@ class RemoteService {
 
 //		echo '****** ' . json_Encode($result);
 
-		return true;
+		return;
 	}
 
 
@@ -377,7 +427,7 @@ class RemoteService {
 	 * @param RestoringChunk $chunk
 	 * @param RestoringChunkPart $part
 	 *
-	 * @return RestoringChunkPart
+	 * @return void
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
@@ -389,6 +439,10 @@ class RemoteService {
 		RestoringChunk $chunk,
 		RestoringChunkPart $part
 	): void {
+		if (!$this->configService->isRemoteEnabled()) {
+			return;
+		}
+
 		$result = $this->remoteStreamService->resultRequestRemoteInstance(
 			$instance,
 			RemoteInstance::RP_DOWNLOAD,
@@ -409,21 +463,24 @@ class RemoteService {
 
 
 	/**
-	 * @param RestoringPoint $point
 	 * @param RemoteInstance $remote
 	 *
+	 * @param RestoringPoint $point
+	 *
 	 * @return RestoringPoint
-	 * @throws InvalidItemException
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
 	 * @throws RestoringPointNotFoundException
-	 * @throws SignatoryException
 	 */
 	public function confirmPoint(
 		RemoteInstance $remote,
 		RestoringPoint $point
 	): RestoringPoint {
+		if (!$this->configService->isRemoteEnabled()) {
+			throw new RestoringPointNotFoundException();
+		}
+
 		try {
 			$stored = $this->getRestoringPoint($remote->getInstance(), $point->getId());
 			$this->o('  > restoring point found');
@@ -465,6 +522,10 @@ class RemoteService {
 		RemoteInstance $remote,
 		RestoringPoint $point
 	): RestoringPoint {
+		if (!$this->configService->isRemoteEnabled()) {
+			throw new RestoringPointNotFoundException();
+		}
+
 		$stored = $this->getRestoringPoint($remote->getInstance(), $point->getId(), true);
 		if (!$stored->hasHealth()) {
 			throw new RestoringPointUploadException('no health status attached');

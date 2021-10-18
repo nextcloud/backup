@@ -92,7 +92,7 @@ class WebfingerHandler implements IHandler {
 	 * @return IResponse|null
 	 */
 	public function handle(string $service, IRequestContext $context, ?IResponse $response): ?IResponse {
-		if ($service !== 'webfinger') {
+		if (!$this->configService->isRemoteEnabled() || $service !== 'webfinger') {
 			return $response;
 		}
 

@@ -36,7 +36,9 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\RemoteRequest;
+use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Model\RemoteInstance;
+use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\RemoteStreamService;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -58,16 +60,25 @@ class RemoteList extends Base {
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
 
+	/** @var ConfigService */
+	private $configService;
+
 
 	/**
 	 * RemoteList constructor.
 	 *
 	 * @param RemoteRequest $remoteRequest
 	 * @param RemoteStreamService $remoteStreamService
+	 * @param ConfigService $configService
 	 */
-	public function __construct(RemoteRequest $remoteRequest, RemoteStreamService $remoteStreamService) {
+	public function __construct(
+		RemoteRequest $remoteRequest,
+		RemoteStreamService $remoteStreamService,
+		ConfigService $configService
+	) {
 		$this->remoteRequest = $remoteRequest;
 		$this->remoteStreamService = $remoteStreamService;
+		$this->configService = $configService;
 
 		parent::__construct();
 	}
@@ -77,6 +88,10 @@ class RemoteList extends Base {
 	 *
 	 */
 	protected function configure() {
+		if (!$this->configService->isRemoteEnabled()) {
+			$this->setHidden(true);
+		}
+
 		$this->setName('backup:remote:list')
 			 ->setDescription('Listing configured remote instances');
 	}
@@ -87,8 +102,13 @@ class RemoteList extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
+	 * @throws RemoteInstanceException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		if (!$this->configService->isRemoteEnabled()) {
+			throw new RemoteInstanceException('not enabled');
+		}
+
 		$output = new ConsoleOutput();
 		$output = $output->section();
 		$table = new Table($output);

@@ -34,7 +34,9 @@ namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
 use OCA\Backup\Db\RemoteRequest;
+use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
+use OCA\Backup\Service\ConfigService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,14 +53,22 @@ class RemoteRemove extends Base {
 	/** @var RemoteRequest */
 	private $remoteRequest;
 
+	/** @var ConfigService */
+	private $configService;
+
 
 	/**
 	 * RemoteRemove constructor.
 	 *
 	 * @param RemoteRequest $remoteRequest
+	 * @param ConfigService $configService
 	 */
-	public function __construct(RemoteRequest $remoteRequest) {
+	public function __construct(
+		RemoteRequest $remoteRequest,
+		ConfigService $configService
+	) {
 		$this->remoteRequest = $remoteRequest;
+		$this->configService = $configService;
 
 		parent::__construct();
 	}
@@ -68,6 +78,10 @@ class RemoteRemove extends Base {
 	 *
 	 */
 	protected function configure() {
+		if (!$this->configService->isRemoteEnabled()) {
+			$this->setHidden(true);
+		}
+
 		$this->setName('backup:remote:remove')
 			 ->setDescription('Removing remote instances from database')
 			 ->addArgument('address', InputArgument::REQUIRED, 'address of the remote instance of Nextcloud');
@@ -80,8 +94,13 @@ class RemoteRemove extends Base {
 	 *
 	 * @return int
 	 * @throws RemoteInstanceNotFoundException
+	 * @throws RemoteInstanceException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		if (!$this->configService->isRemoteEnabled()) {
+			throw new RemoteInstanceException('not enabled');
+		}
+
 		$address = $input->getArgument('address');
 
 		try {
