@@ -98,18 +98,20 @@ class ExternalFolderService {
 	/**
 	 * ExternalFolderService constructor.
 	 *
-	 * @param GlobalStoragesService $globalStoragesService
 	 * @param ExternalFolderRequest $externalFolderRequest
 	 * @param OutputService $outputService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
-		GlobalStoragesService $globalStoragesService,
 		ExternalFolderRequest $externalFolderRequest,
 		OutputService $outputService,
 		ConfigService $configService
 	) {
-		$this->globalStoragesService = $globalStoragesService;
+		try {
+			$this->globalStoragesService = OC::$server->get(GlobalStoragesService::class);
+		} catch (Exception $e) {
+		}
+
 		$this->externalFolderRequest = $externalFolderRequest;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
@@ -236,6 +238,7 @@ class ExternalFolderService {
 	/**
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
+	 * @param RestoringHealth $health
 	 * @param RestoringChunk $chunk
 	 * @param RestoringChunkPart $part
 	 *
@@ -243,23 +246,23 @@ class ExternalFolderService {
 	 * @throws ExternalFolderNotFoundException
 	 * @throws GenericFileException
 	 * @throws LockedException
+	 * @throws MetadataException
 	 * @throws NotPermittedException
+	 * @throws RestoringChunkPartNotFoundException
 	 * @throws RestoringPointException
 	 * @throws RestoringPointNotFoundException
-	 * @throws RestoringChunkPartNotFoundException
 	 */
 	public function uploadPart(
 		ExternalFolder $external,
 		RestoringPoint $point,
+		RestoringHealth $health,
 		RestoringChunk $chunk,
 		RestoringChunkPart $part
 	): void {
 		$folder = $this->getExternalChunkFolder($external, $point, $chunk, true);
 		$file = $folder->newFile($part->getName());
 		$file->putContent(base64_decode($part->getContent()));
-
-		$this->updateChunkPartHealth($external, $point, $chunk, $part);
-		$this->updateMetadataFile($external, $point);
+		$this->updateChunkPartHealth($external, $point, $health, $chunk, $part);
 	}
 
 
@@ -269,10 +272,10 @@ class ExternalFolderService {
 	 * @param RestoringChunk $chunk
 	 * @param RestoringChunkPart $part
 	 *
-	 * @return RestoringChunkPart
+	 * @return void
 	 * @throws ExternalFolderNotFoundException
-	 * @throws GenericFileException
 	 * @throws LockedException
+	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws RestoringChunkPartNotFoundException
 	 * @throws RestoringPointException
@@ -368,7 +371,7 @@ class ExternalFolderService {
 		RestoringPoint $point
 	): RestoringPoint {
 		try {
-			$stored = $this->getRestoringPoint($folder, $point->getId());
+			$stored = $this->getRestoringPoint($folder, $point->getId(), true);
 			$this->o('  > restoring point found');
 //		} catch (RemoteInstanceException $e) {
 //			$this->o('  ! <error>check configuration on remote instance</error>');
@@ -439,6 +442,7 @@ class ExternalFolderService {
 	 * @throws RestoringPointException
 	 * @throws RestoringPointNotFoundException
 	 * @throws ExternalFolderNotFoundException
+	 * @throws MetadataException
 	 */
 	public function createPoint(ExternalFolder $external, RestoringPoint $point): RestoringPoint {
 		$this->o('  * Creating Restoring Point on external folder: ', false);
@@ -555,7 +559,7 @@ class ExternalFolderService {
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
 	 *
-	 * @return RestoringPoint
+	 * @return RestoringHealth
 	 * @throws ExternalFolderNotFoundException
 	 * @throws GenericFileException
 	 * @throws NotPermittedException
@@ -565,13 +569,13 @@ class ExternalFolderService {
 	 * @throws RestoringPointPackException
 	 * @throws RestoringPointUploadException
 	 */
-	public function getCurrentHealth(ExternalFolder $external, RestoringPoint $point): RestoringPoint {
+	public function getCurrentHealth(ExternalFolder $external, RestoringPoint $point): RestoringHealth {
 		$stored = $this->getRestoringPoint($external, $point->getId(), true);
 		if (!$stored->hasHealth()) {
 			throw new RestoringPointUploadException('no health status attached');
 		}
 
-		return $stored;
+		return $stored->getHealth();
 	}
 
 
@@ -580,15 +584,17 @@ class ExternalFolderService {
 	 *
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
+	 * @param RestoringChunkPart|null $part
 	 *
 	 * @return RestoringHealth
+	 * @throws ExternalFolderNotFoundException
+	 * @throws GenericFileException
+	 * @throws NotPermittedException
+	 * @throws RestoringChunkPartNotFoundException
+	 * @throws RestoringPointException
 	 * @throws RestoringPointPackException
 	 */
-	public function generateHealth(
-		ExternalFolder $external,
-		RestoringPoint $point,
-		?RestoringChunkPart $part = null
-	): RestoringHealth {
+	public function generateHealth(ExternalFolder $external, RestoringPoint $point): RestoringHealth {
 		if (!$point->isStatus(RestoringPoint::STATUS_PACKED)) {
 			throw new RestoringPointPackException('restoring point is not packed');
 		}
@@ -634,24 +640,23 @@ class ExternalFolderService {
 	 *
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
+	 * @param RestoringHealth $health
 	 * @param RestoringChunk $chunk
 	 * @param RestoringChunkPart $part
 	 *
-	 * @return RestoringHealth
+	 * @return void
 	 * @throws RestoringChunkPartNotFoundException
 	 */
 	public function updateChunkPartHealth(
 		ExternalFolder $external,
 		RestoringPoint $point,
+		RestoringHealth $health,
 		RestoringChunk $chunk,
 		RestoringChunkPart $part
-	): RestoringHealth {
-		$health = $point->getHealth();
+	): void {
 		$partHealth = $health->getPart($chunk->getName(), $part->getName());
 		$status = $this->generatePartHealthStatus($external, $point, $chunk, $part);
 		$partHealth->setStatus($status);
-
-		return $health;
 	}
 
 
@@ -818,6 +823,10 @@ class ExternalFolderService {
 	 * @throws StorageNotAvailableException
 	 */
 	public function getStorages(): array {
+		if (is_null($this->globalStoragesService)) {
+			return [];
+		}
+
 		$externals = $this->getAll();
 		foreach ($this->globalStoragesService->getAllStorages() as $globalStorage) {
 			$storage = $this->constructStorage($globalStorage);

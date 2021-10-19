@@ -56,6 +56,7 @@ class PointRequest extends PointRequestBuilder {
 		   ->setValue('parent', $qb->createNamedParameter($point->getParent()))
 		   ->setValue('status', $qb->createNamedParameter($point->getStatus()))
 		   ->setValue('archive', $qb->createNamedParameter(($point->isArchive()) ? 1 : 0))
+		   ->setValue('lock', $qb->createNamedParameter($point->getLock()))
 		   ->setValue('notes', $qb->createNamedParameter(json_encode($point->getNotes())))
 		   ->setValue('metadata', $qb->createNamedParameter(json_encode($point->getMetadata())))
 		   ->setValue('date', $qb->createNamedParameter($point->getDate()));

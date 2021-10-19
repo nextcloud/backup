@@ -101,12 +101,11 @@ class OutputService {
 
 
 	/**
-	 * @param RestoringPoint $point
+	 * @param RestoringHealth $health
 	 *
 	 * @return string
 	 */
-	public function displayHealth(RestoringPoint $point): string {
-		$health = $point->getHealth();
+	public function displayHealth(RestoringHealth $health): string {
 		if ($health->getStatus() === RestoringHealth::STATUS_OK) {
 			return '<info>ok</info>';
 		}

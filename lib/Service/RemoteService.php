@@ -49,6 +49,7 @@ use OCA\Backup\Exceptions\RestoringPointUploadException;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkPart;
+use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 
 
@@ -482,7 +483,7 @@ class RemoteService {
 		}
 
 		try {
-			$stored = $this->getRestoringPoint($remote->getInstance(), $point->getId());
+			$stored = $this->getRestoringPoint($remote->getInstance(), $point->getId(), true);
 			$this->o('  > restoring point found');
 		} catch (RemoteInstanceException $e) {
 			$this->o('  ! <error>check configuration on remote instance</error>');
@@ -511,17 +512,17 @@ class RemoteService {
 	 * @param RemoteInstance $remote
 	 * @param RestoringPoint $point
 	 *
-	 * @return RestoringPoint
+	 * @return RestoringHealth
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
-	 * @throws RestoringPointUploadException
 	 * @throws RestoringPointNotFoundException
+	 * @throws RestoringPointUploadException
 	 */
 	public function getCurrentHealth(
 		RemoteInstance $remote,
 		RestoringPoint $point
-	): RestoringPoint {
+	): RestoringHealth {
 		if (!$this->configService->isRemoteEnabled()) {
 			throw new RestoringPointNotFoundException();
 		}
@@ -531,7 +532,7 @@ class RemoteService {
 			throw new RestoringPointUploadException('no health status attached');
 		}
 
-		return $stored;
+		return $stored->getHealth();
 	}
 
 

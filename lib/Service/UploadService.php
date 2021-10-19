@@ -41,14 +41,18 @@ use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointException;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotInitiatedException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\ExternalFolder;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
+use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Lock\LockedException;
 
 
 /**
@@ -147,6 +151,10 @@ class UploadService {
 	 * @throws RemoteInstanceNotFoundException
 	 */
 	public function uploadToRemoteInstances(RestoringPoint $point, string $instance = ''): void {
+		if (!$this->configService->isRemoteEnabled()) {
+			return;
+		}
+
 		$this->o('- uploading ' . $point->getId() . ' to remote instances');
 		if ($instance !== '') {
 			$remotes = [$this->remoteService->getByInstance($instance)];
@@ -160,32 +168,45 @@ class UploadService {
 
 				$stored = $this->remoteService->confirmPoint($remote, $point);
 
+				// TODO: get fresh health
 				if (!$stored->hasHealth()) {
-					try {
-						$this->o('  > <comment>no health status attached</comment>');
-						$this->o('  * Requesting detailed Health status: ', false);
-						try {
-							$stored = $this->remoteService->getCurrentHealth($remote, $point);
-							$this->o('<info>ok</info>');
-						} catch (Exception $e) {
-							$this->o('<error>' . $e->getMessage() . '</error>');
-							continue;
-						}
-					} catch (Exception $e) {
-						continue;
-					}
+					$this->o('no health status available');
+					continue;
 				}
 
 				$health = $stored->getHealth();
-				$this->o('  > Health status: ' . $this->outputService->displayHealth($stored));
-				if ($stored->getHealth()->getStatus() === RestoringHealth::STATUS_OK) {
+
+//				} else {
+//					try {
+//						$this->o('  > <comment>no health status attached</comment>');
+//						$this->o('  * Requesting detailed Health status: ', false);
+//						try {
+//							$health = $this->remoteService->getCurrentHealth($remote, $point);
+//							$this->o('<info>ok</info>');
+//						} catch (Exception $e) {
+//							$this->o('<error>' . $e->getMessage() . '</error>');
+//							continue;
+//						}
+//					} catch (Exception $e) {
+//						continue;
+//					}
+//				}
+
+				$this->o('  > Health status: ' . $this->outputService->displayHealth($health));
+				if ($health->getStatus() === RestoringHealth::STATUS_OK) {
 					continue;
 				}
 
 				$this->uploadMissingFilesToRemoteInstance($remote->getInstance(), $point, $health);
-				$this->remoteService->getRestoringPoint($remote->getInstance(), $stored->getId(), true);
+				$this->remoteService->getRestoringPoint($remote->getInstance(), $point->getId(), true);
+			} catch (RestoringChunkPartNotFoundException $e) {
+				try {
+//					$this->remoteService->deletePointExternal($remote, $point->getId());
+					$this->o('<error>package is out of sync</error>');
+				} catch (Exception $e) {
+					$this->o('<error>cannot delete out of sync package</error>');
+				}
 			} catch (Exception $e) {
-				continue;
 			}
 		}
 	}
@@ -260,33 +281,49 @@ class UploadService {
 
 				$stored = $this->externalFolderService->confirmPoint($external, $point);
 
+				// TODO: get fresh health
 				if (!$stored->hasHealth()) {
-					try {
-						$this->o('  > <comment>no health status attached</comment>');
-						$this->o('  * Requesting detailed Health status: ', false);
-						try {
-							$stored = $this->externalFolderService->getCurrentHealth($external, $point);
-							$this->o('<info>ok</info>');
-						} catch (Exception $e) {
-							$this->o('<error>' . $e->getMessage() . '</error>');
-							continue;
-						}
-
-					} catch (Exception $e) {
-						continue;
-					}
-				}
-
-				$this->o('  > Health status: ' . $this->outputService->displayHealth($stored));
-				if ($stored->getHealth()->getStatus() === RestoringHealth::STATUS_OK) {
+					$this->o('no health status available');
 					continue;
 				}
 
-				$this->uploadMissingFilesToExternalFolder($external, $stored);
-				$this->externalFolderService->getRestoringPoint($external, $stored->getId(), true);
+				$health = $stored->getHealth();
+//			} else {
+//					try {
+//						$this->o('  > <comment>no health status attached</comment>');
+//						$this->o('  * Requesting detailed Health status: ', false);
+//						try {
+//							$health = $this->externalFolderService->getCurrentHealth($external, $point);
+//							$this->o('<info>ok</info>');
+//						} catch (Exception $e) {
+//							$this->o('<error>' . $e->getMessage() . '</error>');
+//							continue;
+//						}
+//					} catch (Exception $e) {
+//						continue;
+//					}
+//				}
 
+				$this->o('  > Health status: ' . $this->outputService->displayHealth($health));
+				if ($health->getStatus() === RestoringHealth::STATUS_OK) {
+					continue;
+				}
+
+				$this->uploadMissingFilesToExternalFolder($external, $point, $health);
+				$this->externalFolderService->getRestoringPoint($external, $point->getId(), true);
+
+			} catch (RestoringChunkPartNotFoundException $e) {
+				try {
+					$this->externalFolderService->deletePointExternal($external, $point->getId());
+					$this->o('<error>package is out of sync</error>');
+				} catch (Exception $e) {
+					$this->o('<error>cannot delete out of sync package</error>');
+				}
 			} catch (Exception $e) {
-				$this->o(' ! issue while checking external folder: <error>' . get_class($e) . ' ' . $e->getMessage() . '</error>');
+				$this->o(
+					' ! issue while checking external folder: <error>' . get_class($e) .
+					' ' . $e->getMessage() . '</error>'
+				);
 				continue;
 			}
 		}
@@ -296,16 +333,18 @@ class UploadService {
 	/**
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
+	 * @param RestoringHealth $health
 	 *
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws RestoringChunkPartNotFoundException
 	 */
 	private function uploadMissingFilesToExternalFolder(
 		ExternalFolder $external,
-		RestoringPoint $point
+		RestoringPoint $point,
+		RestoringHealth $health
 	): void {
 		$this->pointService->initBaseFolder($point);
-		$health = $point->getHealth();
 		foreach ($health->getParts() as $partHealth) {
 			if ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) {
 				continue;
@@ -326,13 +365,17 @@ class UploadService {
 				$part = clone $this->packService->getPartFromChunk($chunk, $partHealth->getPartName());
 				$this->packService->getChunkPartContent($point, $chunk, $part);
 
-				$this->externalFolderService->uploadPart($external, $point, $chunk, $part);
+				$this->externalFolderService->uploadPart($external, $point, $health, $chunk, $part);
 				$this->o('<info>ok</info>');
 			} catch (
 			RestoringChunkNotFoundException |
-			RestoringChunkPartNotFoundException |
-			Exception |
-			RestoringPointNotInitiatedException $e) {
+			RestoringPointNotInitiatedException |
+			RestoringPointException |
+			RestoringPointNotFoundException |
+			ExternalFolderNotFoundException |
+			GenericFileException |
+			NotPermittedException |
+			LockedException $e) {
 				$this->o('<error>' . get_class($e) . $e->getMessage() . '</error>');
 			}
 		}

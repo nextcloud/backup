@@ -116,9 +116,17 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			);
 			$table->addColumn(
 				'archive', 'integer', [
+							 'unsigned' => true,
 							 'notnull' => true,
 							 'length' => 1,
 						 ]
+			);
+			$table->addColumn(
+				'lock', 'integer', [
+						  'notnull' => true,
+						  'unsigned' => true,
+						  'length' => 11,
+					  ]
 			);
 			$table->addColumn(
 				'instance', 'string', [
@@ -141,8 +149,8 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			);
 			$table->addColumn(
 				'notes', 'text', [
-				'notnull' => true
-			]
+						   'notnull' => true
+					   ]
 			);
 			$table->addColumn(
 				'metadata', 'text', [

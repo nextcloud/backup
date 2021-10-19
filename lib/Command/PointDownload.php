@@ -207,7 +207,7 @@ class PointDownload extends Base {
 
 		$output->write('check health status: ');
 		$this->pointService->generateHealth($point);
-		$output->writeln($this->outputService->displayHealth($point));
+		$output->writeln($this->outputService->displayHealth($point->getHealth()));
 		$this->downloadMissingFiles($output, $remote, $external, $point);
 
 		return 0;

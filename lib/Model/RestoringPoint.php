@@ -104,6 +104,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/** @var bool */
 	private $archive = false;
 
+	/** @var int */
+	private $lock = 0;
+
 	/** @var ISimpleFolder */
 	private $baseFolder = null;
 
@@ -277,6 +280,32 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	 */
 	public function isArchive(): bool {
 		return $this->archive;
+	}
+
+
+	/**
+	 * @param int $lock
+	 *
+	 * @return RestoringPoint
+	 */
+	public function setLock(int $lock): self {
+		$this->lock = $lock;
+
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getLock(): int {
+		return $this->lock;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isLock(): bool {
+		return ($this->lock > 0);
 	}
 
 
@@ -603,6 +632,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			 ->setInstance($this->get('instance', $data))
 			 ->setParent($this->get('parent', $data))
 			 ->setArchive($this->getBool('archive', $data))
+			 ->setLock($this->getInt('lock', $data))
 			 ->setStatus($this->getInt('status', $data))
 			 ->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
 			 ->setDate($this->getInt('date', $data));

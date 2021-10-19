@@ -78,6 +78,7 @@ class CoreRequestBuilder {
 			'id',
 			'uid',
 			'archive',
+			'lock',
 			'instance',
 			'parent',
 			'status',

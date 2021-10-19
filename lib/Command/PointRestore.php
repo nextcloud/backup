@@ -192,7 +192,7 @@ class PointRestore extends Base {
 		$output->write('Checking Health status: ');
 		$this->pointService->generateHealth($point);
 
-		$output->writeln($this->outputService->displayHealth($point));
+		$output->writeln($this->outputService->displayHealth($point->getHealth()));
 		$output->writeln('');
 
 		$healthStatus = $point->getHealth()->getStatus();

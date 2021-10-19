@@ -32,15 +32,18 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Service\RemoteStreamService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 
 /**
@@ -57,18 +60,27 @@ class PointUnpack extends Base {
 	/** @var PackService */
 	private $packService;
 
+	/** @var RemoteStreamService */
+	private $remoteStreamService;
+
 
 	/**
 	 * PointUnpack constructor.
 	 *
 	 * @param PointService $pointService
 	 * @param PackService $packService
+	 * @param RemoteStreamService $remoteStreamService
 	 */
-	public function __construct(PointService $pointService, PackService $packService) {
+	public function __construct(
+		PointService $pointService,
+		PackService $packService,
+		RemoteStreamService $remoteStreamService
+	) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
 		$this->packService = $packService;
+		$this->remoteStreamService = $remoteStreamService;
 	}
 
 
@@ -89,15 +101,24 @@ class PointUnpack extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws RestoringPointNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws RestoringPointNotFoundException
+	 * @throws SignatoryException
+	 * @throws Throwable
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
 
 		$this->pointService->initBaseFolder($point);
 		$this->packService->unpackPoint($point);
+
+
+		// set Archive flag up after unpack
+		$point->setArchive(true);
+
+		$this->remoteStreamService->subSignPoint($point);
+		$this->pointService->updateSubInfos($point);
 
 		return 0;
 	}

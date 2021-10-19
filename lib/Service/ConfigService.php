@@ -35,7 +35,10 @@ namespace OCA\Backup\Service;
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Request;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use Exception;
+use OC;
 use OCA\Backup\AppInfo\Application;
+use OCA\Files_External\Service\GlobalStoragesService;
 use OCP\IConfig;
 
 
@@ -104,6 +107,9 @@ class ConfigService {
 
 	/** @var IConfig */
 	private $config;
+
+	/** @var int */
+	private $externalEnabled = -1;
 
 
 	/**
@@ -272,9 +278,30 @@ class ConfigService {
 	}
 
 
+	/**
+	 * @return bool
+	 */
 	public function isRemoteEnabled(): bool {
 		return $this->getAppValueBool(self::REMOTE_ENABLED);
 	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isExternalEnabled(): bool {
+		if ($this->externalEnabled === -1) {
+			try {
+				OC::$server->get(GlobalStoragesService::class);
+				$this->externalEnabled = 0;
+			} catch (Exception $e) {
+				$this->externalEnabled = 1;
+			}
+		}
+
+		return ($this->externalEnabled === 1);
+	}
+
 
 	/**
 	 * @return array
