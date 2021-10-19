@@ -35,9 +35,6 @@ namespace OCA\Backup\Command;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\ExternalFolderRequest;
 use OCA\Backup\Model\ExternalFolder;
-use OCA\Files_External\Service\GlobalStoragesService;
-use OCA\Files_External\Service\UserStoragesService;
-use OCP\Files\Mount\IMountManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,15 +48,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ExternalAdd extends Base {
 
 
-	/** @var IMountManager */
-	private $mountManager;
-
-	/** @var GlobalStoragesService */
-	private $globalStoragesService;
-
-	/** @var UserStoragesService */
-	private $userStoragesService;
-
 	/** @var ExternalFolderRequest */
 	private $externalFolderRequest;
 
@@ -67,22 +55,11 @@ class ExternalAdd extends Base {
 	/**
 	 * ExternalAdd constructor.
 	 *
-	 * @param GlobalStoragesService $globalStoragesService
-	 * @param UserStoragesService $userStoragesService
 	 * @param ExternalFolderRequest $externalFolderRequest
 	 */
-	public function __construct(
-		IMountManager $mountManager,
-		GlobalStoragesService $globalStoragesService,
-		UserStoragesService $userStoragesService,
-		ExternalFolderRequest $externalFolderRequest
-	) {
+	public function __construct(ExternalFolderRequest $externalFolderRequest) {
 		parent::__construct();
 
-
-		$this->mountManager = $mountManager;
-		$this->globalStoragesService = $globalStoragesService;
-		$this->userStoragesService = $userStoragesService;
 		$this->externalFolderRequest = $externalFolderRequest;
 	}
 
