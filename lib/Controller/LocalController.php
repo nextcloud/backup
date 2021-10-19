@@ -185,8 +185,8 @@ class LocalController extends OcsController {
 				);
 			}
 		}
-
-		return new DataResponse($settings);
+		
+		return new DataResponse(array_merge($settings, $this->cronService->nextBackups()));
 	}
 
 
