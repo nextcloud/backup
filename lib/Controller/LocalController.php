@@ -136,7 +136,7 @@ class LocalController extends OcsController {
 				return $this->initActionScanLocalFolder((int)$param);
 
 			case 'backup':
-				if ($param === 'complete') {
+				if ($param === 'full') {
 					return $this->initActionForceFullBackup();
 				} else if ($param === 'partial') {
 					return $this->initActionForceIncrementalBackup();
