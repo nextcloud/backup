@@ -156,6 +156,7 @@ class LocalController extends OcsController {
 		return new DataResponse($points);
 	}
 
+
 	/**
 	 * @return DataResponse
 	 */

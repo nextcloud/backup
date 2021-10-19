@@ -32,8 +32,9 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 
+use Exception;
 use OC\Core\Command\Base;
-use OCA\Backup\Db\ExternalFolderRequest;
+use OCA\Backup\Service\ExternalFolderService;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -48,17 +49,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ExternalList extends Base {
 
 
-	/** @var ExternalFolderRequest */
-	private $externalFolderRequest;
+	/** @var ExternalFolderService */
+	private $externalFolderService;
 
 
 	/**
 	 * ExternalList constructor.
 	 *
-	 * @param ExternalFolderRequest $externalFolderRequest
+	 * @param ExternalFolderService $externalFolderService
 	 */
-	public function __construct(ExternalFolderRequest $externalFolderRequest) {
-		$this->externalFolderRequest = $externalFolderRequest;
+	public function __construct(ExternalFolderService $externalFolderService) {
+		$this->externalFolderService = $externalFolderService;
 
 		parent::__construct();
 	}
@@ -83,13 +84,21 @@ class ExternalList extends Base {
 		$output = new ConsoleOutput();
 		$output = $output->section();
 		$table = new Table($output);
-		$table->setHeaders(['StorageId', 'Storage Folder']);
+		$table->setHeaders(['StorageId', 'Path', 'Storage Folder']);
 		$table->render();
 
-		foreach ($this->externalFolderRequest->getAll() as $externalFolder) {
+		foreach ($this->externalFolderService->getAll() as $externalFolder) {
+			$storagePath = '';
+			try {
+				$storage = $this->externalFolderService->getStorageById($externalFolder->getStorageId());
+				$storagePath = $storage->getStorage();
+			} catch (Exception $e) {
+			}
+
 			$table->appendRow(
 				[
 					$externalFolder->getStorageId(),
+					$storagePath,
 					$externalFolder->getRoot()
 				]
 			);

@@ -849,6 +849,24 @@ class ExternalFolderService {
 		return $externals;
 	}
 
+	/**
+	 * @param int $storageId
+	 *
+	 * @return ExternalFolder
+	 * @throws InsufficientDataForMeaningfulAnswerException
+	 * @throws StorageNotAvailableException
+	 * @throws ExternalFolderNotFoundException
+	 */
+	public function getStorageById(int $storageId): ExternalFolder {
+		foreach ($this->getStorages() as $external) {
+			if ($external->getStorageId() === $storageId) {
+				return $external;
+			}
+		}
+
+		throw new ExternalFolderNotFoundException();
+	}
+
 
 	/**
 	 * Construct the storage implementation
