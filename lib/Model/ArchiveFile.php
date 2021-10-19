@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -30,10 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
-
 
 /**
  * Class ArchiveFile
@@ -41,8 +40,6 @@ use JsonSerializable;
  * @package OCA\Backup\Model
  */
 class ArchiveFile implements JsonSerializable {
-
-
 	use TArrayTools;
 
 
@@ -147,6 +144,4 @@ class ArchiveFile implements JsonSerializable {
 				'filesize' => $this->getFilesize()
 			];
 	}
-
 }
-

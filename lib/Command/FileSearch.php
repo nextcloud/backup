@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
@@ -48,15 +47,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * Class NodeSearch
  *
  * @package OCA\Backup\Command
  */
 class FileSearch extends Base {
-
-
 	use TArrayTools;
 	use TStringTools;
 
@@ -153,8 +149,7 @@ class FileSearch extends Base {
 							$progressBar->setProgress(0);
 						}
 						$output->writeln('');
-					} catch
-					(ArchiveCreateException
+					} catch (ArchiveCreateException
 					| ArchiveNotFoundException
 					| NotFoundException
 					| NotPermittedException $e) {
@@ -176,6 +171,4 @@ class FileSearch extends Base {
 
 		return 0;
 	}
-
 }
-

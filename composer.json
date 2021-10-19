@@ -2,16 +2,24 @@
   "name": "nextcloud/backup",
   "description": "Backup app",
   "minimum-stability": "stable",
-  "license": "AGPL-3.0-or-later",
+  "license": "agpl",
+  "config": {
+    "optimize-autoloader": true,
+    "classmap-authoritative": true,
+    "autoloader-suffix": "Backup",
+    "platform": {
+      "php": "7.4"
+    }
+  },
   "authors": [
     {
       "name": "Maxence Lange",
       "email": "maxence@artificial-owl.com"
     }
   ],
-  "config": {
-    "platform": {
-      "php": "7.2.0"
+  "autoload": {
+    "psr-4": {
+      "OCA\\Backup\\": "lib/"
     }
   },
   "require": {
@@ -19,5 +27,14 @@
     "ifsnop/mysqldump-php": "2.9",
     "spatie/db-dumper": "2.21.0",
     "pimple/pimple": "~3.0"
+  },
+  "scripts": {
+    "cs:check": "php-cs-fixer fix --dry-run --diff",
+    "cs:fix": "php-cs-fixer fix",
+    "lint": "find . -name \\*.php -not -path './vendor/*' -print0 | xargs -0 -n1 php -l"
+  },
+  "require-dev": {
+    "nextcloud/coding-standard": "^0.5.0",
+    "phpunit/phpunit": "^9.5"
   }
 }

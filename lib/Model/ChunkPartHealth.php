@@ -31,11 +31,9 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
-
 
 /**
  * Class ChunkPartHealth
@@ -43,15 +41,13 @@ use JsonSerializable;
  * @package OCA\Backup\Model
  */
 class ChunkPartHealth implements IDeserializable, JsonSerializable {
-
-
 	use TArrayTools;
 
 
-	const STATUS_UNKNOWN = 0;
-	const STATUS_OK = 1;
-	const STATUS_MISSING = 2;
-	const STATUS_CHECKSUM = 3;
+	public const STATUS_UNKNOWN = 0;
+	public const STATUS_OK = 1;
+	public const STATUS_MISSING = 2;
+	public const STATUS_CHECKSUM = 3;
 
 
 	public static $DEF_STATUS = [
@@ -210,6 +206,4 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 			'status' => $this->getStatus()
 		];
 	}
-
 }
-

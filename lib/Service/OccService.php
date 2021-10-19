@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Exceptions\MetadataException;
@@ -47,7 +46,6 @@ use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputInterface;
-
 
 /**
  * Class OccService
@@ -172,5 +170,4 @@ class OccService {
 
 		$this->pointService->updateSubInfos($point);
 	}
-
 }

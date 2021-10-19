@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
@@ -65,15 +64,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-
 /**
  * Class PointRestore
  *
  * @package OCA\Backup\Command
  */
 class PointRestore extends Base {
-
-
 	use TStringTools;
 	use TArrayTools;
 
@@ -418,5 +414,4 @@ class PointRestore extends Base {
 			$this->output->writeln('<error>' . $e->getMessage() . '</error>');
 		}
 	}
-
 }

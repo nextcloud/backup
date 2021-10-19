@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Model\ExternalFolder;
 
@@ -102,6 +101,4 @@ class ExternalFolderRequest extends ExternalFolderRequestBuilder {
 
 		return $this->getItemFromRequest($qb);
 	}
-
 }
-

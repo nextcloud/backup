@@ -31,11 +31,9 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceUidException;
 use OCA\Backup\Model\RemoteInstance;
-
 
 /**
  * Class RemoteRequest
@@ -161,6 +159,4 @@ class RemoteRequest extends RemoteRequestBuilder {
 
 		$qb->execute();
 	}
-
 }
-

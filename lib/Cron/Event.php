@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Cron;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Db\EventRequest;
@@ -40,15 +39,12 @@ use OCA\Backup\Model\BackupEvent;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\FilesService;
 
-
 /**
  * Class Event
  *
  * @package OCA\Backup\Cron
  */
 class Event extends TimedJob {
-
-
 	use TArrayTools;
 
 
@@ -108,17 +104,17 @@ class Event extends TimedJob {
 		}
 
 
-////		$scan = $this->pointService->scanPoint($pointId);
+		////		$scan = $this->pointService->scanPoint($pointId);
 //
 //		$point = new RestoringPoint();
 //		$point->setId($pointId);
-////			$this->scanBaseFolder($point);
+		////			$this->scanBaseFolder($point);
 //
 //
 //		$point = $this->pointService->generatePointFromBackupFS($pointId);
 //		// TODO: display info about the RP and ask for a confirmation before saving into database
 //
-////		echo json_encode($point) . "\n";
+		////		echo json_encode($point) . "\n";
 //		$this->pointRequest->save($point);
 
 

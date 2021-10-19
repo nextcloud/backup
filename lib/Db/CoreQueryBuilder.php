@@ -33,7 +33,6 @@ namespace OCA\Backup\Db;
 
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\NC23ExtendedQueryBuilder;
 
-
 /**
  * Class CoreQueryBuilder
  *
@@ -82,5 +81,4 @@ class CoreQueryBuilder extends NC23ExtendedQueryBuilder {
 	public function limitToParent(string $parent): void {
 		$this->limit('parent', $parent);
 	}
-
 }

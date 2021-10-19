@@ -31,9 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Exceptions;
 
-
 use Exception;
-
 
 /**
  * Class EncryptException
@@ -41,6 +39,4 @@ use Exception;
  * @package OCA\Backup\Exceptions
  */
 class EncryptException extends Exception {
-
 }
-

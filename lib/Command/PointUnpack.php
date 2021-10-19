@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
@@ -44,7 +43,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
-
 
 /**
  * Class PointUnpack
@@ -122,6 +120,4 @@ class PointUnpack extends Base {
 
 		return 0;
 	}
-
 }
-

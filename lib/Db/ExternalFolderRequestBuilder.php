@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Model\ExternalFolder;
-
 
 /**
  * Class ExternalFolderRequestBuilder
@@ -45,8 +43,6 @@ use OCA\Backup\Model\ExternalFolder;
  * @package OCA\Backup\Db
  */
 class ExternalFolderRequestBuilder extends CoreRequestBuilder {
-
-
 	use TArrayTools;
 
 
@@ -124,5 +120,4 @@ class ExternalFolderRequestBuilder extends CoreRequestBuilder {
 		/** @var ExternalFolder[] $result */
 		return $qb->asItems(ExternalFolder::class);
 	}
-
 }

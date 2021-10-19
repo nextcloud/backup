@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -30,10 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
-
 
 /**
  * Class BackupsRequest
@@ -183,6 +182,4 @@ class PointRequest extends PointRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
-
 }
-

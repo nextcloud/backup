@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
@@ -49,13 +48,11 @@ use OCA\Backup\Model\RemoteInstance;
  * @package OCA\Backup\Service
  */
 class CronService {
-
-
 	use TArrayTools;
 
 
-	const MARGIN = 1800;
-	const HOURS_FOR_NEXT = 4000;
+	public const MARGIN = 1800;
+	public const HOURS_FOR_NEXT = 4000;
 
 
 	/** @var PointService */
@@ -120,7 +117,7 @@ class CronService {
 				}
 				if ($fullETA === -1 && $this->verifyFullBackup($time)) {
 					$fullETA = $time;
-				} else if ($partialETA === -1
+				} elseif ($partialETA === -1
 						   && $this->verifyIncrementalBackup($time)
 						   && ($this->configService->getAppValueInt(ConfigService::DATE_FULL_RP) > 0
 							   || $fullETA > 0)) { // we check that the incremental backup can have a parent
@@ -138,7 +135,6 @@ class CronService {
 			'partial' => $partialETA,
 			'full' => $fullETA
 		];
-
 	}
 
 
@@ -261,9 +257,9 @@ class CronService {
 	): array {
 		if ($local) {
 			$instances = [RemoteInstance::LOCAL];
-		} else if ($remote !== '') {
+		} elseif ($remote !== '') {
 			$instances = ['remote:' . $remote];
-		} else if ($external !== '') {
+		} elseif ($external !== '') {
 			$instances = ['external:' . $external];
 		} else {
 			$instances = array_merge(
@@ -290,11 +286,10 @@ class CronService {
 				if ($instance === RemoteInstance::LOCAL) {
 					$list = $this->pointService->getLocalRestoringPoints();
 				} else {
-
 					[$source, $id] = explode(':', $instance, 2);
 					if ($source === 'remote') {
 						$list = $this->remoteService->getRestoringPoints($id);
-					} else if ($source === 'external') {
+					} elseif ($source === 'external') {
 						try {
 							$external = $this->externalFolderService->getByStorageId((int)$id);
 							$list = $this->externalFolderService->getRestoringPoints($external);
@@ -368,6 +363,4 @@ class CronService {
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
 	}
-
 }
-

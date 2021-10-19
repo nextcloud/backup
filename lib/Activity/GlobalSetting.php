@@ -37,7 +37,6 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserSession;
 
-
 /**
  * Class Settings
  *
@@ -136,7 +135,6 @@ class GlobalSetting extends ActivitySettings {
 		$user = $this->userSession->getUser();
 
 		return $this->groupManager->isAdmin($user->getUID());
-
 	}
 
 	/**

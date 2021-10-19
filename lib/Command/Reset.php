@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use OC\Core\Command\Base;
 use OCA\Backup\Db\CoreRequestBuilder;
 use OCA\Backup\Service\ConfigService;
@@ -43,7 +42,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-
 
 /**
  * Class Reset
@@ -152,5 +150,4 @@ class Reset extends Base {
 
 		return 0;
 	}
-
 }

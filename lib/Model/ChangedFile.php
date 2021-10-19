@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -30,11 +31,9 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
-
 
 /**
  * Class ChangedFile
@@ -42,8 +41,6 @@ use JsonSerializable;
  * @package OCA\Backup\Model
  */
 class ChangedFile implements INC23QueryRow, JsonSerializable {
-
-
 	use TArrayTools;
 
 
@@ -126,5 +123,4 @@ class ChangedFile implements INC23QueryRow, JsonSerializable {
 			'hash' => $this->getHash()
 		];
 	}
-
 }

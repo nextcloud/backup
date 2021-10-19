@@ -31,14 +31,12 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use OC\Core\Command\Base;
 use OCA\Backup\Db\ExternalFolderRequest;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class ExternalRemove
@@ -95,5 +93,4 @@ class ExternalRemove extends Base {
 
 		return 0;
 	}
-
 }

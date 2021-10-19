@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -30,18 +31,16 @@ declare(strict_types=1);
 
 namespace OCA\Backup;
 
-
 interface ISqlDump {
+	public const MYSQL = 'mysql';
+	public const PGSQL = 'pgsql';
 
-	const MYSQL = 'mysql';
-	const PGSQL = 'pgsql';
-
-	const DB_TYPE = 'dbtype';
-	const DB_NAME = 'dbname';
-	const DB_HOST = 'dbhost';
-	const DB_PORT = 'dbport';
-	const DB_USER = 'dbuser';
-	const DB_PASS = 'dbpassword';
+	public const DB_TYPE = 'dbtype';
+	public const DB_NAME = 'dbname';
+	public const DB_HOST = 'dbhost';
+	public const DB_PORT = 'dbport';
+	public const DB_USER = 'dbuser';
+	public const DB_PASS = 'dbpassword';
 
 
 	/**
@@ -60,6 +59,4 @@ interface ISqlDump {
 	 * @return bool
 	 */
 	public function import(array $data, $read): bool;
-
 }
-

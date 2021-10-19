@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Cron;
 
-
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Service\ConfigService;
@@ -41,7 +40,6 @@ use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\UploadService;
 use Throwable;
-
 
 /**
  * Class Manage
@@ -148,5 +146,4 @@ class Manage extends TimedJob {
 			}
 		}
 	}
-
 }

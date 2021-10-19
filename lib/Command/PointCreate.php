@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
@@ -46,7 +45,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
-
 
 /**
  * Class PointCreate
@@ -117,6 +115,4 @@ class PointCreate extends Base {
 
 		return 0;
 	}
-
 }
-

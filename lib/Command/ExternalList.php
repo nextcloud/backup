@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Service\ExternalFolderService;
@@ -39,7 +38,6 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class ExternalList
@@ -106,5 +104,4 @@ class ExternalList extends Base {
 
 		return 0;
 	}
-
 }

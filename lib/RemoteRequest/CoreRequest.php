@@ -31,10 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\RemoteRequest;
 
-
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
-
 
 /**
  * Class RemoteRequest
@@ -98,5 +96,4 @@ class CoreRequest {
 	public function getOutcome(): array {
 		return $this->outcome;
 	}
-
 }

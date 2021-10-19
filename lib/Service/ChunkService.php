@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -30,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
@@ -56,22 +56,19 @@ use ZipArchive;
 use ZipStreamer\COMPR;
 use ZipStreamer\ZipStreamer;
 
-
 /**
  * Class ChunkService
  *
  * @package OCA\Backup\Service
  */
 class ChunkService {
-
-
 	use TArrayTools;
 	use TStringTools;
 	use TFileTools;
 
 
-	const BACKUP_SCRIPT = 'restore.php';
-	const APP_ZIP = 'app.zip';
+	public const BACKUP_SCRIPT = 'restore.php';
+	public const APP_ZIP = 'app.zip';
 
 	/** @var FilesService */
 	private $filesService;
@@ -956,5 +953,4 @@ class ChunkService {
 
 		return $folder;
 	}
-
 }

@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
@@ -54,21 +53,18 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Lock\LockedException;
 
-
 /**
  * Class UploadService
  *
  * @package OCA\Backup\Service
  */
 class UploadService {
-
-
 	use TStringTools;
 	use TNC23Logger;
 
 
-	const PACK_SIZE = 1000000;
-	const CHUNK_ENTRY = 'pack';
+	public const PACK_SIZE = 1000000;
+	public const CHUNK_ENTRY = 'pack';
 
 
 	/** @var PointService */
@@ -311,7 +307,6 @@ class UploadService {
 
 				$this->uploadMissingFilesToExternalFolder($external, $point, $health);
 				$this->externalFolderService->getRestoringPoint($external, $point->getId(), true);
-
 			} catch (RestoringChunkPartNotFoundException $e) {
 				try {
 					$this->externalFolderService->deletePointExternal($external, $point->getId());
@@ -389,5 +384,4 @@ class UploadService {
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
 	}
-
 }

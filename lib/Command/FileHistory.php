@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
@@ -45,7 +44,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class NodeHistory
@@ -142,6 +140,4 @@ class FileHistory extends Base {
 
 		return 0;
 	}
-
 }
-

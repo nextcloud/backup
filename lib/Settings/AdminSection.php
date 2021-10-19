@@ -31,12 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Settings;
 
-
 use OCA\Backup\AppInfo\Application;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
-
 
 /**
  * Class AdminSection
@@ -89,5 +87,4 @@ class AdminSection implements IIconSection {
 	public function getIcon(): string {
 		return '';
 	}
-
 }

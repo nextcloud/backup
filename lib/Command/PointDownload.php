@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use OC\Core\Command\Base;
@@ -64,7 +63,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class PointDownload
@@ -297,7 +295,7 @@ class PointDownload extends Base {
 
 			if (!is_null($remote)) {
 				$this->remoteService->downloadPart($remote, $point, $chunk, $part);
-			} else if ($external > 0) {
+			} elseif ($external > 0) {
 				$externalFolder = $this->externalFolderService->getByStorageId($external);
 				$this->externalFolderService->downloadPart(
 					$externalFolder,
@@ -350,5 +348,4 @@ class PointDownload extends Base {
 
 		throw new InvalidOptionException('use --remote or --external');
 	}
-
 }

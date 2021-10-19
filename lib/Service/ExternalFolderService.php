@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
@@ -69,15 +68,12 @@ use OCP\Files\Storage\IStorage;
 use OCP\Files\StorageNotAvailableException;
 use OCP\Lock\LockedException;
 
-
 /**
  * Class ExternalFolderService
  *
  * @package OCA\Backup\Service
  */
 class ExternalFolderService {
-
-
 	use TNC23Deserialize;
 	use TNC23Logger;
 	use TFileTools;
@@ -383,13 +379,15 @@ class ExternalFolderService {
 //			throw $e;
 		} catch (RestoringPointNotFoundException $e) {
 			$this->o('  > <comment>restoring point not found</comment>');
-//			try {
-			$stored = $this->createPoint($folder, $point);
-			$this->o('  > restoring point created');
-//			} catch (Exception $e) {
-//				$this->o('  ! <error>cannot create restoring point</error>');
-//				throw $e;
-//			}
+			try {
+				$this->createPoint($folder, $point);
+				$this->o('  > restoring point created');
+				$this->o('  * initiating health check');
+				$stored = $this->getRestoringPoint($folder, $point->getId(), true);
+			} catch (Exception $e) {
+				$this->o('  ! <error>cannot create restoring point</error>');
+				throw $e;
+			}
 		}
 
 		return $stored;
@@ -456,21 +454,6 @@ class ExternalFolderService {
 			} catch (InvalidItemException $e) {
 				throw new RestoringPointNotFoundException('restoring point not created');
 			}
-
-//			$result = $this->remoteStreamService->resultRequestRemoteInstance(
-//				$remote->getInstance(),
-//				RemoteInstance::RP_CREATE,
-//				Request::TYPE_PUT,
-//				$point
-//			);
-//
-//			/** @var RestoringPoint $stored */
-//			try {
-//				$stored = $this->deserialize($result, RestoringPoint::class);
-//			} catch (InvalidItemException $e) {
-//				throw new RestoringPointNotFoundException('restoring point not created');
-//			}
-
 		} catch (NotPermittedException
 		| RestoringPointNotFoundException $e) {
 			$this->o('<error>' . $e->getMessage() . '</error>');
@@ -523,6 +506,7 @@ class ExternalFolderService {
 	 * @throws NotPermittedException
 	 * @throws RestoringPointException
 	 * @throws RestoringPointNotFoundException
+	 * @throws NotFoundException
 	 */
 	public function updateMetadataFile(
 		ExternalFolder $external,
@@ -536,7 +520,8 @@ class ExternalFolderService {
 			if (!$create) {
 				throw new MetadataException('metadata file not found');
 			}
-			$metadataFile = $folder->newFile(MetadataService::METADATA_FILE);
+
+			$metadataFile = $folder->newFile(MetadataService::METADATA_FILE, '');
 		}
 
 		try {
@@ -754,6 +739,7 @@ class ExternalFolderService {
 			if (!$create) {
 				throw new RestoringPointNotFoundException();
 			}
+
 			$node = $folder->newFolder($pointId);
 			$node->newFile(PointService::NOBACKUP_FILE);
 		}
@@ -910,5 +896,4 @@ class ExternalFolderService {
 	public function remove(int $storageId) {
 		$this->externalFolderRequest->remove($storageId);
 	}
-
 }

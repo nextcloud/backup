@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
@@ -52,7 +51,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class PointUnarchive
@@ -98,7 +96,6 @@ class PointUnarchive extends Base {
 			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
 			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder')
 			 ->addOption('all-storage', '', InputOption::VALUE_NONE, 'duplicate action on all storages');
-
 	}
 
 
@@ -132,7 +129,4 @@ class PointUnarchive extends Base {
 
 		return 0;
 	}
-
-
 }
-

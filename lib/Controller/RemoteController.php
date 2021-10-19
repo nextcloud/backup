@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Controller;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidOriginException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\JsonNotRequestedException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\MalformedArrayException;
@@ -62,15 +61,12 @@ use OCP\IRequest;
 use ReflectionClass;
 use ReflectionException;
 
-
 /**
  * Class RemoteController
  *
  * @package OCA\Backup\Controller
  */
 class RemoteController extends Controller {
-
-
 	use TNC23Controller;
 	use TNC23Logger;
 
@@ -417,4 +413,3 @@ class RemoteController extends Controller {
 		);
 	}
 }
-

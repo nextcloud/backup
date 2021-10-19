@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
-
 
 /**
  * Class BackupEvent
@@ -45,13 +43,11 @@ use JsonSerializable;
  * @package OCA\Backup\Model
  */
 class BackupEvent implements JsonSerializable, INC23QueryRow, IDeserializable {
-
-
 	use TArrayTools;
 	use TStringTools;
 
-	const STATUS_QUEUE = 0;
-	const STATUS_DONE = 1;
+	public const STATUS_QUEUE = 0;
+	public const STATUS_DONE = 1;
 
 
 	/** @var int */
@@ -241,6 +237,4 @@ class BackupEvent implements JsonSerializable, INC23QueryRow, IDeserializable {
 			'result' => $this->getResult()
 		];
 	}
-
 }
-

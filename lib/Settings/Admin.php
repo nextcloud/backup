@@ -31,12 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Settings;
 
-
 use Exception;
 use OCA\Backup\AppInfo\Application;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Settings\ISettings;
-
 
 /**
  * Class Admin
@@ -76,5 +74,4 @@ class Admin implements ISettings {
 	public function getPriority(): int {
 		return 20;
 	}
-
 }

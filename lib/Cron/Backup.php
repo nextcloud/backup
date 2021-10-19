@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Cron;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Service\ConfigService;
@@ -39,15 +38,12 @@ use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\PointService;
 use Throwable;
 
-
 /**
  * Class Backup
  *
  * @package OCA\Backup\Cron
  */
 class Backup extends TimedJob {
-
-
 	use TNC23Logger;
 
 
@@ -107,7 +103,7 @@ class Backup extends TimedJob {
 	private function runBackup(int $time): void {
 		if ($this->cronService->verifyFullBackup($time)) {
 			$this->runFullBackup();
-		} else if ($this->cronService->verifyIncrementalBackup($time)) {
+		} elseif ($this->cronService->verifyIncrementalBackup($time)) {
 			$this->runIncrementalBackup();
 		}
 	}
@@ -130,6 +126,4 @@ class Backup extends TimedJob {
 		} catch (Throwable $e) {
 		}
 	}
-
-
 }

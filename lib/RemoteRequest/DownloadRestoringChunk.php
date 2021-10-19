@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\RemoteRequest;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
@@ -48,15 +47,12 @@ use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 
-
 /**
  * Class DownloadRestoringChunk
  *
  * @package OCA\Backup\RemoteRequest
  */
 class DownloadRestoringChunk extends CoreRequest implements IRemoteRequest {
-
-
 	use TNC23Deserialize;
 	use TNC23Logger;
 
@@ -113,7 +109,6 @@ class DownloadRestoringChunk extends CoreRequest implements IRemoteRequest {
 			$this->packService->getChunkPartContent($point, $chunk, $part);
 
 			$this->setOutcome($this->serialize($part));
-
 		} catch (RestoringPointNotFoundException
 		| InvalidItemException
 		| NotFoundException
@@ -130,5 +125,4 @@ class DownloadRestoringChunk extends CoreRequest implements IRemoteRequest {
 	public function import(array $data): IDeserializable {
 		return $this;
 	}
-
 }

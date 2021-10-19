@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Request;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
@@ -41,40 +40,37 @@ use OCA\Backup\AppInfo\Application;
 use OCA\Files_External\Service\GlobalStoragesService;
 use OCP\IConfig;
 
-
 class ConfigService {
-
-
 	use TArrayTools;
 
 
-	const MAINTENANCE = 'maintenance';
-	const DATA_DIRECTORY = 'datadirectory';
+	public const MAINTENANCE = 'maintenance';
+	public const DATA_DIRECTORY = 'datadirectory';
 
-	const LOCK = 'lock';
-	const REMOTE_ENABLED = 'remote_enabled';
-	const SELF_SIGNED_CERT = 'self_signed_cert';
-	const DELAY_FULL_RP = 'delay_full_rp';
-	const DELAY_PARTIAL_RP = 'delay_partial_rp';
-	const DELAY_UNIT = 'delay_unit';
-	const ALLOW_WEEKDAY = 'allow_weekday';
-	const DATE_FULL_RP = 'date_full_rp';
-	const DATE_PARTIAL_RP = 'date_partial_rp';
-	const LAST_FULL_RP = 'last_full_rp';
-	const LAST_PARTIAL_RP = 'last_partial_rp';
-	const PACK_BACKUP = 'pack_backup';
-	const BACKUP_DAYS = 'backup_days';
+	public const LOCK = 'lock';
+	public const REMOTE_ENABLED = 'remote_enabled';
+	public const SELF_SIGNED_CERT = 'self_signed_cert';
+	public const DELAY_FULL_RP = 'delay_full_rp';
+	public const DELAY_PARTIAL_RP = 'delay_partial_rp';
+	public const DELAY_UNIT = 'delay_unit';
+	public const ALLOW_WEEKDAY = 'allow_weekday';
+	public const DATE_FULL_RP = 'date_full_rp';
+	public const DATE_PARTIAL_RP = 'date_partial_rp';
+	public const LAST_FULL_RP = 'last_full_rp';
+	public const LAST_PARTIAL_RP = 'last_partial_rp';
+	public const PACK_BACKUP = 'pack_backup';
+	public const BACKUP_DAYS = 'backup_days';
 
-	const PACK_ENCRYPT = 'pack_encrypt';
-	const PACK_COMPRESS = 'pack_compress';
-	const PACK_INDEX = 'pack_index';
+	public const PACK_ENCRYPT = 'pack_encrypt';
+	public const PACK_COMPRESS = 'pack_compress';
+	public const PACK_INDEX = 'pack_index';
 
-	const ENCRYPTION_KEY = 'encryption_key';
-	const TIME_SLOTS = 'time_slots';
-	const MOCKUP_DATE = 'mockup_date';
+	public const ENCRYPTION_KEY = 'encryption_key';
+	public const TIME_SLOTS = 'time_slots';
+	public const MOCKUP_DATE = 'mockup_date';
 
-	const CHUNK_SIZE = 'chunk_size';
-	const CHUNK_PART_SIZE = 'chunk_part_size';
+	public const CHUNK_SIZE = 'chunk_size';
+	public const CHUNK_PART_SIZE = 'chunk_part_size';
 
 
 	/** @var array */
@@ -354,5 +350,4 @@ class ConfigService {
 
 		return $this->getSettings();
 	}
-
 }

@@ -31,9 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use OCA\Backup\Model\BackupEvent;
-
 
 /**
  * Class EventRequest
@@ -41,8 +39,6 @@ use OCA\Backup\Model\BackupEvent;
  * @package OCA\Backup\Db
  */
 class EventRequest extends EventRequestBuilder {
-
-
 	public function save(BackupEvent $event): void {
 		$qb = $this->getEventInsertSql();
 		$qb->setValue('type', $qb->createNamedParameter($event->getType()))
@@ -76,6 +72,4 @@ class EventRequest extends EventRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
-
 }
-

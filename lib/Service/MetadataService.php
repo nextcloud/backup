@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use OCA\Backup\Exceptions\MetadataException;
 use OCA\Backup\Model\RestoringPoint;
 use OCP\Files\NotFoundException;
@@ -43,9 +42,7 @@ use OCP\Files\NotPermittedException;
  * @package OCA\Backup\Service
  */
 class MetadataService {
-
-
-	const METADATA_FILE = 'restoring-point.data';
+	public const METADATA_FILE = 'restoring-point.data';
 
 	/** @var RemoteService */
 	private $remoteService;
@@ -97,6 +94,4 @@ class MetadataService {
 		$this->externalFolderService->updateMetadata($point);
 		$this->remoteService->updateMetadata($point);
 	}
-
 }
-

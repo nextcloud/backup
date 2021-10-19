@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
-
 
 /**
  * Class RestoringChunk
@@ -45,28 +43,26 @@ use JsonSerializable;
  * @package OCA\Backup\Model
  */
 class RestoringData implements IDeserializable, JsonSerializable {
-
-
 	use TArrayTools;
 	use TStringTools;
 	use TNC23Deserialize;
 
 
-	const INTERNAL_DATA = 0;
-	const ROOT_DISK = 1;
-	const ROOT_NEXTCLOUD = 2;
-	const ROOT_DATA = 3;
-	const ROOT_APPS = 4;
+	public const INTERNAL_DATA = 0;
+	public const ROOT_DISK = 1;
+	public const ROOT_NEXTCLOUD = 2;
+	public const ROOT_DATA = 3;
+	public const ROOT_APPS = 4;
 
-	const FILE_CONFIG = 101;
+	public const FILE_CONFIG = 101;
 
 	// value > 1000 is for content that are not 'file'
-	const SQL_DUMP = 1001;
+	public const SQL_DUMP = 1001;
 
-	const INTERNAL = 'internal';
-	const DATA = 'data';
-	const APPS = 'apps';
-	const CONFIG = 'config';
+	public const INTERNAL = 'internal';
+	public const DATA = 'data';
+	public const APPS = 'apps';
+	public const CONFIG = 'config';
 
 	public static $DEF = [
 		self::INTERNAL_DATA => 'internal',
@@ -116,7 +112,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 		if ($name === '') {
 			$this->name = $this->uuid();
 		}
-
 	}
 
 
@@ -348,6 +343,4 @@ class RestoringData implements IDeserializable, JsonSerializable {
 			'chunks' => $this->getChunks()
 		];
 	}
-
 }
-

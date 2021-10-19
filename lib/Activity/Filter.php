@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Activity;
 
-
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Service\ActivityService;
 use OCP\Activity\IFilter;
 use OCP\IL10N;
 use OCP\IURLGenerator;
-
 
 /**
  * Class Filter
@@ -119,5 +117,4 @@ class Filter implements IFilter {
 	public function allowedApps(): array {
 		return [Application::APP_ID];
 	}
-
 }

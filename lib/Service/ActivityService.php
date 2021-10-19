@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use OCA\Backup\AppInfo\Application;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager as IActivityManager;
 use OCP\IGroupManager;
 use OCP\IUser;
-
 
 /**
  * Class ActivityService
@@ -45,14 +43,12 @@ use OCP\IUser;
  * @package OCA\Backup\Service
  */
 class ActivityService {
+	public const TYPE_GLOBAL = 'backup_global';
+	public const CREATE = 'backup_create';
+	public const RESTORE = 'backup_restore';
+	public const RESTORE_FILE = 'backup_restore_file';
 
-
-	const TYPE_GLOBAL = 'backup_global';
-	const CREATE = 'backup_create';
-	const RESTORE = 'backup_restore';
-	const RESTORE_FILE = 'backup_restore_file';
-
-	const LIMIT_TO_GROUP = 'admin';
+	public const LIMIT_TO_GROUP = 'admin';
 
 
 	/** @var IActivityManager */
@@ -112,5 +108,4 @@ class ActivityService {
 			$this->activityManager->publish($event);
 		}
 	}
-
 }

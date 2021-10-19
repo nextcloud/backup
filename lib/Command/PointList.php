@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
@@ -47,15 +46,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * Class PointList
  *
  * @package OCA\Backup\Command
  */
 class PointList extends Base {
-
-
 	use TStringTools;
 
 
@@ -213,5 +209,4 @@ class PointList extends Base {
 
 		return '<' . $embed . '>' . $def . '</' . $embed . '>';
 	}
-
 }

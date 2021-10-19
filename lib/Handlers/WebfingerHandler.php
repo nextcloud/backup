@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Handlers;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OC\URLGenerator;
@@ -44,15 +43,12 @@ use OCP\Http\WellKnown\IResponse;
 use OCP\Http\WellKnown\JrdResponse;
 use OCP\IURLGenerator;
 
-
 /**
  * Class WebfingerHandler
  *
  * @package OCA\Backup\Handlers
  */
 class WebfingerHandler implements IHandler {
-
-
 	use TArrayTools;
 
 
@@ -110,8 +106,8 @@ class WebfingerHandler implements IHandler {
 			$this->remoteStreamService->getAppSignatory();
 			$href = $this->urlGenerator->linkToRouteAbsolute('backup.Remote.appService');
 			$info = [
-				'app'     => Application::APP_ID,
-				'name'    => Application::APP_NAME,
+				'app' => Application::APP_ID,
+				'name' => Application::APP_NAME,
 				'version' => $this->configService->getAppValue('installed_version')
 			];
 		} catch (SignatoryException $e) {
@@ -120,6 +116,4 @@ class WebfingerHandler implements IHandler {
 
 		return $response->addLink(Application::APP_REL, 'application/json', $href, [], $info);
 	}
-
 }
-

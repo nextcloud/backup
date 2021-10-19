@@ -31,21 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
-use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
-use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
-use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
-use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
-use OCA\Backup\Model\ChunkPartHealth;
-use OCA\Backup\Model\RestoringHealth;
-use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
@@ -55,7 +45,6 @@ use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class PointUpload
@@ -128,6 +117,4 @@ class PointUpload extends Base {
 		$this->outputService->setOutput($output);
 		$this->uploadService->uploadPoint($point);
 	}
-
 }
-

@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\RemoteRequest;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
@@ -47,15 +46,12 @@ use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 
-
 /**
  * Class UpdateRestoringPoint
  *
  * @package OCA\Backup\RemoteRequest
  */
 class UpdateRestoringPoint extends CoreRequest implements IRemoteRequest {
-
-
 	use TNC23Logger;
 	use TNC23Deserialize;
 
@@ -115,6 +111,4 @@ class UpdateRestoringPoint extends CoreRequest implements IRemoteRequest {
 	public function import(array $data): IDeserializable {
 		return $this;
 	}
-
 }
-

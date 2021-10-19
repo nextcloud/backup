@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use OC\Core\Command\Base;
 use OCA\Backup\Db\RemoteRequest;
 use OCA\Backup\Exceptions\RemoteInstanceException;
@@ -40,7 +39,6 @@ use OCA\Backup\Service\ConfigService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class RemoteRemove
@@ -114,5 +112,4 @@ class RemoteRemove extends Base {
 
 		return 0;
 	}
-
 }

@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Listeners;
 
-
 use OCA\Backup\AppInfo\Application;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\Event;
@@ -39,7 +38,6 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\IGroupManager;
 use OCP\IUserSession;
 use OCP\Util;
-
 
 class FilesAdditionalScripts implements IEventListener {
 
@@ -81,6 +79,4 @@ class FilesAdditionalScripts implements IEventListener {
 
 		Util::addScript(Application::APP_ID, 'files');
 	}
-
 }
-

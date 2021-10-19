@@ -31,13 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\AppInfo;
 
-
-use OCA\Backup\Activity\Filter;
 use OCA\Backup\Handlers\WebfingerHandler;
 use OCA\Backup\Listeners\FilesAdditionalScripts;
 use OCA\Backup\Listeners\NodeEvent;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
-use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -45,9 +42,6 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Files\Events\Node\NodeCreatedEvent;
 use OCP\Files\Events\Node\NodeRenamedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
-use OCP\IGroupManager;
-use OCP\IUserSession;
-
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -58,12 +52,10 @@ require_once __DIR__ . '/../../vendor/autoload.php';
  * @package OCA\Backup\AppInfo
  */
 class Application extends App implements IBootstrap {
-
-
-	const APP_ID = 'backup';
-	const APP_NAME = 'Backup';
-	const APP_SUBJECT = 'http://nextcloud.com/';
-	const APP_REL = 'https://apps.nextcloud.com/apps/backup';
+	public const APP_ID = 'backup';
+	public const APP_NAME = 'Backup';
+	public const APP_SUBJECT = 'http://nextcloud.com/';
+	public const APP_REL = 'https://apps.nextcloud.com/apps/backup';
 
 
 	/**
@@ -95,6 +87,4 @@ class Application extends App implements IBootstrap {
 	 */
 	public function boot(IBootContext $context): void {
 	}
-
 }
-

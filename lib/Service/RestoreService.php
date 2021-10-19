@@ -31,9 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use OCA\Backup\Db\CoreRequestBuilder;
-
 
 /**
  * Class RestoreService
@@ -70,5 +68,4 @@ class RestoreService {
 
 		$this->coreRequestBuilder->emptyTable(CoreRequestBuilder::TABLE_AUTHTOKEN);
 	}
-
 }

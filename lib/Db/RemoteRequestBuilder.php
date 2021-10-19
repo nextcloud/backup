@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Model\RemoteInstance;
-
 
 /**
  * Class RemoteRequestBuilder
@@ -45,8 +43,6 @@ use OCA\Backup\Model\RemoteInstance;
  * @package OCA\Backup\Db
  */
 class RemoteRequestBuilder extends CoreRequestBuilder {
-
-
 	use TArrayTools;
 
 
@@ -131,6 +127,4 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 			['includeExtraDataOnSerialize' => $includeExtraDataOnSerialize]
 		);
 	}
-
 }
-

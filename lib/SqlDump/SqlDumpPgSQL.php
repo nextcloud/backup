@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\SqlDump;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\ISqlDump;
 use Spatie\DbDumper\Databases\PostgreSql;
 use Throwable;
-
 
 /**
  * Class SqlDumpPgSQL
@@ -45,8 +43,6 @@ use Throwable;
  * @package OCA\Backup\SqlDump
  */
 class SqlDumpPgSQL implements ISqlDump {
-
-
 	use TArrayTools;
 
 
@@ -111,6 +107,4 @@ class SqlDumpPgSQL implements ISqlDump {
 
 		return true;
 	}
-
 }
-

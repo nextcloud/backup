@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\BackupEventNotFoundException;
 use OCA\Backup\Model\BackupEvent;
-
 
 /**
  * Class EventRequestBuilder
@@ -45,8 +43,6 @@ use OCA\Backup\Model\BackupEvent;
  * @package OCA\Backup\Db
  */
 class EventRequestBuilder extends CoreRequestBuilder {
-
-
 	use TArrayTools;
 
 
@@ -124,6 +120,4 @@ class EventRequestBuilder extends CoreRequestBuilder {
 		/** @var BackupEvent[] $result */
 		return $qb->asItems(BackupEvent::class);
 	}
-
 }
-

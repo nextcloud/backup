@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Model\Request;
@@ -52,15 +51,12 @@ use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 
-
 /**
  * Class RemoteService
  *
  * @package OCA\Backup\Service
  */
 class RemoteService {
-
-
 	use TNC22Logger;
 	use TNC23Deserialize;
 
@@ -241,7 +237,6 @@ class RemoteService {
 			} catch (InvalidItemException $e) {
 				throw new RestoringPointNotFoundException('restoring point not created');
 			}
-
 		} catch (RemoteInstanceException
 		| RemoteResourceNotFoundException
 		| RestoringPointNotFoundException
@@ -334,7 +329,6 @@ class RemoteService {
 //			} catch (InvalidItemException $e) {
 //				throw new RestoringPointNotFoundException('');
 //			}
-
 		} catch (RemoteInstanceException
 		| RemoteResourceNotFoundException
 		| RestoringPointNotFoundException
@@ -374,7 +368,6 @@ class RemoteService {
 			} catch (InvalidItemException $e) {
 				throw new RestoringPointNotFoundException('restoring point not updated');
 			}
-
 		} catch (RemoteInstanceException
 		| RemoteResourceNotFoundException
 		| RestoringPointNotFoundException
@@ -543,6 +536,4 @@ class RemoteService {
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
 	}
-
 }
-

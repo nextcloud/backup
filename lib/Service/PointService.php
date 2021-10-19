@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
@@ -66,23 +65,20 @@ use OCP\Files\NotPermittedException;
 use OCP\Util;
 use Throwable;
 
-
 /**
  * Class PointService
  *
  * @package OCA\Backup\Service
  */
 class PointService {
-
-
 	use TNC23Signatory;
 	use TNC23Logger;
 	use TStringTools;
 	use TNC23Deserialize;
 
 
-	const NOBACKUP_FILE = '.nobackup';
-	const SQL_DUMP_FILE = 'backup.sql';
+	public const NOBACKUP_FILE = '.nobackup';
+	public const SQL_DUMP_FILE = 'backup.sql';
 
 
 	/** @var PointRequest */
@@ -264,11 +260,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-							   'id' => $point->getId(),
-							   'duration' => $point->getDuration(),
-							   'status' => $point->getStatus(),
-							   'complete' => $complete
-						   ]
+				'id' => $point->getId(),
+				'duration' => $point->getDuration(),
+				'status' => $point->getStatus(),
+				'complete' => $complete
+			]
 		);
 
 		return $point;
@@ -700,7 +696,6 @@ class PointService {
 		RestoringChunk $chunk,
 		int &$globalStatus
 	): void {
-
 		foreach ($chunk->getParts() as $part) {
 			$partHealth = new ChunkPartHealth(true);
 			$status = $this->generatePartHealthStatus($point, $chunk, $part);
@@ -794,5 +789,4 @@ class PointService {
 		$this->initBaseFolder($point);
 		$this->metadataService->saveMetadata($point);
 	}
-
 }

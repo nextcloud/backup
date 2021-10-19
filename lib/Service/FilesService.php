@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -30,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
@@ -48,22 +48,19 @@ use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
 use OCP\Lock\LockedException;
 
-
 /**
  * Class FilesService
  *
  * @package OCA\Backup\Service
  */
 class FilesService {
-
-
 	use TArrayTools;
 	use TStringTools;
 	use TPathTools;
 	use TNC23Deserialize;
 
 
-	const APP_ROOT = __DIR__ . '/../../';
+	public const APP_ROOT = __DIR__ . '/../../';
 
 
 	/** @var IRootFolder */
@@ -210,11 +207,8 @@ class FilesService {
 			| LockedException $e) {
 				continue;
 			}
-
 		}
 
 		throw new RestoringPointNotFoundException();
 	}
-
-
 }

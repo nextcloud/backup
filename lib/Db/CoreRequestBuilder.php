@@ -37,15 +37,12 @@ use OC\DB\Connection;
 use OC\DB\SchemaWrapper;
 use OCA\Backup\Service\ConfigService;
 
-
 /**
  * Class CoreRequestBuilder
  *
  * @package OCA\Backup\Db
  */
 class CoreRequestBuilder {
-
-
 	public const TABLE_FILE_CHANGES = 'backup_changes';
 	public const TABLE_RESTORING_POINT = 'backup_point';
 	public const TABLE_REMOTE = 'backup_remote';
@@ -190,5 +187,4 @@ class CoreRequestBuilder {
 
 		$qb->execute();
 	}
-
 }

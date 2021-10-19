@@ -31,10 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use OCA\Backup\Exceptions\ChangedFileNotFoundException;
 use OCA\Backup\Model\ChangedFile;
-
 
 class ChangesRequest extends ChangesRequestBuilder {
 
@@ -94,5 +92,4 @@ class ChangesRequest extends ChangesRequestBuilder {
 		$qb = $this->getChangesDeleteSql();
 		$qb->execute();
 	}
-
 }

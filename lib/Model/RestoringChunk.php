@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
-
 
 /**
  * Class RestoringChunk
@@ -45,8 +43,6 @@ use JsonSerializable;
  * @package OCA\Backup\Model
  */
 class RestoringChunk implements JsonSerializable, IDeserializable {
-
-
 	use TArrayTools;
 	use TStringTools;
 	use TNC23Deserialize;
@@ -92,11 +88,16 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			return;
 		}
 
+//		if (!$staticName) {
+//			$name .= '-';
+//			$uuid = $this->uuid();
+//			$this->setPath($name . substr($uuid, 0, 1) . '/' . substr($uuid, 0, 2) . '/');
+//			$name .= $uuid;
+//		}
+
 		if (!$staticName) {
-			$name .= '-';
-			$uuid = $this->uuid();
-			$this->setPath($name . substr($uuid, 0, 1) . '/' . substr($uuid, 0, 2) . '/');
-			$name .= $uuid;
+			$name .= '-' . $this->uuid();
+			$this->setPath($name . '/');
 		}
 
 		$this->name = $name;
@@ -366,6 +367,4 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 		return $arr;
 	}
-
 }
-

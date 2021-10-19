@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
@@ -41,26 +40,23 @@ use JsonSerializable;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 
-
 /**
  * Class RestoringHealth
  *
  * @package OCA\Backup\Model
  */
 class RestoringHealth implements IDeserializable, JsonSerializable {
-
-
 	use TArrayTools;
 	use TNC23Deserialize;
 	use TNC23Logger;
 
 
-	const STATUS_ISSUE = 0;
-	const STATUS_ORPHAN = 1;
-	const STATUS_OK = 9;
+	public const STATUS_ISSUE = 0;
+	public const STATUS_ORPHAN = 1;
+	public const STATUS_OK = 9;
 
 
-	static public $DEF = [
+	public static $DEF = [
 		self::STATUS_ISSUE => 'not complete',
 		self::STATUS_ORPHAN => 'without parent',
 		self::STATUS_OK => 'ok'
@@ -204,6 +200,4 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 			'parts' => $this->getParts()
 		];
 	}
-
 }
-

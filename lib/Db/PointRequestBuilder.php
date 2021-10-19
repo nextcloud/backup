@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -30,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
@@ -43,8 +43,6 @@ use OCA\Backup\Model\RestoringPoint;
  * @package OCA\Backup\Db
  */
 class PointRequestBuilder extends CoreRequestBuilder {
-
-
 	use TArrayTools;
 
 
@@ -128,6 +126,4 @@ class PointRequestBuilder extends CoreRequestBuilder {
 		/** @var RestoringPoint[] $result */
 		return $qb->asItems(RestoringPoint::class);
 	}
-
 }
-

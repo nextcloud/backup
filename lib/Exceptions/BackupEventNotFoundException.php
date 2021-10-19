@@ -31,9 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Exceptions;
 
-
 use Exception;
-
 
 /**
  * Class BackupEventNotFoundException
@@ -41,6 +39,4 @@ use Exception;
  * @package OCA\Backup\Exceptions
  */
 class BackupEventNotFoundException extends Exception {
-
 }
-

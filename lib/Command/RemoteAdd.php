@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\RequestNetworkException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
@@ -52,7 +51,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-
 
 /**
  * Class RemoteAdd
@@ -345,6 +343,4 @@ class RemoteAdd extends Base {
 		$output->writeln('   ./occ backup:setup:export [--key] > ~/backup_setup.json');
 		$output->writeln('');
 	}
-
 }
-

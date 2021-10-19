@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
@@ -39,15 +38,12 @@ use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
 use OC\Files\Node\Folder;
 
-
 /**
  * Class ExternalFolder
  *
  * @package OCA\Backup\Model
  */
 class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable {
-
-
 	use TArrayTools;
 	use TStringTools;
 
@@ -194,6 +190,4 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 			'root' => $this->getRoot()
 		];
 	}
-
 }
-

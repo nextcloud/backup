@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -30,10 +31,7 @@ declare(strict_types=1);
 
 namespace OC;
 
-
 use OCP\ILogger;
-
 
 class Logger implements ILogger {
 }
-

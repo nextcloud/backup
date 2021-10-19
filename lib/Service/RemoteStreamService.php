@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\ActivityPub\Nextcloud\nc23\NC23Signature;
 use ArtificialOwl\MySmallPhpTools\Exceptions\RequestNetworkException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
@@ -57,15 +56,12 @@ use OCA\Backup\Model\RestoringPoint;
 use OCP\AppFramework\Http;
 use OCP\IURLGenerator;
 
-
 /**
  * Class RemoteStreamService
  *
  * @package OCA\Backup\Service
  */
 class RemoteStreamService extends NC23Signature {
-
-
 	use TNC23Deserialize;
 	use TNC23LocalSignatory;
 	use TStringTools;
@@ -429,6 +425,4 @@ class RemoteStreamService extends NC23Signature {
 		$string = json_encode($point->subSignedData());
 		$this->verifyString($string, $point->getSubSignature(), $this->getAppSignatory()->getPublicKey());
 	}
-
-
 }

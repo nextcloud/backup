@@ -6,7 +6,7 @@
 	<description><![CDATA[Backup now. Restore later.]]></description>
 	<licence>agpl</licence>
 	<author mail="maxence@artificial-owl.com">Maxence Lange</author>
-	<version>0.3.0</version>
+	<version>23.0.0-alpha1</version>
 	<namespace>Backup</namespace>
 	<category>tools</category>
 	<website>https://github.com/nextcloud/backup</website>
@@ -14,7 +14,7 @@
 	<repository type="git">https://github.com/nextcloud/backup.git</repository>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/backup/master/img/screenshot.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="22" max-version="23"/>
+		<nextcloud min-version="23" max-version="23"/>
 	</dependencies>
 
 	<background-jobs>

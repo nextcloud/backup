@@ -31,12 +31,9 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringHealth;
-use OCA\Backup\Model\RestoringPoint;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class OutputService
@@ -142,5 +139,4 @@ class OutputService {
 			   . $missing . ' missing and '
 			   . $faulty . ' faulty files</' . $color . '>';
 	}
-
 }

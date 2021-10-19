@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Signatory;
@@ -40,24 +39,21 @@ use JsonSerializable;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceUidException;
 
-
 /**
  * Class AppService
  *
  * @package OCA\Backup\Model
  */
 class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializable, JsonSerializable {
-
-
 	use TArrayTools;
 
 
-	const LOCAL = 'local';
-	const ALL = 'all';
+	public const LOCAL = 'local';
+	public const ALL = 'all';
 
 
-	const EXCHANGE_IN = 1;
-	const EXCHANGE_OUT = 2;
+	public const EXCHANGE_IN = 1;
+	public const EXCHANGE_OUT = 2;
 
 
 	public const UID = 'uid';
@@ -491,7 +487,7 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 		$algo = '';
 		$authSigned = trim($this->get(self::AUTH_SIGNED, $data), ':');
 		if (strpos($authSigned, ':') > 0) {
-			list($algo, $authSigned) = explode(':', $authSigned);
+			[$algo, $authSigned] = explode(':', $authSigned);
 		}
 
 		$this->setAuthSigned($authSigned)
@@ -524,9 +520,9 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 		if ($this->includeExtraDataOnSerialize) {
 			$data = array_merge(
 				$data, [
-				'instance' => $this->getInstance(),
-				'exchange' => $this->getExchange()
-			]
+					'instance' => $this->getInstance(),
+					'exchange' => $this->getExchange()
+				]
 			);
 		}
 
@@ -562,6 +558,4 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 
 		return $this;
 	}
-
 }
-

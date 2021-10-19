@@ -43,15 +43,12 @@ use OCP\Activity\IProvider;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 
-
 /**
  * Class Provider
  *
  * @package OCA\Backup\Activity
  */
 class Provider implements IProvider {
-
-
 	use TStringTools;
 	use TArrayTools;
 
@@ -101,15 +98,15 @@ class Provider implements IProvider {
 		}
 
 		switch ($event->getSubject()) {
-			case ActivityService::CREATE;
+			case ActivityService::CREATE:
 				$this->parseCreate($event, $params);
 				break;
 
-			case ActivityService::RESTORE;
+			case ActivityService::RESTORE:
 				$this->parseRestore($event, $params);
 				break;
 
-			case ActivityService::RESTORE_FILE;
+			case ActivityService::RESTORE_FILE:
 				$this->parseRestoreFile($event, $params);
 				break;
 
@@ -260,5 +257,4 @@ class Provider implements IProvider {
 		} catch (Exception $e) {
 		}
 	}
-
 }

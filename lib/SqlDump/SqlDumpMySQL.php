@@ -31,13 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\SqlDump;
 
-
 use Ifsnop\Mysqldump\Mysqldump;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\ISqlDump;
 use OCA\Backup\Service\ConfigService;
 use Throwable;
-
 
 /**
  * Class SqlDumpMySQL
@@ -118,6 +116,4 @@ class SqlDumpMySQL implements ISqlDump {
 
 		return true;
 	}
-
 }
-

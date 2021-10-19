@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\PointRequest;
@@ -46,15 +45,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * Class PointScan
  *
  * @package OCA\Backup\Command
  */
 class PointScan extends Base {
-
-
 	use TStringTools;
 
 
@@ -149,6 +145,4 @@ class PointScan extends Base {
 
 		return 0;
 	}
-
 }
-

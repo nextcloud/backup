@@ -31,11 +31,9 @@ declare(strict_types=1);
 
 namespace OCA\Backup;
 
-
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
 use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
-
 
 /**
  * Interface IRemoteRequest
@@ -64,4 +62,3 @@ interface IRemoteRequest extends IDeserializable {
 	 */
 	public function getOutcome(): array;
 }
-

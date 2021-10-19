@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
@@ -45,24 +44,21 @@ use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\Files\SimpleFS\ISimpleRoot;
 
-
 /**
  * Class RestoringPoint
  *
  * @package OCA\Backup\Model
  */
 class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, JsonSerializable {
-
-
 	use TArrayTools;
 	use TNC23Deserialize;
 	use TNC23Logger;
 
 
-	const STATUS_UNPACKED = 0;
-	const STATUS_PACKED = 1;
-	const STATUS_COMPRESSED = 2;
-	const STATUS_ENCRYPTED = 4;
+	public const STATUS_UNPACKED = 0;
+	public const STATUS_PACKED = 1;
+	public const STATUS_COMPRESSED = 2;
+	public const STATUS_ENCRYPTED = 4;
 
 	public static $DEF_STATUS =
 		[
@@ -71,7 +67,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			self::STATUS_ENCRYPTED => 'encrypted',
 		];
 
-	const STATUS_ISSUE = 32;
+	public const STATUS_ISSUE = 32;
 
 
 	/** @var string */
@@ -757,5 +753,4 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 
 		return $arr;
 	}
-
 }

@@ -31,21 +31,16 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use OC\Core\Command\Base;
-use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use SodiumException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Throwable;
-
 
 /**
  * Class PointStore
@@ -105,6 +100,4 @@ class PointPack extends Base {
 
 		return 0;
 	}
-
 }
-

@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Service\ExternalFolderService;
@@ -42,7 +41,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-
 
 /**
  * Class ExternalAdd
@@ -87,7 +85,6 @@ class ExternalAdd extends Base {
 	 * @throws ExternalFolderNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-
 		$storageId = $this->selectStorage($input, $output);
 		$output->writeln('');
 		if ($storageId === 0) {
@@ -134,7 +131,7 @@ class ExternalAdd extends Base {
 
 			return 0;
 		}
-		
+
 		$this->externalFolderService->save($external);
 
 		$output->writeln(
@@ -213,6 +210,4 @@ class ExternalAdd extends Base {
 
 		return trim($helper->ask($input, $output, $question));
 	}
-
 }
-

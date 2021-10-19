@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
@@ -52,7 +51,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class PointArchive
@@ -131,6 +129,4 @@ class PointArchive extends Base {
 
 		return 0;
 	}
-
 }
-

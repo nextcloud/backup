@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use OC\Core\Command\Base;
@@ -44,7 +43,6 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 /**
  * Class RemoteList
@@ -118,7 +116,6 @@ class RemoteList extends Base {
 		$table->render();
 
 		foreach ($this->remoteRequest->getAll() as $remoteInstance) {
-
 			$color = 'error';
 			$currentUid = 'not available';
 
@@ -146,5 +143,4 @@ class RemoteList extends Base {
 
 		return 0;
 	}
-
 }

@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
@@ -64,15 +63,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * Class PointDetails
  *
  * @package OCA\Backup\Command
  */
 class PointDetails extends Base {
-
-
 	use TArrayTools;
 	use TStringTools;
 
@@ -157,7 +153,7 @@ class PointDetails extends Base {
 
 		if ($remote) {
 			$point = $this->remoteService->getRestoringPoint($remote, $pointId, true);
-		} else if ($external) {
+		} elseif ($external) {
 			$externalFolder = $this->externalFolderService->getByStorageId((int)$external);
 			$point = $this->externalFolderService->getRestoringPoint($externalFolder, $pointId, true);
 		} else {
@@ -229,7 +225,7 @@ class PointDetails extends Base {
 		$source = '';
 		if ($remote) {
 			$source = ' on <info>' . $remote . '</info>';
-		} else if ($external) {
+		} elseif ($external) {
 			$source = ' at <info>' . $externalFolder->getStorageId() . '</info>:<info>' .
 					  $externalFolder->getRoot() . '</info>';
 		}
@@ -290,4 +286,3 @@ class PointDetails extends Base {
 		}
 	}
 }
-

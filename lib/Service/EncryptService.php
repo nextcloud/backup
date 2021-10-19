@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use Exception;
 use OCA\Backup\Exceptions\EncryptException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
@@ -43,11 +42,9 @@ use SodiumException;
  * @package OCA\Backup\Service
  */
 class EncryptService {
-
-
-	const BLOCK_SIZE = 500;
-	const CUSTOM_CHUNK_SIZE = 8192;
-	const KEY_LENGTH = 32;
+	public const BLOCK_SIZE = 500;
+	public const CUSTOM_CHUNK_SIZE = 8192;
+	public const KEY_LENGTH = 32;
 
 
 	/** @var ConfigService */
@@ -248,6 +245,4 @@ class EncryptService {
 //		fclose($in);
 //		fclose($out);
 //	}
-
 }
-

@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Controller;
 
-
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Controller;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
@@ -51,15 +50,12 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 use OCP\IUserSession;
 
-
 /**
  * Class LocalController
  *
  * @package OCA\Backup\Controller
  */
 class LocalController extends OcsController {
-
-
 	use TNC23Controller;
 	use TNC23Logger;
 	use TNC23Deserialize;
@@ -138,7 +134,7 @@ class LocalController extends OcsController {
 			case 'backup':
 				if ($param === 'full') {
 					return $this->initActionForceFullBackup();
-				} else if ($param === 'partial') {
+				} elseif ($param === 'partial') {
 					return $this->initActionForceIncrementalBackup();
 				}
 		}
@@ -304,6 +300,4 @@ class LocalController extends OcsController {
 	private function initActionForceIncrementalBackup(): DataResponse {
 		return new DataResponse(['message' => 'action partial backup not yet implemented)']);
 	}
-
 }
-

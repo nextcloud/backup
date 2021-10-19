@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
@@ -56,21 +55,18 @@ use SodiumException;
 use Throwable;
 use ZipArchive;
 
-
 /**
  * Class PackService
  *
  * @package OCA\Backup\Service
  */
 class PackService {
-
-
 	use TStringTools;
 	use TNC23Logger;
 	use TFileTools;
 
 
-	const CHUNK_ENTRY = 'pack';
+	public const CHUNK_ENTRY = 'pack';
 
 
 	/** @var PointRequest */
@@ -345,8 +341,6 @@ class PackService {
 						break;
 					}
 				}
-
-
 			} catch (Throwable $t) {
 				foreach ($parts as $item) {
 					unlink($item->getName());
@@ -488,11 +482,11 @@ class PackService {
 //	): RestoringChunkPart {
 //		$chunk = $this->chunkService->getChunkFromRP($point, $chunkName, $dataName);
 //		$part = clone $this->getPartFromChunk($chunk, $partName);
-//echo '!!!';
-////		$part = clone $this->getPartFromPoint($point, $partName, $chunkName, $dataName);
+	//echo '!!!';
+	////		$part = clone $this->getPartFromPoint($point, $partName, $chunkName, $dataName);
 //		$this->getChunkPartContent($point, $chunk, $part);
 //
-//echo json_encode($part);
+	//echo json_encode($part);
 //
 //		return $part;
 //	}
@@ -989,5 +983,4 @@ class PackService {
 		} catch (NotPermittedException | NotFoundException $e) {
 		}
 	}
-
 }

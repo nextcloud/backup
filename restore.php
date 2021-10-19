@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -30,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup;
 
-
 use Composer\Autoload\ClassLoader;
 use ArtificialOwl\MySmallPhpTools\DI\DIContainer;
 use ArtificialOwl\MySmallPhpTools\Exceptions\DependencyInjectionException;
@@ -47,8 +47,6 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use ZipArchive;
-
-
 
 echo "\n" . 'At this moment, this script will not works. Sorry.' . "\n";
 echo 'Please follow online documentation to restore your backup.'. "\n\n";
@@ -217,7 +215,6 @@ try {
 			$output->writeln('details/restore/files');
 			break;
 	}
-
 } catch (Exception $e) {
 	echo "\n" . $e->getMessage() . "\n\n";
 	exit();
@@ -311,4 +308,3 @@ function generateInputDefinition(): InputDefinition {
 
 	return $input;
 }
-

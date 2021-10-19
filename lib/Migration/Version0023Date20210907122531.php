@@ -73,22 +73,22 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table = $schema->createTable('backup_changes');
 			$table->addColumn(
 				'id', 'integer', [
-						'autoincrement' => true,
-						'notnull' => true,
-						'length' => 11,
-						'unsigned' => true,
-					]
+					'autoincrement' => true,
+					'notnull' => true,
+					'length' => 11,
+					'unsigned' => true,
+				]
 			);
 			$table->addColumn(
 				'path', 'text', [
-						  'notnull' => true
-					  ]
+					'notnull' => true
+				]
 			);
 			$table->addColumn(
 				'hash', 'string', [
-						  'notnull' => true,
-						  'length' => 63
-					  ]
+					'notnull' => true,
+					'length' => 63
+				]
 			);
 			$table->setPrimaryKey(['id']);
 			$table->addUniqueIndex(['hash']);
@@ -102,73 +102,73 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table = $schema->createTable('backup_point');
 			$table->addColumn(
 				'id', 'integer', [
-						'autoincrement' => true,
-						'notnull' => true,
-						'length' => 4,
-						'unsigned' => true,
-					]
+					'autoincrement' => true,
+					'notnull' => true,
+					'length' => 4,
+					'unsigned' => true,
+				]
 			);
 			$table->addColumn(
 				'uid', 'string', [
-						 'notnull' => true,
-						 'length' => 63,
-					 ]
+					'notnull' => true,
+					'length' => 63,
+				]
 			);
 			$table->addColumn(
 				'archive', 'integer', [
-							 'unsigned' => true,
-							 'notnull' => true,
-							 'length' => 1,
-						 ]
+					'unsigned' => true,
+					'notnull' => true,
+					'length' => 1,
+				]
 			);
 			$table->addColumn(
 				'lock', 'integer', [
-						  'notnull' => true,
-						  'unsigned' => true,
-						  'length' => 11,
-					  ]
+					'notnull' => true,
+					'unsigned' => true,
+					'length' => 11,
+				]
 			);
 			$table->addColumn(
 				'instance', 'string', [
-							  'notnull' => true,
-							  'length' => 127,
-						  ]
+					'notnull' => true,
+					'length' => 127,
+				]
 			);
 			$table->addColumn(
 				'parent', 'string', [
-							'notnull' => true,
-							'length' => 63,
-						]
+					'notnull' => true,
+					'length' => 63,
+				]
 			);
 			$table->addColumn(
 				'status', 'integer', [
-							'notnull' => true,
-							'unsigned' => true,
-							'length' => 1
-						]
+					'notnull' => true,
+					'unsigned' => true,
+					'length' => 1
+				]
 			);
 			$table->addColumn(
 				'notes', 'text', [
-						   'notnull' => true
-					   ]
+					'notnull' => true
+				]
 			);
 			$table->addColumn(
 				'metadata', 'text', [
-							  'notnull' => true
-						  ]
+					'notnull' => true
+				]
 			);
 			$table->addColumn(
 				'health', 'text', [
-							'notnull' => false,
-							'default' => '[]'
-						]
+					'notnull' => false,
+					'default' => '[]'
+				]
 			);
 			$table->addColumn(
 				'date', 'integer', [
-						  'notnull' => true,
-						  'unsigned' => true,
-						  'length' => 11
-					  ]
+					'notnull' => true,
+					'unsigned' => true,
+					'length' => 11
+				]
 			);
 
 			$table->setPrimaryKey(['id']);
@@ -186,28 +186,28 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table = $schema->createTable('backup_external');
 			$table->addColumn(
 				'id', 'integer', [
-						'autoincrement' => true,
-						'notnull' => true,
-						'length' => 4,
-						'unsigned' => true,
-					]
+					'autoincrement' => true,
+					'notnull' => true,
+					'length' => 4,
+					'unsigned' => true,
+				]
 			);
 			$table->addColumn(
 				'storage_id', 'integer', [
-								'notnull' => false,
-								'length' => 4,
-							]
+					'notnull' => false,
+					'length' => 4,
+				]
 			);
 			$table->addColumn(
 				'root', 'string', [
-						  'notnull' => false,
-						  'length' => 255,
-					  ]
+					'notnull' => false,
+					'length' => 255,
+				]
 			);
 			$table->addColumn(
 				'creation', 'datetime', [
-							  'notnull' => false,
-						  ]
+					'notnull' => false,
+				]
 			);
 
 			$table->setPrimaryKey(['id']);
@@ -222,46 +222,46 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table = $schema->createTable('backup_remote');
 			$table->addColumn(
 				'id', 'integer', [
-						'autoincrement' => true,
-						'notnull' => true,
-						'length' => 4,
-						'unsigned' => true,
-					]
+					'autoincrement' => true,
+					'notnull' => true,
+					'length' => 4,
+					'unsigned' => true,
+				]
 			);
 			$table->addColumn(
 				'uid', 'string', [
-						 'notnull' => false,
-						 'length' => 20,
-					 ]
+					'notnull' => false,
+					'length' => 20,
+				]
 			);
 			$table->addColumn(
 				'instance', 'string', [
-							  'notnull' => false,
-							  'length' => 127,
-						  ]
+					'notnull' => false,
+					'length' => 127,
+				]
 			);
 			$table->addColumn(
 				'exchange', 'integer', [
-							  'notnull' => true,
-							  'length' => 1,
-							  'unsigned' => true,
-						  ]
+					'notnull' => true,
+					'length' => 1,
+					'unsigned' => true,
+				]
 			);
 			$table->addColumn(
 				'href', 'string', [
-						  'notnull' => false,
-						  'length' => 254,
-					  ]
+					'notnull' => false,
+					'length' => 254,
+				]
 			);
 			$table->addColumn(
 				'item', 'text', [
-						  'notnull' => false,
-					  ]
+					'notnull' => false,
+				]
 			);
 			$table->addColumn(
 				'creation', 'datetime', [
-							  'notnull' => false,
-						  ]
+					'notnull' => false,
+				]
 			);
 
 			$table->setPrimaryKey(['id']);
@@ -278,38 +278,38 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table = $schema->createTable('backup_event');
 			$table->addColumn(
 				'id', 'integer', [
-						'autoincrement' => true,
-						'notnull' => true,
-						'length' => 4,
-						'unsigned' => true,
-					]
+					'autoincrement' => true,
+					'notnull' => true,
+					'length' => 4,
+					'unsigned' => true,
+				]
 			);
 			$table->addColumn(
 				'author', 'string', [
-							'notnull' => false,
-							'length' => 127,
-						]
+					'notnull' => false,
+					'length' => 127,
+				]
 			);
 			$table->addColumn(
 				'type', 'string', [
-						  'notnull' => false,
-						  'length' => 127,
-					  ]
+					'notnull' => false,
+					'length' => 127,
+				]
 			);
 			$table->addColumn(
 				'status', 'integer', [
-							'notnull' => false,
-							'unsigned' => true,
-							'length' => 1,
-						]
+					'notnull' => false,
+					'unsigned' => true,
+					'length' => 1,
+				]
 			);
 			$table->addColumn(
 				'data', 'text', [
-					  ]
+				]
 			);
 			$table->addColumn(
 				'result', 'string', [
-						]
+				]
 			);
 
 			$table->setPrimaryKey(['id']);
