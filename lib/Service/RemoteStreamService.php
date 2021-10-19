@@ -393,7 +393,7 @@ class RemoteStreamService extends NC23Signature {
 	 * @throws SignatoryException
 	 */
 	public function signPoint(RestoringPoint $point) {
-		$this->signModel($point, $this->getAppSignatory(false));
+		$this->signModel($point, $this->getAppSignatory(true));
 		$this->subSignPoint($point);
 	}
 
