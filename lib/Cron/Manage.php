@@ -108,6 +108,9 @@ class Manage extends TimedJob {
 
 		// uploading
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
+			if ($point->isArchive()) {
+				continue;
+			}
 			try {
 				$this->uploadService->uploadPoint($point);
 			} catch (Throwable $e) {
@@ -116,6 +119,9 @@ class Manage extends TimedJob {
 
 		// packing
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
+			if ($point->isArchive()) {
+				continue;
+			}
 			try {
 				$this->pointService->initBaseFolder($point);
 				$this->packService->packPoint($point);
