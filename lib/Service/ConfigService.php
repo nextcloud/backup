@@ -153,7 +153,11 @@ class ConfigService {
 	 * @return int
 	 */
 	public function getAppValueInt(string $key): int {
-		return (int)$this->getAppValue($key);
+		if (($value = $this->config->getAppValue(Application::APP_ID, $key, '')) !== '') {
+			return (int)$value;
+		}
+
+		return $this->getInt($key, $this->defaults);
 	}
 
 	/**
