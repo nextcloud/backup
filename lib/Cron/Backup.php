@@ -47,7 +47,6 @@ class Backup extends TimedJob {
 	use TNC23Logger;
 
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -82,7 +81,11 @@ class Backup extends TimedJob {
 	/**
 	 * @param $argument
 	 */
-	protected function run($argument) {
+	protected function run($argument):void {
+		if (!$this->cronService->isRealCron()) {
+			return;
+		}
+
 		$time = time();
 		if ($this->configService->getAppValueInt(ConfigService::MOCKUP_DATE) > 0) {
 			$time = $this->configService->getAppValueInt(ConfigService::MOCKUP_DATE);

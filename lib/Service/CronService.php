@@ -118,9 +118,9 @@ class CronService {
 				if ($fullETA === -1 && $this->verifyFullBackup($time)) {
 					$fullETA = $time;
 				} elseif ($partialETA === -1
-						   && $this->verifyIncrementalBackup($time)
-						   && ($this->configService->getAppValueInt(ConfigService::DATE_FULL_RP) > 0
-							   || $fullETA > 0)) { // we check that the incremental backup can have a parent
+						  && $this->verifyIncrementalBackup($time)
+						  && ($this->configService->getAppValueInt(ConfigService::DATE_FULL_RP) > 0
+							  || $fullETA > 0)) { // we check that the incremental backup can have a parent
 					$partialETA = $time;
 				}
 
@@ -362,5 +362,15 @@ class CronService {
 	 */
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isRealCron(): bool {
+		$mode = $this->configService->getCoreValue('backgroundjobs_mode', '');
+
+		return (strtolower($mode) === 'cron' || strtolower($mode) === 'webcron');
 	}
 }

@@ -102,6 +102,10 @@ class Manage extends TimedJob {
 	 * @param $argument
 	 */
 	protected function run($argument) {
+		if (!$this->cronService->isRealCron()) {
+			return;
+		}
+
 		// uploading
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
 			try {

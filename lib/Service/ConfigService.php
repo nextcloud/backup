@@ -119,6 +119,16 @@ class ConfigService {
 
 
 	/**
+	 * @param string $key
+	 * @param string $default
+	 *
+	 * @return string
+	 */
+	public function getCoreValue(string $key, string $default): string {
+		return $this->config->getAppValue('core', $key, $default);
+	}
+
+	/**
 	 * Get a value by key
 	 *
 	 * @param string $key
@@ -350,4 +360,5 @@ class ConfigService {
 
 		return $this->getSettings();
 	}
+
 }

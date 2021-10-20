@@ -37,6 +37,7 @@ use OCA\Backup\Db\EventRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\FilesService;
 
 /**
@@ -54,6 +55,9 @@ class Event extends TimedJob {
 	/** @var FilesService */
 	private $filesService;
 
+	/** @var CronService */
+	private $cronService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -63,17 +67,20 @@ class Event extends TimedJob {
 	 *
 	 * @param EventRequest $eventRequest
 	 * @param FilesService $filesService
+	 * @param CronService $cronService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
 		EventRequest $eventRequest,
 		FilesService $filesService,
+		CronService $cronService,
 		ConfigService $configService
 	) {
 		$this->setInterval(1);
 
 		$this->eventRequest = $eventRequest;
 		$this->filesService = $filesService;
+		$this->cronService = $cronService;
 		$this->configService = $configService;
 	}
 
@@ -82,6 +89,10 @@ class Event extends TimedJob {
 	 * @param $argument
 	 */
 	protected function run($argument) {
+		if (!$this->cronService->isRealCron()) {
+			return;
+		}
+
 		foreach ($this->eventRequest->getQueue() as $event) {
 			if ($event->getType() === 'ScanLocalFolder') {
 				$this->scanLocalFolder($event);
