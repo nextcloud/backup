@@ -31,7 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use OCA\Backup\Exceptions\MetadataException;
+
+use OCA\Backup\Db\PointRequest;
+use OCA\Backup\Exceptions\RestoringPointException;
+use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -44,6 +47,13 @@ use OCP\Files\NotPermittedException;
 class MetadataService {
 	public const METADATA_FILE = 'restoring-point.data';
 
+
+	const METADATA_FILE = 'restoring-point.data';
+
+
+	/** @var PointRequest */
+	private $pointRequest;
+
 	/** @var RemoteService */
 	private $remoteService;
 
@@ -54,13 +64,16 @@ class MetadataService {
 	/**
 	 * MetadataService constructor.
 	 *
+	 * @param PointRequest $pointRequest
 	 * @param RemoteService $remoteService
 	 * @param ExternalFolderService $externalFolderService
 	 */
 	public function __construct(
+		PointRequest $pointRequest,
 		RemoteService $remoteService,
 		ExternalFolderService $externalFolderService
 	) {
+		$this->pointRequest = $pointRequest;
 		$this->remoteService = $remoteService;
 		$this->externalFolderService = $externalFolderService;
 	}
@@ -87,11 +100,55 @@ class MetadataService {
 
 	/**
 	 * @param RestoringPoint $point
-	 *
-	 * @throws MetadataException
 	 */
 	public function globalUpdate(RestoringPoint $point) {
 		$this->externalFolderService->updateMetadata($point);
 		$this->remoteService->updateMetadata($point);
 	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 */
+	public function lock(RestoringPoint $point): void {
+		$time = time();
+		if ($point->getLock() > $time - 60) {
+			return;
+		}
+
+		$point->setLock($time);
+		$this->pointRequest->updateLock($point);
+	}
+
+	/**
+	 * @param RestoringPoint $point
+	 */
+	public function unlock(RestoringPoint $point): void {
+		if ($point->getLock() === 0) {
+			return;
+		}
+
+		$point->setLock(0);
+		$this->pointRequest->updateLock($point);
+	}
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws RestoringPointException
+	 */
+	public function isLock(RestoringPoint $point): void {
+		try {
+			$stored = $this->pointRequest->getById($point->getId());
+		} catch (RestoringPointNotFoundException $e) {
+			return;
+		}
+
+		$point->setLock($stored->getLock());
+
+		if ($point->isLocked()) {
+			throw new RestoringPointException('point is locked');
+		}
+	}
+
 }

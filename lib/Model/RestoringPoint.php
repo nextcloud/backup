@@ -60,6 +60,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	public const STATUS_COMPRESSED = 2;
 	public const STATUS_ENCRYPTED = 4;
 
+	const LOCK_TIMEOUT = 3600 * 3;
+
 	public static $DEF_STATUS =
 		[
 			self::STATUS_PACKED => 'packed',
@@ -300,8 +302,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/**
 	 * @return bool
 	 */
-	public function isLock(): bool {
-		return ($this->lock > 0);
+	public function isLocked(): bool {
+		return ($this->getLock() < (time() - self::LOCK_TIMEOUT));
 	}
 
 
@@ -376,7 +378,9 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 		return implode('.', $this->getNc());
 	}
 
-
+	/**
+	 * @return int
+	 */
 	public function getNCInt(): int {
 		$nc = $this->getNc();
 
@@ -460,19 +464,6 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	 */
 	public function getRestoringData(): array {
 		return $this->restoringData;
-//		$options = $this->getOptions();
-//		if (!$filtered || $options->getChunk() === '') {
-//			return $this->chunks;
-//		}
-//
-//		$options = $this->getOptions();
-//		foreach ($this->chunks as $chunk) {
-//			if ($chunk->getName() === $options->getChunk()) {
-//				return [$chunk];
-//			}
-//		}
-//
-//		return [];
 	}
 
 	/**

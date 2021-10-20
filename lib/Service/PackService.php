@@ -41,6 +41,7 @@ use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotInitiatedException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Model\RestoringChunk;
@@ -131,6 +132,8 @@ class PackService {
 		if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
 			throw new RestoringPointPackException('restoring point is already packed');
 		}
+
+		$this->metadataService->isLock($point);
 
 		if ($point->isStatus(RestoringPoint::STATUS_ISSUE)) {
 			if (!$force && $point->getNotes()->gInt('pack_date') > time() - 3600 * 6) {
