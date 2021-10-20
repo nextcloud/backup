@@ -69,6 +69,8 @@ class ChunkService {
 
 	public const BACKUP_SCRIPT = 'restore.php';
 	public const APP_ZIP = 'app.zip';
+	public const PREFIX = '.backup.';
+
 
 	/** @var FilesService */
 	private $filesService;
@@ -179,7 +181,7 @@ class ChunkService {
 		$zip->extractTo($root, ($filename === '') ? null : $filename);
 		$this->closeZipArchive($zip);
 
-		unlink($root . '.backup.' . $chunk->getName() . '.json');
+		unlink($root . self::PREFIX . $chunk->getName() . '.json');
 //		$this->restoreFromArchive($archive, $root);
 //		$this->deleteArchive($backup, $archive, 'zip');
 	}
@@ -261,7 +263,7 @@ class ChunkService {
 	 * @param ZipArchive $zip
 	 */
 	public function listFilesFromZip(RestoringChunk $archive, ZipArchive $zip): void {
-		$json = $zip->getFromName('.backup.' . $archive->getName() . '.json');
+		$json = $zip->getFromName(self::PREFIX . $archive->getName() . '.json');
 		if (!$json) {
 			return;
 		}
@@ -492,7 +494,7 @@ class ChunkService {
 	public function finalizeZip(ZipStreamer $zip, RestoringChunk $archive): void {
 		$str = json_encode($archive->getResume(), JSON_PRETTY_PRINT);
 		$read = fopen('data://text/plain,' . $str, 'rb');
-		$zip->addFileFromStream($read, '.backup.' . $archive->getName() . '.json');
+		$zip->addFileFromStream($read, self::PREFIX . $archive->getName() . '.json');
 
 		$zip->finalize();
 	}
@@ -505,7 +507,12 @@ class ChunkService {
 	private function finalizeChunk(RestoringPoint $point, RestoringChunk $chunk) {
 		try {
 			$folder = $this->getChunkFolder($point, $chunk);
-			$folder->newFile('.backup.' . $chunk->getName() . '.json', json_encode($chunk->getResume(), JSON_PRETTY_PRINT));
+			if ($this->configService->getAppValueBool(ConfigService::PACK_INDEX)) {
+				$folder->newFile(
+					self::PREFIX . $chunk->getName() . '.json',
+					json_encode($chunk->getResume(), JSON_PRETTY_PRINT)
+				);
+			}
 		} catch (Exception $e) {
 		}
 	}

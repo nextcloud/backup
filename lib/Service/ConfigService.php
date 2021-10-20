@@ -64,6 +64,7 @@ class ConfigService {
 	public const PACK_ENCRYPT = 'pack_encrypt';
 	public const PACK_COMPRESS = 'pack_compress';
 	public const PACK_INDEX = 'pack_index';
+	public const PACK_REMOTE_INDEX = 'pack_remote_index';
 
 	public const ENCRYPTION_KEY = 'encryption_key';
 	public const TIME_SLOTS = 'time_slots';
@@ -95,7 +96,7 @@ class ConfigService {
 		self::PACK_ENCRYPT => '1',
 		self::PACK_COMPRESS => '1',
 		self::PACK_INDEX => '1',
-
+		self::PACK_REMOTE_INDEX => '0',
 		self::CHUNK_SIZE => 4000,
 		self::CHUNK_PART_SIZE => 100
 	];
