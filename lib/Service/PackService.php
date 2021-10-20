@@ -214,6 +214,7 @@ class PackService {
 		$temp = $this->wrapPackChunkCompress($point, $temp);
 		$parts = $this->wrapPackExplode($temp);
 		$parts = $this->wrapPackEncrypt($point, $parts);
+
 		$this->wrapStoreParts($point, $chunk, $parts);
 	}
 
@@ -308,6 +309,8 @@ class PackService {
 			unlink($filename);
 			throw $t;
 		}
+
+		unlink($filename);
 
 		return $parts;
 	}
