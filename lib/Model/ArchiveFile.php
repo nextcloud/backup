@@ -31,6 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
+use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
 
@@ -39,7 +40,7 @@ use JsonSerializable;
  *
  * @package OCA\Backup\Model
  */
-class ArchiveFile implements JsonSerializable {
+class ArchiveFile implements JsonSerializable, IDeserializable {
 	use TArrayTools;
 
 
@@ -126,7 +127,7 @@ class ArchiveFile implements JsonSerializable {
 	 *
 	 * @return ArchiveFile
 	 */
-	public function import(array $data): ArchiveFile {
+	public function import(array $data): IDeserializable {
 		$this->setName($this->get('name', $data));
 		$this->setFilesize($this->getInt('filesize', $data));
 

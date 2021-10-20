@@ -31,12 +31,18 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointNotInitiatedException;
+use OCA\Backup\Model\ArchiveFile;
+use OCA\Backup\Model\RestoringChunk;
+use OCA\Backup\Model\RestoringData;
+use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
@@ -55,6 +61,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FileSearch extends Base {
 	use TArrayTools;
 	use TStringTools;
+	use TNC23Deserialize;
 
 
 	/** @var PointService */
@@ -103,6 +110,7 @@ class FileSearch extends Base {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotFoundException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$search = $input->getArgument('search');
@@ -126,6 +134,11 @@ class FileSearch extends Base {
 			$empty = true;
 
 			foreach ($point->getRestoringData() as $data) {
+				if ($data->getType() === RestoringData::INTERNAL_DATA
+					|| $data->getType() === RestoringData::SQL_DUMP) {
+					continue;
+				}
+
 				$chunks = $data->getChunks();
 				$progressBar = new ProgressBar($output, sizeof($chunks));
 				$progressBar->start();
@@ -133,7 +146,12 @@ class FileSearch extends Base {
 				foreach ($chunks as $chunk) {
 					$progressBar->advance();
 					try {
-						$files = $this->chunkService->searchFileInChunk($point, $chunk, $search);
+						try {
+							$files = $this->searchFilesInChunkFolder($point, $chunk, $search);
+						} catch (NotFoundException | NotPermittedException $e) {
+							$files = $this->chunkService->searchFilesInChunk($point, $chunk, $search);
+						}
+
 						if (empty($files)) {
 							continue;
 						}
@@ -170,5 +188,46 @@ class FileSearch extends Base {
 		$output->writeln('');
 
 		return 0;
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 * @param string $search
+	 *
+	 * @return array
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
+	 */
+	private function searchFilesInChunkFolder(
+		RestoringPoint $point,
+		RestoringChunk $chunk,
+		string $search
+	): array {
+		$folder = $this->chunkService->getChunkFolder($point, $chunk);
+
+		$file = $folder->getFile(ChunkService::PREFIX . $chunk->getName());
+		$data = json_decode($file->getContent(), true);
+		if (!is_array($data)) {
+			$data = [];
+		}
+
+		/** @var ArchiveFile[] $files */
+		$files = $this->deserializeArray($this->getArray('files', $data), ArchiveFile::class);
+		$chunk->setFiles($files);
+
+		return array_filter(
+			array_map(
+				function (ArchiveFile $file) use ($search): ?ArchiveFile {
+					if (strpos(strtolower($file->getName()), $search) !== false) {
+						return $file;
+					}
+
+					return null;
+				}, $chunk->getFiles()
+			)
+		);
 	}
 }

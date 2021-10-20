@@ -31,6 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
@@ -65,6 +66,7 @@ class ChunkService {
 	use TArrayTools;
 	use TStringTools;
 	use TFileTools;
+	use TNC23Deserialize;
 
 
 	public const BACKUP_SCRIPT = 'restore.php';
@@ -181,7 +183,7 @@ class ChunkService {
 		$zip->extractTo($root, ($filename === '') ? null : $filename);
 		$this->closeZipArchive($zip);
 
-		unlink($root . self::PREFIX . $chunk->getName() . '.json');
+		unlink($root . self::PREFIX . $chunk->getName());
 //		$this->restoreFromArchive($archive, $root);
 //		$this->deleteArchive($backup, $archive, 'zip');
 	}
@@ -259,19 +261,20 @@ class ChunkService {
 
 
 	/**
-	 * @param RestoringChunk $archive
+	 * @param RestoringChunk $chunk
 	 * @param ZipArchive $zip
 	 */
-	public function listFilesFromZip(RestoringChunk $archive, ZipArchive $zip): void {
-		$json = $zip->getFromName(self::PREFIX . $archive->getName() . '.json');
+	public function listFilesFromZip(RestoringChunk $chunk, ZipArchive $zip): void {
+		$json = $zip->getFromName(self::PREFIX . $chunk->getName());
 		if (!$json) {
 			return;
 		}
 
 		$data = json_decode($json, true);
-		$files = $this->getList('files', $data, [ArchiveFile::class, 'import'], []);
+		/** @var ArchiveFile[] $files */
+		$files = $this->deserializeArray($this->getArray('files', $data), ArchiveFile::class);
 
-		$archive->setFiles($files);
+		$chunk->setFiles($files);
 	}
 
 
@@ -494,7 +497,7 @@ class ChunkService {
 	public function finalizeZip(ZipStreamer $zip, RestoringChunk $archive): void {
 		$str = json_encode($archive->getResume(), JSON_PRETTY_PRINT);
 		$read = fopen('data://text/plain,' . $str, 'rb');
-		$zip->addFileFromStream($read, self::PREFIX . $archive->getName() . '.json');
+		$zip->addFileFromStream($read, self::PREFIX . $archive->getName());
 
 		$zip->finalize();
 	}
@@ -509,7 +512,7 @@ class ChunkService {
 			$folder = $this->getChunkFolder($point, $chunk);
 			if ($this->configService->getAppValueBool(ConfigService::PACK_INDEX)) {
 				$folder->newFile(
-					self::PREFIX . $chunk->getName() . '.json',
+					self::PREFIX . $chunk->getName(),
 					json_encode($chunk->getResume(), JSON_PRETTY_PRINT)
 				);
 			}
@@ -838,7 +841,7 @@ class ChunkService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-	public function searchFileInChunk(RestoringPoint $point, RestoringChunk $chunk, string $search): array {
+	public function searchFilesInChunk(RestoringPoint $point, RestoringChunk $chunk, string $search): array {
 		if (empty($chunk->getFiles())) {
 			$this->listFilesFromChunk($point, $chunk);
 		}
