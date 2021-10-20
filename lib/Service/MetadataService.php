@@ -39,6 +39,7 @@ use OCA\Backup\Model\RestoringPoint;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 
+
 /**
  * Class MetadataService
  *
@@ -46,9 +47,6 @@ use OCP\Files\NotPermittedException;
  */
 class MetadataService {
 	public const METADATA_FILE = 'restoring-point.data';
-
-
-	const METADATA_FILE = 'restoring-point.data';
 
 
 	/** @var PointRequest */
