@@ -303,7 +303,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	 * @return bool
 	 */
 	public function isLocked(): bool {
-		return ($this->getLock() < (time() - self::LOCK_TIMEOUT));
+		return ($this->getLock() > (time() - self::LOCK_TIMEOUT));
 	}
 
 

@@ -626,6 +626,8 @@ class PointService {
 			$folder = $this->appData->getFolder('/' . $point->getId());
 		}
 
+		$folder->newFile(PointService::NOBACKUP_FILE, '');
+
 		$point->setRootFolder($this->appData);
 		$point->setBaseFolder($folder);
 	}

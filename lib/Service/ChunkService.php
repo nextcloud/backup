@@ -433,6 +433,7 @@ class ChunkService {
 
 			if ($zipSize > 0 && ($zipSize + $fileSize) > $chunkSize) {
 				$this->finalizeZip($zip, $chunk->setCount()->setSize($zipSize));
+				$this->finalizeChunk($point, $chunk);
 				array_unshift($files, $filename);
 
 				return $chunk;
@@ -447,6 +448,7 @@ class ChunkService {
 		}
 
 		$this->finalizeZip($zip, $chunk->setCount()->setSize($zipSize));
+		$this->finalizeChunk($point, $chunk);
 
 		return $chunk;
 	}
@@ -493,6 +495,19 @@ class ChunkService {
 		$zip->addFileFromStream($read, '.backup.' . $archive->getName() . '.json');
 
 		$zip->finalize();
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
+	 */
+	private function finalizeChunk(RestoringPoint $point, RestoringChunk $chunk) {
+		try {
+			$folder = $this->getChunkFolder($point, $chunk);
+			$folder->newFile('.backup.' . $chunk->getName() . '.json', json_encode($chunk->getResume(), JSON_PRETTY_PRINT));
+		} catch (Exception $e) {
+		}
 	}
 
 

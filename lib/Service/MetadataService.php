@@ -34,6 +34,7 @@ namespace OCA\Backup\Service;
 
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\RestoringPointException;
+use OCA\Backup\Exceptions\RestoringPointLockException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
 use OCP\Files\NotFoundException;
@@ -133,7 +134,7 @@ class MetadataService {
 	/**
 	 * @param RestoringPoint $point
 	 *
-	 * @throws RestoringPointException
+	 * @throws RestoringPointLockException
 	 */
 	public function isLock(RestoringPoint $point): void {
 		try {
@@ -145,7 +146,7 @@ class MetadataService {
 		$point->setLock($stored->getLock());
 
 		if ($point->isLocked()) {
-			throw new RestoringPointException('point is locked');
+			throw new RestoringPointLockException('point is locked');
 		}
 	}
 

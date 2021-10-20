@@ -41,7 +41,7 @@ use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
-use OCA\Backup\Exceptions\RestoringPointException;
+use OCA\Backup\Exceptions\RestoringPointLockException;
 use OCA\Backup\Exceptions\RestoringPointNotInitiatedException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Model\RestoringChunk;
@@ -127,6 +127,7 @@ class PackService {
 	 * @param bool $force
 	 *
 	 * @throws RestoringPointPackException
+	 * @throws RestoringPointLockException
 	 */
 	public function packPoint(RestoringPoint $point, bool $force = false): void {
 		if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
@@ -134,6 +135,7 @@ class PackService {
 		}
 
 		$this->metadataService->isLock($point);
+		$this->metadataService->lock($point);
 
 		if ($point->isStatus(RestoringPoint::STATUS_ISSUE)) {
 			if (!$force && $point->getNotes()->gInt('pack_date') > time() - 3600 * 6) {
@@ -141,6 +143,7 @@ class PackService {
 			}
 		}
 
+		$oldChunks = [];
 		foreach ($point->getRestoringData() as $data) {
 			foreach ($data->getChunks() as $chunk) {
 				try {
@@ -149,6 +152,7 @@ class PackService {
 						$chunkPart->setChecksum($this->chunkService->getChecksum($point, $chunk));
 						$chunk->addPart($chunkPart);
 					} else {
+						$oldChunks[] = clone $chunk;
 						$this->packChunk($point, $chunk);
 					}
 				} catch (Throwable $t) {
@@ -164,6 +168,8 @@ class PackService {
 				}
 			}
 		}
+
+		$this->removeOldChunkFiles($point, $oldChunks);
 
 		$point->addStatus(RestoringPoint::STATUS_PACKED)
 			  ->getNotes()
@@ -187,6 +193,8 @@ class PackService {
 				]
 			);
 		}
+
+		$this->metadataService->unlock($point);
 	}
 
 
@@ -207,8 +215,6 @@ class PackService {
 		$parts = $this->wrapPackExplode($temp);
 		$parts = $this->wrapPackEncrypt($point, $parts);
 		$this->wrapStoreParts($point, $chunk, $parts);
-
-		$this->chunkService->removeChunkFile($point, $chunk);
 	}
 
 
@@ -434,7 +440,10 @@ class PackService {
 		}
 
 		foreach ($parts as $item) {
-			unlink($item->getName());
+			try {
+				unlink($item->getName());
+			} catch (Throwable $t) {
+			}
 		}
 	}
 
@@ -448,7 +457,8 @@ class PackService {
 	 */
 	private function storeParts(RestoringPoint $point, RestoringChunk $chunk, array $parts): void {
 		$folder = $this->getPackFolder($point, $chunk);
-		foreach ($parts as $item) {
+		foreach ($parts as $temp) {
+			$item = clone $temp;
 			$prefix = str_pad((string)$item->getOrder(), 5, '0', STR_PAD_LEFT) . '-';
 			$filename = $prefix . $this->token();
 			$file = $folder->newFile($filename);
@@ -586,22 +596,30 @@ class PackService {
 			throw new RestoringPointPackException('restoring point is not packed');
 		}
 
+		$this->metadataService->isLock($point);
+		$this->metadataService->lock($point);
+
+		$oldChunks = [];
 		foreach ($point->getRestoringData() as $data) {
 			if ($data->getType() === RestoringData::INTERNAL_DATA) {
 				continue;
 			}
 
 			foreach ($data->getChunks() as $chunk) {
+				$oldChunks[] = clone $chunk;
 				$this->unpackChunk($point, $chunk);
 			}
 		}
 
+		$this->removeOldChunkPartFiles($point, $oldChunks);
 		$point->setStatus(RestoringPoint::STATUS_UNPACKED)
 			  ->unsetNotes();
 
 		$this->remoteStreamService->signPoint($point);
 		$this->pointRequest->update($point, true);
 		$this->metadataService->saveMetadata($point);
+
+		$this->metadataService->unlock($point);
 	}
 
 
@@ -609,6 +627,12 @@ class PackService {
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 *
+	 * @return void
+	 * @throws ArchiveNotFoundException
+	 * @throws EncryptionKeyException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
+	 * @throws SodiumException
 	 * @throws Throwable
 	 */
 	public function unpackChunk(RestoringPoint $point, RestoringChunk $chunk): void {
@@ -618,8 +642,11 @@ class PackService {
 		$temp = $this->wrapPackChunkExtract($point, $temp);
 		$this->wrapRecreateChunk($point, $chunk, $temp);
 
-		$this->removeChunkPartFiles($point, $chunk);
+//		$parts = $chunk->getParts();
 		$chunk->setParts([]);
+
+//		$this->removeChunkPartFiles($point, $chunk);
+//		return $parts;
 	}
 
 
@@ -830,7 +857,8 @@ class PackService {
 
 		$folder = $point->getBaseFolder();
 		if ($chunk->getPath() !== '') {
-			$path = '/' . $folder->getName() . '/' . $chunk->getPath() . '/' . $chunk->getName();
+			$path = '/' . $folder->getName() . '/' . $chunk->getPath();
+//			$path = '/' . $folder->getName() . '/' . $chunk->getPath() . '/' . $chunk->getName();
 			$root = $point->getRootFolder();
 			try {
 				$folder = $root->getFolder($path);
@@ -891,18 +919,34 @@ class PackService {
 
 	/**
 	 * @param RestoringPoint $point
-	 * @param RestoringChunk $chunk
+	 * @param RestoringChunk[] $chunks
 	 *
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotInitiatedException
 	 */
-	private function removeChunkPartFiles(RestoringPoint $point, RestoringChunk $chunk): void {
-		$folder = $this->getPackFolder($point, $chunk);
-		foreach ($chunk->getParts() as $part) {
+	private function removeOldChunkPartFiles(RestoringPoint $point, array $chunks): void {
+		foreach ($chunks as $chunk) {
+			$folder = $this->getPackFolder($point, $chunk);
+			foreach ($chunk->getParts() as $part) {
+				try {
+					$file = $folder->getFile($part->getName());
+					$file->delete();
+				} catch (Exception $e) {
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringChunk[] $chunks
+	 */
+	private function removeOldChunkFiles(RestoringPoint $point, array $chunks): void {
+		foreach ($chunks as $chunk) {
 			try {
-				$file = $folder->getFile($part->getName());
-				$file->delete();
-			} catch (NotFoundException $e) {
+				$this->chunkService->removeChunkFile($point, $chunk);
+			} catch (Exception $e) {
 				continue;
 			}
 		}
