@@ -1,17 +1,9 @@
-<?php
-
-declare(strict_types=1);
-
-
 /**
- * Nextcloud - Backup now. Restore later.
+ * @copyright Copyright (c) 2021 Louis Chemineau <louis@chmn.me>
  *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
+ * @author Louis Chemineau <louis@chmn.me>
  *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
- * @license GNU AGPL version 3 or any later version
+ * @license GPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,16 +16,13 @@ declare(strict_types=1);
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
+import { getLoggerBuilder } from '@nextcloud/logger'
 
-use OCA\Backup\AppInfo\Application;
-use OCP\Util;
-
-Util::addScript(Application::APP_ID, 'backup-adminSettings');
-?>
-
-
-<div id="backup-settings"></div>
+export default getLoggerBuilder()
+	.setApp('backup')
+	.detectUser()
+	.build()

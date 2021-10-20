@@ -67,6 +67,7 @@ class SqlDumpPgSQL implements ISqlDump {
 					  ->setUserName($this->get('dbuser', $data))
 					  ->setPassword($this->get('dbpassword', $data))
 					  ->setHost($this->get('dbhost', $data))
+					  ->setPort($this->getInt('dbport', $data))
 					  ->addExtraOption('--clean --inserts')
 					  ->dumpToFile($filename);
 		} catch (Throwable $t) {
