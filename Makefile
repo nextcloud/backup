@@ -73,7 +73,7 @@ cs-fix: composer-dev
 clean:
 	rm -rf $(build_dir)
 	rm -rf node_modules
-	rm -rf js/*.hot-update.*
+	find ./js/ -type f ! -name "files.js" -delete
 
 # composer packages
 composer:
@@ -84,7 +84,7 @@ composer-dev:
 	composer install --prefer-dist --dev
 	composer upgrade --prefer-dist --dev
 
-appstore: clean composer
+appstore: clean composer js
 	mkdir -p $(sign_dir)
 	rsync -a \
 	--exclude=/build \
@@ -113,6 +113,8 @@ appstore: clean composer
 		echo "Signing package…"; \
 		openssl dgst -sha512 -sign $(cert_dir)/$(package_name).key $(build_dir)/$(package_name)-$(version).tar.gz | openssl base64; \
 	fi
+
+js: npm-init npm-update build-js-production
 
 npm-init:
 	npm ci
