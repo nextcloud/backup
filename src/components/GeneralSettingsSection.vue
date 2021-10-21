@@ -123,6 +123,7 @@
 				{{ t('backup', 'Export backup configuration') }}
 			</h3>
 			<div class="backup-settings__actions__action">
+				{{ t('backup', 'You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
 				<button
 					:disabled="loadingExportSettings"
 					:class="{loading: loadingExportSettings}"
@@ -132,9 +133,10 @@
 				</button>
 			</div>
 			<div v-if="exportPrivateKey !== undefined" class="backup-settings__export__info">
-				{{ t('backup', 'Your export as been downloaded encrypted. To ba able to decrypt it later, please keep the following private key in a safe place:') }}
+				{{ t('backup', 'Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
 				<br>
 				<code><b>{{ exportPrivateKey }}</b></code>
+				<br>
 			</div>
 
 			<div class="backup-settings__actions__action">
