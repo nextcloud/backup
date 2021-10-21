@@ -73,6 +73,7 @@ cs-fix: composer-dev
 clean:
 	rm -rf $(build_dir)
 	rm -rf node_modules
+	rm -rf js/*.hot-update.*
 
 # composer packages
 composer:
@@ -112,3 +113,36 @@ appstore: clean composer
 		echo "Signing package…"; \
 		openssl dgst -sha512 -sign $(cert_dir)/$(package_name).key $(build_dir)/$(package_name)-$(version).tar.gz | openssl base64; \
 	fi
+
+npm-init:
+	npm ci
+
+npm-update:
+	npm update
+
+# Building
+build-js:
+	npm run dev
+
+build-js-production:
+	npm run build
+
+watch-js:
+	npm run watch
+
+serve-js:
+	npm run serve
+
+# Linting
+lint:
+	npm run lint
+
+lint-fix:
+	npm run lint:fix
+
+# Style linting
+stylelint:
+	npm run stylelint
+
+stylelint-fix:
+	npm run stylelint:fix
