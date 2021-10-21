@@ -365,5 +365,4 @@ class ConfigService {
 
 		return $this->getSettings();
 	}
-
 }

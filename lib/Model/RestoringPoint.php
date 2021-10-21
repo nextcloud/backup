@@ -60,7 +60,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	public const STATUS_COMPRESSED = 2;
 	public const STATUS_ENCRYPTED = 4;
 
-	const LOCK_TIMEOUT = 3600 * 3;
+	public const LOCK_TIMEOUT = 3600 * 3;
 
 	public static $DEF_STATUS =
 		[

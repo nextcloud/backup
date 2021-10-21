@@ -1,6 +1,7 @@
 \.idea/
 .buildpath
 .project
+.php_cs.cache
 build/
 .settings/
 vendor/
