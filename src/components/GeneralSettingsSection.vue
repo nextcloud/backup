@@ -123,12 +123,18 @@
 				{{ t('backup', 'Export backup configuration') }}
 			</h3>
 			<div class="backup-settings__actions__action">
-				<a href="getDownloadConfigurationURL" target="_blank">
-					<button :disabled="loadingFetchSettings">
-						<span class="icon icon-external" />
-						{{ t('backup', 'Export configuration') }}
-					</button>
-				</a>
+				<button
+					:disabled="loadingExportSettings"
+					:class="{loading: loadingExportSettings}"
+					@click="downloadSettings">
+					<span class="icon icon-external" />
+					{{ t('backup', 'Export configuration') }}
+				</button>
+			</div>
+			<div v-if="exportPrivateKey !== undefined" class="backup-settings__export__info">
+				{{ t('backup', 'Your export as been downloaded encrypted. To ba able to decrypt it later, please keep the following private key in a safe place:') }}
+				<br>
+				<code><b>{{ exportPrivateKey }}</b></code>
 			</div>
 
 			<div class="backup-settings__actions__action">
@@ -211,9 +217,11 @@ export default {
 				partial: 0,
 				full: 0,
 			}),
+			exportPrivateKey: undefined,
 			loadingFetchSettings: false,
 			loadingSetSettings: 0,
 			loadingRequestRestoringPoint: false,
+			loadingExportSettings: false,
 			/** @type {'full'|'partial'|''} */
 			requestRestoringPointType: '',
 			validationCheckboxForRestoringPointRequest: false,
@@ -221,9 +229,6 @@ export default {
 	},
 
 	computed: {
-		downloadConfigurationURL() {
-			return 'https://nextcloud.test/...'
-		},
 		/** @return {HTMLFormElement} */
 		settingsForm() {
 			return this.$refs['settings-form']
@@ -293,6 +298,37 @@ export default {
 				this.loadingRequestRestoringPoint = false
 			}
 		},
+
+		async downloadSettings() {
+			if (this.loadingExportSettings) {
+				return
+			}
+
+			try {
+				this.loadingExportSettings = true
+				const response = await axios.get(generateOcsUrl('apps/backup/setup/encrypted'))
+
+				this.exportPrivateKey = response.data.ocs.data.key
+
+				// From: https://stackoverflow.com/questions/13405129/javascript-create-and-save-file
+				const file = new Blob([response.data.ocs.data.content], { type: 'asc' })
+				const a = document.createElement('a')
+				const url = URL.createObjectURL(file)
+				a.href = url
+				a.download = 'settings.asc'
+				document.body.appendChild(a)
+				a.click()
+				setTimeout(() => {
+					document.body.removeChild(a)
+					window.URL.revokeObjectURL(url)
+				}, 0)
+			} catch (error) {
+				showError(t('backup', 'Unable to export settings'))
+				logger.error('An error occurred while exporting the settings', { error })
+			} finally {
+				this.loadingExportSettings = false
+			}
+		},
 	},
 }
 </script>
@@ -324,6 +360,20 @@ button.loading {
 	&__input {
 		width: 30px;
 		text-align: center;
+	}
+
+	&__export__info {
+		color: var(--color-error);
+
+		code {
+			display: inline-block;
+			margin-top: 12px;
+			padding: 8px;
+			border-radius: 4px;
+			user-select: all;
+			background: var(--color-background-dark);
+			color: var(--color-text-lighter);
+		}
 	}
 
 	&__actions {
