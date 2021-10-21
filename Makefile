@@ -99,6 +99,8 @@ appstore: clean composer js
 	--exclude=/issue_template.md \
 	--exclude=/README.md \
 	--exclude=/composer.json \
+	--exclude=/node_modules/ \
+	--exclude=/src/ \
 	--exclude=/testConfiguration.json \
 	--exclude=/composer.lock \
 	--exclude=/.gitattributes \

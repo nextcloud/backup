@@ -7,3 +7,4 @@ vendor/
 node_modules/
 js/*hot-update.*
 .php_cs.cache
+\.vscode/
