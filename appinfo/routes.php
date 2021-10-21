@@ -3,6 +3,7 @@
 return [
 
 	'ocs' => [
+		['name' => 'Local#setupExport', 'url' => '/setup/{encrypted}', 'verb' => 'GET'],
 		['name' => 'Local#getSettings', 'url' => '/settings', 'verb' => 'GET'],
 		['name' => 'Local#setSettings', 'url' => '/settings', 'verb' => 'PUT'],
 		['name' => 'Local#getRestoringPoints', 'url' => '/rp', 'verb' => 'GET'],

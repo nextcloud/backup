@@ -41,6 +41,7 @@ use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
+use OCA\Backup\Service\ExportService;
 use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\PointService;
@@ -79,6 +80,9 @@ class LocalController extends OcsController {
 	/** @var ExternalFolderService */
 	private $externalFolderService;
 
+	/** @var ExportService */
+	private $exportService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -94,6 +98,7 @@ class LocalController extends OcsController {
 	 * @param FilesService $filesService
 	 * @param CronService $cronService
 	 * @param ExternalFolderService $externalFolderService
+	 * @param ExportService $exportService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
@@ -105,6 +110,7 @@ class LocalController extends OcsController {
 		FilesService $filesService,
 		CronService $cronService,
 		ExternalFolderService $externalFolderService,
+		ExportService $exportService,
 		ConfigService $configService
 	) {
 		parent::__construct($appName, $request);
@@ -115,6 +121,7 @@ class LocalController extends OcsController {
 		$this->filesService = $filesService;
 		$this->cronService = $cronService;
 		$this->externalFolderService = $externalFolderService;
+		$this->exportService = $exportService;
 		$this->configService = $configService;
 	}
 
@@ -181,8 +188,31 @@ class LocalController extends OcsController {
 				);
 			}
 		}
-		
+
 		return new DataResponse(array_merge($settings, $this->cronService->nextBackups()));
+	}
+
+
+	/**
+	 * @param string $encrypted
+	 *
+	 * @return DataResponse
+	 * @throws OCSException
+	 */
+	public function setupExport(string $encrypted): DataResponse {
+		try {
+			$key = '';
+			$content = $this->exportService->export(($encrypted === 'encrypted'), $key);
+
+			return new DataResponse(
+				[
+					'key' => $key,
+					'content' => $content
+				]
+			);
+		} catch (Exception $e) {
+			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		}
 	}
 
 
