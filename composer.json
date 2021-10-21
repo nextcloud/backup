@@ -25,7 +25,7 @@
   "require": {
     "artificial-owl/my-small-php-tools": "~23",
     "ifsnop/mysqldump-php": "2.9",
-    "spatie/db-dumper": "2.21.0",
+    "spatie/db-dumper": "2.21.1",
     "pimple/pimple": "~3.0"
   },
   "scripts": {

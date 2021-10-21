@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b2a61995f8154d97499221ac38389694",
+    "content-hash": "079e29dbeb9272e068532e96704fd655",
     "packages": [
         {
             "name": "artificial-owl/my-small-php-tools",
@@ -208,16 +208,16 @@
         },
         {
             "name": "spatie/db-dumper",
-            "version": "2.21.0",
+            "version": "2.21.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/db-dumper.git",
-                "reference": "54150d138dfe5b8043c2a7c6c27a8b41a9e8f418"
+                "reference": "05e5955fb882008a8947c5a45146d86cfafa10d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/54150d138dfe5b8043c2a7c6c27a8b41a9e8f418",
-                "reference": "54150d138dfe5b8043c2a7c6c27a8b41a9e8f418",
+                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/05e5955fb882008a8947c5a45146d86cfafa10d1",
+                "reference": "05e5955fb882008a8947c5a45146d86cfafa10d1",
                 "shasum": ""
             },
             "require": {
@@ -256,7 +256,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/db-dumper/issues",
-                "source": "https://github.com/spatie/db-dumper/tree/2.21.0"
+                "source": "https://github.com/spatie/db-dumper/tree/2.21.1"
             },
             "funding": [
                 {
@@ -264,7 +264,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-01-27T09:26:50+00:00"
+            "time": "2021-02-24T14:56:42+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
