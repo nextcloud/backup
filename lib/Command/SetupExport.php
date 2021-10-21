@@ -109,7 +109,7 @@ class SetupExport extends Base {
 		$setup = [
 			'signatory' => $this->configService->getAppValue('key_pairs'),
 			'remote' => $this->remoteService->getAll(true),
-			'encryption' => $this->encryptService->getEncryptionKey()
+			'encryption' => $this->encryptService->getEncryptionKeys(true)
 		];
 
 		$data = json_encode($setup);

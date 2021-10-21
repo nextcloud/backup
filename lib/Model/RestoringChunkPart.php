@@ -62,6 +62,9 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	private $encrypted = false;
 
 	/** @var string */
+	private $algorithm = '';
+
+	/** @var string */
 	private $encryptedChecksum = '';
 
 
@@ -126,8 +129,9 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	 *
 	 * @return RestoringChunkPart
 	 */
-	public function setEncrypted(bool $encrypted): self {
+	public function setEncrypted(bool $encrypted, string $algorithm = ''): self {
 		$this->encrypted = $encrypted;
+		$this->algorithm = $algorithm;
 
 		return $this;
 	}
@@ -137,6 +141,25 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	 */
 	public function isEncrypted(): bool {
 		return $this->encrypted;
+	}
+
+
+	/**
+	 * @param string $algorithm
+	 *
+	 * @return RestoringChunkPart
+	 */
+	public function setAlgorithm(string $algorithm): self {
+		$this->algorithm = $algorithm;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAlgorithm(): string {
+		return $this->algorithm;
 	}
 
 
@@ -219,6 +242,7 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 			 ->setOrder($this->getInt('order', $data))
 			 ->setContent($this->get('content', $data))
 			 ->setEncrypted($this->getBool('encrypted', $data))
+			 ->setAlgorithm($this->get('algorithm', $data))
 			 ->setChecksum($this->get('checksum', $data))
 			 ->setEncryptedChecksum($this->get('encryptedChecksum', $data));
 
@@ -234,6 +258,7 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 			'name' => $this->getName(),
 			'order' => $this->getOrder(),
 			'encrypted' => $this->isEncrypted(),
+			'algorithm' => $this->getAlgorithm(),
 			'checksum' => $this->getChecksum(),
 			'encryptedChecksum' => $this->getEncryptedChecksum()
 		];

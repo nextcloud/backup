@@ -5,3 +5,5 @@
 build/
 .settings/
 vendor/
+
+.php_cs.cache

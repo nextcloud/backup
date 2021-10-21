@@ -31,15 +31,12 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-
 use OCA\Backup\Db\PointRequest;
-use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointLockException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-
 
 /**
  * Class MetadataService
@@ -149,5 +146,4 @@ class MetadataService {
 			throw new RestoringPointLockException('point is locked');
 		}
 	}
-
 }

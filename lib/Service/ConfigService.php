@@ -66,7 +66,8 @@ class ConfigService {
 	public const PACK_INDEX = 'pack_index';
 	public const PACK_REMOTE_INDEX = 'pack_remote_index';
 
-	public const ENCRYPTION_KEY = 'encryption_key';
+	public const ENCRYPTION_KEYS = 'encryption_keys';
+	public const FORCE_CBC = 'force_cbc';
 	public const TIME_SLOTS = 'time_slots';
 	public const MOCKUP_DATE = 'mockup_date';
 
@@ -88,7 +89,8 @@ class ConfigService {
 		self::DELAY_UNIT => 'd',
 		self::ALLOW_WEEKDAY => 0,
 		self::PACK_BACKUP => '1',
-		self::ENCRYPTION_KEY => '',
+		self::ENCRYPTION_KEYS => '{}',
+		self::FORCE_CBC => 0,
 		self::TIME_SLOTS => '23-5',
 		self::MOCKUP_DATE => 0,
 		self::BACKUP_DAYS => 60,
@@ -365,5 +367,4 @@ class ConfigService {
 
 		return $this->getSettings();
 	}
-
 }

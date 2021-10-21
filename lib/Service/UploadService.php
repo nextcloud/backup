@@ -41,6 +41,7 @@ use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointException;
+use OCA\Backup\Exceptions\RestoringPointLockException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotInitiatedException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
@@ -82,6 +83,9 @@ class UploadService {
 	/** @var ExternalFolderService */
 	private $externalFolderService;
 
+	/** @var MetadataService */
+	private $metadataService;
+
 	/** @var OutputService */
 	private $outputService;
 
@@ -97,6 +101,7 @@ class UploadService {
 	 * @param PackService $packService
 	 * @param RemoteService $remoteService
 	 * @param ExternalFolderService $externalFolderService
+	 * @param MetadataService $metadataService
 	 * @param OutputService $outputService
 	 * @param ConfigService $configService
 	 */
@@ -106,6 +111,7 @@ class UploadService {
 		PackService $packService,
 		RemoteService $remoteService,
 		ExternalFolderService $externalFolderService,
+		MetadataService $metadataService,
 		OutputService $outputService,
 		ConfigService $configService
 	) {
@@ -114,6 +120,7 @@ class UploadService {
 		$this->packService = $packService;
 		$this->remoteService = $remoteService;
 		$this->externalFolderService = $externalFolderService;
+		$this->metadataService = $metadataService;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
 	}
@@ -127,11 +134,14 @@ class UploadService {
 	 * @throws NotPermittedException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RestoringPointPackException
+	 * @throws RestoringPointLockException
 	 */
 	public function uploadPoint(RestoringPoint $point): void {
 		if (!$point->isStatus(RestoringPoint::STATUS_PACKED)) {
 			throw new RestoringPointPackException('restoring point is not packed');
 		}
+
+		$this->metadataService->isLock($point);
 
 		$this->pointService->initBaseFolder($point);
 
@@ -171,23 +181,6 @@ class UploadService {
 				}
 
 				$health = $stored->getHealth();
-
-//				} else {
-//					try {
-//						$this->o('  > <comment>no health status attached</comment>');
-//						$this->o('  * Requesting detailed Health status: ', false);
-//						try {
-//							$health = $this->remoteService->getCurrentHealth($remote, $point);
-//							$this->o('<info>ok</info>');
-//						} catch (Exception $e) {
-//							$this->o('<error>' . $e->getMessage() . '</error>');
-//							continue;
-//						}
-//					} catch (Exception $e) {
-//						continue;
-//					}
-//				}
-
 				$this->o('  > Health status: ' . $this->outputService->displayHealth($health));
 				if ($health->getStatus() === RestoringHealth::STATUS_OK) {
 					continue;

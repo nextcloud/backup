@@ -39,6 +39,7 @@ use Exception;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
+use OCA\Backup\Exceptions\PackDecryptException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointLockException;
@@ -134,14 +135,14 @@ class PackService {
 			throw new RestoringPointPackException('restoring point is already packed');
 		}
 
-		$this->metadataService->isLock($point);
-		$this->metadataService->lock($point);
-
 		if ($point->isStatus(RestoringPoint::STATUS_ISSUE)) {
 			if (!$force && $point->getNotes()->gInt('pack_date') > time() - 3600 * 6) {
 				throw new RestoringPointPackException('restoring point already failed few hours ago');
 			}
 		}
+
+		$this->metadataService->isLock($point);
+		$this->metadataService->lock($point);
 
 		$oldChunks = [];
 		foreach ($point->getRestoringData() as $data) {
@@ -162,6 +163,7 @@ class PackService {
 						  ->sInt('pack_date', time());
 
 					$this->pointRequest->update($point);
+					$this->metadataService->unlock($point);
 					throw new RestoringPointPackException(
 						'issue on chunk ' . $chunk->getName() . ' - ' . $t->getMessage()
 					);
@@ -213,7 +215,7 @@ class PackService {
 		$temp = $this->packChunkTempFile($point, $chunk);
 		$temp = $this->wrapPackChunkCompress($point, $temp);
 		$parts = $this->wrapPackExplode($temp);
-		$parts = $this->wrapPackEncrypt($point, $parts);
+		$parts = $this->wrapPackEncrypt($point, $chunk, $parts);
 
 		$this->wrapStoreParts($point, $chunk, $parts);
 	}
@@ -365,17 +367,18 @@ class PackService {
 
 	/**
 	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
 	 * @param RestoringChunkPart[] $parts
 	 *
 	 * @return array
+	 * @throws ArchiveNotFoundException
 	 * @throws EncryptionKeyException
 	 * @throws SodiumException
-	 * @throws ArchiveNotFoundException
 	 */
-	private function wrapPackEncrypt(RestoringPoint $point, array $parts): array {
+	private function wrapPackEncrypt(RestoringPoint $point, RestoringChunk $chunk, array $parts): array {
 		if ($this->configService->getAppValueBool(ConfigService::PACK_ENCRYPT)) {
 			try {
-				$encrypted = $this->packEncrypt($parts);
+				$encrypted = $this->packEncrypt($parts, $chunk->getName());
 				foreach ($parts as $item) {
 					unlink($item->getName());
 				}
@@ -398,20 +401,21 @@ class PackService {
 
 	/**
 	 * @param RestoringChunkPart[] $parts
+	 * @param string $chunkName
 	 *
 	 * @return array
+	 * @throws ArchiveNotFoundException
 	 * @throws EncryptionKeyException
 	 * @throws SodiumException
-	 * @throws ArchiveNotFoundException
 	 */
-	private function packEncrypt(array $parts): array {
+	private function packEncrypt(array $parts, string $chunkName): array {
 		$encrypted = [];
 
 		foreach ($parts as $item) {
 			$new = clone $item;
 			$new->setName($this->configService->getTempFileName());
-			$this->encryptService->encryptFile($item->getName(), $new->getName());
-			$new->setEncrypted(true)
+			$algorithm = $this->encryptService->encryptFile($item->getName(), $new->getName(), $chunkName);
+			$new->setEncrypted(true, $algorithm)
 				->setEncryptedChecksum($this->getTempChecksum($new->getName()));
 
 			$encrypted[] = $new;
@@ -477,35 +481,6 @@ class PackService {
 			$chunk->addPart($item);
 		}
 	}
-
-
-//	/**
-//	 * @param RestoringPoint $point
-//	 * @param string $partName
-//	 * @param string $chunkName
-//	 * @param string $dataName
-//	 *
-//	 * @return RestoringChunkPart
-//	 * @throws RestoringChunkNotFoundException
-//	 * @throws RestoringChunkPartNotFoundException
-//	 * @throws RestoringPointNotInitiatedException
-//	 */
-//	public function getPartContent(
-//		RestoringPoint $point,
-//		string $partName,
-//		string $chunkName,
-//		string $dataName = ''
-//	): RestoringChunkPart {
-//		$chunk = $this->chunkService->getChunkFromRP($point, $chunkName, $dataName);
-//		$part = clone $this->getPartFromChunk($chunk, $partName);
-	//echo '!!!';
-	////		$part = clone $this->getPartFromPoint($point, $partName, $chunkName, $dataName);
-//		$this->getChunkPartContent($point, $chunk, $part);
-//
-	//echo json_encode($part);
-//
-//		return $part;
-//	}
 
 
 	/**
@@ -592,6 +567,13 @@ class PackService {
 	/**
 	 * @param RestoringPoint $point
 	 *
+	 * @throws ArchiveNotFoundException
+	 * @throws EncryptionKeyException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointLockException
+	 * @throws RestoringPointNotInitiatedException
+	 * @throws RestoringPointPackException
+	 * @throws SodiumException
 	 * @throws Throwable
 	 */
 	public function unpackPoint(RestoringPoint $point): void {
@@ -610,17 +592,30 @@ class PackService {
 
 			foreach ($data->getChunks() as $chunk) {
 				$oldChunks[] = clone $chunk;
-				$this->unpackChunk($point, $chunk);
+				try {
+					$this->unpackChunk($point, $chunk);
+				} catch (Throwable $t) {
+					$this->metadataService->unlock($point);
+
+					throw $t;
+				}
 			}
 		}
 
-		$this->removeOldChunkPartFiles($point, $oldChunks);
+		try {
+			$this->removeOldChunkPartFiles($point, $oldChunks);
+		} catch (RestoringPointNotInitiatedException | NotPermittedException $e) {
+		}
+
 		$point->setStatus(RestoringPoint::STATUS_UNPACKED)
 			  ->unsetNotes();
 
-		$this->remoteStreamService->signPoint($point);
-		$this->pointRequest->update($point, true);
-		$this->metadataService->saveMetadata($point);
+		try {
+			$this->remoteStreamService->signPoint($point);
+			$this->pointRequest->update($point, true);
+			$this->metadataService->saveMetadata($point);
+		} catch (SignatoryException | NotFoundException | NotPermittedException $e) {
+		}
 
 		$this->metadataService->unlock($point);
 	}
@@ -640,16 +635,12 @@ class PackService {
 	 */
 	public function unpackChunk(RestoringPoint $point, RestoringChunk $chunk): void {
 		$parts = $this->putOutParts($point, $chunk);
-		$parts = $this->wrapPackDecrypt($point, $parts);
+		$parts = $this->wrapPackDecrypt($point, $chunk, $parts);
 		$temp = $this->wrapPackImplode($parts);
 		$temp = $this->wrapPackChunkExtract($point, $temp);
 		$this->wrapRecreateChunk($point, $chunk, $temp);
 
-//		$parts = $chunk->getParts();
 		$chunk->setParts([]);
-
-//		$this->removeChunkPartFiles($point, $chunk);
-//		return $parts;
 	}
 
 
@@ -692,18 +683,16 @@ class PackService {
 
 	/**
 	 * @param RestoringPoint $point
+	 * @param RestoringChunk $chunk
 	 * @param RestoringChunkPart[] $parts
 	 *
 	 * @return RestoringChunkPart[]
-	 * @throws ArchiveNotFoundException
-	 * @throws EncryptionKeyException
-	 * @throws SodiumException
 	 * @throws Throwable
 	 */
-	private function wrapPackDecrypt(RestoringPoint $point, array $parts): array {
+	private function wrapPackDecrypt(RestoringPoint $point, RestoringChunk $chunk, array $parts): array {
 		if ($this->configService->getAppValueBool(ConfigService::PACK_ENCRYPT)) {
 			try {
-				$encrypted = $this->packDecrypt($parts);
+				$encrypted = $this->packDecrypt($parts, $chunk);
 				foreach ($parts as $item) {
 					unlink($item->getName());
 				}
@@ -724,21 +713,30 @@ class PackService {
 		return $parts;
 	}
 
+
 	/**
-	 * @param RestoringChunkPart[] $parts
+	 * @param array $parts
+	 * @param RestoringChunk $chunk
 	 *
 	 * @return RestoringChunkPart[]
 	 */
-	private function packDecrypt(array $parts): array {
+	private function packDecrypt(array $parts, RestoringChunk $chunk): array {
 		$decrypted = [];
 		foreach ($parts as $part) {
 			$new = clone $part;
-			$new->setName($this->configService->getTempFileName());
+			$new->setName($this->configService->getTempFileName())
+				->setAlgorithm('');
 			try {
-				$this->encryptService->decryptFile($part->getName(), $new->getName());
-				// TODO check checksums
+				$this->encryptService->decryptFile(
+					$part->getName(),
+					$new->getName(),
+					$chunk->getName(),
+					$part->getAlgorithm()
+				);
+				// TODO checksums
 //				echo '-checksum: ' . $this->getTempChecksum($new->getName()) . "\n";
-			} catch (SodiumException
+			} catch (PackDecryptException
+			| SodiumException
 			| EncryptionKeyException $e) {
 				echo '### ' . $e->getMessage();
 			}
@@ -757,7 +755,15 @@ class PackService {
 	 */
 	private function wrapPackImplode(array $parts): string {
 		try {
-			return $this->packImplode($parts);
+			$filename = $this->packImplode($parts);
+			foreach ($parts as $item) {
+				try {
+					unlink($item->getName());
+				} catch (Throwable $t) {
+				}
+			}
+
+			return $filename;
 		} catch (Throwable $t) { // in case of issue during the exploding of the file
 			foreach ($parts as $item) {
 				try {
