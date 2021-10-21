@@ -85,6 +85,6 @@ class AdminSection implements IIconSection {
 	 * {@inheritdoc}
 	 */
 	public function getIcon(): string {
-		return '';
+		return $this->urlGenerator->imagePath('backup', 'backup.svg');
 	}
 }

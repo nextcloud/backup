@@ -1,7 +1,8 @@
-
 \.idea/
 .buildpath
 .project
 build/
 .settings/
 vendor/
+node_modules/
+js/*hot-update.*

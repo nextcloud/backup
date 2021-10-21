@@ -483,10 +483,17 @@ class PointService {
 	 * @return array
 	 */
 	public function getSqlData(): array {
+		$host = $this->configService->getSystemValue(ISqlDump::DB_HOST);
+		$port = $this->configService->getSystemValue(ISqlDump::DB_PORT);
+
+		if (str_contains($host, ':')) {
+			[$host, $port] = explode(':', $host);
+		}
+
 		return [
 			'dbname' => $this->configService->getSystemValue(ISqlDump::DB_NAME),
-			'dbhost' => $this->configService->getSystemValue(ISqlDump::DB_HOST),
-			'dbport' => $this->configService->getSystemValue(ISqlDump::DB_PORT),
+			'dbhost' => $host,
+			'dbport' => $port,
 			'dbuser' => $this->configService->getSystemValue(ISqlDump::DB_USER),
 			'dbpassword' => $this->configService->getSystemValue(ISqlDump::DB_PASS)
 		];
