@@ -2,6 +2,15 @@
 
 This App allows admin to create and store backup images of their Nextcloud
 
+
+- [Restoring Points](#restoring-point)
+- [How the Backup App manage your data](#backup-manage-data)
+- [Upload to External Storages](#external-storages)
+- [Important details about your data](#important)
+- [Available `occ` commands](#occ)
+
+
+<a name="restoring-point"></a>
 ## Restoring Points
 
 A restoring point is an image of your Nextcloud at a specific time. A restoring point can be:
@@ -55,9 +64,55 @@ The normal process is to re-create the `restoring-point.data` a new one, however
 - the restoring process will require some knowledge from the admin about the infrastructure from the
   original instance that generated the backup.
 
+<a name="backup-manage-data"></a>
+## How the Backup App manage your data
+
+### The timing
+
+The settings available in the Admin Settings/Backup page, allow an admin to configure when the next
+backups will be run and at which rate:
+ ...
+### The first pass (the backup process)
+ ...
+
+### The second pass (the packing process)
+ ...
 
 
-## Quick documentation:
+<a name="external-storages"></a>
+## Upload to External Storages
+
+
+<a name="important"></a>
+## Important details about your data
+
+- **Disk-space**: The 1st pass does not compress anything, meaning that you will need at least the
+  equivalent of currently used space by your Nextcloud as available disk-space.  
+  If you have no disk-space available, you can setup your instance to directly store your backup on an
+  external storage:
+    - the data generated during the 1st pass are not encrypted, Your data leaves the internal data folder
+      from your instance and are now available on an external storage.
+    - the 1st-pass will require more resource and your instance will stays in maintenance mode for a
+      longer time.
+    - If your external storage is not a local folder, huge network resources will be required.
+
+
+- **Temporary Files**: during the 2nd pass (packing process), the compression and encryption require the
+  creation of temporary files. while those files are temporary and deleted when they become useless, they
+  are still available for few seconds. Meaning that the temp directory should not be shared with other
+  application.
+
+
+- **Export your setup**: If the option is not disable, Backups are encrypted with a key that is stored in
+  the database of your current instance of Nextcloud. The key is mandatory to recover any data from your backups.
+  
+  You can export your setup from the Admin Settings/Backup page, or using `occ`. If encrypted, the export process will 
+  generate  and returns its own key that will be required during the import when restoring your instance.
+  As an admin, you will need to store the export file and its key, preferably in different location.
+  
+
+<a name="occ"></a>
+## Available `occ` commands:
 
 ### Manage remote instance to store your backups remotely
 
