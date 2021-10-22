@@ -37,6 +37,7 @@ use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\RemoteRequest;
 use OCA\Backup\Exceptions\EncryptException;
+use OCA\Backup\Exceptions\PackDecryptException;
 use OCA\Backup\Exceptions\RemoteInstanceUidException;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Service\ConfigService;
@@ -115,7 +116,7 @@ class SetupImport extends Base {
 		if ($key !== '') {
 			try {
 				$json = $this->encryptService->decryptString(base64_decode($json), $key);
-			} catch (EncryptException $e) {
+			} catch (PackDecryptException $e) {
 				throw new EncryptException('Invalid Key');
 			}
 		}

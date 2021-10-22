@@ -33,7 +33,6 @@ namespace OCA\Backup\Service;
 
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use Exception;
-use OCA\Backup\Exceptions\EncryptException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\PackDecryptException;
 use OCA\Backup\Exceptions\PackEncryptException;
@@ -60,8 +59,11 @@ class EncryptService {
 
 	public const CHACHA = 'chacha';
 
+	public const STRING = 'string';
+	public const STRING_NONCE = 'string-nonce';
 
-	public static $LIST = [
+
+	public static $EXPORT = [
 		self::AES_GCM,
 		self::AES_GCM_NONCE,
 		self::AES_CBC,
@@ -83,22 +85,29 @@ class EncryptService {
 
 
 	/**
-	 * @param string $data
+	 * @param string $plain
 	 * @param string $key
 	 *
 	 * @return string
-	 * @throws SodiumException
+	 * @throws EncryptionKeyException
+	 * @throws PackEncryptException
 	 */
-	public function encryptString(string $data, string $key): string {
-		try {
-			$nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-		} catch (Exception $e) {
-			throw new SodiumException('random_bytes - ' . $e->getMessage());
+	public function encryptString(string $plain, string &$key = ''): string {
+		$key = $this->getEncryptionKey(self::STRING, false);
+		$nonce = $this->getEncryptionKey(self::STRING_NONCE, false);
+		$encrypted = openssl_encrypt(
+			$plain,
+			self::AES_CBC,
+			$key,
+			OPENSSL_RAW_DATA,
+			$nonce
+		);
+
+		if (!$encrypted) {
+			throw new PackEncryptException('data were not encrypted');
 		}
 
-		$encrypted = $nonce . sodium_crypto_secretbox($data, $nonce, $key);
-		sodium_memzero($data);
-		sodium_memzero($key);
+		$key = base64_encode($key) . '.' . base64_encode($nonce);
 
 		return base64_encode($encrypted);
 	}
@@ -109,36 +118,24 @@ class EncryptService {
 	 * @param string $key
 	 *
 	 * @return string
-	 * @throws EncryptException
-	 * @throws SodiumException
+	 * @throws PackDecryptException
 	 */
 	public function decryptString(string $encrypted, string $key): string {
-		$key = base64_decode($key);
+		[$k, $n] = explode('.', $key, 2);
+		$key = base64_decode($k);
+		$nonce = base64_decode($n);
 
-		if ($encrypted === false) {
-			throw new EncryptException('invalid data');
-		}
-
-		if (mb_strlen($encrypted, '8bit') < (SODIUM_CRYPTO_SECRETBOX_NONCEBYTES
-											 + SODIUM_CRYPTO_SECRETBOX_MACBYTES)) {
-			throw new EncryptException('invalid data');
-		}
-
-		$nonce = mb_substr($encrypted, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, '8bit');
-		$ciphertext = mb_substr($encrypted, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit');
-
-		$plain = sodium_crypto_secretbox_open(
-			$ciphertext,
-			$nonce,
-			$key
+		$plain = openssl_decrypt(
+			$encrypted,
+			self::AES_CBC,
+			$key,
+			OPENSSL_RAW_DATA,
+			$nonce
 		);
 
 		if ($plain === false) {
-			throw new EncryptException('invalid data');
+			throw new PackDecryptException('cannot decrypt data');
 		}
-
-		sodium_memzero($ciphertext);
-		sodium_memzero($key);
 
 		return $plain;
 	}
@@ -277,7 +274,7 @@ class EncryptService {
 				$this->decryptFileGCM($input, $output, $name);
 				break;
 			case self::AES_CBC:
-				$this->decryptFileOpenSSL($input, $output);
+				$this->decryptFileCBC($input, $output);
 				break;
 		}
 	}
@@ -323,7 +320,7 @@ class EncryptService {
 	 * @throws PackDecryptException
 	 * @throws SodiumException
 	 */
-	public function decryptFileOpenSSL(string $input, string $output): void {
+	public function decryptFileCBC(string $input, string $output): void {
 		$key = base64_decode($this->getEncryptionKey(self::AES_CBC));
 		$nonce = base64_decode($this->getEncryptionKey(self::AES_CBC_IV));
 		$write = fopen($output, 'wb');
@@ -382,7 +379,7 @@ class EncryptService {
 	 */
 	public function getEncryptionKeys(bool $generate = false): array {
 		if ($generate) {
-			foreach (self::$LIST as $item) {
+			foreach (self::$EXPORT as $item) {
 				try {
 					$this->getEncryptionKey($item);
 				} catch (EncryptionKeyException $e) {
@@ -402,7 +399,7 @@ class EncryptService {
 	/**
 	 * @throws EncryptionKeyException
 	 */
-	public function getEncryptionKey(string $type): string {
+	public function getEncryptionKey(string $type, bool $storeIt = true): string {
 		$keys = $this->getEncryptionKeys();
 
 		$key = $this->get($type, $keys);
@@ -413,8 +410,10 @@ class EncryptService {
 				throw new EncryptionKeyException($e->getMessage());
 			}
 
-			$keys[$type] = $key;
-			$this->configService->setAppValue(ConfigService::ENCRYPTION_KEYS, json_encode($keys));
+			if ($storeIt) {
+				$keys[$type] = $key;
+				$this->configService->setAppValue(ConfigService::ENCRYPTION_KEYS, json_encode($keys));
+			}
 		}
 
 		return $key;
@@ -428,6 +427,10 @@ class EncryptService {
 	 * @throws Exception
 	 */
 	private function generateKey(string $type): string {
+		if (!$this->isSodiumAvailable()) {
+			return $this->generateKeyNative($type);
+		}
+
 		switch ($type) {
 			case self::CHACHA:
 				return base64_encode(random_bytes(SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES));
@@ -437,6 +440,34 @@ class EncryptService {
 			case self::AES_CBC_IV:
 			case self::AES_GCM_NONCE:
 				return base64_encode(random_bytes(SODIUM_CRYPTO_AEAD_AES256GCM_NPUBBYTES));
+			case self::STRING:
+				return base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES));
+			case self::STRING_NONCE:
+				return base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES));
+		}
+
+		throw new EncryptionKeyException('unknown key type');
+	}
+
+
+	/**
+	 * @param string $type
+	 *
+	 * @return string
+	 * @throws EncryptionKeyException
+	 */
+	private function generateKeyNative(string $type): string {
+		switch ($type) {
+			case self::CHACHA:
+			case self::AES_GCM:
+			case self::AES_CBC:
+			case self::STRING:
+				return base64_encode(random_bytes(32));
+			case self::AES_CBC_IV:
+			case self::AES_GCM_NONCE:
+				return base64_encode(random_bytes(12));
+			case self::STRING_NONCE:
+				return base64_encode(random_bytes(24));
 		}
 
 		throw new EncryptionKeyException('unknown key type');
@@ -451,6 +482,17 @@ class EncryptService {
 			return false;
 		}
 
+		if (!$this->isSodiumAvailable()) {
+			return false;
+		}
+
 		return sodium_crypto_aead_aes256gcm_is_available();
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function isSodiumAvailable(): bool {
+		return extension_loaded('sodium');
 	}
 }

@@ -95,9 +95,7 @@ class ExportService {
 
 		$data = json_encode($setup);
 		if ($encrypted) {
-			$key = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
 			$data = $this->encryptService->encryptString($data, $key);
-			$key = base64_encode($key);
 		}
 
 		return $data;
