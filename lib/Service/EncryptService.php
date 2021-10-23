@@ -86,13 +86,13 @@ class EncryptService {
 
 	/**
 	 * @param string $plain
-	 * @param string $key
+	 * @param string $generatedKey
 	 *
 	 * @return string
 	 * @throws EncryptionKeyException
 	 * @throws PackEncryptException
 	 */
-	public function encryptString(string $plain, string &$key = ''): string {
+	public function encryptString(string $plain, string &$generatedKey = ''): string {
 		$key = $this->getEncryptionKey(self::STRING, false);
 		$nonce = $this->getEncryptionKey(self::STRING_NONCE, false);
 		$encrypted = openssl_encrypt(
@@ -107,7 +107,7 @@ class EncryptService {
 			throw new PackEncryptException('data were not encrypted');
 		}
 
-		$key = base64_encode($key) . '.' . base64_encode($nonce);
+		$generatedKey = base64_encode($key) . '.' . base64_encode($nonce);
 
 		return base64_encode($encrypted);
 	}
@@ -427,47 +427,17 @@ class EncryptService {
 	 * @throws Exception
 	 */
 	private function generateKey(string $type): string {
-		if (!$this->isSodiumAvailable()) {
-			return $this->generateKeyNative($type);
-		}
-
-		switch ($type) {
-			case self::CHACHA:
-				return base64_encode(random_bytes(SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES));
-			case self::AES_GCM:
-			case self::AES_CBC:
-				return base64_encode(random_bytes(SODIUM_CRYPTO_AEAD_AES256GCM_KEYBYTES));
-			case self::AES_CBC_IV:
-			case self::AES_GCM_NONCE:
-				return base64_encode(random_bytes(SODIUM_CRYPTO_AEAD_AES256GCM_NPUBBYTES));
-			case self::STRING:
-				return base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES));
-			case self::STRING_NONCE:
-				return base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES));
-		}
-
-		throw new EncryptionKeyException('unknown key type');
-	}
-
-
-	/**
-	 * @param string $type
-	 *
-	 * @return string
-	 * @throws EncryptionKeyException
-	 */
-	private function generateKeyNative(string $type): string {
 		switch ($type) {
 			case self::CHACHA:
 			case self::AES_GCM:
 			case self::AES_CBC:
 			case self::STRING:
 				return base64_encode(random_bytes(32));
-			case self::AES_CBC_IV:
 			case self::AES_GCM_NONCE:
 				return base64_encode(random_bytes(12));
+			case self::AES_CBC_IV:
 			case self::STRING_NONCE:
-				return base64_encode(random_bytes(24));
+				return base64_encode(random_bytes(12));
 		}
 
 		throw new EncryptionKeyException('unknown key type');

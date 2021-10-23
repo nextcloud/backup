@@ -191,7 +191,7 @@ class PointDetails extends Base {
 			}
 
 			$table = new Table($output);
-			$table->setHeaders(['Chunk Id', 'Size', 'Count', 'Part Id', 'Checksum', 'verified']);
+			$table->setHeaders(['Chunk Id', 'Size', 'Count', 'Part Id', 'Checksum', 'Algorithm', 'verified']);
 			$table->render();
 
 			foreach ($data->getChunks() as $chunk) {
@@ -278,6 +278,7 @@ class PointDetails extends Base {
 					($fresh) ? $chunk->getCount() : '',
 					$part->getName(),
 					$part->getCurrentChecksum(),
+					$part->getAlgorithm(),
 					$status
 				]
 			);

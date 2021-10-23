@@ -130,6 +130,10 @@ class SetupImport extends Base {
 		}
 
 		$this->configService->setAppValue('key_pairs', $this->get('signatory', $setup));
+		$this->configService->setAppValue(
+			ConfigService::ENCRYPTION_KEYS,
+			json_encode($this->getArray('encryption', $setup))
+		);
 
 		/** @var RemoteInstance[] $remotes */
 		$remotes = $this->deserializeArray($this->getArray('remote', $setup), RemoteInstance::class);

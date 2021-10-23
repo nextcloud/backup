@@ -86,8 +86,7 @@ class Manage extends TimedJob {
 		ExternalFolderService $externalFolderService,
 		ConfigService $configService
 	) {
-		$this->setInterval(1);
-//		$this->setInterval(3600 * 3); // 3 hours ?
+		$this->setInterval(3600);
 
 		$this->cronService = $cronService;
 		$this->pointService = $pointService;

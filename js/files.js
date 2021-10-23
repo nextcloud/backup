@@ -58,7 +58,7 @@ Backup.prototype = {
 	scanBackupFile: function(fileName, context) {
 		var fileId = context.$file.data('id')
 		$.ajax({
-			method: 'PUT',
+			method: 'POST',
 			url: OC.linkToOCS('apps/backup/action/scan', 2) + fileId + '?format=json'
 		}).done(function(res) {
 			OCP.Toast.success(res.ocs.data.message);
