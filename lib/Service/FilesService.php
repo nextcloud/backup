@@ -38,6 +38,8 @@ use ArtificialOwl\MySmallPhpTools\Traits\TPathTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC;
 use OC\Files\Node\File;
+use OC\Files\Node\Folder;
+use OC\User\NoUserException;
 use OCA\Backup\Db\ChangesRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\ChangedFile;
@@ -45,7 +47,9 @@ use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\Lock\LockedException;
 
 /**
@@ -185,19 +189,26 @@ class FilesService {
 
 	/**
 	 * @param int $fileId
+	 * @param string $owner
+	 * @param Folder|null $folder
 	 *
 	 * @return RestoringPoint
+	 * @throws NotPermittedException
+	 * @throws NoUserException
 	 * @throws RestoringPointNotFoundException
 	 */
-	public function getPointFromFileId(int $fileId): RestoringPoint {
-		$nodes = $this->rootFolder->getById($fileId);
+	public function getPointFromFileId(int $fileId, string $owner, ?Folder &$folder = null): RestoringPoint {
+		$storage = $this->rootFolder->getUserFolder($owner);
+		$nodes = $storage->getById($fileId);
+
 		foreach ($nodes as $node) {
 			if ($node->getType() !== FileInfo::TYPE_FILE) {
 				continue;
 			}
 
+			/** @var File $node */
+			$folder = $node->getParent();
 			try {
-				/** @var File $node */
 				/** @var RestoringPoint $point */
 				$point = $this->deserializeJson($node->getContent(), RestoringPoint::class);
 
@@ -211,4 +222,63 @@ class FilesService {
 
 		throw new RestoringPointNotFoundException();
 	}
+
+
+	/**
+	 * @param Folder $node
+	 * @param string $path
+	 *
+	 * @return Folder
+	 */
+	public function getPackFolder(Folder $node, string $path): Folder {
+		foreach (explode('/', $path, 2) as $dir) {
+			if ($dir === '') {
+				continue;
+			}
+
+			try {
+				$sub = $node->get($dir);
+				if ($sub->getType() !== \OC\Files\FileInfo::TYPE_FOLDER) {
+					continue;
+				}
+			} catch (NotFoundException $e) {
+				try {
+					$sub = $node->newFolder($dir);
+				} catch (NotPermittedException $e) {
+					continue;
+				}
+			}
+			$node = $sub;
+		}
+
+		return $node;
+	}
+
+
+	/**
+	 * @param Folder $input
+	 * @param ISimpleFolder $output
+	 * @param string $filename
+	 *
+	 * @throws LockedException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	public function copyFileToAppData(Folder $input, ISimpleFolder $output, string $filename): void {
+		/** @var File $orig */
+		$orig = $input->get($filename);
+		if ($orig->getType() !== FileInfo::TYPE_FILE) {
+			return;
+		}
+
+		/** @var File $orig */
+		try {
+			$dest = $output->getFile($filename);
+		} catch (NotFoundException $e) {
+			$dest = $output->newFile($filename);
+		}
+
+		$dest->putContent($orig->getContent());
+	}
+
 }

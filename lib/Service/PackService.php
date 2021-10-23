@@ -882,16 +882,17 @@ class PackService {
 	public function getPackFolder(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		string &$path = ''
+		string &$path = '',
+		string &$sub = ''
 	): ISimpleFolder {
 		if (!$point->hasBaseFolder() || !$point->hasRootFolder()) {
 			throw new RestoringPointNotInitiatedException('Restoring Point is not initiated');
 		}
 
 		$folder = $point->getBaseFolder();
-		if ($chunk->getPath() !== '') {
-			$path = '/' . $folder->getName() . '/' . $chunk->getPath();
-//			$path = '/' . $folder->getName() . '/' . $chunk->getPath() . '/' . $chunk->getName();
+		$sub = $chunk->getPath();
+		if ($sub !== '') {
+			$path = '/' . $folder->getName() . '/' . $sub;
 			$root = $point->getRootFolder();
 			try {
 				$folder = $root->getFolder($path);

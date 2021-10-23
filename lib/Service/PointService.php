@@ -528,6 +528,34 @@ class PointService {
 	}
 
 
+	public function generatePointFromFolder(int $fileId, string $owner): RestoringPoint {
+		$point = $this->filesService->getPointFromFileId($fileId, $owner, $folder);
+		$this->initBaseFolder($point);
+
+		$this->metadataService->saveMetadata($point);
+
+		foreach ($point->getRestoringData() as $data) {
+			foreach ($data->getChunks() as $chunk) {
+				$path = $sub = '';
+				$dest = $this->packService->getPackFolder($point, $chunk, $path, $sub);
+				$orig = $this->filesService->getPackFolder($folder, $sub);
+				if ($chunk->hasParts()) {
+					foreach ($chunk->getParts() as $part) {
+						$this->filesService->copyFileToAppData($orig, $dest, $part->getName());
+					}
+				} else {
+					$this->filesService->copyFileToAppData($orig, $dest, $chunk->getFilename());
+				}
+			}
+		}
+
+		$this->generateHealth($point);
+		$this->pointRequest->save($point);
+		$this->saveMetadata($point);
+
+		return $point;
+	}
+
 	/**
 	 * @param string $pointId
 	 *
@@ -535,6 +563,7 @@ class PointService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotFoundException
+	 * @throws SignatoryException
 	 */
 	public function generatePointFromBackupFS(string $pointId): RestoringPoint {
 		$tmp = new RestoringPoint();
@@ -559,6 +588,9 @@ class PointService {
 		} catch (NotPermittedException $e) {
 			throw new RestoringPointNotFoundException('cannot read ' . MetadataService::METADATA_FILE);
 		}
+
+		$this->generateHealth($point);
+		$this->pointRequest->save($point);
 
 		return $point;
 	}

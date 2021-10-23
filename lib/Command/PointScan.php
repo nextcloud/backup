@@ -35,14 +35,15 @@ use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
-use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -102,10 +103,9 @@ class PointScan extends Base {
 			 ->setDescription(
 				 'Scan a folder containing the data of a restoring point to add it in the list of available restoring point'
 			 )
-			 ->addArgument(
-				 'pointId', InputArgument::REQUIRED, 'Id of the restoring point'
-			 )
-			 ->addArgument('folder', InputArgument::OPTIONAL, 'Folder to scan');
+			 ->addArgument('pointId', InputArgument::OPTIONAL, 'Id of the restoring point', '')
+			 ->addOption('owner', '', InputOption::VALUE_REQUIRED, 'owner of the metadata file')
+			 ->addOption('file', '', InputOption::VALUE_REQUIRED, 'file_id of the metadata file');
 	}
 
 
@@ -119,29 +119,34 @@ class PointScan extends Base {
 	 * @throws NotPermittedException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$pointId = $input->getArgument('pointId');
-		$folder = $input->getArgument('folder');
+		$fileId = (int)$input->getOption('file');
 
-		try {
-			$this->pointService->getRestoringPoint($pointId);
-			$output->writeln('A restoring point with this Id already exists');
+		if ($fileId > 0) {
+			$owner = $input->getOption('owner');
+			if (!$owner) {
+				throw new InvalidArgumentException('use --owner to specify the owner of the file');
+			}
+			$point = $this->pointService->generatePointFromFolder($fileId, $owner);
 
-			return 0;
-		} catch (RestoringPointNotFoundException $e) {
+		} else {
+			$pointId = $input->getArgument('pointId');
+
+			if ($pointId === '') {
+				throw new InvalidArgumentException('use --file or pointId');
+			}
+			try {
+				$this->pointService->getRestoringPoint($pointId);
+				$output->writeln('A restoring point with this Id already exists');
+
+				return 0;
+			} catch (RestoringPointNotFoundException $e) {
+			}
+
+			$point = $this->pointService->generatePointFromBackupFS($pointId);
 		}
 
-//		$scan = $this->pointService->scanPoint($pointId);
-
-		$point = new RestoringPoint();
-		$point->setId($pointId);
-//			$this->scanBaseFolder($point);
-
-
-		$point = $this->pointService->generatePointFromBackupFS($pointId);
 		// TODO: display info about the RP and ask for a confirmation before saving into database
-
-//		echo json_encode($point) . "\n";
-		$this->pointRequest->save($point);
+		$output->writeln($point->getId() . ' added to the list');
 
 		return 0;
 	}
