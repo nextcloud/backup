@@ -182,8 +182,6 @@ class PackService {
 						'issue on chunk ' . $chunk->getName() . ' - ' . $t->getMessage()
 					);
 				}
-
-
 			}
 		}
 
@@ -966,7 +964,6 @@ class PackService {
 				$file->delete();
 			} catch (Exception $e) {
 			}
-
 		}
 	}
 

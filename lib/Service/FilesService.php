@@ -280,5 +280,4 @@ class FilesService {
 
 		$dest->putContent($orig->getContent());
 	}
-
 }

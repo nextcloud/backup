@@ -127,7 +127,6 @@ class PointScan extends Base {
 				throw new InvalidArgumentException('use --owner to specify the owner of the file');
 			}
 			$point = $this->pointService->generatePointFromFolder($fileId, $owner);
-
 		} else {
 			$pointId = $input->getArgument('pointId');
 

@@ -155,5 +155,4 @@ class MetadataService {
 			throw new RestoringPointLockException('point is locked');
 		}
 	}
-
 }

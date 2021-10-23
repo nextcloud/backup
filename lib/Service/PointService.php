@@ -260,11 +260,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-							   'id' => $point->getId(),
-							   'duration' => $point->getDuration(),
-							   'status' => $point->getStatus(),
-							   'complete' => $complete
-						   ]
+				'id' => $point->getId(),
+				'duration' => $point->getDuration(),
+				'status' => $point->getStatus(),
+				'complete' => $complete
+			]
 		);
 
 		return $point;
