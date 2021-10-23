@@ -31,6 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
@@ -142,6 +143,7 @@ class PointRestore extends Base {
 		$this->setName('backup:point:restore')
 			 ->setDescription('Restore a restoring point')
 			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			 ->addOption('force', '', InputOption::VALUE_NONE, 'Force the restoring process')
 			 ->addOption('file', '', InputOption::VALUE_REQUIRED, 'restore only a specific file')
 			 ->addOption('chunk', '', InputOption::VALUE_REQUIRED, 'location of the file')
 			 ->addOption('data', '', InputOption::VALUE_REQUIRED, 'location of the file');
@@ -162,16 +164,27 @@ class PointRestore extends Base {
 	 * @throws RestoringPointNotFoundException
 	 * @throws RestoringDataNotFoundException
 	 * @throws SqlDumpException
+	 * @throws SignatoryException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->output = $output;
 		$this->input = $input;
 
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
+		$force = $input->getOption('force');
 
-		if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
+		if ($point->isStatus(RestoringPoint::STATUS_PACKED)
+			&& !$point->isStatus(RestoringPoint::STATUS_PACKING)) {
 			throw new RestoringPointNotFoundException('the restoring point is packed, please unpack first');
 		}
+		if ($point->isStatus(RestoringPoint::STATUS_PACKING) && !$force) {
+			throw new RestoringPointNotFoundException(
+				'the restoring point does not seems to be fully unpacked, meaning not all data are available.'
+				. "\n" .
+				'Finish the unpacking process, or use --force to see how the restoring process goes and hope for the best'
+			);
+		}
+
 		$file = $input->getOption('file');
 		$data = $input->getOption('data');
 		$chunk = $input->getOption('chunk');
@@ -192,7 +205,7 @@ class PointRestore extends Base {
 		$output->writeln('');
 
 		$healthStatus = $point->getHealth()->getStatus();
-		if ($healthStatus !== RestoringHealth::STATUS_OK) {
+		if ($healthStatus !== RestoringHealth::STATUS_OK && !$force) {
 			$output->writeln('Some files from your restoring point might not be available');
 			$output->writeln('You can run ./occ backup:point:details for more details on the affected files');
 			$output->writeln('continue ? (not available yet)');
@@ -200,7 +213,6 @@ class PointRestore extends Base {
 
 			return 0;
 		}
-
 
 		$output->writeln(
 			'<error>WARNING! You are about to initiate the complete restoration of your instance!</error>'
