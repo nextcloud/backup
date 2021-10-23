@@ -191,15 +191,15 @@ class PointDetails extends Base {
 			}
 
 			$table = new Table($output);
-			$table->setHeaders(['Chunk Id', 'Size', 'Count', 'Part Id', 'Checksum', 'Algorithm', 'verified']);
+			$table->setHeaders(['Chunk Id', 'Size', 'Count', 'Part Id', 'Checksum', 'Algorithm', '']);
 			$table->render();
 
 			foreach ($data->getChunks() as $chunk) {
-				if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
+				if ($chunk->hasParts()) {
 					$this->displayDetailsPacked($table, $point, $chunk);
-
 					continue;
 				}
+
 				try {
 					$checked = $this->chunkService->getChecksum($point, $chunk);
 				} catch (ArchiveNotFoundException $e) {
@@ -207,7 +207,7 @@ class PointDetails extends Base {
 				}
 
 				$color = ($checked === $chunk->getChecksum()) ? 'info' : 'error';
-				$checked = '<' . $color . '>' . $checked . '</' . $color . '>';
+				$checked = '<' . $color . '>ok</' . $color . '>';
 
 				$table->appendRow(
 					[
@@ -216,6 +216,7 @@ class PointDetails extends Base {
 						$chunk->getCount(),
 						'not packed',
 						$chunk->getChecksum(),
+						'',
 						$checked
 					]
 				);

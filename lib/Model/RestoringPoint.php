@@ -68,6 +68,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 			self::STATUS_PACKED => 'packed',
 			self::STATUS_COMPRESSED => 'compressed',
 			self::STATUS_ENCRYPTED => 'encrypted',
+			self::STATUS_PACKING => 'in process'
 		];
 
 	public const STATUS_ISSUE = 32;

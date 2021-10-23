@@ -245,6 +245,14 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function hasParts(): bool {
+		return !empty($this->parts);
+	}
+
+
+	/**
 	 * @param RestoringChunkPart $part
 	 *
 	 * @return RestoringChunk

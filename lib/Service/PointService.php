@@ -260,11 +260,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-				'id' => $point->getId(),
-				'duration' => $point->getDuration(),
-				'status' => $point->getStatus(),
-				'complete' => $complete
-			]
+							   'id' => $point->getId(),
+							   'duration' => $point->getDuration(),
+							   'status' => $point->getStatus(),
+							   'complete' => $complete
+						   ]
 		);
 
 		return $point;
@@ -659,7 +659,7 @@ class PointService {
 		$globalStatus = RestoringHealth::STATUS_OK;
 		foreach ($point->getRestoringData() as $data) {
 			foreach ($data->getChunks() as $chunk) {
-				if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
+				if ($chunk->hasParts()) {
 					$this->generateHealthPacked($health, $point, $data, $chunk, $globalStatus);
 					continue;
 				}
@@ -672,7 +672,7 @@ class PointService {
 				}
 
 				$chunkHealth->setDataName($data->getName())
-							->setPartName($chunk->getName())
+							->setChunkName($chunk->getName())
 							->setStatus($status);
 				$health->addPart($chunkHealth);
 			}

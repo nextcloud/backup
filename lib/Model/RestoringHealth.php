@@ -141,11 +141,11 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	 * @return $this
 	 */
 	public function addPart(ChunkPartHealth $part): self {
-		$this->parts[$part->getChunkName() . '-' . $part->getPartName()] = $part;
+		$k = $this->generateName($part->getChunkName(), $part->getPartName());
+		$this->parts[$k] = $part;
 
 		return $this;
 	}
-
 
 	/**
 	 * @param string $chunkName
@@ -155,11 +155,28 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	 * @throws RestoringChunkPartNotFoundException
 	 */
 	public function getPart(string $chunkName, string $partName): ChunkPartHealth {
-		if (!array_key_exists($chunkName . '-' . $partName, $this->parts)) {
+		$k = $this->generateName($chunkName, $partName);
+		if (!array_key_exists($k, $this->parts)) {
 			throw new RestoringChunkPartNotFoundException();
 		}
 
 		return $this->parts[$chunkName . '-' . $partName];
+	}
+
+
+	/**
+	 * @param string $chunkName
+	 * @param string $partName
+	 *
+	 * @return string
+	 */
+	private function generateName(string $chunkName, string $partName = ''): string {
+		$k = $chunkName;
+		if ($partName !== '') {
+			$k .= '-' . $partName;
+		}
+
+		return $k;
 	}
 
 
