@@ -2,15 +2,16 @@
 
 This App allows admin to create and store backup images of their Nextcloud
 
-
 - [Restoring Points](#restoring-point)
+- [Hardware Requirement](#hardware)
 - [How the Backup App manage your data](#backup-manage-data)
-- [Upload to External Storages](#external-storages)
 - [Important details about your data](#important)
+- [Upload to External Storages](#external-storages)
+- [AppData on External Storage](#external-appdata)
 - [Available `occ` commands](#occ)
 
-
 <a name="restoring-point"></a>
+
 ## Restoring Points
 
 A restoring point is an image of your Nextcloud at a specific time. A restoring point can be:
@@ -64,37 +65,48 @@ The normal process is to re-create the `restoring-point.data` a new one, however
 - the restoring process will require some knowledge from the admin about the infrastructure from the
   original instance that generated the backup.
 
+<a name="hardware"></a>
+
+## Hardware requirement
+
+- **Diskspace**: Creating and storing backups require a lot, **a lot**, of disk-space.
+
+- **AES Hardware Acceleration**: If your processor does not
+  include [AES instruction set](https://en.wikipedia.org/wiki/AES_instruction_set), the encryption
+  process will _"downgrade"_ and use `aes-256-cbc`.  
+  This should only affect you when using the Backup App to migrate your instance from an AES-supporting
+  CPU to a non-AES-supporting CPU. Enforcing the use of `aes-256-cbc` when creating the backup on the
+  AES-supporting CPU will fix this:
+
+    - run: `./occ config:app:set backup force_cbc --value '1' `
+    - create a new backup: `./occ backup:point:create`
+
 <a name="backup-manage-data"></a>
+
 ## How the Backup App manage your data
 
 ### The timing
 
 The settings available in the Admin Settings/Backup page, allow an admin to configure when the next
 backups will be run and at which rate:
- ...
+...
+
 ### The first pass (the backup process)
- ...
+
+...
 
 ### The second pass (the packing process)
- ...
 
-
-<a name="external-storages"></a>
-## Upload to External Storages
-
+...
 
 <a name="important"></a>
+
 ## Important details about your data
 
 - **Disk-space**: The 1st pass does not compress anything, meaning that you will need at least the
-  equivalent of currently used space by your Nextcloud as available disk-space.  
-  If you have no disk-space available, you can setup your instance to directly store your backup on an
-  external storage:
-    - the data generated during the 1st pass are not encrypted, Your data leaves the internal data folder
-      from your instance and are now available on an external storage.
-    - the 1st-pass will require more resource and your instance will stays in maintenance mode for a
-      longer time.
-    - If your external storage is not a local folder, huge network resources will be required.
+  equivalent of currently used space by your Nextcloud as available disk-space. If you have no disk-space
+  available, you can configure the app to use an external storage to store all its data.  
+  The configuration process is described in [this chapter](#external-appdata).
 
 
 - **Temporary Files**: during the 2nd pass (packing process), the compression and encryption require the
@@ -104,14 +116,40 @@ backups will be run and at which rate:
 
 
 - **Export your setup**: If the option is not disable, Backups are encrypted with a key that is stored in
-  the database of your current instance of Nextcloud. The key is mandatory to recover any data from your backups.
-  
-  You can export your setup from the Admin Settings/Backup page, or using `occ`. If encrypted, the export process will 
-  generate  and returns its own key that will be required during the import when restoring your instance.
-  As an admin, you will need to store the export file and its key, preferably in different location.
-  
+  the database of your current instance of Nextcloud. The key is mandatory to recover any data from your
+  backups.
+
+  You can export your setup from the Admin Settings/Backup page, or using `occ`. If encrypted, the export
+  process will generate and returns its own key that will be required during the import when restoring
+  your instance. As an admin, you will need to store the export file and its key, preferably in different
+  location.
+
+
+- **.nobackup**: The presence of a `.nobackup` file in a folder will exclude all content from the current
+  folder and its subfolders at the creation of the backup.
+
+<a name="external-storages"></a>
+
+## Upload to External Storages
+
+<a name="external-appdata"></a>
+
+## AppData on External Storage
+
+If you have no disk-space available, you can configure the app to use an external storage to store all
+its data:
+
+- the data generated during the 1st pass are not encrypted, Your data leaves the internal data folder
+  from your instance and are now available on an external storage.
+- the 1st-pass will require more resources and your instance will stays in maintenance mode for a longer
+  time.
+- If your external storage is not a local folder, huge network resources will be required.
+
+run `./occ backup:external:appdata` and follow instruction to select the configured external storage, and
+configure the path to the right folder.
 
 <a name="occ"></a>
+
 ## Available `occ` commands:
 
 ### Manage remote instance to store your backups remotely

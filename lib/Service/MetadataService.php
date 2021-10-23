@@ -104,6 +104,15 @@ class MetadataService {
 
 
 	/**
+	 * @throws NotPermittedException
+	 * @throws NotFoundException
+	 */
+	public function updateStatus(RestoringPoint $point) {
+		$this->pointRequest->updateStatus($point);
+		$this->saveMetadata($point);
+	}
+
+	/**
 	 * @param RestoringPoint $point
 	 */
 	public function lock(RestoringPoint $point): void {
@@ -146,4 +155,5 @@ class MetadataService {
 			throw new RestoringPointLockException('point is locked');
 		}
 	}
+
 }

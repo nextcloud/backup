@@ -95,6 +95,19 @@ class PointRequest extends PointRequestBuilder {
 
 
 	/**
+	 * @param RestoringPoint $point
+	 */
+	public function updateStatus(RestoringPoint $point): void {
+		$qb = $this->getPointUpdateSql();
+		$qb->set('status', $qb->createNamedParameter($point->getStatus()));
+		$qb->limitToUid($point->getId());
+		$qb->limitToInstance($point->getInstance());
+
+		$qb->execute();
+	}
+
+
+	/**
 	 * @param string $pointId
 	 */
 	public function deletePoint(string $pointId): void {

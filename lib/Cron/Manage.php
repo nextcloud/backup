@@ -105,6 +105,8 @@ class Manage extends TimedJob {
 			return;
 		}
 
+		// TODO: purge old restoring points.
+
 		// uploading
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
 			if ($point->isArchive()) {

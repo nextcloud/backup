@@ -59,6 +59,7 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	public const STATUS_PACKED = 1;
 	public const STATUS_COMPRESSED = 2;
 	public const STATUS_ENCRYPTED = 4;
+    public const STATUS_PACKING = 8;
 
 	public const LOCK_TIMEOUT = 3600 * 3;
 

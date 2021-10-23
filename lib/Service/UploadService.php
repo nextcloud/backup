@@ -137,7 +137,8 @@ class UploadService {
 	 * @throws RestoringPointLockException
 	 */
 	public function uploadPoint(RestoringPoint $point): void {
-		if (!$point->isStatus(RestoringPoint::STATUS_PACKED)) {
+		if (!$point->isStatus(RestoringPoint::STATUS_PACKED)
+			|| $point->isStatus(RestoringPoint::STATUS_PACKING)) {
 			throw new RestoringPointPackException('restoring point is not packed');
 		}
 

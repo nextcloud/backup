@@ -131,7 +131,8 @@ class PackService {
 	 * @throws RestoringPointLockException
 	 */
 	public function packPoint(RestoringPoint $point, bool $force = false): void {
-		if ($point->isStatus(RestoringPoint::STATUS_PACKED)) {
+		if ($point->isStatus(RestoringPoint::STATUS_PACKED)
+			&& !$point->isStatus(RestoringPoint::STATUS_PACKING)) {
 			throw new RestoringPointPackException('restoring point is already packed');
 		}
 
@@ -143,6 +144,9 @@ class PackService {
 
 		$this->metadataService->isLock($point);
 		$this->metadataService->lock($point);
+
+		$point->addStatus(RestoringPoint::STATUS_PACKING);
+		$this->metadataService->updateStatus($point);
 
 		$oldChunks = [];
 		foreach ($point->getRestoringData() as $data) {
@@ -156,6 +160,7 @@ class PackService {
 						$oldChunks[] = clone $chunk;
 						$this->packChunk($point, $chunk);
 					}
+
 				} catch (Throwable $t) {
 					$point->setStatus(RestoringPoint::STATUS_ISSUE)
 						  ->getNotes()
@@ -168,15 +173,19 @@ class PackService {
 						'issue on chunk ' . $chunk->getName() . ' - ' . $t->getMessage()
 					);
 				}
+
+
 			}
 		}
 
 		$this->removeOldChunkFiles($point, $oldChunks);
 
-		$point->addStatus(RestoringPoint::STATUS_PACKED)
-			  ->getNotes()
-			  ->u('pack_error')
-			  ->u('pack_date');
+		$point
+			->removeStatus(RestoringPoint::STATUS_PACKING)
+			->addStatus(RestoringPoint::STATUS_PACKED)
+			->getNotes()
+			->u('pack_error')
+			->u('pack_date');
 
 		try {
 			$this->remoteStreamService->signPoint($point);
@@ -577,7 +586,8 @@ class PackService {
 	 * @throws Throwable
 	 */
 	public function unpackPoint(RestoringPoint $point): void {
-		if (!$point->isStatus(RestoringPoint::STATUS_PACKED)) {
+		if (!$point->isStatus(RestoringPoint::STATUS_PACKED)
+			&& !$point->isStatus(RestoringPoint::STATUS_PACKING)) {
 			throw new RestoringPointPackException('restoring point is not packed');
 		}
 
