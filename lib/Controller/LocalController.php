@@ -287,9 +287,10 @@ class LocalController extends OcsController {
 	 */
 	private function initActionScanLocalFolder(int $fileId): DataResponse {
 		try {
-			$point = $this->filesService->getPointFromFileId($fileId);
+			$userId = $this->userSession->getUser()->getUID();
+			$point = $this->filesService->getPointFromFileId($fileId, $userId);
 			$event = new BackupEvent();
-			$event->setAuthor($this->userSession->getUser()->getUID());
+			$event->setAuthor($userId);
 			$event->setData(['fileId' => $fileId]);
 			$event->setType('ScanLocalFolder');
 

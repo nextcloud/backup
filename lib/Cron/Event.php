@@ -34,11 +34,11 @@ namespace OCA\Backup\Cron;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Db\EventRequest;
-use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\FilesService;
+use OCA\Backup\Service\PointService;
 
 /**
  * Class Event
@@ -51,6 +51,9 @@ class Event extends TimedJob {
 
 	/** @var EventRequest */
 	private $eventRequest;
+
+	/** @var PointService */
+	private $pointService;
 
 	/** @var FilesService */
 	private $filesService;
@@ -66,12 +69,14 @@ class Event extends TimedJob {
 	 * Event constructor.
 	 *
 	 * @param EventRequest $eventRequest
+	 * @param PointService $pointService
 	 * @param FilesService $filesService
 	 * @param CronService $cronService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
 		EventRequest $eventRequest,
+		PointService $pointService,
 		FilesService $filesService,
 		CronService $cronService,
 		ConfigService $configService
@@ -79,6 +84,7 @@ class Event extends TimedJob {
 		$this->setInterval(1);
 
 		$this->eventRequest = $eventRequest;
+		$this->pointService = $pointService;
 		$this->filesService = $filesService;
 		$this->cronService = $cronService;
 		$this->configService = $configService;
@@ -106,28 +112,10 @@ class Event extends TimedJob {
 	 */
 	private function scanLocalFolder(BackupEvent $event): void {
 		$data = $event->getData();
-		try {
-			$point = $this->filesService->getPointFromFileId($this->getInt('fileId', $data));
-			$this->failEvent($event, 'A similar restoring point already exists (id=' . $point->getId() . ')');
+		$fileId = $this->getInt('fileId', $data);
+		$owner = $event->getAuthor();
 
-			return;
-		} catch (RestoringPointNotFoundException $e) {
-		}
-
-
-		////		$scan = $this->pointService->scanPoint($pointId);
-//
-//		$point = new RestoringPoint();
-//		$point->setId($pointId);
-		////			$this->scanBaseFolder($point);
-//
-//
-//		$point = $this->pointService->generatePointFromBackupFS($pointId);
-//		// TODO: display info about the RP and ask for a confirmation before saving into database
-//
-		////		echo json_encode($point) . "\n";
-//		$this->pointRequest->save($point);
-
+		$point = $this->pointService->generatePointFromFolder($fileId, $owner);
 
 		$this->successEvent($event);
 	}
