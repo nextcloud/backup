@@ -100,5 +100,4 @@ class ExportService {
 
 		return $data;
 	}
-
 }

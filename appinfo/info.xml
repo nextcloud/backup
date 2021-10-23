@@ -3,10 +3,22 @@
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>backup</id>
 	<name>Backup</name>
-	<description><![CDATA[Backup now. Restore later.]]></description>
+	<summary>Backup now. Restore later.</summary>
+	<description>
+		<![CDATA[The Backup App allows admins to create and store backup images of their Nextcloud:
+	  - Backup the instance, its apps, your local data and your database,
+      - Admin can configure the time slots for automated backup,
+      - Full and Partial backup, with different frequencies,
+      - 2-pass to limit the downtime of your instance (maintenance mode),
+      - compression and encryption,
+      - upload your encrypted backup on an external filesystem,
+      - download and search for your data,
+      - restore single file or the complete instance
+]]>
+	</description>
+	<version>1.0.0-beta1</version>
 	<licence>agpl</licence>
 	<author mail="maxence@artificial-owl.com">Maxence Lange</author>
-	<version>23.0.0-alpha1</version>
 	<namespace>Backup</namespace>
 	<category>tools</category>
 	<website>https://github.com/nextcloud/backup</website>
