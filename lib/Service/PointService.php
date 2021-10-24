@@ -46,12 +46,15 @@ use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
+use OCA\Backup\Exceptions\ExternalAppdataException;
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Exceptions\ParentRestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\ISqlDump;
 use OCA\Backup\Model\ChunkPartHealth;
+use OCA\Backup\Model\ExternalFolder;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Model\RestoringData;
@@ -59,7 +62,7 @@ use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCA\Backup\SqlDump\SqlDumpPgSQL;
-use OCP\Files\IAppData;
+use OCA\Backup\Wrappers\AppDataRootWrapper;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Util;
@@ -90,6 +93,9 @@ class PointService {
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
 
+	/** @var ExternalFolderService */
+	private $externalFolderService;
+
 	/** @var ChunkService */
 	private $chunkService;
 
@@ -111,8 +117,8 @@ class PointService {
 	/** @var ConfigService */
 	private $configService;
 
-	/** @var IAppData */
-	private $appData;
+	/** @var AppDataRootWrapper */
+	private $appDataRoot;
 
 	/** @var bool */
 	private $backupFSInitiated = false;
@@ -124,6 +130,7 @@ class PointService {
 	 * @param PointRequest $pointRequest
 	 * @param ChangesRequest $changesRequest
 	 * @param RemoteStreamService $remoteStreamService
+	 * @param ExternalFolderService $externalFolderService
 	 * @param ChunkService $chunkService
 	 * @param PackService $packService
 	 * @param MetadataService $metadataService
@@ -133,20 +140,22 @@ class PointService {
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
-		PointRequest $pointRequest,
-		ChangesRequest $changesRequest,
-		RemoteStreamService $remoteStreamService,
-		ChunkService $chunkService,
-		PackService $packService,
-		MetadataService $metadataService,
-		FilesService $filesService,
-		OutputService $outputService,
-		ActivityService $activityService,
-		ConfigService $configService
+		PointRequest          $pointRequest,
+		ChangesRequest        $changesRequest,
+		RemoteStreamService   $remoteStreamService,
+		ExternalFolderService $externalFolderService,
+		ChunkService          $chunkService,
+		PackService           $packService,
+		MetadataService       $metadataService,
+		FilesService          $filesService,
+		OutputService         $outputService,
+		ActivityService       $activityService,
+		ConfigService         $configService
 	) {
 		$this->pointRequest = $pointRequest;
 		$this->changesRequest = $changesRequest;
 		$this->remoteStreamService = $remoteStreamService;
+		$this->externalFolderService = $externalFolderService;
 		$this->chunkService = $chunkService;
 		$this->packService = $packService;
 		$this->metadataService = $metadataService;
@@ -597,11 +606,37 @@ class PointService {
 
 
 	/**
+	 * @return ExternalFolder
+	 * @throws ExternalAppdataException
+	 * @throws ExternalFolderNotFoundException
+	 */
+	private function getExternalAppData(): ExternalFolder {
+		$externalAppdata = $this->configService->getAppValueArray(ConfigService::EXTERNAL_APPDATA);
+
+		if (empty($externalAppdata)) {
+			throw new ExternalAppdataException();
+		}
+
+		$external = new ExternalFolder();
+		try {
+			$external->import($externalAppdata);
+		} catch (InvalidItemException $e) {
+			throw new ExternalAppdataException('invalid ExternalFolder');
+		}
+
+		$this->externalFolderService->initRootFolder($external);
+
+		return $external;
+	}
+
+
+	/**
 	 * @throws NotPermittedException
 	 * @throws NotFoundException
+	 * @throws ExternalFolderNotFoundException
 	 */
 	private function initBackupFS(bool $force = false): void {
-		if ($this->backupFSInitiated) {
+		if (!is_null($this->appDataRoot)) {
 			return;
 		}
 
@@ -609,19 +644,25 @@ class PointService {
 			return;
 		}
 
-		/** @var Factory $factory */
-		$factory = OC::$server->get(Factory::class);
-		$this->appData = $factory->get(Application::APP_ID);
+		$this->appDataRoot = new AppDataRootWrapper();
+
+		try {
+			$externalAppData = $this->getExternalAppData();
+			$this->appDataRoot->setExternalFolder($externalAppData);
+		} catch (ExternalAppdataException $e) {
+			/** @var Factory $factory */
+			$factory = OC::$server->get(Factory::class);
+			$this->appDataRoot->setSimpleRoot($factory->get(Application::APP_ID));
+		}
 
 		if ($force) {
 			return;
 		}
 
 		$path = '/';
-		$folder = $this->appData->getFolder($path);
 
-		$temp = $folder->newFile(self::NOBACKUP_FILE);
-		$temp->putContent('');
+		$folder = $this->appDataRoot->getFolder($path);
+		$folder->newFile(self::NOBACKUP_FILE, '');
 
 		$this->backupFSInitiated = true;
 	}
@@ -639,7 +680,7 @@ class PointService {
 	public function destroyBackupFS(): void {
 		$this->initBackupFS(true);
 		try {
-			$folder = $this->appData->getFolder('/');
+			$folder = $this->appDataRoot->getFolder('/');
 			$folder->delete();
 		} catch (NotFoundException $e) {
 		}
@@ -660,14 +701,14 @@ class PointService {
 		$this->initBackupFS();
 
 		try {
-			$folder = $this->appData->newFolder('/' . $point->getId());
+			$folder = $this->appDataRoot->newFolder('/' . $point->getId());
 		} catch (NotPermittedException $e) {
-			$folder = $this->appData->getFolder('/' . $point->getId());
+			$folder = $this->appDataRoot->getFolder('/' . $point->getId());
 		}
 
 		$folder->newFile(PointService::NOBACKUP_FILE, '');
 
-		$point->setRootFolder($this->appData);
+		$point->setAppDataRootWrapper($this->appDataRoot);
 		$point->setBaseFolder($folder);
 	}
 
@@ -732,10 +773,10 @@ class PointService {
 
 	private function generateHealthPacked(
 		RestoringHealth $health,
-		RestoringPoint $point,
-		RestoringData $data,
-		RestoringChunk $chunk,
-		int &$globalStatus
+		RestoringPoint  $point,
+		RestoringData   $data,
+		RestoringChunk  $chunk,
+		int             &$globalStatus
 	): void {
 		foreach ($chunk->getParts() as $part) {
 			$partHealth = new ChunkPartHealth(true);
@@ -781,8 +822,8 @@ class PointService {
 	 * @return int
 	 */
 	private function generatePartHealthStatus(
-		RestoringPoint $point,
-		RestoringChunk $chunk,
+		RestoringPoint     $point,
+		RestoringChunk     $chunk,
 		RestoringChunkPart $part
 	): int {
 		try {

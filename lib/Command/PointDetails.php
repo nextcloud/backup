@@ -99,11 +99,11 @@ class PointDetails extends Base {
 	 * @param PackService $packService
 	 */
 	public function __construct(
-		RemoteService $remoteService,
-		PointService $pointService,
+		RemoteService         $remoteService,
+		PointService          $pointService,
 		ExternalFolderService $externalFolderService,
-		ChunkService $chunkService,
-		PackService $packService
+		ChunkService          $chunkService,
+		PackService           $packService
 	) {
 		parent::__construct();
 
@@ -206,8 +206,8 @@ class PointDetails extends Base {
 					$checked = '<error>missing chunk</error>';
 				}
 
-				$color = ($checked === $chunk->getChecksum()) ? 'info' : 'error';
-				$checked = '<' . $color . '>ok</' . $color . '>';
+				$checked =
+					($checked === $chunk->getChecksum()) ? '<info>ok</info>' : '<error>checksum</error>';
 
 				$table->appendRow(
 					[
@@ -253,7 +253,7 @@ class PointDetails extends Base {
 	 * @param RestoringChunk $chunk
 	 */
 	private function displayDetailsPacked(
-		Table $table,
+		Table          $table,
 		RestoringPoint $point,
 		RestoringChunk $chunk
 	): void {

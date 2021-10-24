@@ -41,8 +41,8 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
+use OCA\Backup\Wrappers\AppDataRootWrapper;
 use OCP\Files\SimpleFS\ISimpleFolder;
-use OCP\Files\SimpleFS\ISimpleRoot;
 
 /**
  * Class RestoringPoint
@@ -110,8 +110,8 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/** @var ISimpleFolder */
 	private $baseFolder = null;
 
-	/** @var ISimpleRoot */
-	private $baseRoot = null;
+	/** @var AppDataRootWrapper */
+	private $appDataRootWrapper = null;
 
 	/** @var RestoringData[] */
 	private $restoringData = [];
@@ -438,26 +438,26 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/**
 	 * @return bool
 	 */
-	public function hasRootFolder(): bool {
-		return !is_null($this->baseRoot);
+	public function hasAppDataRootWrapper(): bool {
+		return !is_null($this->appDataRootWrapper);
 	}
 
 	/**
-	 * @param ISimpleRoot $root
+	 * @param AppDataRootWrapper $root
 	 *
 	 * @return RestoringPoint
 	 */
-	public function setRootFolder(ISimpleRoot $root): self {
-		$this->baseRoot = $root;
+	public function setAppDataRootWrapper(AppDataRootWrapper $root): self {
+		$this->appDataRootWrapper = $root;
 
 		return $this;
 	}
 
 	/**
-	 * @return ISimpleRoot
+	 * @return AppDataRootWrapper
 	 */
-	public function getRootFolder(): ISimpleRoot {
-		return $this->baseRoot;
+	public function getAppDataRootWrapper(): AppDataRootWrapper {
+		return $this->appDataRootWrapper;
 	}
 
 

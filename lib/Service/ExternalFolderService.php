@@ -79,6 +79,7 @@ class ExternalFolderService {
 	use TFileTools;
 
 
+	/** @var GlobalStoragesService */
 	private $globalStoragesService;
 
 	/** @var ExternalFolderRequest */
@@ -100,8 +101,8 @@ class ExternalFolderService {
 	 */
 	public function __construct(
 		ExternalFolderRequest $externalFolderRequest,
-		OutputService $outputService,
-		ConfigService $configService
+		OutputService         $outputService,
+		ConfigService         $configService
 	) {
 		try {
 			$this->globalStoragesService = OC::$server->get(GlobalStoragesService::class);
@@ -199,8 +200,8 @@ class ExternalFolderService {
 	 */
 	public function getRestoringPoint(
 		ExternalFolder $external,
-		string $pointId,
-		bool $current = false
+		string         $pointId,
+		bool           $current = false
 	): RestoringPoint {
 		$folder = $this->getExternalPointFolder($external, $pointId, false);
 
@@ -249,10 +250,10 @@ class ExternalFolderService {
 	 * @throws RestoringPointNotFoundException
 	 */
 	public function uploadPart(
-		ExternalFolder $external,
-		RestoringPoint $point,
-		RestoringHealth $health,
-		RestoringChunk $chunk,
+		ExternalFolder     $external,
+		RestoringPoint     $point,
+		RestoringHealth    $health,
+		RestoringChunk     $chunk,
 		RestoringChunkPart $part
 	): void {
 		$folder = $this->getExternalChunkFolder($external, $point, $chunk, true);
@@ -278,9 +279,9 @@ class ExternalFolderService {
 	 * @throws RestoringPointNotFoundException
 	 */
 	public function downloadPart(
-		ExternalFolder $external,
-		RestoringPoint $point,
-		RestoringChunk $chunk,
+		ExternalFolder     $external,
+		RestoringPoint     $point,
+		RestoringChunk     $chunk,
 		RestoringChunkPart $part
 	): void {
 		$folder = $this->getExternalChunkFolder($external, $point, $chunk, true);
@@ -300,7 +301,7 @@ class ExternalFolderService {
 	 *
 	 * @throws ExternalFolderNotFoundException
 	 */
-	private function initRootFolder(ExternalFolder $external): void {
+	public function initRootFolder(ExternalFolder $external): void {
 		if ($external->hasRootFolder()) {
 			return;
 		}
@@ -511,7 +512,7 @@ class ExternalFolderService {
 	public function updateMetadataFile(
 		ExternalFolder $external,
 		RestoringPoint $point,
-		bool $create = true
+		bool           $create = true
 	): File {
 		$folder = $this->getExternalPointFolder($external, $point->getId());
 		try {
@@ -633,10 +634,10 @@ class ExternalFolderService {
 	 * @throws RestoringChunkPartNotFoundException
 	 */
 	public function updateChunkPartHealth(
-		ExternalFolder $external,
-		RestoringPoint $point,
-		RestoringHealth $health,
-		RestoringChunk $chunk,
+		ExternalFolder     $external,
+		RestoringPoint     $point,
+		RestoringHealth    $health,
+		RestoringChunk     $chunk,
 		RestoringChunkPart $part
 	): void {
 		$partHealth = $health->getPart($chunk->getName(), $part->getName());
@@ -654,9 +655,9 @@ class ExternalFolderService {
 	 * @return int
 	 */
 	private function generatePartHealthStatus(
-		ExternalFolder $external,
-		RestoringPoint $point,
-		RestoringChunk $chunk,
+		ExternalFolder     $external,
+		RestoringPoint     $point,
+		RestoringChunk     $chunk,
 		RestoringChunkPart $part
 	): int {
 		try {
@@ -682,9 +683,9 @@ class ExternalFolderService {
 	 * @throws ArchiveNotFoundException
 	 */
 	public function getChecksum(
-		ExternalFolder $external,
-		RestoringPoint $point,
-		RestoringChunk $chunk,
+		ExternalFolder     $external,
+		RestoringPoint     $point,
+		RestoringChunk     $chunk,
 		RestoringChunkPart $part
 	): string {
 		try {
@@ -727,8 +728,8 @@ class ExternalFolderService {
 	 */
 	public function getExternalPointFolder(
 		ExternalFolder $external,
-		string $pointId,
-		bool $create = true
+		string         $pointId,
+		bool           $create = true
 	): Folder {
 		$this->initRootFolder($external);
 		$folder = $external->getRootFolder();
@@ -768,7 +769,7 @@ class ExternalFolderService {
 		ExternalFolder $external,
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		bool $pack = false
+		bool           $pack = false
 	): Folder {
 		$folder = $this->getExternalPointFolder($external, $point->getId());
 

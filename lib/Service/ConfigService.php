@@ -49,6 +49,7 @@ class ConfigService {
 
 	public const LOCK = 'lock';
 	public const REMOTE_ENABLED = 'remote_enabled';
+	public const EXTERNAL_APPDATA = 'external_appdata';
 	public const SELF_SIGNED_CERT = 'self_signed_cert';
 	public const DELAY_FULL_RP = 'delay_full_rp';
 	public const DELAY_PARTIAL_RP = 'delay_partial_rp';
@@ -79,6 +80,7 @@ class ConfigService {
 	public $defaults = [
 		self::LOCK => 0,
 		self::REMOTE_ENABLED => 0,
+		self::EXTERNAL_APPDATA => '{}',
 		self::SELF_SIGNED_CERT => '0',
 		self::LAST_FULL_RP => '',
 		self::LAST_PARTIAL_RP => '',
@@ -172,6 +174,15 @@ class ConfigService {
 		return ($this->getAppValueInt($key) === 1);
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return array
+	 */
+	public function getAppValueArray(string $key): array {
+		return json_decode($this->getAppValue($key), true);
+	}
+
 
 	/**
 	 * Set a value by key
@@ -201,6 +212,14 @@ class ConfigService {
 	 */
 	public function setAppValueBool(string $key, bool $value): void {
 		$this->config->setAppValue(Application::APP_ID, $key, ($value) ? 1 : 0);
+	}
+
+	/**
+	 * @param string $key
+	 * @param array $value
+	 */
+	public function setAppValueArray(string $key, array $value): void {
+		$this->config->setAppValue(Application::APP_ID, $key, json_encode($value));
 	}
 
 

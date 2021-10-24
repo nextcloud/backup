@@ -31,9 +31,12 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
+use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\ExternalFolderService;
+use OCA\Backup\Service\PointService;
 use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCP\Files\StorageNotAvailableException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,26 +46,41 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
 /**
- * Class ExternalAdd
+ * Class ExternalAppData
  *
  * @package OCA\Backup\Command
  */
-class ExternalAdd extends Base {
+class ExternalAppData extends Base {
+	use TNC23Deserialize;
 
+
+	/** @var PointService */
+	private $pointService;
 
 	/** @var ExternalFolderService */
 	private $externalFolderService;
 
+	/** @var ConfigService */
+	private $configService;
+
 
 	/**
-	 * ExternalAdd constructor.
+	 * ExternalAppData constructor.
 	 *
+	 * @param PointService $pointService
 	 * @param ExternalFolderService $externalFolderService
+	 * @param ConfigService $configService
 	 */
-	public function __construct(ExternalFolderService $externalFolderService) {
+	public function __construct(
+		PointService          $pointService,
+		ExternalFolderService $externalFolderService,
+		ConfigService         $configService
+	) {
 		parent::__construct();
 
+		$this->pointService = $pointService;
 		$this->externalFolderService = $externalFolderService;
+		$this->configService = $configService;
 	}
 
 
@@ -70,8 +88,8 @@ class ExternalAdd extends Base {
 	 *
 	 */
 	protected function configure() {
-		$this->setName('backup:external:add')
-			 ->setDescription('Add external filesystem to store your backups');
+		$this->setName('backup:external:appdata')
+			 ->setDescription('Add external filesystem to store the app\'s data');
 	}
 
 
@@ -85,6 +103,14 @@ class ExternalAdd extends Base {
 	 * @throws ExternalFolderNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$output->writeln(
+			'This configuration tool will help you set the <info>Appdata</info> folder of the Backup App on an <info>external storage</info>'
+		);
+		$output->writeln('...');
+		$output->writeln('');
+		$output->writeln('<error>All previous Restoring Point will be lost during this process</error>');
+		$output->writeln('');
+		$output->writeln('');
 		$storageId = $this->selectStorage($input, $output);
 		$output->writeln('');
 		if ($storageId === 0) {
@@ -119,7 +145,7 @@ class ExternalAdd extends Base {
 		$output->writeln('');
 
 		$question = new ConfirmationQuestion(
-			'<comment>Do you really want to create and use this External Folder to store your backup ?</comment> (y/N) ',
+			'<comment>Do you really want to create and use this External Folder as appdata ?</comment> (y/N) ',
 			false,
 			'/^(y|Y)/i'
 		);
@@ -131,11 +157,11 @@ class ExternalAdd extends Base {
 			return 0;
 		}
 
-		$this->externalFolderService->save($external);
 
-		$output->writeln(
-			'<info>The generated External Folder will now be used to store your restoring points</info>'
-		);
+		$this->pointService->destroyBackupFS();
+		$this->configService->setAppValueArray(ConfigService::EXTERNAL_APPDATA, $this->serialize($external));
+
+		$output->writeln('done');
 
 		return 0;
 	}
@@ -161,9 +187,6 @@ class ExternalAdd extends Base {
 
 		if (empty($availableStorage)) {
 			$output->writeln('There is no available external filesystem.');
-			$output->writeln(
-				'You can use <info>./occ backup:external:list</info> to see already configured external folders'
-			);
 			$output->writeln('You can use the <info>Files External</info> to add a new external filesystem');
 			$output->writeln('');
 
@@ -200,7 +223,7 @@ class ExternalAdd extends Base {
 	 */
 	private function requestingRoot(InputInterface $input, OutputInterface $output): string {
 		$helper = $this->getHelper('question');
-		$default = 'backup/points/';
+		$default = 'backups/';
 
 		$question = new Question(
 			'Path to the right folder to store your backups (default="<info>' . $default . '</info>"): ',

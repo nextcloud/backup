@@ -961,14 +961,14 @@ class ChunkService {
 		RestoringChunk $chunk,
 		string &$path = ''
 	): ISimpleFolder {
-		if (!$point->hasBaseFolder() || !$point->hasRootFolder()) {
+		if (!$point->hasBaseFolder() || !$point->hasAppDataRootWrapper()) {
 			throw new RestoringPointNotInitiatedException('Restoring Point is not initiated');
 		}
 
 		$folder = $point->getBaseFolder();
 		if ($chunk->getPath() !== '') {
 			$path = '/' . $folder->getName() . '/' . $chunk->getPath();
-			$root = $point->getRootFolder();
+			$root = $point->getAppDataRootWrapper();
 			try {
 				$folder = $root->getFolder($path);
 			} catch (NotFoundException $e) {

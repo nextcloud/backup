@@ -32,6 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Model;
 
 use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
+use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\IDeserializable;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
@@ -49,7 +50,7 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 
 
 	/** @var int */
-	private $storageId;
+	private $storageId = 0;
 
 	/** @var string */
 	private $storage;
@@ -170,11 +171,16 @@ class ExternalFolder implements JsonSerializable, INC23QueryRow, IDeserializable
 	 * @param array $data
 	 *
 	 * @return ExternalFolder
+	 * @throws InvalidItemException
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setStorageId($this->getInt('storageId', $data))
 			 ->setStorage($this->get('storage', $data))
 			 ->setRoot($this->get('root', $data));
+
+		if ($this->getStorageId() === 0) {
+			throw new InvalidItemException();
+		}
 
 		return $this;
 	}

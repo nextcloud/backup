@@ -41,6 +41,7 @@
 		<command>OCA\Backup\Command\RemoteRemove</command>
 
 		<command>OCA\Backup\Command\ExternalAdd</command>
+		<command>OCA\Backup\Command\ExternalAppData</command>
 		<command>OCA\Backup\Command\ExternalList</command>
 		<command>OCA\Backup\Command\ExternalRemove</command>
 

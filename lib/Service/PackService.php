@@ -883,7 +883,7 @@ class PackService {
 		string &$path = '',
 		string &$sub = ''
 	): ISimpleFolder {
-		if (!$point->hasBaseFolder() || !$point->hasRootFolder()) {
+		if (!$point->hasBaseFolder() || !$point->hasAppDataRootWrapper()) {
 			throw new RestoringPointNotInitiatedException('Restoring Point is not initiated');
 		}
 
@@ -891,7 +891,7 @@ class PackService {
 		$sub = $chunk->getPath();
 		if ($sub !== '') {
 			$path = '/' . $folder->getName() . '/' . $sub;
-			$root = $point->getRootFolder();
+			$root = $point->getAppDataRootWrapper();
 			try {
 				$folder = $root->getFolder($path);
 			} catch (NotFoundException $e) {
