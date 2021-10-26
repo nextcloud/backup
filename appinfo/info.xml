@@ -5,7 +5,9 @@
 	<name>Backup</name>
 	<summary>Backup now. Restore later.</summary>
 	<description>
-		<![CDATA[The Backup App allows admins to create and store backup images of their Nextcloud:
+		<![CDATA[
+		 The Backup App creates and stores backup images of your Nextcloud:
+
 	  - Backup the instance, its apps, your local data and your database,
       - Admin can configure the time slots for automated backup,
       - Full and Partial backup, with different frequencies,

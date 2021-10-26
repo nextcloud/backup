@@ -98,6 +98,7 @@ appstore: clean composer js
 	--exclude=/CONTRIBUTING.md \
 	--exclude=/issue_template.md \
 	--exclude=/README.md \
+	--exclude=/screenshots \
 	--exclude=/composer.json \
 	--exclude=/node_modules/ \
 	--exclude=/src/ \
