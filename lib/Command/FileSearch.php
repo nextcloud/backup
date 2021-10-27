@@ -135,7 +135,7 @@ class FileSearch extends Base {
 
 			foreach ($point->getRestoringData() as $data) {
 				if ($data->getType() === RestoringData::INTERNAL_DATA
-					|| $data->getType() === RestoringData::SQL_DUMP) {
+					|| $data->getType() === RestoringData::FILE_SQL_DUMP) {
 					continue;
 				}
 

@@ -57,17 +57,19 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	public const FILE_CONFIG = 101;
 
 	// value > 1000 is for content that are not 'file'
-	public const SQL_DUMP = 1001;
+	public const FILE_SQL_DUMP = 1001;
 
 	public const INTERNAL = 'internal';
+	public const NEXTCLOUD = 'nextcloud';
 	public const DATA = 'data';
 	public const APPS = 'apps';
 	public const CONFIG = 'config';
+	public const SQL_DUMP = 'sqldump';
 
 	public static $DEF = [
 		self::INTERNAL_DATA => 'internal',
 		self::ROOT_DATA => 'data',
-		self::ROOT_NEXTCLOUD => 'nextcloud',
+		self::ROOT_NEXTCLOUD => 'core',
 		self::ROOT_APPS => 'apps'
 	];
 

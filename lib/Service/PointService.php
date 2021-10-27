@@ -197,11 +197,12 @@ class PointService {
 	/**
 	 * @param int $since
 	 * @param int $until
+	 * @param bool $asc
 	 *
 	 * @return RestoringPoint[]
 	 */
-	public function getLocalRestoringPoints(int $since = 0, int $until = 0): array {
-		return $this->pointRequest->getLocal($since, $until);
+	public function getLocalRestoringPoints(int $since = 0, int $until = 0, bool $asc = true): array {
+		return $this->pointRequest->getLocal($since, $until, $asc);
 	}
 
 
@@ -269,11 +270,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-				'id' => $point->getId(),
-				'duration' => $point->getDuration(),
-				'status' => $point->getStatus(),
-				'complete' => $complete
-			]
+							   'id' => $point->getId(),
+							   'duration' => $point->getDuration(),
+							   'status' => $point->getStatus(),
+							   'complete' => $complete
+						   ]
 		);
 
 		return $point;
@@ -336,14 +337,14 @@ class PointService {
 	 *
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws ExternalFolderNotFoundException
 	 */
 	public function delete(RestoringPoint $point): void {
-		$this->pointRequest->deletePoint($point->getId());
-
 		$this->initBackupFS();
 		$this->initBaseFolder($point);
 
 		$point->getBaseFolder()->delete();
+		$this->pointRequest->deletePoint($point->getId());
 	}
 
 
@@ -388,10 +389,19 @@ class PointService {
 		$point->addRestoringData(
 			new RestoringData(
 				RestoringData::ROOT_NEXTCLOUD,
-				'apps/',
+				'',
+				RestoringData::NEXTCLOUD
+			)
+		);
+
+		$point->addRestoringData(
+			new RestoringData(
+				RestoringData::ROOT_APPS,
+				'',
 				RestoringData::APPS
 			)
 		);
+
 		$point->addRestoringData(new RestoringData(RestoringData::FILE_CONFIG, '', RestoringData::CONFIG));
 
 		$this->addCustomApps($point);
@@ -419,7 +429,8 @@ class PointService {
 	/**
 	 * @param RestoringPoint $point
 	 */
-	private function addCustomApps(RestoringPoint $point) {
+	private function addCustomApps(RestoringPoint $point): void {
+		return;
 		$customApps = $this->configService->getSystemValue('apps_paths');
 		if (!is_array($customApps)) {
 			return;
@@ -471,7 +482,7 @@ class PointService {
 		$tmp = $this->configService->getTempFileName();
 		try {
 			$sqlDump->export($this->getSqlData(), $tmp);
-			$data = new RestoringData(RestoringData::SQL_DUMP, '', 'sqldump');
+			$data = new RestoringData(RestoringData::FILE_SQL_DUMP, '', RestoringData::SQL_DUMP);
 			$this->chunkService->createSingleFileChunk(
 				$point,
 				$data,

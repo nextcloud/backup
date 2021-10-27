@@ -274,7 +274,7 @@ class PointRestore extends Base {
 				continue;
 			}
 
-			if ($data->getType() === RestoringData::SQL_DUMP) {
+			if ($data->getType() === RestoringData::FILE_SQL_DUMP) {
 				$this->output->writeln('  will be imported in your current database');
 
 				try {

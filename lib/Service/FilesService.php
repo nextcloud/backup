@@ -142,6 +142,11 @@ class FilesService {
 				$root = $this->configService->getSystemValue(ConfigService::DATA_DIRECTORY);
 				break;
 
+			case RestoringData::ROOT_APPS:
+				$root = OC::$SERVERROOT;
+				$data->setPath('apps/');
+				break;
+
 			case RestoringData::FILE_CONFIG:
 				$root = OC::$SERVERROOT;
 				$data->setPath('config/');

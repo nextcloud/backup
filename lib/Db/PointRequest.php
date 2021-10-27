@@ -138,13 +138,14 @@ class PointRequest extends PointRequestBuilder {
 	/**
 	 * @param int $since
 	 * @param int $until
+	 * @param bool $asc
 	 *
 	 * @return array
 	 */
-	public function getLocal(int $since = 0, int $until = 0): array {
+	public function getLocal(int $since = 0, int $until = 0, bool $asc = true): array {
 		$qb = $this->getPointSelectSql();
 		$qb->limitToInstance('');
-		$qb->orderBy('date', 'asc');
+		$qb->orderBy('date', ($asc) ? 'asc' : 'desc');
 
 //		if ($fullOnly) {
 //			$qb->limitEmpty('parent', true);

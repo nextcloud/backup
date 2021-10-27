@@ -43,7 +43,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class PointStore
+ * Class PointPack
  *
  * @package OCA\Backup\Command
  */
@@ -58,7 +58,7 @@ class PointPack extends Base {
 
 
 	/**
-	 * PointStore constructor.
+	 * PointPack constructor.
 	 *
 	 * @param PointService $pointService
 	 * @param PackService $packService
