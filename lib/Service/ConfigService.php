@@ -67,6 +67,7 @@ class ConfigService {
 	public const PACK_INDEX = 'pack_index';
 	public const PACK_REMOTE_INDEX = 'pack_remote_index';
 
+	public const STORE_ITEMS = 'store_items';
 	public const ENCRYPTION_KEYS = 'encryption_keys';
 	public const FORCE_CBC = 'force_cbc';
 	public const TIME_SLOTS = 'time_slots';
@@ -91,6 +92,7 @@ class ConfigService {
 		self::DELAY_UNIT => 'd',
 		self::ALLOW_WEEKDAY => 0,
 		self::PACK_BACKUP => '1',
+		self::STORE_ITEMS => 4,
 		self::ENCRYPTION_KEYS => '{}',
 		self::FORCE_CBC => 0,
 		self::TIME_SLOTS => '23-5',
@@ -349,6 +351,7 @@ class ConfigService {
 			self::PACK_BACKUP => $this->getAppValueBool(self::PACK_BACKUP),
 			self::PACK_COMPRESS => $this->getAppValueBool(self::PACK_COMPRESS),
 			self::PACK_ENCRYPT => $this->getAppValueBool(self::PACK_ENCRYPT),
+			self::STORE_ITEMS => $this->getAppValueInt(self::STORE_ITEMS),
 			self::MOCKUP_DATE => $this->getAppValueInt(self::MOCKUP_DATE)
 		];
 	}
@@ -382,6 +385,9 @@ class ConfigService {
 		}
 		if ($data->hasKey(self::PACK_ENCRYPT)) {
 			$this->setAppValueBool(self::PACK_ENCRYPT, $data->gBool(self::PACK_ENCRYPT));
+		}
+		if ($data->hasKey(self::STORE_ITEMS)) {
+			$this->setAppValueInt(self::STORE_ITEMS, $data->gInt(self::STORE_ITEMS));
 		}
 
 		return $this->getSettings();

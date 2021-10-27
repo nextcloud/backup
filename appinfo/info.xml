@@ -54,6 +54,7 @@
 		<command>OCA\Backup\Command\PointHistory</command>
 		<command>OCA\Backup\Command\PointList</command>
 		<command>OCA\Backup\Command\PointPack</command>
+		<command>OCA\Backup\Command\PointPurge</command>
 		<command>OCA\Backup\Command\PointRestore</command>
 		<command>OCA\Backup\Command\PointScan</command>
 		<command>OCA\Backup\Command\PointUnarchive</command>

@@ -106,6 +106,7 @@ class Manage extends TimedJob {
 		}
 
 		// TODO: purge old restoring points.
+		$this->cronService->purgeRestoringPoints();
 
 		// uploading
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
@@ -138,6 +139,10 @@ class Manage extends TimedJob {
 
 		// regenerate local health
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
+			if ($point->hasHealth()
+				&& $point->getHealth()->getChecked() > time() - 3600 * 12) {
+				continue;
+			}
 			try {
 				$this->pointService->generateHealth($point, true);
 			} catch (Throwable $e) {
@@ -148,6 +153,10 @@ class Manage extends TimedJob {
 		foreach ($this->externalFolderService->getAll() as $external) {
 			try {
 				foreach ($this->externalFolderService->getRestoringPoints($external) as $point) {
+					if ($point->hasHealth()
+						&& $point->getHealth()->getChecked() > time() - 3600 * 12) {
+						continue;
+					}
 					try {
 						$this->externalFolderService->getCurrentHealth($external, $point);
 					} catch (Throwable $e) {

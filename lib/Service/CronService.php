@@ -41,6 +41,7 @@ use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\SettingsException;
 use OCA\Backup\Model\ExternalFolder;
 use OCA\Backup\Model\RemoteInstance;
+use Throwable;
 
 /**
  * Class CronService
@@ -335,6 +336,27 @@ class CronService {
 		}
 
 		return $this->orderByDate($points, $dates);
+	}
+
+
+	/**
+	 *
+	 */
+	public function purgeRestoringPoints(): void {
+		$c = $this->configService->getAppValue(ConfigService::STORE_ITEMS);
+		$i = 0;
+		foreach ($this->pointService->getLocalRestoringPoints(0, 0, false) as $point) {
+			if ($point->isArchive()) {
+				continue;
+			}
+			$i++;
+			if ($i > $c) {
+				try {
+					$this->pointService->delete($point);
+				} catch (Throwable $e) {
+				}
+			}
+		}
 	}
 
 
