@@ -74,6 +74,14 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	];
 
 
+	// filtering folders from the 'core' data
+	public static $FILTER_FROM_NC = [
+		'apps/',
+		'data/',
+		'config/'
+	];
+
+
 	/** @var string */
 	private $name;
 

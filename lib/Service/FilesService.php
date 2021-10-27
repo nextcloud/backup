@@ -114,6 +114,14 @@ class FilesService {
 			return;
 		}
 
+		if ($data->getType() === RestoringData::ROOT_NEXTCLOUD) {
+			foreach (RestoringData::$FILTER_FROM_NC as $item) {
+				if ($path === $item) {
+					return;
+				}
+			}
+		}
+
 		foreach (scandir($data->getAbsolutePath() . $path) as $entry) {
 			if ($entry === '.' || $entry === '..') {
 				continue;
