@@ -48,6 +48,7 @@ use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
+use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PackService;
@@ -96,6 +97,9 @@ class PointDownload extends Base {
 	/** @var OutputService */
 	private $outputService;
 
+	/** @var ConfigService */
+	private $configService;
+
 
 	/**
 	 * PointDownload constructor.
@@ -108,6 +112,7 @@ class PointDownload extends Base {
 	 * @param RemoteService $remoteService
 	 * @param ExternalFolderService $externalFolderService
 	 * @param OutputService $outputService
+	 * @param ConfigService $configService
 	 */
 	public function __construct(
 		PointRequest $pointRequest,
@@ -117,7 +122,8 @@ class PointDownload extends Base {
 		RemoteStreamService $remoteStreamService,
 		RemoteService $remoteService,
 		ExternalFolderService $externalFolderService,
-		OutputService $outputService
+		OutputService $outputService,
+		ConfigService $configService
 	) {
 		parent::__construct();
 
@@ -129,6 +135,7 @@ class PointDownload extends Base {
 		$this->remoteService = $remoteService;
 		$this->externalFolderService = $externalFolderService;
 		$this->outputService = $outputService;
+		$this->configService = $configService;
 	}
 
 
@@ -173,7 +180,11 @@ class PointDownload extends Base {
 		$external = (int)$input->getOption('external');
 
 		if (!$remote && !$external) {
-			throw new InvalidOptionException('use --remote or --external');
+			$msg = 'use --external';
+			if ($this->configService->isRemoteEnabled()) {
+				$msg = 'use --remote or --external';
+			}
+			throw new InvalidOptionException($msg);
 		}
 
 		try {
@@ -202,11 +213,19 @@ class PointDownload extends Base {
 			$this->pointService->saveMetadata($point);
 		}
 
-
 		$output->write('check health status: ');
 		$this->pointService->generateHealth($point);
 		$output->writeln($this->outputService->displayHealth($point->getHealth()));
 		$this->downloadMissingFiles($output, $remote, $external, $point);
+
+		$this->pointService->generateHealth($point);
+
+		// set Archive flag up after download
+		$point->setArchive(true);
+		$this->remoteStreamService->subSignPoint($point);
+
+		$this->pointRequest->update($point);
+		$this->pointService->saveMetadata($point);
 
 		return 0;
 //		$this->downloadMissingFiles($instance, $point, $point->getHealth(), $output);
@@ -304,7 +323,11 @@ class PointDownload extends Base {
 					$part
 				);
 			} else {
-				throw new InvalidOptionException('use --remote or --external');
+				$msg = 'use --external';
+				if ($this->configService->isRemoteEnabled()) {
+					$msg = 'use --remote or --external';
+				}
+				throw new InvalidOptionException($msg);
 			}
 
 //			$chunk = $this->remoteService->downloadChunk($instance, $point, $restoringChunk);
@@ -346,6 +369,10 @@ class PointDownload extends Base {
 			return $this->externalFolderService->getRestoringPoint($externalFolder, $pointId);
 		}
 
-		throw new InvalidOptionException('use --remote or --external');
+		$msg = 'use --external';
+		if ($this->configService->isRemoteEnabled()) {
+			$msg = 'use --remote or --external';
+		}
+		throw new InvalidOptionException($msg);
 	}
 }
