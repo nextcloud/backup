@@ -62,6 +62,7 @@ class ConfigService {
 	public const PACK_BACKUP = 'pack_backup';
 	public const BACKUP_DAYS = 'backup_days';
 
+	public const INCLUDE_LOGS = 'include_logs';
 	public const PACK_ENCRYPT = 'pack_encrypt';
 	public const PACK_COMPRESS = 'pack_compress';
 	public const PACK_INDEX = 'pack_index';
@@ -99,6 +100,7 @@ class ConfigService {
 		self::MOCKUP_DATE => 0,
 		self::BACKUP_DAYS => 60,
 
+		self::INCLUDE_LOGS => '1',
 		self::PACK_ENCRYPT => '1',
 		self::PACK_COMPRESS => '1',
 		self::PACK_INDEX => '1',

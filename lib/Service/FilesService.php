@@ -101,6 +101,12 @@ class FilesService {
 	 */
 	public function fillRestoringData(RestoringData $data, string $path): void {
 		if (!is_dir($data->getAbsolutePath() . rtrim($path, '/'))) {
+			if ($data->getType() === RestoringData::ROOT_DATA
+				&& !$this->configService->getAppValueBool(ConfigService::INCLUDE_LOGS)
+				&& $path === 'nextcloud.log') {
+				return;
+			}
+
 			$data->addFile($path);
 
 			return;
