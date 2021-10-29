@@ -33,6 +33,7 @@ namespace OCA\Backup\Service;
 
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
+use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TPathTools;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
@@ -40,6 +41,7 @@ use OC;
 use OC\Files\Node\File;
 use OC\Files\Node\Folder;
 use OC\User\NoUserException;
+use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\ChangesRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\ChangedFile;
@@ -62,7 +64,7 @@ class FilesService {
 	use TStringTools;
 	use TPathTools;
 	use TNC23Deserialize;
-
+	use TNC23Logger;
 
 	public const APP_ROOT = __DIR__ . '/../../';
 
@@ -92,6 +94,8 @@ class FilesService {
 		$this->rootFolder = $rootFolder;
 		$this->changesRequest = $changesRequest;
 		$this->configService = $configService;
+
+		$this->setup('app', Application::APP_ID);
 	}
 
 
@@ -173,6 +177,7 @@ class FilesService {
 		}
 	}
 
+
 	/**
 	 * @param string $path
 	 *
@@ -227,6 +232,7 @@ class FilesService {
 
 			/** @var File $node */
 			$folder = $node->getParent();
+
 			try {
 				/** @var RestoringPoint $point */
 				$point = $this->deserializeJson($node->getContent(), RestoringPoint::class);
@@ -257,7 +263,7 @@ class FilesService {
 
 			try {
 				$sub = $node->get($dir);
-				if ($sub->getType() !== \OC\Files\FileInfo::TYPE_FOLDER) {
+				if ($sub->getType() !== FileInfo::TYPE_FOLDER) {
 					continue;
 				}
 			} catch (NotFoundException $e) {
@@ -283,7 +289,11 @@ class FilesService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-	public function copyFileToAppData(Folder $input, ISimpleFolder $output, string $filename): void {
+	public function copyFileToAppData(
+		Folder $input,
+		ISimpleFolder $output,
+		string $filename
+	): void {
 		/** @var File $orig */
 		$orig = $input->get($filename);
 		if ($orig->getType() !== FileInfo::TYPE_FILE) {
