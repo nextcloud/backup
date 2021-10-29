@@ -202,7 +202,7 @@ class PackService {
 
 //		$this->removeOldChunkFiles($point, $oldChunks);
 
-		$this->o(' > removing status <info>packing</info>, add status <info>packed</info>');
+		$this->o(' > removing status <info>packing</info>, adding status <info>packed</info>');
 		$point->removeStatus(RestoringPoint::STATUS_PACKING)
 			  ->addStatus(RestoringPoint::STATUS_PACKED)
 			  ->getNotes()
@@ -677,9 +677,11 @@ class PackService {
 		}
 
 		if ($completed) {
-			$this->o(' > removing status <info>packed</info>, <info>unpacking</info>');
+			$this->o(' > removing status <info>packed</info>');
 			$point->setStatus(RestoringPoint::STATUS_UNPACKED)
 				  ->removeStatus(RestoringPoint::STATUS_PACKING)
+				  ->removeStatus(RestoringPoint::STATUS_COMPRESSED)
+				  ->removeStatus(RestoringPoint::STATUS_ENCRYPTED)
 				  ->unsetNotes();
 
 			try {
@@ -784,8 +786,6 @@ class PackService {
 				}
 				throw $t;
 			}
-
-			$point->removeStatus(RestoringPoint::STATUS_ENCRYPTED);
 		}
 
 		return $parts;
@@ -907,8 +907,6 @@ class PackService {
 				$this->o('<error>fail ' . $t->getMessage() . '</error>');
 				throw $t;
 			}
-
-			$point->removeStatus(RestoringPoint::STATUS_COMPRESSED);
 		}
 
 		return $filename;
