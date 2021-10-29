@@ -53,6 +53,7 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	public const ROOT_NEXTCLOUD = 2;
 	public const ROOT_DATA = 3;
 	public const ROOT_APPS = 4;
+	public const EXTERNAL_STORAGE = 5;
 
 	public const FILE_CONFIG = 101;
 

@@ -133,13 +133,6 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 						  'length' => 255
 					  ]
 			);
-			$table->addColumn(
-				'static', 'integer', [
-							'notnull' => true,
-							'length' => 1,
-							'unsigned' => true,
-						]
-			);
 
 			$table->setPrimaryKey(['id']);
 		}
