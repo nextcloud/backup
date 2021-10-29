@@ -148,6 +148,7 @@ class EncryptService {
 	 *
 	 * @return string
 	 * @throws EncryptionKeyException
+	 * @throws PackEncryptException
 	 * @throws SodiumException
 	 */
 	public function encryptFile(string $input, string $output, string $name): string {

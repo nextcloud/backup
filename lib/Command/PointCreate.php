@@ -38,6 +38,7 @@ use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\SqlDumpException;
+use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -57,16 +58,21 @@ class PointCreate extends Base {
 	/** @var PointService */
 	private $pointService;
 
+	/** @var OutputService */
+	private $outputService;
+
 
 	/**
 	 * PointCreate constructor.
 	 *
 	 * @param PointService $pointService
+	 * @param OutputService $outputService
 	 */
-	public function __construct(PointService $pointService) {
+	public function __construct(PointService $pointService, OutputService $outputService) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
+		$this->outputService = $outputService;
 	}
 
 
@@ -98,19 +104,24 @@ class PointCreate extends Base {
 	 * @throws Throwable
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$o = $input->getOption('output');
+		if ($o !== 'none' && $o !== 'json') {
+			$this->outputService->setOutput($output);
+		}
+
 		$point = $this->pointService->create(!$input->getOption('incremental'));
 
-		if ($input->getOption('output') === 'none') {
+		if ($o === 'none') {
 			return 0;
 		}
 
-
-		if ($input->getOption('output') === 'json') {
+		if ($o === 'json') {
 			$output->writeln(json_encode($point, JSON_PRETTY_PRINT));
 
 			return 0;
 		}
 
+		$output->writeln('');
 		$output->writeln('Restoring Point ID: <info>' . $point->getId() . '</info>');
 
 		return 0;

@@ -34,6 +34,7 @@ namespace OCA\Backup\Command;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteStreamService;
@@ -61,6 +62,9 @@ class PointUnpack extends Base {
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
 
+	/** @var OutputService */
+	private $outputService;
+
 
 	/**
 	 * PointUnpack constructor.
@@ -68,17 +72,20 @@ class PointUnpack extends Base {
 	 * @param PointService $pointService
 	 * @param PackService $packService
 	 * @param RemoteStreamService $remoteStreamService
+	 * @param OutputService $outputService
 	 */
 	public function __construct(
 		PointService $pointService,
 		PackService $packService,
-		RemoteStreamService $remoteStreamService
+		RemoteStreamService $remoteStreamService,
+		OutputService $outputService
 	) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
 		$this->packService = $packService;
 		$this->remoteStreamService = $remoteStreamService;
+		$this->outputService = $outputService;
 	}
 
 
@@ -106,6 +113,7 @@ class PointUnpack extends Base {
 	 * @throws Throwable
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$this->outputService->setOutput($output);
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
 
 		$this->pointService->initBaseFolder($point);

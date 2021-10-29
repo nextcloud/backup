@@ -140,17 +140,17 @@ class PointService {
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
-		PointRequest          $pointRequest,
-		ChangesRequest        $changesRequest,
-		RemoteStreamService   $remoteStreamService,
+		PointRequest $pointRequest,
+		ChangesRequest $changesRequest,
+		RemoteStreamService $remoteStreamService,
 		ExternalFolderService $externalFolderService,
-		ChunkService          $chunkService,
-		PackService           $packService,
-		MetadataService       $metadataService,
-		FilesService          $filesService,
-		OutputService         $outputService,
-		ActivityService       $activityService,
-		ConfigService         $configService
+		ChunkService $chunkService,
+		PackService $packService,
+		MetadataService $metadataService,
+		FilesService $filesService,
+		OutputService $outputService,
+		ActivityService $activityService,
+		ConfigService $configService
 	) {
 		$this->pointRequest = $pointRequest;
 		$this->changesRequest = $changesRequest;
@@ -231,12 +231,11 @@ class PointService {
 	 */
 	public function create(bool $complete): RestoringPoint {
 		$point = $this->initRestoringPoint($complete);
-		$this->chunkService->copyApp($point);
-		$this->chunkService->generateInternalData($point);
 
 		// maintenance mode on
 		$initTime = time();
 		$maintenance = $this->configService->getSystemValueBool(ConfigService::MAINTENANCE);
+		$this->o('> maintenance mode: <info>on</info>');
 		$this->configService->maintenanceMode(true);
 
 		try {
@@ -244,6 +243,7 @@ class PointService {
 			$this->backupSql($point);
 		} catch (Throwable $t) {
 			if (!$maintenance) {
+				$this->o('> maintenance mode: <info>off</info>');
 				$this->configService->maintenanceMode();
 			}
 			throw $t;
@@ -260,10 +260,14 @@ class PointService {
 
 		// maintenance mode off
 		if (!$maintenance) {
+			$this->o('> maintenance mode: <info>off</info>');
 			$this->configService->maintenanceMode();
 		}
 
 		$point->setDuration(time() - $initTime);
+		$this->o('> maintenance mode was active for ' . $this->getDateDiff($point->getDuration()));
+
+		$this->o('> signing and storing metadata');
 		$this->remoteStreamService->signPoint($point);
 		$this->metadataService->saveMetadata($point);
 		$this->pointRequest->save($point);
@@ -352,21 +356,36 @@ class PointService {
 	 * @param bool $complete
 	 *
 	 * @return RestoringPoint
+	 * @throws ArchiveNotFoundException
+	 * @throws BackupAppCopyException
+	 * @throws BackupScriptNotFoundException
+	 * @throws ExternalFolderNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws ParentRestoringPointNotFoundException
 	 */
 	private function initRestoringPoint(bool $complete): RestoringPoint {
+		$this->o('> initialization of the AppData');
 		$this->initBackupFS();
 
+		$this->o('> initialization of the RestoringPoint: ', false);
 		$point = new RestoringPoint();
 		$point->setDate(time());
 		$separator = ($complete) ? '-full-' : '-incremental-';
 		$point->setId(date('YmdHis', $point->getDate()) . $separator . $this->token());
 		$point->setNC(Util::getVersion());
 
+		$this->o('<info>' . $point->getId() . '</info> based on NC' . $point->getNCVersion());
+
+		$this->o('> initialization of the storage');
 		$this->initBaseFolder($point);
+
+		$this->o('> preparation of the data to be stored in the restoring point');
 		$this->addingRestoringData($point, $complete);
+
+		$this->o('> preparation of internal data');
+		$this->chunkService->copyApp($point);
+		$this->chunkService->generateInternalData($point);
 
 		return $point;
 	}
@@ -478,10 +497,14 @@ class PointService {
 			return;
 		}
 
+		$this->o('  * <info>SqlDump</info>: ', false);
 		$sqlDump = $this->getSqlDump();
+		$this->o(get_class($sqlDump));
 		$tmp = $this->configService->getTempFileName();
 		try {
+			$this->o('    - exporting sql to <info>' . $tmp . '</info>');
 			$sqlDump->export($this->getSqlData(), $tmp);
+			$this->o('    - generating single file chunk');
 			$data = new RestoringData(RestoringData::FILE_SQL_DUMP, '', RestoringData::SQL_DUMP);
 			$this->chunkService->createSingleFileChunk(
 				$point,
@@ -784,10 +807,10 @@ class PointService {
 
 	private function generateHealthPacked(
 		RestoringHealth $health,
-		RestoringPoint  $point,
-		RestoringData   $data,
-		RestoringChunk  $chunk,
-		int             &$globalStatus
+		RestoringPoint $point,
+		RestoringData $data,
+		RestoringChunk $chunk,
+		int &$globalStatus
 	): void {
 		foreach ($chunk->getParts() as $part) {
 			$partHealth = new ChunkPartHealth(true);
@@ -833,8 +856,8 @@ class PointService {
 	 * @return int
 	 */
 	private function generatePartHealthStatus(
-		RestoringPoint     $point,
-		RestoringChunk     $chunk,
+		RestoringPoint $point,
+		RestoringChunk $chunk,
 		RestoringChunkPart $part
 	): int {
 		try {
@@ -882,4 +905,14 @@ class PointService {
 		$this->initBaseFolder($point);
 		$this->metadataService->saveMetadata($point);
 	}
+
+
+	/**
+	 * @param string $line
+	 * @param bool $ln
+	 */
+	private function o(string $line, bool $ln = true): void {
+		$this->outputService->o($line, $ln);
+	}
+
 }

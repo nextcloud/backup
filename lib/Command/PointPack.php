@@ -32,8 +32,10 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
-use OCA\Backup\Exceptions\RestoringPointPackException;
+use OCA\Backup\Exceptions\RestoringPointLockException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointPackException;
+use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
@@ -56,18 +58,27 @@ class PointPack extends Base {
 	/** @var PackService */
 	private $packService;
 
+	/** @var OutputService */
+	private $outputService;
+
 
 	/**
 	 * PointPack constructor.
 	 *
 	 * @param PointService $pointService
 	 * @param PackService $packService
+	 * @param OutputService $outputService
 	 */
-	public function __construct(PointService $pointService, PackService $packService) {
+	public function __construct(
+		PointService $pointService,
+		PackService $packService,
+		OutputService $outputService
+	) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
 		$this->packService = $packService;
+		$this->outputService = $outputService;
 	}
 
 
@@ -92,10 +103,12 @@ class PointPack extends Base {
 	 * @throws NotPermittedException
 	 * @throws RestoringPointPackException
 	 * @throws RestoringPointNotFoundException
+	 * @throws RestoringPointLockException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
 		$this->pointService->initBaseFolder($point);
+		$this->outputService->setOutput($output);
 		$this->packService->packPoint($point, true);
 
 		return 0;

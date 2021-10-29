@@ -80,6 +80,9 @@ class ChunkService {
 	/** @var EncryptService */
 	private $encryptService;
 
+	/** @var OutputService */
+	private $outputService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -89,15 +92,18 @@ class ChunkService {
 	 *
 	 * @param FilesService $filesService
 	 * @param EncryptService $encryptService
+	 * @param OutputService $outputService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
 		FilesService $filesService,
 		EncryptService $encryptService,
+		OutputService $outputService,
 		ConfigService $configService
 	) {
 		$this->filesService = $filesService;
 		$this->encryptService = $encryptService;
+		$this->outputService = $outputService;
 		$this->configService = $configService;
 	}
 
@@ -115,10 +121,12 @@ class ChunkService {
 				continue;
 			}
 
+			$this->o('  * <info>' . $data->getName() . '</info>: ', false);
 			$this->filesService->initRestoringData($data);
 			if (!$data->isLocked()) {
 				$this->filesService->fillRestoringData($data, $data->getUniqueFile());
 			}
+			$this->o($data->getRoot() . $data->getPath() . ', ' . count($data->getFiles()) . ' files');
 			$data->setLocked(true);
 
 			$this->fillChunks($point, $data);
@@ -353,6 +361,7 @@ class ChunkService {
 		$files = $data->getFiles();
 		while (!empty($files)) {
 			$archive = $this->generateChunk($point, $data, $files);
+			$this->o('    - ' . $archive->getName());
 			$this->updateChecksum($point, $archive);
 
 			$data->addChunk($archive);
@@ -978,4 +987,14 @@ class ChunkService {
 
 		return $folder;
 	}
+
+
+	/**
+	 * @param string $line
+	 * @param bool $ln
+	 */
+	private function o(string $line, bool $ln = true): void {
+		$this->outputService->o($line, $ln);
+	}
+
 }
