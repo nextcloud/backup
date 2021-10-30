@@ -58,6 +58,7 @@ class EncryptService {
 	public const AES_CBC_IV = 'aes-256-cbc-iv';
 
 	public const CHACHA = 'chacha';
+	public const NONE = 'none';
 
 	public const STRING = 'string';
 	public const STRING_NONCE = 'string-nonce';
@@ -262,9 +263,28 @@ class EncryptService {
 	 * @throws PackDecryptException
 	 * @throws SodiumException
 	 */
-	public function decryptFile(string $input, string $output, string $name, string $algorithm = ''): void {
+	public function decryptFile(string $input, string $output, string $name, string &$algorithm = ''): void {
 		if ($algorithm === '') {
-			// TODO: test them all ?
+			try {
+				$this->decryptFileGCM($input, $output, $name);
+				$algorithm = self::AES_GCM;
+
+				return;
+			} catch (Exception $e) {
+			}
+
+			try {
+				$this->decryptFileCBC($input, $output);
+				$algorithm = self::AES_CBC;
+
+				return;
+			} catch (Exception $e) {
+			}
+
+			$this->decryptFileNone($input, $output);
+			$algorithm = self::NONE;
+
+			return;
 		}
 
 		switch ($algorithm) {
@@ -276,6 +296,9 @@ class EncryptService {
 				break;
 			case self::AES_CBC:
 				$this->decryptFileCBC($input, $output);
+				break;
+			case self::NONE:
+				$this->decryptFileNone($input, $output);
 				break;
 		}
 	}
@@ -368,6 +391,21 @@ class EncryptService {
 			sodium_memzero($plain);
 		}
 
+		fclose($read);
+		fclose($write);
+	}
+
+
+	/**
+	 * @param string $input
+	 * @param string $output
+	 */
+	public function decryptFileNone(string $input, string $output): void {
+		$read = fopen($input, 'rb');
+		$write = fopen($output, 'wb');
+		while (($r = fgets($read, 4096)) !== false) {
+			fputs($write, $r);
+		}
 		fclose($read);
 		fclose($write);
 	}

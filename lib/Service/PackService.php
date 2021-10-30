@@ -146,7 +146,7 @@ class PackService {
 			}
 		}
 
-		$this->o(' > lock and set status to <info>packing</info>');
+		$this->o(' > lock and set status to <info>processing</info>');
 		$this->metadataService->isLock($point);
 		$this->metadataService->lock($point);
 		$point->addStatus(RestoringPoint::STATUS_PACKING);
@@ -202,7 +202,7 @@ class PackService {
 
 //		$this->removeOldChunkFiles($point, $oldChunks);
 
-		$this->o(' > removing status <info>packing</info>, adding status <info>packed</info>');
+		$this->o(' > removing status <info>processing</info>, adding status <info>packed</info>');
 		$point->removeStatus(RestoringPoint::STATUS_PACKING)
 			  ->addStatus(RestoringPoint::STATUS_PACKED)
 			  ->getNotes()
@@ -769,7 +769,8 @@ class PackService {
 	 * @throws Throwable
 	 */
 	private function wrapPackDecrypt(RestoringPoint $point, RestoringChunk $chunk, array $parts): array {
-		if ($point->isStatus(RestoringPoint::STATUS_ENCRYPTED)) {
+		if ($point->isStatus(RestoringPoint::STATUS_ENCRYPTED)
+			|| $point->isStatus(RestoringPoint::STATUS_UNKNOWN)) {
 			$this->o('     * decrypting each part');
 			try {
 				$encrypted = $this->packDecrypt($parts, $chunk);
@@ -793,14 +794,19 @@ class PackService {
 
 
 	/**
-	 * @param array $parts
+	 * @param RestoringChunkPart[] $parts
 	 * @param RestoringChunk $chunk
 	 *
 	 * @return RestoringChunkPart[]
 	 */
 	private function packDecrypt(array $parts, RestoringChunk $chunk): array {
 		$decrypted = [];
+		$algorithm = '';
 		foreach ($parts as $part) {
+			if ($part->getAlgorithm() !== '') {
+				$algorithm = $part->getAlgorithm();
+			}
+
 			$this->o('       - decrypting <info>' . $part->getName() . '</info>: ', false);
 
 			$new = clone $part;
@@ -811,10 +817,10 @@ class PackService {
 					$part->getName(),
 					$new->getName(),
 					$chunk->getName(),
-					$part->getAlgorithm()
+					$algorithm
 				);
 
-				$this->o('<info>' . $new->getName() . '</info>, <info>' . $part->getAlgorithm() . '</info>');
+				$this->o('<info>' . $new->getName() . '</info>, <info>' . $algorithm . '</info>');
 
 				// TODO checksums
 //				echo '-checksum: ' . $this->getTempChecksum($new->getName()) . "\n";
@@ -829,6 +835,7 @@ class PackService {
 
 		return $decrypted;
 	}
+
 
 	/**
 	 * @param RestoringChunkPart[] $parts
@@ -894,7 +901,8 @@ class PackService {
 	 * @throws Throwable
 	 */
 	private function wrapPackChunkExtract(RestoringPoint $point, string $filename): string {
-		if ($point->isStatus(RestoringPoint::STATUS_COMPRESSED)) {
+		if ($point->isStatus(RestoringPoint::STATUS_COMPRESSED)
+			|| $point->isStatus(RestoringPoint::STATUS_UNKNOWN)) {
 			$this->o('     * Extracting <info>' . $filename . '</info>: ', false);
 
 			try {
@@ -923,7 +931,12 @@ class PackService {
 
 		$zip = new ZipArchive();
 		$zip->open($zipName);
-		$read = $zip->getStream(self::CHUNK_ENTRY);
+		if ($zip->count() === 1 && $zip->getFromName(self::CHUNK_ENTRY) !== false) {
+			$read = $zip->getStream(self::CHUNK_ENTRY);
+		} else {
+			$read = fopen($zipName, 'rb');
+		}
+
 		while (($r = fgets($read, 4096)) !== false) {
 			fputs($write, $r);
 		}
@@ -978,6 +991,7 @@ class PackService {
 	 *
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotInitiatedException
+	 * @throws Throwable
 	 */
 	private function wrapRecreateChunk(RestoringPoint $point, RestoringChunk $chunk, string $temp): void {
 		try {
@@ -1094,7 +1108,8 @@ class PackService {
 			}
 		} catch (Exception $e) {
 			throw new ArchiveNotFoundException(
-				'Part ' . $part->getName() . ' from ' . $chunk->getFilename() . ' not found. path: ' . $path
+				'Part ' . $part->getName() . ' from ' . $chunk->getFilename() . ' not found. path: '
+				. $path
 			);
 		}
 
@@ -1140,5 +1155,4 @@ class PackService {
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
 	}
-
 }
