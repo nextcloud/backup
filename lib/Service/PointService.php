@@ -230,8 +230,6 @@ class PointService {
 	 * @throws Throwable
 	 */
 	public function create(bool $complete): RestoringPoint {
-		$point = $this->initRestoringPoint($complete);
-
 		// maintenance mode on
 		$initTime = time();
 		$maintenance = $this->configService->getSystemValueBool(ConfigService::MAINTENANCE);
@@ -239,6 +237,8 @@ class PointService {
 		$this->configService->maintenanceMode(true);
 
 		try {
+			$point = $this->initRestoringPoint($complete);
+
 			$this->chunkService->createChunks($point);
 			$this->backupSql($point);
 		} catch (Throwable $t) {
