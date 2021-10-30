@@ -161,7 +161,8 @@ class PointList extends Base {
 
 				$table->appendRow(
 					[
-						(($point->isArchive()) ? 'A ' : '  ') . (($fresh) ? $displayPointId : ''),
+						'<comment>' . (($point->isLocked()) ? 'L' : '') .
+						(($point->isArchive()) ? 'A' : '') . '</comment> ' . (($fresh) ? $displayPointId : ''),
 						($fresh) ? date('Y-m-d H:i:s', $point->getDate()) : '',
 						($fresh) ? $point->getParent() : '',
 						$comment,
