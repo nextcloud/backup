@@ -108,6 +108,10 @@ class CronService {
 	public function nextBackups(): array {
 		$partialETA = $fullETA = -1;
 
+		$delayPartial = $this->configService->getAppValueInt(ConfigService::DELAY_PARTIAL_RP);
+		$delayUnit = $this->configService->getAppValue(ConfigService::DELAY_UNIT);
+		$delayPartial = $delayPartial * 3600 * (($delayUnit !== 'h') ? 24 : 1);
+
 		try {
 			$this->getTime();
 			$time = time() - 3600; // we start checking now.
@@ -116,12 +120,16 @@ class CronService {
 				if (!$this->verifyTime($time)) {
 					continue;
 				}
+
+				$last = max($fullETA, $this->configService->getAppValueInt(ConfigService::DATE_FULL_RP));
+
+				// TODO: minor glitch: this will estimate the partial backup with one hour late.
 				if ($fullETA === -1 && $this->verifyFullBackup($time)) {
 					$fullETA = $time;
 				} elseif ($partialETA === -1
 						  && $this->verifyIncrementalBackup($time)
-						  && ($this->configService->getAppValueInt(ConfigService::DATE_FULL_RP) > 0
-							  || $fullETA > 0)) { // we check that the incremental backup can have a parent
+						  && ($last > 0) // we check that the incremental backup can have a parent
+						  && ($time - $last) > $delayPartial) { // we check the time since next full rp
 					$partialETA = $time;
 				}
 
@@ -133,8 +141,8 @@ class CronService {
 		}
 
 		return [
-			'partial' => $partialETA,
-			'full' => $fullETA
+			'partial' => $partialETA + 300,
+			'full' => $fullETA + 300
 		];
 	}
 
