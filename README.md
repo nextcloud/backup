@@ -19,7 +19,7 @@ This App creates and stores backup images of your Nextcloud
 - **Read the full documentation,**
 - This app needs to put your instance in `maintenance mode` during the generation of the backups,
 - This app generates a lot of data and can fill your hard drive,
-- By default, **your data are encrypted**, you **will need to export the App configuration** to be able
+- By default, **your data are encrypted**, you **will need to export** the App configuration **as soon as possible** or you will **not** be able
   to **decrypt your backups**.
 
 <a name="restoring-point"></a>
@@ -58,14 +58,14 @@ A restoring point will store
 
 A restoring point will **NOT** store:
 
-- External storages, even if the mounted filesystem is available locally.
+- data from External Storages, even if the mounted filesystem is available locally.
 
 ### Metadata
 
 A Restoring Point also contains a file named `restoring-point.data` that contains metadata about the
 backup:
 
-- Version of your Nextcloud
+- Version of your Nextcloud,
 - The ID of the parent backup in case of partial backup,
 - The list of data file that compose the restoring point, the format for this data depends on the current
   status of the restoring point (packed/unpacked) and the settings (compression, encryption)
@@ -88,7 +88,7 @@ still possible to generate a restoring point based on the available files. Howev
 - At the root of this **specific** folder, create a file named `restoring-point.data` and add this
   content inside:
 
-       {"action": "generate", "id": "20211023234222-full-TFTBQewCEdcQ3cS"}
+       `{"action": "generate", "id": "20211023234222-full-TFTBQewCEdcQ3cS"}`
 
 - Customize your `id`; while it is advised to use the correct **Id** of the **Restoring Point** (if
   known), any string would work. Be aware that, if kept empty, a new **Id** will be generated using the
@@ -184,7 +184,6 @@ restoring points on the **External Storage**
 
 ![Settings export](screenshots/settings_export.png)
 
-
 <a name="important"></a>
 
 ## Important details about your data
@@ -238,29 +237,31 @@ configure the path to the right folder.
 
 ## Available `occ` commands:
 
-### Manage remote instance to store your backups remotely
+### Export/Import the configuration of your app.
 
-You can upload your backup files on a remote instance
+It is **mandatory** to export the configuration of the app as it contains the encryption keys for your
+encrypted backup and you will not be able to restore your backups from a data lost.
 
-**Add a remote instance to store your backups**
+You can do that from the Admin Settings page or using the `occ` command:
 
-    ./occ backup:remote:add cloud.example.net
+    ./occ backup:setup:export [--key] > ~/backup.setup
 
-**List configured remote instance**
+This will create the file `~/backup.setup`.  
+When using the option `--key` the setup will be encrypted and an `encryption_key` will be generated and
+returned by the occ command. This key needs to be stored somewhere and will be required to decrypt the
+saved configuration.  
+It is strongly (again) advised to use the `--key` option
 
-    ./occ backup:remote:list
+To restore the exported configuration:
 
-**Remove remote instance from the list**
+     ./occ backup:setup:import [--key encryption_key] < ~/backup.setup
 
-    ./occ backup:remote:remove cloud.example.net
-
-**Note**: if you enable the backup on remote instance, it is strongly advice
-to [keep your current setup somewhere](), or your files won't be available without your identity nor
-readable without your encryption key
 
 ### Manage your restoring point
 
 **Create a new Restoring Point**
+
+While this is managed by a background job, you can still generate a restoring point manually:
 
     ./occ backup:point:create [--incremental]
 
