@@ -1,6 +1,6 @@
 # Backup
 
-This App creates and stores backup images of your Nextcloud
+This App creates and stores backup images of your Nextcloud.
 
 - [Important notes](#notes)
 - [Restoring Points](#restoring-point)
@@ -16,11 +16,11 @@ This App creates and stores backup images of your Nextcloud
 
 ## Important notes
 
-- **Read the full documentation,**
-- This app needs to put your instance in `maintenance mode` during the generation of the backups,
+- **Read the full documentation**,
+- During the generation of the backup, the app will put your instance in `maintenance mode`,
 - This app generates a lot of data and can fill your hard drive,
-- By default, **your data are encrypted**, you **will need to export** the App configuration **as soon as possible** or you will **not** be able
-  to **decrypt your backups**.
+- By default **your data are encrypted**, meaning you **will need to export** the App configuration **as
+  soon as possible** or you will **not** be able to **decrypt your backups**.
 
 <a name="restoring-point"></a>
 
@@ -29,16 +29,17 @@ This App creates and stores backup images of your Nextcloud
 A restoring point is an image of your Nextcloud at a specific time. A restoring point can be:
 
 - '**Full**' (or Complete) and contains a backup of :
-    * the instance of Nextcloud (core),
-    * the apps of the Nextcloud (from `apps/` and `custom_apps/`),
+    * the instance of Nextcloud,
+    * the apps of the Nextcloud (`apps/` and `custom_apps/`),
     * A dump of the database,
-    * the local data of the Nextcloud.
+    * the local folder defined as `data` of the Nextcloud.
+
 
 - '**Partial**' (or Incremental) that contains a backup of :
     * the instance of Nextcloud,
     * the apps of the Nextcloud,
     * A dump of the database,
-    * local data that have been generated or edited since the last **Full Backup**
+    * local data that have been modified/generated since the last **Full Backup**
 
 ### What data are available in a Restoring Point
 
@@ -49,12 +50,12 @@ This is a list of what can be restored and what cannot be restored when using th
 A restoring point will store
 
 - your current Nextcloud,
-- the `apps/` folder,
-- your local data, defined by `'datadirectory'` in `config/config.php`,
-- the folder defined as `custom_apps`,
 - the configuration in `config/config.php`,
+- the `apps/` folder and any other `custom_apps/`
+- your local `data/`, defined by `'datadirectory'` in `config/config.php`,
 - original absolute paths,
-- A full `sqldump` of your database.
+- A full `sqldump` of your database,
+- List of files and localisation within the backup.
 
 A restoring point will **NOT** store:
 
@@ -69,10 +70,10 @@ backup:
 - The ID of the parent backup in case of partial backup,
 - The list of data file that compose the restoring point, the format for this data depends on the current
   status of the restoring point (packed/unpacked) and the settings (compression, encryption)
-- Checksum for those files,
-- the date of the restoring point,
-- eventually admin added comments if available,
-- information related to the health of the files.
+- Checksum for each files of the backup itself,
+- The date of the restoring point,
+- Comments,
+- Information related to the health of the files during the last check.
 
 While the file `restoring-point.data` confirm the integrity of all files and parts of the backup, it is
 still possible to generate a restoring point based on the available files. However :
@@ -88,22 +89,22 @@ still possible to generate a restoring point based on the available files. Howev
 - At the root of this **specific** folder, create a file named `restoring-point.data` and add this
   content inside:
 
-       `{"action": "generate", "id": "20211023234222-full-TFTBQewCEdcQ3cS"}`
+       {"action": "generate", "id": "20211023234222-full-TFTBQewCEdcQ3cS"}
 
 - Customize your `id`; while it is advised to use the correct **Id** of the **Restoring Point** (if
-  known), any string would work. Be aware that, if kept empty, a new **Id** will be generated using the
-  current time.
+  known), any string would work. If kept empty, a new **Id** will be generated using the current time.
 
-- Right click the file `restoring-point.data` and select 'Scan Backup Folder'
+- Right-click the file `restoring-point.data` and select '`Scan Backup Folder`'
 
-At the next tick of your crontab, the metadata file will be generated, based on the file. The process
-will generate an entry about its status on the Activity App.
+After few seconds, the metadata file will be generated and stored within the same `restoring-point.data`
+itself.
 
 <a name="hardware"></a>
 
 ## Hardware requirement
 
 - **Diskspace**: Creating and storing backups require a lot, **a lot**, of disk-space.
+
 
 - **AES Hardware Acceleration**: If your processor does not
   support [AES instruction set](https://en.wikipedia.org/wiki/AES_instruction_set), the encryption
@@ -121,9 +122,12 @@ will generate an entry about its status on the Activity App.
 
 ### The timing
 
-![Settings Schedule](screenshots/settings_schedule.png)
+
 From the **Admin Settings**/**Backup** page, you can configure the time slot and the rate for the
 generation of your future backups.
+
+![Settings Schedule](screenshots/settings_schedule.png)
+
 
 The time slot define the time of the day the Backup App might generate a backup, it is based on the local
 time on the server.
@@ -256,6 +260,22 @@ To restore the exported configuration:
 
      ./occ backup:setup:import [--key encryption_key] < ~/backup.setup
 
+It is **mandatory** to export the configuration of the app as it contains the encryption keys for your
+encrypted backup and you will not be able to restore your backups from a data lost.
+
+You can do that from the Admin Settings page or using the `occ` command:
+
+    ./occ backup:setup:export [--key] > ~/backup.setup
+
+This will create the file `~/backup.setup`.  
+When using the option `--key` the setup will be encrypted and an `encryption_key` will be generated and
+returned by the occ command. This key needs to be stored somewhere and will be required to decrypt the
+saved configuration.  
+It is strongly (again) advised to use the `--key` option
+
+To restore the exported configuration:
+
+     ./occ backup:setup:import [--key encryption_key] < ~/backup.setup
 
 ### Manage your restoring point
 
