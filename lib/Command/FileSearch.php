@@ -113,7 +113,7 @@ class FileSearch extends Base {
 	 * @throws RestoringPointNotInitiatedException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$search = $input->getArgument('search');
+		$search = strtolower($input->getArgument('search'));
 		$since = ($input->getOption('since')) ? (int)strtotime($input->getOption('since')) : 0;
 		$until = ($input->getOption('until')) ? (int)strtotime($input->getOption('until')) : 0;
 
