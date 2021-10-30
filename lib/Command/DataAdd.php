@@ -69,5 +69,4 @@ class DataAdd extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		return 0;
 	}
-
 }

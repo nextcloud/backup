@@ -36,7 +36,6 @@ use OCA\Backup\Service\CronService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * Class PointPurge
  *

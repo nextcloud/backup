@@ -274,11 +274,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-							   'id' => $point->getId(),
-							   'duration' => $point->getDuration(),
-							   'status' => $point->getStatus(),
-							   'complete' => $complete
-						   ]
+				'id' => $point->getId(),
+				'duration' => $point->getDuration(),
+				'status' => $point->getStatus(),
+				'complete' => $complete
+			]
 		);
 
 		return $point;
@@ -914,5 +914,4 @@ class PointService {
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
 	}
-
 }

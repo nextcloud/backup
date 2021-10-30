@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-
 use OCA\Backup\Model\RestoringData;
 
 /**
@@ -40,8 +39,6 @@ use OCA\Backup\Model\RestoringData;
  * @package OCA\Backup\Db
  */
 class RestoringDataRequest extends RestoringDataRequestBuilder {
-
-
 	public function save(RestoringData $data): void {
 		$qb = $this->getRestoringDataInsertSql();
 

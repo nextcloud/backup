@@ -996,5 +996,4 @@ class ChunkService {
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
 	}
-
 }
