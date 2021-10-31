@@ -96,6 +96,9 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	private $root = '';
 
 	/** @var string */
+	private $restoredRoot = '';
+
+	/** @var string */
 	private $uniqueFile = '';
 
 	/** @var RestoringChunk[] */
@@ -206,6 +209,25 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	 */
 	public function getAbsolutePath(): string {
 		return $this->getRoot() . $this->getPath();
+	}
+
+
+	/**
+	 * @param string $restoredRoot
+	 *
+	 * @return RestoringData
+	 */
+	public function setRestoredRoot(string $restoredRoot): self {
+		$this->restoredRoot = $restoredRoot;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRestoredRoot(): string {
+		return $this->restoredRoot;
 	}
 
 

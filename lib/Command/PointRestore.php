@@ -43,8 +43,10 @@ use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointNotInitiatedException;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\Exceptions\SqlImportException;
+use OCA\Backup\ISqlDump;
 use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
@@ -64,6 +66,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * Class PointRestore
@@ -165,6 +168,7 @@ class PointRestore extends Base {
 	 * @throws RestoringDataNotFoundException
 	 * @throws SqlDumpException
 	 * @throws SignatoryException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->output = $output;
@@ -208,15 +212,20 @@ class PointRestore extends Base {
 		if ($healthStatus !== RestoringHealth::STATUS_OK && !$force) {
 			$output->writeln('Some files from your restoring point might not be available');
 			$output->writeln('You can run ./occ backup:point:details for more details on the affected files');
-			$output->writeln('continue ? (not available yet)');
+			$output->writeln('or use --force to force the restoring process despite this warning');
 			$output->writeln('');
 
 			return 0;
 		}
 
+		$output->writeln('');
 		$output->writeln(
 			'<error>WARNING! You are about to initiate the complete restoration of your instance!</error>'
 		);
+		$output->writeln(
+			'<error>All data generated since the creation of the selected backup will be lost...</error>'
+		);
+		$output->writeln('');
 
 		try {
 			$output->writeln(
@@ -240,8 +249,18 @@ class PointRestore extends Base {
 			return 0;
 		}
 
+		$output->writeln('');
+		$output->writeln(' > Enabling <info>maintenance mode</info>');
 		$this->configService->maintenanceMode(true);
 		$this->restorePointComplete($point);
+
+		$this->output->writeln('');
+		$this->updateConfig($point);
+
+		$output->writeln('> Finalization of the restoring process');
+		$this->restoreService->finalizeFullRestore();
+
+		$output->writeln('> Disabling <info>maintenance mode</info>');
 		$this->configService->maintenanceMode(false);
 
 		$this->activityService->newActivity(
@@ -261,54 +280,28 @@ class PointRestore extends Base {
 	 * @param RestoringPoint $point
 	 *
 	 * @throws SqlDumpException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	public function restorePointComplete(RestoringPoint $point): void {
-		$this->pointService->loadSqlDump();
+		$this->output->writeln('> Restoring <info>' . $point->getId() . '</info>');
+
+		$this->pointService->loadSqlDump(); // load ISqlDump before rewriting the apps' files
 		foreach ($point->getRestoringData() as $data) {
 			$this->output->writeln('');
-			$root = $data->getAbsolutePath();
-			$this->output->writeln('- Found data pack: <info>' . $data->getName() . '</info>');
+			$this->output->writeln(' > Found data pack: <info>' . $data->getName() . '</info>');
 
 			if ($data->getType() === RestoringData::INTERNAL_DATA) {
-				$this->output->writeln('  will be ignored');
+				$this->output->writeln('  * ignoring');
 				continue;
 			}
 
 			if ($data->getType() === RestoringData::FILE_SQL_DUMP) {
-				$this->output->writeln('  will be imported in your current database');
-
-				try {
-					$this->importSqlDump($point, $data);
-					$this->output->writeln('<info>ok</info>');
-				} catch (SqlImportException $e) {
-					$this->output->writeln('<error>' . $e->getMessage() . '</error>');
-				}
+				$this->restorePointSqlDump($point, $data);
 				continue;
 			}
 
-			$this->output->writeln('  will be extracted in ' . $root);
-
-			foreach ($data->getChunks() as $chunk) {
-				$this->output->write(
-					'   > Chunk: ' . $chunk->getPath() . $chunk->getFilename() . ' (' . $chunk->getCount()
-					. ' files) '
-				);
-
-				try {
-					$this->chunkService->restoreChunk($point, $chunk, $root);
-					$this->output->writeln('<info>ok</info>');
-				} catch (
-				ArchiveCreateException
-				| ArchiveNotFoundException
-				| NotFoundException
-				| NotPermittedException
-				| RestoreChunkException $e) {
-					$this->output->writeln('<error>' . $e->getMessage() . '</error>');
-				}
-			}
+			$this->restorePointData($point, $data);
 		}
-
-		$this->restoreService->finalizeFullRestore();
 	}
 
 
@@ -316,10 +309,303 @@ class PointRestore extends Base {
 	 * @param RestoringPoint $point
 	 * @param RestoringData $data
 	 *
-	 * @throws SqlImportException
+	 * @throws RestoringPointNotInitiatedException
+	 */
+	private function restorePointData(RestoringPoint $point, RestoringData $data): void {
+		$root = $this->requestDataRoot($data);
+
+		$this->output->writeln('   > extracting data to <info>' . $root . '</info>');
+		foreach ($data->getChunks() as $chunk) {
+			$this->output->write(
+				'   > Chunk: <info>' . $chunk->getFilename()
+				. '</info> (' . $chunk->getCount() . ' files) '
+			);
+
+			try {
+				$this->chunkService->restoreChunk($point, $chunk, $root);
+				$this->output->writeln('<info>ok</info>');
+			} catch (
+			ArchiveCreateException
+			| ArchiveNotFoundException
+			| NotFoundException
+			| NotPermittedException
+			| RestoreChunkException $e) {
+				$this->output->writeln('<error>' . $e->getMessage() . '</error>');
+			}
+		}
+
+		$data->setRestoredRoot($root);
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringData $data
+	 *
 	 * @throws SqlDumpException
 	 */
-	private function importSqlDump(RestoringPoint $point, RestoringData $data): void {
+	private function restorePointSqlDump(RestoringPoint $point, RestoringData $data): void {
+		$sqlParams = $this->requestSqlParams();
+
+		$this->output->write(
+			'   > importing sqldump in <info>' . $this->displaySqlParams($sqlParams, true) . '</info>: '
+		);
+		try {
+			$this->importSqlDump($point, $data, $sqlParams);
+			$this->output->writeln('<info>ok</info>');
+		} catch (SqlImportException $e) {
+			$this->output->writeln('<error>' . $e->getMessage() . '</error>');
+		}
+
+		$data->setRestoredRoot(json_encode($sqlParams));
+	}
+
+
+	/**
+	 * @param RestoringData $data
+	 *
+	 * @return string
+	 */
+	private function requestDataRoot(RestoringData $data): string {
+		$root = $data->getAbsolutePath();
+		while (true) {
+			$this->output->writeln('   > will be extracted in <info>' . $root . '</info>');
+			$helper = $this->getHelper('question');
+			$question = new Question(
+				'    - <comment>enter a new absolute path</comment> or press \'<info>enter</info>\' to use this location: ',
+				$root
+			);
+			$question->setAutocompleterValues([$data->getAbsolutePath()]);
+			$newRoot = trim($helper->ask($this->input, $this->output, $question));
+			$newRoot = rtrim($newRoot, '/') . '/';
+			if ($newRoot === $root) {
+				break;
+			}
+
+			$root = $newRoot;
+		}
+
+		return $root;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	private function requestSqlParams(): array {
+		$sqlParams = $this->pointService->getSqlParams();
+
+		while (true) {
+			$this->output->writeln('   > will be imported in ' . $this->displaySqlParams($sqlParams, true));
+
+			$helper = $this->getHelper('question');
+			$question = new ConfirmationQuestion(
+				'<comment>    - Do you want to import the dump in another SQL server ?</comment> (y/N) ',
+				false,
+				'/^(y|Y)/i'
+			);
+
+			if (!$helper->ask($this->input, $this->output, $question)) {
+				return $sqlParams;
+			}
+
+			$this->output->writeln('    - current configuration:');
+			$this->displaySqlParams($sqlParams);
+
+			$this->output->writeln('    - edit configuration:');
+			while (true) {
+				$question = new Question('      . Host: ', '');
+				$newHost = trim($helper->ask($this->input, $this->output, $question));
+				if ($newHost !== '') {
+					break;
+				}
+			}
+
+			$question = new Question('      . Port: ', '');
+			$newPort = trim($helper->ask($this->input, $this->output, $question));
+
+			while (true) {
+				$question = new Question('      . Database: ', '');
+				$newName = trim($helper->ask($this->input, $this->output, $question));
+				if ($newName !== '') {
+					break;
+				}
+			}
+
+			while (true) {
+				$question = new Question('      . Username: ', '');
+				$newUser = trim($helper->ask($this->input, $this->output, $question));
+				if ($newUser !== '') {
+					break;
+				}
+			}
+
+			while (true) {
+				$question = new Question('      . Password: ', '');
+				$question->setHidden(true);
+				$newPass = trim($helper->ask($this->input, $this->output, $question));
+				if ($newPass !== '') {
+					break;
+				}
+			}
+
+			$newParams = [
+				ISqlDump::DB_NAME => $newName,
+				ISqlDump::DB_HOST => $newHost,
+				ISqlDump::DB_PORT => $newPort,
+				ISqlDump::DB_USER => $newUser,
+				ISqlDump::DB_PASS => $newPass
+			];
+
+			$this->output->writeln('    - new configuration:');
+			$this->displaySqlParams($newParams);
+
+			$question = new ConfirmationQuestion(
+				'<comment>    - Do you want to use this configuration ?</comment> (y/N) ',
+				false,
+				'/^(y|Y)/i'
+			);
+
+			if ($helper->ask($this->input, $this->output, $question)) {
+				return $newParams;
+			}
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 */
+	private function updateConfig(RestoringPoint $point): void {
+		$this->output->writeln('> Refreshing <info>config.php</info>');
+
+		$sqlParams = [];
+		$dataRoot = $configRoot = '';
+		foreach ($point->getRestoringData() as $data) {
+			if ($data->getType() === RestoringData::ROOT_DATA) {
+				$dataRoot = $data->getRestoredRoot();
+			}
+
+			if ($data->getType() === RestoringData::FILE_CONFIG) {
+				$configRoot = $data->getRestoredRoot();
+			}
+
+			if ($data->getType() === RestoringData::FILE_SQL_DUMP) {
+				$sqlParams = json_decode($data->getRestoredRoot(), true);
+				if (!is_array($sqlParams)) {
+					$sqlParams = [];
+				}
+			}
+		}
+
+		$CONFIG = [];
+		$configFile = rtrim($configRoot, '/') . '/config.php';
+		require $configFile;
+
+		$updated = false;
+		$this->compareConfigDataRoot($CONFIG, $dataRoot, $updated);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_HOST, $updated);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PORT, $updated);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_NAME, $updated);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_USER, $updated);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PASS, $updated);
+
+		if ($updated) {
+			$this->output->writeln('  > Updating <info>config.php</info>');
+			$this->output->writeln('');
+			file_put_contents($configFile, '<?php ' . "\n" . '$CONFIG = ' . var_export($CONFIG, true) . ';');
+		}
+	}
+
+
+	/**
+	 * @param array $CONFIG
+	 * @param string $used
+	 * @param bool $updated
+	 */
+	private function compareConfigDataRoot(array &$CONFIG, string $used, bool &$updated): void {
+		$fromConfig = rtrim($this->get(ConfigService::DATA_DIRECTORY, $CONFIG), '/') . '/';
+
+		if ($fromConfig !== $used) {
+			$this->output->writeln('');
+			$this->output->writeln(
+				'   * <info>datadirectory</info> from the file <info>config/config.php</info> that was recently '
+				. 'restored from your backup is different than the path you used to extract the backup of the <info>datadirectory</info>'
+			);
+
+			$this->output->writeln('     - from config/config.php: <info>' . $fromConfig . '</info>');
+			$this->output->writeln('     - used during extraction: <info>' . $used . '</info>');
+			$question = new ConfirmationQuestion(
+				'     - <comment>Do you want to replace the <info>datadirectory</info> in <info>config/config.php</info> with this new path ?</comment> (y/N) ',
+				false,
+				'/^(y|Y)/i'
+			);
+
+			$helper = $this->getHelper('question');
+			if ($helper->ask($this->input, $this->output, $question)) {
+				$CONFIG[ConfigService::DATA_DIRECTORY] = $used;
+				$updated = true;
+			}
+		}
+	}
+
+
+	/**
+	 * @param array $sqlParams
+	 * @param array $CONFIG
+	 * @param string $key
+	 * @param bool $updated
+	 */
+	private function compareConfigSqlParams(
+		array $sqlParams,
+		array &$CONFIG,
+		string $key,
+		bool &$updated
+	): void {
+		$fromConfig = $this->get($key, $CONFIG);
+		$used = $this->get($key, $sqlParams);
+		if ($used !== $fromConfig) {
+			$this->output->writeln('');
+			$this->output->writeln(
+				'   * The <info>configuration of the database</info> from the file <info>config/config.php</info> that was recently '
+				. 'restored from your backup is different from the configuration used to import the <info>sqldump</info>'
+			);
+
+			if ($key !== ISqlDump::DB_PASS) {
+				$this->output->writeln(
+					'     - <info>' . $key . '</info> from config/config.php: <info>' . $fromConfig
+					. '</info>'
+				);
+				$this->output->writeln(
+					'     - <info>' . $key . '</info> used during extraction: <info>' . $used . '</info>'
+				);
+			}
+
+			$question = new ConfirmationQuestion(
+				'     - <comment>Do you want to replace the configuration of the database in <info>config/config.php</info> with this new <info>'
+				. $key . '</info> ?</comment> (y/N) ',
+				false,
+				'/^(y|Y)/i'
+			);
+
+			$helper = $this->getHelper('question');
+			if ($helper->ask($this->input, $this->output, $question)) {
+				$CONFIG[$key] = $used;
+				$updated = true;
+			}
+		}
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param RestoringData $data
+	 * @param array $sqlParams
+	 *
+	 * @throws SqlDumpException
+	 * @throws SqlImportException
+	 */
+	private function importSqlDump(RestoringPoint $point, RestoringData $data, array $sqlParams): void {
 		$chunks = $data->getChunks();
 		if (sizeof($chunks) !== 1) {
 			throw new SqlImportException('sql dump contains no chunks');
@@ -342,7 +628,7 @@ class PointRestore extends Base {
 
 //		$config = $this->extractDatabaseConfig();
 		$sqlDump = $this->pointService->getSqlDump();
-		$sqlDump->import($this->pointService->getSqlData(), $read);
+		$sqlDump->import($sqlParams, $read);
 	}
 
 
@@ -426,4 +712,31 @@ class PointRestore extends Base {
 			$this->output->writeln('<error>' . $e->getMessage() . '</error>');
 		}
 	}
+
+
+	/**
+	 * ugly but it does it job.
+	 *
+	 * @param array $sql
+	 * @param bool $oneLine
+	 *
+	 * @return string
+	 */
+	private function displaySqlParams(array $sql, bool $oneLine = false): string {
+		if ($oneLine) {
+			return '<info>' . $this->get(ISqlDump::DB_USER, $sql) . '</info>:****@<info>'
+				   . $this->get(ISqlDump::DB_HOST, $sql) . ':' . $this->get(ISqlDump::DB_PORT, $sql)
+				   . '</info>/<info>'
+				   . $this->get(ISqlDump::DB_NAME, $sql) . '</info>';
+		}
+
+		$this->output->writeln('      . Host: <info>' . $this->get(ISqlDump::DB_HOST, $sql) . '</info>');
+		$this->output->writeln('      . Port: <info>' . $this->get(ISqlDump::DB_PORT, $sql) . '</info>');
+		$this->output->writeln('      . Database: <info>' . $this->get(ISqlDump::DB_NAME, $sql) . '</info>');
+		$this->output->writeln('      . Username: <info>' . $this->get(ISqlDump::DB_USER, $sql) . '</info>');
+		$this->output->writeln('      . Password: <info>*******</info>');
+
+		return '';
+	}
+
 }

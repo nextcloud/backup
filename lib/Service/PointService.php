@@ -274,11 +274,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-				'id' => $point->getId(),
-				'duration' => $point->getDuration(),
-				'status' => $point->getStatus(),
-				'complete' => $complete
-			]
+							   'id' => $point->getId(),
+							   'duration' => $point->getDuration(),
+							   'status' => $point->getStatus(),
+							   'complete' => $complete
+						   ]
 		);
 
 		return $point;
@@ -503,7 +503,7 @@ class PointService {
 		$tmp = $this->configService->getTempFileName();
 		try {
 			$this->o('    - exporting sql to <info>' . $tmp . '</info>');
-			$sqlDump->export($this->getSqlData(), $tmp);
+			$sqlDump->export($this->getSqlParams(), $tmp);
 			$this->o('    - generating single file chunk');
 			$data = new RestoringData(RestoringData::FILE_SQL_DUMP, '', RestoringData::SQL_DUMP);
 			$this->chunkService->createSingleFileChunk(
@@ -525,7 +525,7 @@ class PointService {
 	/**
 	 * @return array
 	 */
-	public function getSqlData(): array {
+	public function getSqlParams(): array {
 		$host = $this->configService->getSystemValue(ISqlDump::DB_HOST);
 		$port = $this->configService->getSystemValue(ISqlDump::DB_PORT);
 
@@ -534,11 +534,11 @@ class PointService {
 		}
 
 		return [
-			'dbname' => $this->configService->getSystemValue(ISqlDump::DB_NAME),
-			'dbhost' => $host,
-			'dbport' => $port,
-			'dbuser' => $this->configService->getSystemValue(ISqlDump::DB_USER),
-			'dbpassword' => $this->configService->getSystemValue(ISqlDump::DB_PASS)
+			ISqlDump::DB_NAME => $this->configService->getSystemValue(ISqlDump::DB_NAME),
+			ISqlDump::DB_HOST => $host,
+			ISqlDump::DB_PORT => $port,
+			ISqlDump::DB_USER => $this->configService->getSystemValue(ISqlDump::DB_USER),
+			ISqlDump::DB_PASS => $this->configService->getSystemValue(ISqlDump::DB_PASS)
 		];
 	}
 

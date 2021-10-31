@@ -186,14 +186,11 @@ class ChunkService {
 			}
 		}
 
-//		$this->decryptArchive($backup, $archive);
 		$zip = $this->openZipArchive($point, $chunk);
 		$zip->extractTo($root, ($filename === '') ? null : $filename);
 		$this->closeZipArchive($zip);
 
 		unlink($root . self::PREFIX . $chunk->getName());
-//		$this->restoreFromArchive($archive, $root);
-//		$this->deleteArchive($backup, $archive, 'zip');
 	}
 
 
