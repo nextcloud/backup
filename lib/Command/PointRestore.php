@@ -738,5 +738,4 @@ class PointRestore extends Base {
 
 		return '';
 	}
-
 }
