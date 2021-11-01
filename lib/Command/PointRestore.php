@@ -512,7 +512,7 @@ class PointRestore extends Base {
 		$CONFIG['maintenance'] = false;
 		$this->output->writeln('  > Updating <info>config.php</info>');
 		$this->output->writeln('');
-		file_put_contents($configFile, '<?php ' . "\n" . '$CONFIG = ' . var_export($CONFIG, true) . ';');
+		file_put_contents($configFile, '<?php' . "\n" . '$CONFIG = ' . var_export($CONFIG, true) . ';' . "\n");
 	}
 
 
