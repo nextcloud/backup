@@ -1,14 +1,26 @@
 # Backup
 
-This App allows admin to create and store backup images of their Nextcloud
+This App creates and stores backup images of your Nextcloud.
 
+- [Important notes](#notes)
 - [Restoring Points](#restoring-point)
 - [Hardware Requirement](#hardware)
 - [How the Backup App manage your data](#backup-manage-data)
+- [Export configuration](#export)
 - [Important details about your data](#important)
 - [Upload to External Storages](#external-storages)
 - [AppData on External Storage](#external-appdata)
 - [Available `occ` commands](#occ)
+
+<a name="notes"></a>
+
+## Important notes
+
+- **Read the full documentation**,
+- During the generation of the backup, the app will put your instance in `maintenance mode`,
+- This app generates a lot of data and can fill your hard drive,
+- By default **your data are encrypted**, meaning you **will need to export** the App configuration **as
+  soon as possible** or you will **not** be able to **decrypt your backups**.
 
 <a name="restoring-point"></a>
 
@@ -16,54 +28,76 @@ This App allows admin to create and store backup images of their Nextcloud
 
 A restoring point is an image of your Nextcloud at a specific time. A restoring point can be:
 
-- '**Complete**' (or Full) and contains a backup of :
-    * the instance of Nextcloud (core),
-    * the apps of the Nextcloud (from `apps/` and `custom_apps/`),
+- '**Full**' (or Complete) and contains a backup of :
+    * the instance of Nextcloud,
+    * the apps of the Nextcloud (`apps/` and `custom_apps/`),
     * A dump of the database,
-    * the data of the Nextcloud including users' files.
+    * the local folder defined as `data` of the Nextcloud.
+
 
 - '**Partial**' (or Incremental) that contains a backup of :
     * the instance of Nextcloud,
     * the apps of the Nextcloud,
     * A dump of the database,
-    * data that have been generated or edited since the last **Complete Backup**
+    * local data that have been modified/generated since the last **Full Backup**
 
 ### What data are available in a Restoring Point
 
-Please note that the Backup App will not store ALL data from your Nextcloud. As an example, remote files
-does not have backup.  
-This is a quick list of what can be restored and what cannot be restored when using the Backup App:
+Please note that the **Backup App** will not store ALL data from your Nextcloud. As an example, remote
+files won't be stored.  
+This is a list of what can be restored and what cannot be restored when using the **Backup App**:
 
 A restoring point will store
 
 - your current Nextcloud,
-- the `apps/` folder,
-- your local data, defined by `'datadirectory'` in `config/config.php`,
-- the custom_apps folder (confirmation ?),
 - the configuration in `config/config.php`,
-- A full dump of your database.
+- the `apps/` folder and any other `custom_apps/`
+- your local `data/`, defined by `'datadirectory'` in `config/config.php`,
+- original absolute paths,
+- A full `sqldump` of your database,
+- List of files and localisation within the backup.
 
 A restoring point will **NOT** store:
 
-- Remote data, even if the filesystem is available locally.
+- data from External Storages, even if the mounted filesystem is available locally.
+
+### Metadata
 
 A Restoring Point also contains a file named `restoring-point.data` that contains metadata about the
 backup:
 
-- Version of your Nextcloud
+- Version of your Nextcloud,
 - The ID of the parent backup in case of partial backup,
-- The list of compressed file that contains the backup files,
-- Checksum for those files,
-- the date of the restoring point,
-- information related to the health of the files
+- The list of data file that compose the restoring point, the format for this data depends on the current
+  status of the restoring point (packed/unpacked) and the settings (compression, encryption)
+- Checksum for each files of the backup itself,
+- The date of the restoring point,
+- Comments,
+- Information related to the health of the files during the last check.
 
-_Note: the file `restoring-point.data` can confirm the integrity of all files and parts of the backup. If
-the file is lost, it is still possible to restore a restoring point.  
-The normal process is to re-create the `restoring-point.data` a new one, however :
+While the file `restoring-point.data` confirm the integrity of all files and parts of the backup, it is
+still possible to generate a restoring point based on the available files. However :
 
-- there is no way to confirm the integrity of content of the backup,
-- the restoring process will require some knowledge from the admin about the infrastructure from the
-  original instance that generated the backup.
+- there is no way to confirm the integrity of the restoring point,
+- the restoring process will require some knowledge from the admin about the original infrastructure from
+  the original instance that generated the backup.
+
+**Generate Metadata from backup files**
+
+- Upload the files of your restoring point on your instance of Nextcloud with the Backup App installed,
+  in a **specific** folder in your Files.
+- At the root of this **specific** folder, create a file named `restoring-point.data` and add this
+  content inside:
+
+       {"action": "generate", "id": "20211023234222-full-TFTBQewCEdcQ3cS"}
+
+- Customize your `id`; while it is advised to use the correct **Id** of the **Restoring Point** (if
+  known), any string would work. If kept empty, a new **Id** will be generated using the current time.
+
+- Right-click the file `restoring-point.data` and select '`Scan Backup Folder`'
+
+After few seconds, the metadata file will be generated and stored within the same `restoring-point.data`
+itself.
 
 <a name="hardware"></a>
 
@@ -71,33 +105,88 @@ The normal process is to re-create the `restoring-point.data` a new one, however
 
 - **Diskspace**: Creating and storing backups require a lot, **a lot**, of disk-space.
 
+
 - **AES Hardware Acceleration**: If your processor does not
-  include [AES instruction set](https://en.wikipedia.org/wiki/AES_instruction_set), the encryption
-  process will _"downgrade"_ and use `aes-256-cbc`.  
-  This should only affect you when using the Backup App to migrate your instance from an AES-supporting
-  CPU to a non-AES-supporting CPU. Enforcing the use of `aes-256-cbc` when creating the backup on the
-  AES-supporting CPU will fix this:
+  support [AES instruction set](https://en.wikipedia.org/wiki/AES_instruction_set), the encryption
+  process will fall back to `aes-256-cbc`.  
+  This should only affect you if using the Backup App to migrate your instance from an AES-supporting CPU
+  to a non-AES-supporting CPU (ie. old arm proc). Enforcing the use of `aes-256-cbc` before the packing
+  of the restoring point on a AES-supporting CPU will fix this:
 
     - run: `./occ config:app:set backup force_cbc --value '1' `
-    - create a new backup: `./occ backup:point:create`
+    - Pack the restoring point: `./occ backup:point:pack <pointId>`
 
 <a name="backup-manage-data"></a>
 
-## How the Backup App manage your data
+## Configure the handle of your data
 
 ### The timing
 
-The settings available in the Admin Settings/Backup page, allow an admin to configure when the next
-backups will be run and at which rate:
-...
+
+From the **Admin Settings**/**Backup** page, you can configure the time slot and the rate for the
+generation of your future backups.
+
+![Settings Schedule](screenshots/settings_schedule.png)
+
+
+The time slot define the time of the day the Backup App might generate a backup, it is based on the local
+time on the server.
+
+Keep in mind that your instance will be in `maintenance mode` for the duration of the generation of the
+backup. This is the reason why, by default, **Full Backup** will only be started during the week-end,
+while **Partial Backup** are also run during week days.
+
+If you scroll down to the bottom of this page, you can have an estimation of the next backup based on
+your settings:
+
+![Settings Next Point](screenshots/settings_next_point.png)
 
 ### The first pass (the backup process)
 
-...
+During the **First Pass**, data are quickly stored in the `appdata` folder of the **Backup App*.   
+At this point, there is no compression nor encryption; the first pass needs to be as fast as possible to
+release the `maintenance mode` on the instance.   
+The data are stored in a list of zip files (named `chunk`), each one with a maximum size of 4GB (unless
+it contains a file bigger than 4GB).
+
+Because there is no compression during the first pass, the `appdata` folder of the **Backup App** will
+require at least the same size of your current setup of Nextcloud: the content of the `core`, its `apps`
+and `local data`.
+
+By default, the `appdata` folder of the Backup App is located in the same folder than the rest of the
+data of your instance defined in `datadirectory`. It is estimated that the `Backup App` needs 65% of the
+available diskspace of the `datadirectory`
+
+In case there is no enough space, you can [#external-appdata](mount an External Storage) and move
+the `appdata` folder of the **Backup app** there.
 
 ### The second pass (the packing process)
 
-...
+![Settings Packing](screenshots/settings_packing.png)
+
+The second pass does not require to put your instance in `maintenance mode`. The 2nd pass consist in the
+packing of the restoring point and eventually its upload on external storage.
+
+The packing will list each `chunk` of your backup and:
+
+- Compress them (if enabled),
+- Split the result in multiple files (named `part`) of 100MB,
+- Encrypt each `part` (if enabled),
+- Once completed without issue, remove the original zip file of the `chunk` to free space.
+
+<a name="export"></a>
+
+### Storing on a different hard drive
+
+![Settings External](screenshots/settings_upload.png)
+
+Once packed, restoring points can be stored on a different hard drive. Locally or remotely.  
+If [enabled and configured](#upload-to-external-storages), the Backup App will store and manage your
+restoring points on the **External Storage**
+
+## Exporting your configuration
+
+![Settings export](screenshots/settings_export.png)
 
 <a name="important"></a>
 
@@ -152,29 +241,47 @@ configure the path to the right folder.
 
 ## Available `occ` commands:
 
-### Manage remote instance to store your backups remotely
+### Export/Import the configuration of your app.
 
-You can upload your backup files on a remote instance
+It is **mandatory** to export the configuration of the app as it contains the encryption keys for your
+encrypted backup and you will not be able to restore your backups from a data lost.
 
-**Add a remote instance to store your backups**
+You can do that from the Admin Settings page or using the `occ` command:
 
-    ./occ backup:remote:add cloud.example.net
+    ./occ backup:setup:export [--key] > ~/backup.setup
 
-**List configured remote instance**
+This will create the file `~/backup.setup`.  
+When using the option `--key` the setup will be encrypted and an `encryption_key` will be generated and
+returned by the occ command. This key needs to be stored somewhere and will be required to decrypt the
+saved configuration.  
+It is strongly (again) advised to use the `--key` option
 
-    ./occ backup:remote:list
+To restore the exported configuration:
 
-**Remove remote instance from the list**
+     ./occ backup:setup:import [--key encryption_key] < ~/backup.setup
 
-    ./occ backup:remote:remove cloud.example.net
+It is **mandatory** to export the configuration of the app as it contains the encryption keys for your
+encrypted backup and you will not be able to restore your backups from a data lost.
 
-**Note**: if you enable the backup on remote instance, it is strongly advice
-to [keep your current setup somewhere](), or your files won't be available without your identity nor
-readable without your encryption key
+You can do that from the Admin Settings page or using the `occ` command:
+
+    ./occ backup:setup:export [--key] > ~/backup.setup
+
+This will create the file `~/backup.setup`.  
+When using the option `--key` the setup will be encrypted and an `encryption_key` will be generated and
+returned by the occ command. This key needs to be stored somewhere and will be required to decrypt the
+saved configuration.  
+It is strongly (again) advised to use the `--key` option
+
+To restore the exported configuration:
+
+     ./occ backup:setup:import [--key encryption_key] < ~/backup.setup
 
 ### Manage your restoring point
 
 **Create a new Restoring Point**
+
+While this is managed by a background job, you can still generate a restoring point manually:
 
     ./occ backup:point:create [--incremental]
 
@@ -258,10 +365,12 @@ generated during the export of your setup needs to be stored somewhere safe!
 
     ./occ backup:setup:import [--key <key>] < ~/backup_setup.json
 
-### Known issues, missing features:
 
-- files are not encrypted when uploading to a remote instance
-- cannot upload restoring point with file bigger than 100M
-- uploading a parent RP after a dependant incremental backup does not remove the 'orphan' tag
-- Importing a Restoring Point using `backup:point:scan` from an external folder
-- Add remote instance to `backup:point:details`
+
+### Known issues, because _beta_:
+
+  * custom_apps are not included in the backup.
+  * Zip's integrity are not checked during unpack, might result in a lose of data when decrypting with the wrong key when restoring a backup with lost metadata file.
+  * When removed from the files_external, an external storage will not be removed from the backup app's list of external folder
+  * When restoring in another database, the process will fail if the database does not exist.
+
