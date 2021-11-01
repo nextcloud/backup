@@ -2,6 +2,8 @@
 
 This App creates and stores backup images of your Nextcloud.
 
+_(documentation is still in writing)_
+
 - [Important notes](#notes)
 - [Restoring Points](#restoring-point)
 - [Hardware Requirement](#hardware)
@@ -10,6 +12,7 @@ This App creates and stores backup images of your Nextcloud.
 - [Important details about your data](#important)
 - [Upload to External Storages](#external-storages)
 - [AppData on External Storage](#external-appdata)
+- [Restoring a backup]($restoring)
 - [Available `occ` commands](#occ)
 
 <a name="notes"></a>
@@ -19,8 +22,8 @@ This App creates and stores backup images of your Nextcloud.
 - **Read the full documentation**,
 - During the generation of the backup, the app will put your instance in `maintenance mode`,
 - This app generates a lot of data and can fill your hard drive,
-- By default **your data are encrypted**, meaning you **will need to export** the App configuration **as
-  soon as possible** or you will **not** be able to **decrypt your backups**.
+- By default, **your data are encrypted** meaning you **will need to export** the configuration of the
+  App **as soon as possible** or you will **not** be able to **decrypt your backups**.
 
 <a name="restoring-point"></a>
 
@@ -29,22 +32,22 @@ This App creates and stores backup images of your Nextcloud.
 A restoring point is an image of your Nextcloud at a specific time. A restoring point can be:
 
 - '**Full**' (or Complete) and contains a backup of :
-    * the instance of Nextcloud,
-    * the apps of the Nextcloud (`apps/` and `custom_apps/`),
+    * the instance of Nextcloud, its apps and `config/config.php`
     * A dump of the database,
     * the local folder defined as `data` of the Nextcloud.
 
 
 - '**Partial**' (or Incremental) that contains a backup of :
-    * the instance of Nextcloud,
-    * the apps of the Nextcloud,
-    * A dump of the database,
-    * local data that have been modified/generated since the last **Full Backup**
+    * the instance of Nextcloud, its apps and `config/config.php`
+        * A dump of the database,
+        * local data that have been modified/generated since the last **Full Backup**
 
 ### What data are available in a Restoring Point
 
-Please note that the **Backup App** will not store ALL data from your Nextcloud. As an example, remote
-files won't be stored.  
+Let's first start with the fact that the **Backup App** will not store **ALL** data from your
+Nextcloud.  
+As an example, remote files won't be stored.
+
 This is a list of what can be restored and what cannot be restored when using the **Backup App**:
 
 A restoring point will store
@@ -53,9 +56,9 @@ A restoring point will store
 - the configuration in `config/config.php`,
 - the `apps/` folder and any other `custom_apps/`
 - your local `data/`, defined by `'datadirectory'` in `config/config.php`,
-- original absolute paths,
-- A full `sqldump` of your database,
-- List of files and localisation within the backup.
+- a full `sqldump` of your database,
+- list of files and localisation within the backup,
+- metadata about the instance.
 
 A restoring point will **NOT** store:
 
@@ -69,14 +72,15 @@ backup:
 - Version of your Nextcloud,
 - The ID of the parent backup in case of partial backup,
 - The list of data file that compose the restoring point, the format for this data depends on the current
-  status of the restoring point (packed/unpacked) and the settings (compression, encryption)
-- Checksum for each files of the backup itself,
+  status of the restoring point (packed/unpacked) and the settings (compression, encryption),
+- Absolute paths for each data file,
+- Checksum for each file of the backup itself,
 - The date of the restoring point,
 - Comments,
 - Information related to the health of the files during the last check.
 
-While the file `restoring-point.data` confirm the integrity of all files and parts of the backup, it is
-still possible to generate a restoring point based on the available files. However :
+While the file `restoring-point.data` is require to confirm the integrity of all files and parts of the
+backup, it is still possible to generate a restoring point based on the available files. However :
 
 - there is no way to confirm the integrity of the restoring point,
 - the restoring process will require some knowledge from the admin about the original infrastructure from
@@ -86,8 +90,7 @@ still possible to generate a restoring point based on the available files. Howev
 
 - Upload the files of your restoring point on your instance of Nextcloud with the Backup App installed,
   in a **specific** folder in your Files.
-- At the root of this **specific** folder, create a file named `restoring-point.data` and add this
-  content inside:
+- At the root of this **specific** folder, create a file named `restoring-point.data` with this content:
 
        {"action": "generate", "id": "20211023234222-full-TFTBQewCEdcQ3cS"}
 
@@ -122,12 +125,10 @@ itself.
 
 ### The timing
 
-
 From the **Admin Settings**/**Backup** page, you can configure the time slot and the rate for the
 generation of your future backups.
 
 ![Settings Schedule](screenshots/settings_schedule.png)
-
 
 The time slot define the time of the day the Backup App might generate a backup, it is based on the local
 time on the server.
@@ -136,8 +137,8 @@ Keep in mind that your instance will be in `maintenance mode` for the duration o
 backup. This is the reason why, by default, **Full Backup** will only be started during the week-end,
 while **Partial Backup** are also run during week days.
 
-If you scroll down to the bottom of this page, you can have an estimation of the next backup based on
-your settings:
+If you scroll down to the bottom of this page, you can have an estimation of the date for your next
+backup based on your settings:
 
 ![Settings Next Point](screenshots/settings_next_point.png)
 
@@ -157,15 +158,17 @@ By default, the `appdata` folder of the Backup App is located in the same folder
 data of your instance defined in `datadirectory`. It is estimated that the `Backup App` needs 65% of the
 available diskspace of the `datadirectory`
 
-In case there is no enough space, you can [#external-appdata](mount an External Storage) and move
+In case there is not enough space, you can [#external-appdata](mount an External Storage) and move
 the `appdata` folder of the **Backup app** there.
 
 ### The second pass (the packing process)
 
-![Settings Packing](screenshots/settings_packing.png)
-
 The second pass does not require to put your instance in `maintenance mode`. The 2nd pass consist in the
 packing of the restoring point and eventually its upload on external storage.
+
+You can configure the type of packing in the Admin Settings of the app
+
+![Settings Packing](screenshots/settings_packing.png)
 
 The packing will list each `chunk` of your backup and:
 
@@ -174,15 +177,22 @@ The packing will list each `chunk` of your backup and:
 - Encrypt each `part` (if enabled),
 - Once completed without issue, remove the original zip file of the `chunk` to free space.
 
-<a name="export"></a>
+
+<a name="handle-external-storages"></a>
 
 ### Storing on a different hard drive
 
-![Settings External](screenshots/settings_upload.png)
+Once packed, restoring points can be stored on a different location. Locally or remotely.
 
-Once packed, restoring points can be stored on a different hard drive. Locally or remotely.  
-If [enabled and configured](#upload-to-external-storages), the Backup App will store and manage your
-restoring points on the **External Storage**
+if [configured](#external-storages), the Backup App will start storing your restoring points externally,
+and check their integrity every day.
+
+The uploading process will check that each `part` of the packed restoring point are healthy, based on the
+checksum stored in the `metadata` file and will retry to upload any faulty `part`.  
+On top of that, the data itself from the `metadata` file are signed, making the Backup App able to
+confirm the full integrity of the backup.
+
+<a name="export"></a>
 
 ## Exporting your configuration
 
@@ -221,6 +231,25 @@ restoring points on the **External Storage**
 
 ## Upload to External Storages
 
+Uploading your packed restoring point on one (or multiple) external storages is the perfect solution when
+facing a huge loss of data from your disk whether it is of human or hardware origin.
+
+Those external data are [fully managed](#handle-external-storages) by the app itself.
+
+The configuration is done in 2 steps:
+
+- The first step is to setup a folder from the **External Storage** Settings Page, it is strongly adviced
+  to limit the availability of the folder to the `admin` group only,
+
+![Settings External](screenshots/settings_external_store.png)
+
+- the second step is done in the **Backup** Settings Page, the configured External Storage should be
+  displayed in the listing of available storage location,
+
+![Settings External](screenshots/settings_external_folder.png)
+
+- set the path where your backup files will be stored.
+
 <a name="external-appdata"></a>
 
 ## AppData on External Storage
@@ -236,6 +265,93 @@ its data:
 
 run `./occ backup:external:appdata` and follow instruction to select the configured external storage, and
 configure the path to the right folder.
+
+<a name="restoring"></a>
+
+## Restoring a backup
+
+You can restore a single file or the whole instance to a previous state:
+
+    ./occ backup:point:restore <pointId> [--file <filename>] [--data <dataPack>] [--chunk chunkName]
+
+Please note that you can go back to a previous backup of your instance from any Nextcloud compatible with
+the Backup App. There is no need to install the exact same version as it will be reverted to the one used
+when creating the Restoring Point. Meaning that you can fully restore your instance of Nextcloud even if
+you lost your harddrive, as long as you kept a copy of the Restoring Point (upload to another remote
+instance)
+
+- install nextcloud compatible with the Backup App,
+- ./occ app:enable backup
+- if the backup are encrypted (or to confirm integrity of files): `./occ backup:setup:
+  import [--key <key>] < ~/backup_setup
+- if the backup are on an external storage:
+    * `./occ app:enable files_external`
+    * add the [external storage](#upload-to-external-storages)
+    * `./occ backup:external:add` and follow instruction, add the path to the backup you want to reach
+    * you should be able to see the restoring point the external storage
+- `./occ backup:point:list`
+
+```
+$ ./occ backup:point:list
+- retreiving data from local
+- retreiving data from external:3
+> found RestoringPoint 20211031232710-full-Tu4H6vOtxKoLLb9
+> found RestoringPoint 20211101014009-full-QeTziynggIuaaD2
++---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
+| Restoring Point                       | Date                | Parent | Comment | Status                      | Instance   | Health       |  |
++---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
+| A 20211031232710-full-Tu4H6vOtxKoLLb9 | 2021-10-31 23:27:10 |        | beta2   | packed,compressed,encrypted | external:3 | 12H, 23M ago |  |
+|  20211101014009-full-QeTziynggIuaaD2  | 2021-11-01 01:40:09 |        |         | packed,compressed,encrypted | external:3 | 10H, 53M ago |  |
++---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
+```
+
+* download the restoring point
+
+```
+$ ./occ backup:point:download --external 3 20211031232710-full-Tu4H6vOtxKoLLb9
+> downloading metadata
+check health status: 0 correct, 43 missing and 0 faulty files
+  * Downloading data/data-0540e4d6-9d7f-4c84-a8d8-ca40764257d1/00001-B57XWKJQe5Xg1sd: ok
+  * Downloading data/data-0540e4d6-9d7f-4c84-a8d8-ca40764257d1/00002-PXHPeS6t6OXFwkP: ok
+[...]
+```
+
+* unpack the restoring point
+
+```
+$ ./occ backup:point:unpack  20211031232710-full-Tu4H6vOtxKoLLb9
+Unpacking Restoring Point 20211031232710-full-Tu4H6vOtxKoLLb9
+ > lock and set status to unpacking
+ > Browsing RestoringData data
+   > Unpacking RestoringChunk data-0540e4d6-9d7f-4c84-a8d8-ca40764257d1: proceeding
+     * copying parts to temp files
+       - 00001-B57XWKJQe5Xg1sd: /tmp/phpNnYCbZ
+       - 00002-PXHPeS6t6OXFwkP: /tmp/phpYqRSPW
+[...]
+```
+
+* for each data pack, you will be prompt to choose the location of the extraction.
+* If a sqldump is available, you will be prompt to use the current configuration from the instance, or
+  use another database
+
+    * if the information from the file `config/config.php` are in conflict with the path or sql settings
+      specified during the extraction, you will be notified that the restoring process wants to update
+      them.
+
+```
+$ ./occ backup:point:restore 20211031232710-full-Tu4H6vOtxKoLLb9
+Restoring Point: 20211031232710-full-Tu4H6vOtxKoLLb9
+Date: 2021-10-31 23:27:10
+Checking Health status: ok
+
+
+WARNING! You are about to initiate the complete restoration of your instance!
+All data generated since the creation of the selected backup will be lost...
+
+Your instance will come back to a previous state from 13 hours, 17 minutes and 48 seconds ago.
+
+Do you really want to continue this operation ? (y/N) 
+```
 
 <a name="occ"></a>
 
@@ -332,18 +448,6 @@ appdata folder: data/appdata_qwerty123/backup/
 
     ./occ backup:point:details <pointId>
 
-## Restoration
-
-You can restore a single file or the whole instance to a previous state:
-
-    ./occ backup:point:restore <pointId> [--file <filename>] [--data <dataPack>] [--chunk chunkName]
-
-Please note that you can go back to a previous backup of your instance from any Nextcloud compatible with
-the Backup App. There is no need to install the exact same version as it will be reverted to the one used
-when creating the Restoring Point. Meaning that you can fully restore your instance of Nextcloud even if
-you lost your harddrive, as long as you kept a copy of the Restoring Point (upload to another remote
-instance)
-
 ## Exporting configuration
 
 This is an important step of your configuration of the Backup App Some information will be needed in case
@@ -365,12 +469,24 @@ generated during the export of your setup needs to be stored somewhere safe!
 
     ./occ backup:setup:import [--key <key>] < ~/backup_setup.json
 
+## Questions ?
 
+**- Can the app be used to migrate an instance of Nextcloud ?**
 
-### Known issues, because _beta_:
+Yes, during the restoration you can change the absolute path of your files and the configuration relative
+to the database.  
+No, you cannot switch the type of the database server (mysql, postgres, ...).
 
-  * custom_apps are not included in the backup.
-  * Zip's integrity are not checked during unpack, might result in a lose of data when decrypting with the wrong key when restoring a backup with lost metadata file.
-  * When removed from the files_external, an external storage will not be removed from the backup app's list of external folder
-  * When restoring in another database, the process will fail if the database does not exist.
+However, the app should not be used to duplicate setup in production as each instance will be fully
+identical (`instanceid`, ...).
 
+## Known issues, because _beta_:
+
+* custom_apps are not included in the backup.
+* Zip's integrity are not checked during unpack, might result in a lose of data when decrypting with the
+  wrong key when restoring a backup with lost metadata file.
+* When removed from the files_external, an external storage will not be removed from the backup app's
+  list of external folder
+* When restoring in another database, the process will fail if the database does not exist.
+* When adding a new external storage from the files_external, the folder needs to be mounted using the
+  Files App. Browsing the root folder should be enough.
