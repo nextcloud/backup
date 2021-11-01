@@ -250,7 +250,7 @@ class PointRestore extends Base {
 		}
 
 		$output->writeln('');
-		$output->writeln(' > Enabling <info>maintenance mode</info>');
+		$output->writeln('> Enabling <info>maintenance mode</info>');
 		$this->configService->maintenanceMode(true);
 		$this->restorePointComplete($point);
 
@@ -258,10 +258,10 @@ class PointRestore extends Base {
 		$this->updateConfig($point);
 
 		$output->writeln('> Finalization of the restoring process');
+		$output->writeln('> <info>maintenance mode</info> disabled');
 		$this->restoreService->finalizeFullRestore();
 
-		$output->writeln('> Disabling <info>maintenance mode</info>');
-		$this->configService->maintenanceMode(false);
+//		$this->configService->maintenanceMode(false);
 
 		$this->activityService->newActivity(
 			ActivityService::RESTORE,
@@ -502,28 +502,25 @@ class PointRestore extends Base {
 		$configFile = rtrim($configRoot, '/') . '/config.php';
 		include $configFile;
 
-		$updated = false;
-		$this->compareConfigDataRoot($CONFIG, $dataRoot, $updated);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_HOST, $updated);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PORT, $updated);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_NAME, $updated);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_USER, $updated);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PASS, $updated);
+		$this->compareConfigDataRoot($CONFIG, $dataRoot);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_HOST);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PORT);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_NAME);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_USER);
+		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PASS);
 
-		if ($updated) {
-			$this->output->writeln('  > Updating <info>config.php</info>');
-			$this->output->writeln('');
-			file_put_contents($configFile, '<?php ' . "\n" . '$CONFIG = ' . var_export($CONFIG, true) . ';');
-		}
+		$CONFIG['maintenance'] = false;
+		$this->output->writeln('  > Updating <info>config.php</info>');
+		$this->output->writeln('');
+		file_put_contents($configFile, '<?php ' . "\n" . '$CONFIG = ' . var_export($CONFIG, true) . ';');
 	}
 
 
 	/**
 	 * @param array $CONFIG
 	 * @param string $used
-	 * @param bool $updated
 	 */
-	private function compareConfigDataRoot(array &$CONFIG, string $used, bool &$updated): void {
+	private function compareConfigDataRoot(array &$CONFIG, string $used): void {
 		$fromConfig = rtrim($this->get(ConfigService::DATA_DIRECTORY, $CONFIG), '/') . '/';
 
 		if ($fromConfig !== $used) {
@@ -544,7 +541,6 @@ class PointRestore extends Base {
 			$helper = $this->getHelper('question');
 			if ($helper->ask($this->input, $this->output, $question)) {
 				$CONFIG[ConfigService::DATA_DIRECTORY] = $used;
-				$updated = true;
 			}
 		}
 	}
@@ -554,14 +550,8 @@ class PointRestore extends Base {
 	 * @param array $sqlParams
 	 * @param array $CONFIG
 	 * @param string $key
-	 * @param bool $updated
 	 */
-	private function compareConfigSqlParams(
-		array $sqlParams,
-		array &$CONFIG,
-		string $key,
-		bool &$updated
-	): void {
+	private function compareConfigSqlParams(array $sqlParams, array &$CONFIG, string $key): void {
 		$fromConfig = $this->get($key, $CONFIG);
 		$used = $this->get($key, $sqlParams);
 		if ($used !== $fromConfig) {
@@ -591,7 +581,6 @@ class PointRestore extends Base {
 			$helper = $this->getHelper('question');
 			if ($helper->ask($this->input, $this->output, $question)) {
 				$CONFIG[$key] = $used;
-				$updated = true;
 			}
 		}
 	}

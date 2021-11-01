@@ -34,6 +34,7 @@ namespace OCA\Backup\Command;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
+use OCA\Backup\Exceptions\RestoringPointLockException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Service\OutputService;
@@ -104,17 +105,21 @@ class PointUpload extends Base {
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 *
+	 * @return int
+	 * @throws ExternalFolderNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RestoringPointNotFoundException
-	 * @throws ExternalFolderNotFoundException
 	 * @throws RestoringPointPackException
+	 * @throws RestoringPointLockException
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('point'));
 
 		$this->outputService->setOutput($output);
 		$this->uploadService->uploadPoint($point);
+
+		return 0;
 	}
 }
