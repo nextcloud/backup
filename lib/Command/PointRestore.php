@@ -400,7 +400,7 @@ class PointRestore extends Base {
 
 			$helper = $this->getHelper('question');
 			$question = new ConfirmationQuestion(
-				'<comment>    - Do you want to import the dump in another SQL server ?</comment> (y/N) ',
+				'<comment>    - Do you want to import the dump in another SQL server or database ?</comment> (y/N) ',
 				false,
 				'/^(y|Y)/i'
 			);
@@ -500,7 +500,7 @@ class PointRestore extends Base {
 
 		$CONFIG = [];
 		$configFile = rtrim($configRoot, '/') . '/config.php';
-		require $configFile;
+		include $configFile;
 
 		$updated = false;
 		$this->compareConfigDataRoot($CONFIG, $dataRoot, $updated);

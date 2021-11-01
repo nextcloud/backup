@@ -31,6 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\SqlDump;
 
+use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use Ifsnop\Mysqldump\Mysqldump;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\ISqlDump;
@@ -43,6 +44,9 @@ use Throwable;
  * @package OCA\Backup\SqlDump
  */
 class SqlDumpMySQL implements ISqlDump {
+
+
+	use TArrayTools;
 
 
 	/** @var ConfigService */
@@ -97,7 +101,18 @@ class SqlDumpMySQL implements ISqlDump {
 	 * @return bool
 	 */
 	public function import(array $data, $read): bool {
-		$sql = mysqli_connect($data['dbhost'], $data['dbuser'], $data['dbpassword'], $data['dbname']);
+		$port = $this->getInt(ISqlDump::DB_PORT, $data);
+		if ($port === 0) {
+			$port = null;
+		}
+		$sql = mysqli_connect(
+			$this->get(ISqlDump::DB_HOST, $data),
+			$this->get(ISqlDump::DB_USER, $data),
+			$this->get(ISqlDump::DB_PASS, $data),
+			$this->get(ISqlDump::DB_NAME, $data),
+			$port
+		);
+
 		$request = '';
 		while (($line = fgets($read)) !== false) {
 			$line = trim($line);
