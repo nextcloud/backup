@@ -44,8 +44,6 @@ use Throwable;
  * @package OCA\Backup\SqlDump
  */
 class SqlDumpMySQL implements ISqlDump {
-
-
 	use TArrayTools;
 
 
