@@ -365,10 +365,12 @@ generated during the export of your setup needs to be stored somewhere safe!
 
     ./occ backup:setup:import [--key <key>] < ~/backup_setup.json
 
-### Known issues, missing features:
 
-- files are not encrypted when uploading to a remote instance
-- cannot upload restoring point with file bigger than 100M
-- uploading a parent RP after a dependant incremental backup does not remove the 'orphan' tag
-- Importing a Restoring Point using `backup:point:scan` from an external folder
-- Add remote instance to `backup:point:details`
+
+### Known issues, because _beta_:
+
+  * custom_apps are not included in the backup.
+  * Zip's integrity are not checked during unpack, might result in a lose of data when decrypting with the wrong key when restoring a backup with lost metadata file.
+  * When removed from the files_external, an external storage will not be removed from the backup app's list of external folder
+  * When restoring in another database, the process will fail if the database does not exist.
+
