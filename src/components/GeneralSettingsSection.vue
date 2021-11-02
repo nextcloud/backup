@@ -37,14 +37,14 @@
 					:disabled="loadingFetchSettings"
 					name="timeSlotsStart"
 					@change="setSettings">
-					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index">{{ index | leadingZero }}:00</option>
+					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index | leadingZero">{{ index | leadingZero }}:00</option>
 				</select>
 				{{ t('backup', 'and') }}
 				<select v-model.number="settings.timeSlotsEnd"
 					:disabled="loadingFetchSettings"
 					name="timeSlotsEnd"
 					@change="setSettings">
-					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index">{{ index | leadingZero }}:00</option>
+					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index | leadingZero">{{ index | leadingZero }}:00</option>
 				</select>
 			</label>
 
@@ -109,20 +109,17 @@
 		<ul class="backup-settings__summary">
 			<template v-if="settings.allowWeekdays">
 				<li>
-					{{ t('backup', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00.', settings) }}
-				</li>
-				<li>
-					{{ t('backup', 'A full restoring point will be created {delayPartialRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00.', settings) }}
+					{{ t('backup', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings) }}
 				</li>
 			</template>
 			<template v-if="!settings.allowWeekdays">
 				<li>
 					{{ t('backup', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 during weekends.', settings) }}
 				</li>
-				<li>
-					{{ t('backup', 'A full restoring point will be created {delayPartialRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 during weekends.', settings) }}
-				</li>
 			</template>
+			<li>
+				{{ t('backup', 'A partial restoring point will be created {delayPartialRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings) }}
+			</li>
 		</ul>
 
 		<div class="backup-settings__actions">

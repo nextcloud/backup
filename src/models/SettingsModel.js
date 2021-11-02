@@ -379,18 +379,18 @@ export default class SettingsModel {
 	/**
 	 * Get the start of the allowed time slots to do a backup.
 	 *
-	 * @return {number}
+	 * @return {string}
 	 * @readonly
 	 * @memberof SettingsModel
 	 */
 	get timeSlotsStart() {
-		return this._timeSlots.start
+		return (this._timeSlots.start < 10 ? '0' : '') + this._timeSlots.start
 	}
 
 	/**
 	 * Set the start of the allowed time slots to do a backup.
 	 *
-	 * @param {number} value - The new value.
+	 * @param {string} value - The new value.
 	 * @memberof SettingsModel
 	 */
 	set timeSlotsStart(value) {
@@ -401,18 +401,18 @@ export default class SettingsModel {
 	/**
 	 * Get the end of the allowed time slots to do a backup.
 	 *
-	 * @return {number}
+	 * @return {string}
 	 * @readonly
 	 * @memberof SettingsModel
 	 */
 	get timeSlotsEnd() {
-		return this._timeSlots.end
+		return (this._timeSlots.end < 10 ? '0' : '') + this._timeSlots.end
 	}
 
 	/**
 	 * Set the end of the allowed time slots to do a backup.
 	 *
-	 * @param {number} value - The new value.
+	 * @param {string} value - The new value.
 	 * @memberof SettingsModel
 	 */
 	set timeSlotsEnd(value) {
