@@ -50,7 +50,11 @@
 				{{ t('backup', 'h') }}
 			</label>
 
-			<CheckboxRadioSwitch :loading="loadingFetchSettings" :checked.sync="settings.allowWeekdays" @update:checked="setSettings">
+			<CheckboxRadioSwitch
+				:loading="loadingFetchSettings"
+				:disabled="loadingFetchSettings"
+				:checked.sync="settings.allowWeekdays"
+				@update:checked="setSettings">
 				{{ t('backup', 'Allow to create full restoring points during week day') }}
 			</CheckboxRadioSwitch>
 
@@ -80,18 +84,23 @@
 				{{ t('backup', 'Restoring point packing') }}
 			</span>
 		</h3>
-		<CheckboxRadioSwitch :loading="loadingFetchSettings" :checked.sync="settings.packBackup" @update:checked="setSettings">
+		<CheckboxRadioSwitch
+			:loading="loadingFetchSettings"
+			:disabled="loadingFetchSettings"
+			:checked.sync="settings.packBackup"
+			@update:checked="setSettings">
 			{{ t('backup', 'Enable restoring point packing') }}
 		</CheckboxRadioSwitch>
-		<CheckboxRadioSwitch :loading="loadingFetchSettings"
+		<CheckboxRadioSwitch
+			:loading="loadingFetchSettings"
 			:checked.sync="settings.packEncrypt"
-			:disabled="!settings.packBackup"
+			:disabled="!settings.packBackup || loadingFetchSettings"
 			@update:checked="setSettings">
 			{{ t('backup', 'Enable encryption') }}
 		</CheckboxRadioSwitch>
 		<CheckboxRadioSwitch :loading="loadingFetchSettings"
 			:checked.sync="settings.packCompress"
-			:disabled="!settings.packBackup"
+			:disabled="!settings.packBackup || loadingFetchSettings"
 			@update:checked="setSettings">
 			{{ t('backup', 'Enable compression') }}
 		</CheckboxRadioSwitch>
