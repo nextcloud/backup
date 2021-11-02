@@ -34,6 +34,7 @@ namespace OCA\Backup\SqlDump;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use Ifsnop\Mysqldump\Mysqldump;
 use OCA\Backup\Exceptions\SqlDumpException;
+use OCA\Backup\Exceptions\SqlParamsException;
 use OCA\Backup\ISqlDump;
 use OCA\Backup\Service\ConfigService;
 use Throwable;
@@ -59,14 +60,14 @@ class SqlDumpMySQL implements ISqlDump {
 
 
 	/**
-	 * @param array $data
+	 * @param array $params
 	 * @param string $filename
 	 *
 	 * @return string
 	 * @throws SqlDumpException
 	 */
-	public function export(array $data, string $filename): void {
-		$connect = 'mysql:host=' . $data['dbhost'] . ';dbname=' . $data['dbname'];
+	public function export(array $params, string $filename): void {
+		$connect = 'mysql:host=' . $params['dbhost'] . ';dbname=' . $params['dbname'];
 		$settings = [
 			'compress' => Mysqldump::NONE,
 			'no-data' => false,
@@ -84,7 +85,7 @@ class SqlDumpMySQL implements ISqlDump {
 		];
 
 		try {
-			$dump = new Mysqldump($connect, $data['dbuser'], $data['dbpassword'], $settings);
+			$dump = new Mysqldump($connect, $params['dbuser'], $params['dbpassword'], $settings);
 			$dump->start($filename);
 		} catch (Throwable $t) {
 			throw new SqlDumpException($t->getMessage());
@@ -93,21 +94,53 @@ class SqlDumpMySQL implements ISqlDump {
 
 
 	/**
-	 * @param array $data
-	 * @param resource $read
+	 * @param array $params
 	 *
-	 * @return bool
+	 * @throws SqlParamsException
 	 */
-	public function import(array $data, $read): bool {
-		$port = $this->getInt(ISqlDump::DB_PORT, $data);
+	public function setup(array $params): void {
+		$port = $this->getInt(ISqlDump::DB_PORT, $params);
 		if ($port === 0) {
 			$port = null;
 		}
 		$sql = mysqli_connect(
-			$this->get(ISqlDump::DB_HOST, $data),
-			$this->get(ISqlDump::DB_USER, $data),
-			$this->get(ISqlDump::DB_PASS, $data),
-			$this->get(ISqlDump::DB_NAME, $data),
+			$this->get(ISqlDump::DB_HOST, $params),
+			$this->get(ISqlDump::DB_USER, $params),
+			$this->get(ISqlDump::DB_PASS, $params),
+			null,
+			$port
+		);
+
+		if (is_bool($sql) || is_null($sql)) {
+			throw new SqlParamsException('cannot connect to database');
+		}
+
+		$dbName = $this->get(ISqlDump::DB_NAME, $params);
+		if (!mysqli_select_db($sql, $dbName)) {
+			mysqli_query($sql, 'CREATE DATABASE IF NOT EXISTS ' . $dbName);
+			if (!mysqli_select_db($sql, $dbName)) {
+				throw new SqlParamsException('cannot create database');
+			}
+		}
+	}
+
+
+	/**
+	 * @param array $params
+	 * @param resource $read
+	 *
+	 * @return bool
+	 */
+	public function import(array $params, $read): bool {
+		$port = $this->getInt(ISqlDump::DB_PORT, $params);
+		if ($port === 0) {
+			$port = null;
+		}
+		$sql = mysqli_connect(
+			$this->get(ISqlDump::DB_HOST, $params),
+			$this->get(ISqlDump::DB_USER, $params),
+			$this->get(ISqlDump::DB_PASS, $params),
+			$this->get(ISqlDump::DB_NAME, $params),
 			$port
 		);
 

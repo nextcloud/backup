@@ -54,20 +54,20 @@ class SqlDumpPgSQL implements ISqlDump {
 
 
 	/**
-	 * @param array $data
+	 * @param array $params
 	 * @param string $filename
 	 *
 	 * @return void
 	 * @throws SqlDumpException
 	 */
-	public function export(array $data, string $filename): void {
+	public function export(array $params, string $filename): void {
 		try {
 			PostgreSql::create()
-					  ->setDbName($this->get('dbname', $data))
-					  ->setUserName($this->get('dbuser', $data))
-					  ->setPassword($this->get('dbpassword', $data))
-					  ->setHost($this->get('dbhost', $data))
-					  ->setPort($this->getInt('dbport', $data))
+					  ->setDbName($this->get('dbname', $params))
+					  ->setUserName($this->get('dbuser', $params))
+					  ->setPassword($this->get('dbpassword', $params))
+					  ->setHost($this->get('dbhost', $params))
+					  ->setPort($this->getInt('dbport', $params))
 					  ->addExtraOption('--clean --inserts')
 					  ->dumpToFile($filename);
 		} catch (Throwable $t) {
@@ -77,17 +77,24 @@ class SqlDumpPgSQL implements ISqlDump {
 
 
 	/**
-	 * @param array $data
+	 * @param array $params
+	 */
+	public function setup(array $params): void {
+	}
+
+
+	/**
+	 * @param array $params
 	 * @param resource $read
 	 *
 	 * @return bool
 	 */
-	public function import(array $data, $read): bool {
+	public function import(array $params, $read): bool {
 		$sql = pg_connect(
-			'host=' . $data['dbhost'] .
-			' dbname=' . $this->get('dbname', $data) .
-			' user=' . $this->get('dbuser', $data) .
-			' password=' . $this->get('dbpassword', $data)
+			'host=' . $params['dbhost'] .
+			' dbname=' . $this->get('dbname', $params) .
+			' user=' . $this->get('dbuser', $params) .
+			' password=' . $this->get('dbpassword', $params)
 		);
 
 		$request = '';
