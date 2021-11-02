@@ -37,17 +37,15 @@
 					:disabled="loadingFetchSettings"
 					name="timeSlotsStart"
 					@change="setSettings">
-					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index">{{ index }}</option>
+					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index">{{ index | leadingZero }}:00</option>
 				</select>
-				{{ t('backup', 'h') }}
 				{{ t('backup', 'and') }}
 				<select v-model.number="settings.timeSlotsEnd"
 					:disabled="loadingFetchSettings"
 					name="timeSlotsEnd"
 					@change="setSettings">
-					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index">{{ index }}</option>
+					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index">{{ index | leadingZero }}:00</option>
 				</select>
-				{{ t('backup', 'h') }}
 			</label>
 
 			<CheckboxRadioSwitch
@@ -210,6 +208,18 @@ export default {
 		SettingsSection,
 		CheckboxRadioSwitch,
 		Modal,
+	},
+
+	filters: {
+		/**
+		 * Add a leading '0' of the passed number is inferior to 10.
+		 *
+		 * @param {number} number - the number to prefix.
+		 * @return {string}
+		 */
+		leadingZero(number) {
+			return (number < 10 ? '0' : '') + number
+		},
 	},
 
 	data() {
