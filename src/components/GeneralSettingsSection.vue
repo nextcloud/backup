@@ -175,7 +175,7 @@
 							</CheckboxRadioSwitch>
 						</div>
 						<div class="backup-settings__request-modal__actions">
-							<button class="error" @click="requestRestoringPointType = ''">
+							<button @click="requestRestoringPointType = ''">
 								Cancel
 							</button>
 							<button class="primary"
