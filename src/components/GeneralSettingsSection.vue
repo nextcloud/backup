@@ -180,7 +180,7 @@
 							</button>
 							<button class="primary"
 								:class="{loading: loadingRequestRestoringPoint}"
-								:disabled="!validationCheckboxForRestoringPointRequest"
+								:disabled="!validationCheckboxForRestoringPointRequest || loadingRequestRestoringPoint"
 								@click="requestRestoringPoint">
 								{{ t('backup', 'Request {mode} restoring point', { mode: requestRestoringPointType}) }}
 							</button>
