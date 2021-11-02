@@ -61,7 +61,7 @@
 						:disabled="loadingFetchSettings"
 						class="backup-settings__input"
 						type="text"
-						@change="setSettings">
+						@change="setSettings"> {{ n('backup', 'day', 'days', settings.delayFullRestoringPoint) }}
 				</li>
 
 				<li>
@@ -70,7 +70,7 @@
 						:disabled="loadingFetchSettings"
 						class="backup-settings__input"
 						type="text"
-						@change="setSettings">
+						@change="setSettings"> {{ n('backup', 'day', 'days', settings.delayPartialRestoringPoint) }}
 				</li>
 			</ul>
 		</form>
