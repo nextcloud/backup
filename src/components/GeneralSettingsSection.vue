@@ -27,29 +27,8 @@
 		:description="t('backup', 'General configuration on how and when your restoring points are created.')">
 		<form ref="settings-form">
 			<h3 class="backup-settings__sub-headers">
-				<span>
-					{{ t('backup', 'Restoring point packing') }}
-				</span>
-				<span v-if="loadingSetSettings > 0" class="icon-loading" />
-			</h3>
-			<CheckboxRadioSwitch :loading="loadingFetchSettings" :checked.sync="settings.packBackup" @update:checked="setSettings">
-				{{ t('backup', 'Enable restoring point packing') }}
-			</CheckboxRadioSwitch>
-			<CheckboxRadioSwitch :loading="loadingFetchSettings"
-				:checked.sync="settings.packEncrypt"
-				:disabled="!settings.packBackup"
-				@update:checked="setSettings">
-				{{ t('backup', 'Enable encryption') }}
-			</CheckboxRadioSwitch>
-			<CheckboxRadioSwitch :loading="loadingFetchSettings"
-				:checked.sync="settings.packCompress"
-				:disabled="!settings.packBackup"
-				@update:checked="setSettings">
-				{{ t('backup', 'Enable compression') }}
-			</CheckboxRadioSwitch>
-
-			<h3 class="backup-settings__sub-headers">
 				{{ t('backup', 'Backup schedule') }}
+				<span v-if="loadingSetSettings > 0" class="icon-loading" />
 			</h3>
 
 			<label class="backup-settings__time-slots">
@@ -95,6 +74,27 @@
 				</li>
 			</ul>
 		</form>
+
+		<h3 class="backup-settings__sub-headers">
+			<span>
+				{{ t('backup', 'Restoring point packing') }}
+			</span>
+		</h3>
+		<CheckboxRadioSwitch :loading="loadingFetchSettings" :checked.sync="settings.packBackup" @update:checked="setSettings">
+			{{ t('backup', 'Enable restoring point packing') }}
+		</CheckboxRadioSwitch>
+		<CheckboxRadioSwitch :loading="loadingFetchSettings"
+			:checked.sync="settings.packEncrypt"
+			:disabled="!settings.packBackup"
+			@update:checked="setSettings">
+			{{ t('backup', 'Enable encryption') }}
+		</CheckboxRadioSwitch>
+		<CheckboxRadioSwitch :loading="loadingFetchSettings"
+			:checked.sync="settings.packCompress"
+			:disabled="!settings.packBackup"
+			@update:checked="setSettings">
+			{{ t('backup', 'Enable compression') }}
+		</CheckboxRadioSwitch>
 
 		<h3 class="backup-settings__sub-headers">
 			{{ t('backup', 'Schedule summary') }}
