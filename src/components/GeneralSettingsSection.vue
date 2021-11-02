@@ -126,16 +126,17 @@
 				{{ t('backup', 'You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
 				<button
 					:disabled="loadingExportSettings"
+					class="backup-settings__actions__action__export"
 					:class="{loading: loadingExportSettings}"
 					@click="downloadSettings">
 					<span class="icon icon-external" />
 					{{ t('backup', 'Export configuration') }}
 				</button>
 			</div>
-			<div v-if="exportPrivateKey !== undefined" class="backup-settings__export__info">
+			<div v-if="exportedPrivateKey !== undefined" class="backup-settings__export__info">
 				{{ t('backup', 'Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
 				<br>
-				<code><b>{{ exportPrivateKey }}</b></code>
+				<code><b>{{ exportedPrivateKey }}</b></code>
 				<br>
 			</div>
 
@@ -219,7 +220,8 @@ export default {
 				partial: 0,
 				full: 0,
 			}),
-			exportPrivateKey: undefined,
+			exportedPrivateKey: undefined,
+			exportedSettings: undefined,
 			loadingFetchSettings: false,
 			loadingSetSettings: 0,
 			loadingRequestRestoringPoint: false,
@@ -306,30 +308,39 @@ export default {
 				return
 			}
 
+			if (this.exportedSettings !== undefined) {
+				this.saveFile('settings.asc', this.exportedSettings)
+				return
+			}
+
 			try {
 				this.loadingExportSettings = true
 				const response = await axios.get(generateOcsUrl('apps/backup/setup/encrypted'))
+				this.exportedSettings = response.data.ocs.data.content
+				this.exportedPrivateKey = response.data.ocs.data.key
+				this.saveFile('settings.asc', response.data.ocs.data.content)
 
-				this.exportPrivateKey = response.data.ocs.data.key
-
-				// From: https://stackoverflow.com/questions/13405129/javascript-create-and-save-file
-				const file = new Blob([response.data.ocs.data.content], { type: 'asc' })
-				const a = document.createElement('a')
-				const url = URL.createObjectURL(file)
-				a.href = url
-				a.download = 'settings.asc'
-				document.body.appendChild(a)
-				a.click()
-				setTimeout(() => {
-					document.body.removeChild(a)
-					window.URL.revokeObjectURL(url)
-				}, 0)
 			} catch (error) {
 				showError(t('backup', 'Unable to export settings'))
 				logger.error('An error occurred while exporting the settings', { error })
 			} finally {
 				this.loadingExportSettings = false
 			}
+		},
+
+		saveFile(name, content) {
+			// From: https://stackoverflow.com/questions/13405129/javascript-create-and-save-file
+			const file = new Blob([content], { type: 'asc' })
+			const a = document.createElement('a')
+			const url = URL.createObjectURL(file)
+			a.href = url
+			a.download = name
+			document.body.appendChild(a)
+			a.click()
+			setTimeout(() => {
+				document.body.removeChild(a)
+				window.URL.revokeObjectURL(url)
+			}, 0)
 		},
 	},
 }
@@ -385,6 +396,11 @@ button.loading {
 			&__info {
 				margin-bottom: 12px;
 				color: var(--color-error);
+			}
+
+			&__export {
+				display: block;
+				margin-top: 16px;
 			}
 		}
 	}
