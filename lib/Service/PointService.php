@@ -37,6 +37,7 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Signatory;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
+use Exception;
 use OC;
 use OC\Files\AppData\Factory;
 use OCA\Backup\AppInfo\Application;
@@ -274,11 +275,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-				'id' => $point->getId(),
-				'duration' => $point->getDuration(),
-				'status' => $point->getStatus(),
-				'complete' => $complete
-			]
+							   'id' => $point->getId(),
+							   'duration' => $point->getDuration(),
+							   'status' => $point->getStatus(),
+							   'complete' => $complete
+						   ]
 		);
 
 		return $point;
@@ -599,6 +600,27 @@ class PointService {
 		return $point;
 	}
 
+
+	/**
+	 * @return RestoringPoint[]
+	 * @throws ExternalFolderNotFoundException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	public function scanFoldersFromAppData(): array {
+		$this->initBackupFS();
+
+		foreach ($this->appDataRoot->getFolders() as $pointId) {
+			try {
+				$this->generatePointFromAppData($pointId);
+			} catch (Exception $e) {
+			}
+		}
+
+		return [];
+	}
+
+
 	/**
 	 * @param string $pointId
 	 *
@@ -608,7 +630,7 @@ class PointService {
 	 * @throws RestoringPointNotFoundException
 	 * @throws SignatoryException
 	 */
-	public function generatePointFromBackupFS(string $pointId): RestoringPoint {
+	public function generatePointFromAppData(string $pointId): RestoringPoint {
 		$tmp = new RestoringPoint();
 		$tmp->setId($pointId);
 		$this->initBaseFolder($tmp);
@@ -694,6 +716,12 @@ class PointService {
 		}
 
 		$path = '/';
+
+		try {
+			// avoid strange behavior post-restoration
+			$this->appDataRoot->newFolder($path);
+		} catch (NotPermittedException $e) {
+		}
 
 		$folder = $this->appDataRoot->getFolder($path);
 		$folder->newFile(self::NOBACKUP_FILE, '');
