@@ -2,12 +2,12 @@
 	<ClipboardClock
 		v-if="health === -2"
 		slot="icon"
-		fill-color="orange"
+		fill-color="#eca700"
 		:title="t('backup', 'Scheduled')" />
 	<ClockOutline
 		v-else-if="health === -1"
 		slot="icon"
-		fill-color="orange"
+		fill-color="#eca700"
 		:title="t('backup', 'Pending')" />
 	<AlertCircle
 		v-else-if="health === 0"
@@ -17,7 +17,7 @@
 	<AlertCircle
 		v-else-if="health === 1"
 		slot="icon"
-		fill-color="orange"
+		fill-color="#eca700"
 		:title="t('backup', 'Orphan')" />
 	<Check
 		v-else-if="health === 9"

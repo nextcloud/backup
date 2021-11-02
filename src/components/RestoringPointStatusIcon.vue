@@ -3,7 +3,7 @@
 		<PackageVariant
 			v-if="!isPacked"
 			slot="icon"
-			fill-color="orange"
+			fill-color="#eca700"
 			:title="t('backup', 'Not packed yet')" />
 		<PackageVariantClosed
 			v-if="isPacked"
