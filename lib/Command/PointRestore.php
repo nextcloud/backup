@@ -46,6 +46,7 @@ use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotInitiatedException;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\Exceptions\SqlImportException;
+use OCA\Backup\Exceptions\SqlParamsException;
 use OCA\Backup\ISqlDump;
 use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
@@ -147,6 +148,8 @@ class PointRestore extends Base {
 			 ->setDescription('Restore a restoring point')
 			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
 			 ->addOption('force', '', InputOption::VALUE_NONE, 'Force the restoring process')
+			 ->addOption('do-not-ask-data', '', InputOption::VALUE_NONE, 'Do not ask for path on data')
+			 ->addOption('do-not-ask-sql', '', InputOption::VALUE_NONE, 'Do not ask for params on sqldump')
 			 ->addOption('file', '', InputOption::VALUE_REQUIRED, 'restore only a specific file')
 			 ->addOption('chunk', '', InputOption::VALUE_REQUIRED, 'location of the file')
 			 ->addOption('data', '', InputOption::VALUE_REQUIRED, 'location of the file');
@@ -261,8 +264,6 @@ class PointRestore extends Base {
 		$output->writeln('> <info>maintenance mode</info> disabled');
 		$this->restoreService->finalizeFullRestore();
 
-//		$this->configService->maintenanceMode(false);
-
 		$this->activityService->newActivity(
 			ActivityService::RESTORE,
 			[
@@ -291,7 +292,7 @@ class PointRestore extends Base {
 			$this->output->writeln(' > Found data pack: <info>' . $data->getName() . '</info>');
 
 			if ($data->getType() === RestoringData::INTERNAL_DATA) {
-				$this->output->writeln('  * ignoring');
+				$this->output->writeln('   * ignoring');
 				continue;
 			}
 
@@ -312,7 +313,13 @@ class PointRestore extends Base {
 	 * @throws RestoringPointNotInitiatedException
 	 */
 	private function restorePointData(RestoringPoint $point, RestoringData $data): void {
-		$root = $this->requestDataRoot($data);
+		try {
+			$root = $this->requestDataRoot($data);
+		} catch (RestoringDataNotFoundException $e) {
+			$this->output->writeln('   * ignoring data pack');
+
+			return;
+		}
 
 		$this->output->writeln('   > extracting data to <info>' . $root . '</info>');
 		foreach ($data->getChunks() as $chunk) {
@@ -345,16 +352,29 @@ class PointRestore extends Base {
 	 * @throws SqlDumpException
 	 */
 	private function restorePointSqlDump(RestoringPoint $point, RestoringData $data): void {
-		$sqlParams = $this->requestSqlParams();
+		while (true) {
+			try {
+				$sqlParams = $this->requestSqlParams();
+			} catch (RestoringDataNotFoundException $e) {
+				$this->output->writeln('   * ignoring sqldump');
 
-		$this->output->write(
-			'   > importing sqldump in <info>' . $this->displaySqlParams($sqlParams, true) . '</info>: '
-		);
-		try {
-			$this->importSqlDump($point, $data, $sqlParams);
-			$this->output->writeln('<info>ok</info>');
-		} catch (SqlImportException $e) {
-			$this->output->writeln('<error>' . $e->getMessage() . '</error>');
+				return;
+			}
+
+			$this->output->write(
+				'   > importing sqldump in <info>' . $this->displaySqlParams($sqlParams, true) . '</info>: '
+			);
+			try {
+				$this->importSqlDump($point, $data, $sqlParams);
+				$this->output->writeln('<info>ok</info>');
+			} catch (SqlParamsException $e) {
+				$this->output->writeln('<error>' . $e->getMessage() . '</error>');
+				continue;
+			} catch (SqlImportException $e) {
+				$this->output->writeln('<error>' . $e->getMessage() . '</error>');
+			}
+
+			break;
 		}
 
 		$data->setRestoredRoot(json_encode($sqlParams));
@@ -365,18 +385,37 @@ class PointRestore extends Base {
 	 * @param RestoringData $data
 	 *
 	 * @return string
+	 * @throws RestoringDataNotFoundException
 	 */
 	private function requestDataRoot(RestoringData $data): string {
 		$root = $data->getAbsolutePath();
+		if ($this->input->getOption('do-not-ask-data')) {
+			return $root;
+		}
+
 		while (true) {
 			$this->output->writeln('   > will be extracted in <info>' . $root . '</info>');
 			$helper = $this->getHelper('question');
 			$question = new Question(
-				'    - <comment>enter a new absolute path</comment> or press \'<info>enter</info>\' to use this location: ',
-				$root
+				'    - <comment>enter a new absolute path</comment>, or type <info>yes</info> to confirm '
+				. 'this location or <info>no</info> to ignore this part of the backup: ',
+				''
 			);
-			$question->setAutocompleterValues([$data->getAbsolutePath()]);
+			$question->setAutocompleterValues([$data->getAbsolutePath(), 'yes', 'no']);
 			$newRoot = trim($helper->ask($this->input, $this->output, $question));
+
+			if ($newRoot === '') {
+				continue;
+			}
+
+			if ($newRoot === 'yes') {
+				break;
+			}
+
+			if ($newRoot === 'no') {
+				throw new  RestoringDataNotFoundException('ignoring');
+			}
+
 			$newRoot = rtrim($newRoot, '/') . '/';
 			if ($newRoot === $root) {
 				break;
@@ -391,28 +430,35 @@ class PointRestore extends Base {
 
 	/**
 	 * @return array
+	 * @throws RestoringDataNotFoundException
 	 */
 	private function requestSqlParams(): array {
 		$sqlParams = $this->pointService->getSqlParams();
+		if ($this->input->getOption('do-not-ask-sql')) {
+			return $sqlParams;
+		}
 
 		while (true) {
 			$this->output->writeln('   > will be imported in ' . $this->displaySqlParams($sqlParams, true));
 
 			$helper = $this->getHelper('question');
-			$question = new ConfirmationQuestion(
-				'<comment>    - Do you want to import the dump in another SQL server or database ?</comment> (y/N) ',
-				false,
-				'/^(y|Y)/i'
+			$question = new Question(
+				'    - <comment>Do you want to import the dump in the current database, or cancel the import ?</comment> (yes/No/cancel) ',
+				'no',
 			);
+			$question->setAutocompleterValues(['cancel', 'yes', 'no']);
 
-			if (!$helper->ask($this->input, $this->output, $question)) {
-				return $sqlParams;
+			switch (strtolower($helper->ask($this->input, $this->output, $question))) {
+				case 'yes':
+					return $sqlParams;
+				case 'cancel':
+					throw new RestoringDataNotFoundException();
 			}
 
 			$this->output->writeln('    - current configuration:');
 			$this->displaySqlParams($sqlParams);
 
-			$this->output->writeln('    - edit configuration:');
+			$this->output->writeln('    - edit configuration:  (enter \'.\' to skip this step)');
 			while (true) {
 				$question = new Question('      . Host: ', '');
 				$newHost = trim($helper->ask($this->input, $this->output, $question));
@@ -420,9 +466,15 @@ class PointRestore extends Base {
 					break;
 				}
 			}
+			if ($newHost === '.') {
+				continue;
+			}
 
 			$question = new Question('      . Port: ', '');
 			$newPort = trim($helper->ask($this->input, $this->output, $question));
+			if ($newPort === '.') {
+				continue;
+			}
 
 			while (true) {
 				$question = new Question('      . Database: ', '');
@@ -430,6 +482,9 @@ class PointRestore extends Base {
 				if ($newName !== '') {
 					break;
 				}
+			}
+			if ($newName === '.') {
+				continue;
 			}
 
 			while (true) {
@@ -439,6 +494,9 @@ class PointRestore extends Base {
 					break;
 				}
 			}
+			if ($newUser === '.') {
+				continue;
+			}
 
 			while (true) {
 				$question = new Question('      . Password: ', '');
@@ -447,6 +505,9 @@ class PointRestore extends Base {
 				if ($newPass !== '') {
 					break;
 				}
+			}
+			if ($newPass === '.') {
+				continue;
 			}
 
 			$newParams = [
@@ -483,14 +544,28 @@ class PointRestore extends Base {
 		$dataRoot = $configRoot = '';
 		foreach ($point->getRestoringData() as $data) {
 			if ($data->getType() === RestoringData::ROOT_DATA) {
+				if ($data->getRestoredRoot() === '') {
+					continue;
+				}
 				$dataRoot = $data->getRestoredRoot();
 			}
 
 			if ($data->getType() === RestoringData::FILE_CONFIG) {
+				if ($data->getRestoredRoot() === '') {
+					$this->output->writeln(
+						'  * do not refresh as <info>config/config.php</info> were not restored'
+					);
+					$this->configService->maintenanceMode(false);
+
+					return;
+				}
 				$configRoot = $data->getRestoredRoot();
 			}
 
 			if ($data->getType() === RestoringData::FILE_SQL_DUMP) {
+				if ($data->getRestoredRoot() === '') {
+					continue;
+				}
 				$sqlParams = json_decode($data->getRestoredRoot(), true);
 				if (!is_array($sqlParams)) {
 					$sqlParams = [];
@@ -502,17 +577,23 @@ class PointRestore extends Base {
 		$configFile = rtrim($configRoot, '/') . '/config.php';
 		include $configFile;
 
-		$this->compareConfigDataRoot($CONFIG, $dataRoot);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_HOST);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PORT);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_NAME);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_USER);
-		$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PASS);
+		if ($dataRoot !== '') {
+			$this->compareConfigDataRoot($CONFIG, $dataRoot);
+		}
+		if (!empty($sqlParams)) {
+			$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_HOST);
+			$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PORT);
+			$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_NAME);
+			$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_USER);
+			$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PASS);
+		}
 
 		$CONFIG['maintenance'] = false;
 		$this->output->writeln('  > Updating <info>config.php</info>');
 		$this->output->writeln('');
-		file_put_contents($configFile, '<?php' . "\n" . '$CONFIG = ' . var_export($CONFIG, true) . ';' . "\n");
+		file_put_contents(
+			$configFile, '<?php' . "\n" . '$CONFIG = ' . var_export($CONFIG, true) . ';' . "\n"
+		);
 	}
 
 
@@ -593,6 +674,7 @@ class PointRestore extends Base {
 	 *
 	 * @throws SqlDumpException
 	 * @throws SqlImportException
+	 * @throws SqlParamsException
 	 */
 	private function importSqlDump(RestoringPoint $point, RestoringData $data, array $sqlParams): void {
 		$chunks = $data->getChunks();
@@ -616,7 +698,9 @@ class PointRestore extends Base {
 		}
 
 //		$config = $this->extractDatabaseConfig();
-		$sqlDump = $this->pointService->getSqlDump();
+		$sqlDump = $this->pointService->getSqlDump($sqlParams);
+		$sqlDump->setup($sqlParams);
+
 		$sqlDump->import($sqlParams, $read);
 	}
 

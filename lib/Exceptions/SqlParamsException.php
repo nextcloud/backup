@@ -29,42 +29,14 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Backup;
+namespace OCA\Backup\Exceptions;
 
-use OCA\Backup\Exceptions\SqlParamsException;
+use Exception;
 
-interface ISqlDump {
-	public const MYSQL = 'mysql';
-	public const PGSQL = 'pgsql';
-
-	public const DB_TYPE = 'dbtype';
-	public const DB_NAME = 'dbname';
-	public const DB_HOST = 'dbhost';
-	public const DB_PORT = 'dbport';
-	public const DB_USER = 'dbuser';
-	public const DB_PASS = 'dbpassword';
-
-
-	/**
-	 * @param array $params
-	 * @param string $filename
-	 */
-	public function export(array $params, string $filename): void;
-
-
-	/**
-	 * @param array $params
-	 *
-	 * @throws SqlParamsException
-	 */
-	public function setup(array $params): void;
-
-
-	/**
-	 * @param array $params
-	 * @param resource $read
-	 *
-	 * @return bool
-	 */
-	public function import(array $params, $read): bool;
+/**
+ * Class SqlParamsException
+ *
+ * @package OCA\Backup\Exceptions
+ */
+class SqlParamsException extends Exception {
 }
