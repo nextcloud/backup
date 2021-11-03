@@ -31,6 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Wrappers;
 
+use OC\Files\Node\Node;
 use OC\Files\SimpleFS\SimpleFolder;
 use OCA\Backup\Model\ExternalFolder;
 use OCP\Files\FileInfo;
@@ -104,6 +105,43 @@ class AppDataRootWrapper {
 	 */
 	public function isSimpleRoot(): bool {
 		return !is_null($this->simpleRoot);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getFolders(): array {
+		if ($this->isSimpleRoot()) {
+			try {
+				return array_map(
+					function (ISimpleFolder $folder): string {
+						return $folder->getName();
+					}, $this->getSimpleRoot()->getDirectoryListing()
+				);
+			} catch (NotFoundException $e) {
+				return [];
+			}
+		}
+
+		$external = $this->getExternalFolder();
+		$folder = $external->getRootFolder();
+
+		try {
+			return array_values(
+				array_filter(
+					array_map(function (Node $node): string {
+						if ($node->getType() !== FileInfo::TYPE_FOLDER) {
+							return '';
+						}
+
+						return $node->getName();
+					}, $folder->getDirectoryListing())
+				)
+			);
+		} catch (NotFoundException $e) {
+			return [];
+		}
 	}
 
 

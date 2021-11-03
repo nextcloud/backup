@@ -34,14 +34,13 @@ namespace OCA\Backup\Command;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\PointRequest;
-use OCA\Backup\Exceptions\RestoringPointNotFoundException;
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -103,7 +102,6 @@ class PointScan extends Base {
 			 ->setDescription(
 				 'Scan a folder containing the data of a restoring point to add it in the list of available restoring point'
 			 )
-			 ->addArgument('pointId', InputArgument::OPTIONAL, 'Id of the restoring point', '')
 			 ->addOption('owner', '', InputOption::VALUE_REQUIRED, 'owner of the metadata file')
 			 ->addOption('file', '', InputOption::VALUE_REQUIRED, 'file_id of the metadata file');
 	}
@@ -114,7 +112,7 @@ class PointScan extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
-	 * @throws RestoringPointNotFoundException
+	 * @throws ExternalFolderNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
@@ -126,26 +124,14 @@ class PointScan extends Base {
 			if (!$owner) {
 				throw new InvalidArgumentException('use --owner to specify the owner of the file');
 			}
-			$point = $this->pointService->generatePointFromFolder($fileId, $owner);
+			$points = [$this->pointService->generatePointFromFolder($fileId, $owner)];
 		} else {
-			$pointId = $input->getArgument('pointId');
-
-			if ($pointId === '') {
-				throw new InvalidArgumentException('use --file or pointId');
-			}
-			try {
-				$this->pointService->getRestoringPoint($pointId);
-				$output->writeln('A restoring point with this Id already exists');
-
-				return 0;
-			} catch (RestoringPointNotFoundException $e) {
-			}
-
-			$point = $this->pointService->generatePointFromBackupFS($pointId);
+			$points = $this->pointService->scanFoldersFromAppData();
 		}
 
-		// TODO: display info about the RP and ask for a confirmation before saving into database
-		$output->writeln($point->getId() . ' added to the list');
+		foreach ($points as $point) {
+			$output->writeln($point->getId() . ' added to the list');
+		}
 
 		return 0;
 	}
