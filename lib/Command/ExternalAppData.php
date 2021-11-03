@@ -72,9 +72,9 @@ class ExternalAppData extends Base {
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
-		PointService          $pointService,
+		PointService $pointService,
 		ExternalFolderService $externalFolderService,
-		ConfigService         $configService
+		ConfigService $configService
 	) {
 		parent::__construct();
 
@@ -129,11 +129,6 @@ class ExternalAppData extends Base {
 
 		$external = $this->externalFolderService->getStorageById($storageId);
 		$output->writeln('');
-		if ($external->getRoot() !== '') {
-			$output->writeln('This external filesystem is already used by the Backup App');
-
-			return 0;
-		}
 
 		$external->setRoot($root);
 
@@ -157,10 +152,7 @@ class ExternalAppData extends Base {
 			return 0;
 		}
 
-
-		$this->pointService->destroyBackupFS();
-		$this->configService->setAppValueArray(ConfigService::EXTERNAL_APPDATA, $this->serialize($external));
-
+		$this->pointService->setExternalAppData($storageId, $root);
 		$output->writeln('done');
 
 		return 0;

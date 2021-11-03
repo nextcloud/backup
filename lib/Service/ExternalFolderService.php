@@ -852,7 +852,7 @@ class ExternalFolderService {
 			}
 		}
 
-		throw new ExternalFolderNotFoundException();
+		throw new ExternalFolderNotFoundException('storage not found');
 	}
 
 
