@@ -443,7 +443,7 @@ class PointRestore extends Base {
 
 			$helper = $this->getHelper('question');
 			$question = new Question(
-				'<comment>    - Do you want to import the dump in the current database, or cancel the import ?</comment> (yes/No/cancel) ',
+				'    - <comment>Do you want to import the dump in the current database, or cancel the import ?</comment> (yes/No/cancel) ',
 				'no',
 			);
 			$question->setAutocompleterValues(['cancel', 'yes', 'no']);
@@ -698,7 +698,7 @@ class PointRestore extends Base {
 		}
 
 //		$config = $this->extractDatabaseConfig();
-		$sqlDump = $this->pointService->getSqlDump();
+		$sqlDump = $this->pointService->getSqlDump($sqlParams);
 		$sqlDump->setup($sqlParams);
 
 		$sqlDump->import($sqlParams, $read);

@@ -63,7 +63,7 @@ class SqlDumpMySQL implements ISqlDump {
 	 * @param array $params
 	 * @param string $filename
 	 *
-	 * @return string
+	 * @return void
 	 * @throws SqlDumpException
 	 */
 	public function export(array $params, string $filename): void {

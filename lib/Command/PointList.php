@@ -125,7 +125,7 @@ class PointList extends Base {
 
 		$table = new Table($output);
 		$table->setHeaders(
-			['Restoring Point', 'Date', 'Parent', 'Comment', 'Status', 'Instance', 'Health']
+			['Restoring Point', 'Date', 'NC', 'Parent', 'Comment', 'Status', 'Instance', 'Health']
 		);
 		$table->render();
 
@@ -164,6 +164,7 @@ class PointList extends Base {
 						'<comment>' . (($point->isLocked()) ? 'L' : '') .
 						(($point->isArchive()) ? 'A' : '') . '</comment> ' . (($fresh) ? $displayPointId : ''),
 						($fresh) ? date('Y-m-d H:i:s', $point->getDate()) : '',
+						($fresh) ? $point->getNCVersion() : '',
 						($fresh) ? $point->getParent() : '',
 						$comment,
 						implode(',', $status),

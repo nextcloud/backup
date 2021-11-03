@@ -274,11 +274,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-				'id' => $point->getId(),
-				'duration' => $point->getDuration(),
-				'status' => $point->getStatus(),
-				'complete' => $complete
-			]
+							   'id' => $point->getId(),
+							   'duration' => $point->getDuration(),
+							   'status' => $point->getStatus(),
+							   'complete' => $complete
+						   ]
 		);
 
 		return $point;
@@ -522,7 +522,8 @@ class PointService {
 	}
 
 
-	/**
+	/** // TODO: add a way to get sql params from current config/config.php directly
+	 *
 	 * @return array
 	 */
 	public function getSqlParams(): array {
@@ -545,11 +546,19 @@ class PointService {
 	/**
 	 * return temp file name/path
 	 *
+	 * @param array $params
+	 *
 	 * @return ISqlDump
 	 * @throws SqlDumpException
 	 */
-	public function getSqlDump(): ISqlDump {
-		switch ($this->configService->getSystemValue(ISqlDump::DB_TYPE)) {
+	public function getSqlDump(array $params = []): ISqlDump {
+		if (empty($params)) {
+			$dbType = $this->configService->getSystemValue(ISqlDump::DB_TYPE);
+		} else {
+			$dbType = $this->get(ISqlDump::DB_TYPE, $params);
+		}
+
+		switch ($dbType) {
 			case ISqlDump::MYSQL:
 				$sqlDump = new SqlDumpMySQL();
 				break;

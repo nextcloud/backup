@@ -33,6 +33,7 @@ namespace OCA\Backup\SqlDump;
 
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\SqlDumpException;
+use OCA\Backup\Exceptions\SqlParamsException;
 use OCA\Backup\ISqlDump;
 use Spatie\DbDumper\Databases\PostgreSql;
 use Throwable;
@@ -62,14 +63,19 @@ class SqlDumpPgSQL implements ISqlDump {
 	 */
 	public function export(array $params, string $filename): void {
 		try {
-			PostgreSql::create()
-					  ->setDbName($this->get('dbname', $params))
-					  ->setUserName($this->get('dbuser', $params))
-					  ->setPassword($this->get('dbpassword', $params))
-					  ->setHost($this->get('dbhost', $params))
-					  ->setPort($this->getInt('dbport', $params))
-					  ->addExtraOption('--clean --inserts')
-					  ->dumpToFile($filename);
+			$dump = PostgreSql::create();
+			$dump->setDbName($this->get(ISqlDump::DB_NAME, $params))
+				 ->setUserName($this->get(ISqlDump::DB_USER, $params))
+				 ->setPassword($this->get(ISqlDump::DB_PASS, $params))
+				 ->setHost($this->get(ISqlDump::DB_HOST, $params));
+
+			$port = $this->getInt(ISqlDump::DB_PORT, $params);
+			if ($port > 0) {
+				$dump->setPort($port);
+			}
+
+			$dump->addExtraOption('--clean --inserts')
+				 ->dumpToFile($filename);
 		} catch (Throwable $t) {
 			throw new SqlDumpException($t->getMessage());
 		}
@@ -78,8 +84,34 @@ class SqlDumpPgSQL implements ISqlDump {
 
 	/**
 	 * @param array $params
+	 *
+	 * @throws SqlParamsException
 	 */
 	public function setup(array $params): void {
+		$port = $this->getInt(ISqlDump::DB_PORT, $params);
+		if ($port === 0) {
+			$port = null;
+		}
+		$sql = pg_connect(
+			'host=' . $this->get(ISqlDump::DB_HOST, $params) .
+			' dbname=' . $this->get(ISqlDump::DB_NAME, $params) .
+			' user=' . $this->get(ISqlDump::DB_USER, $params) .
+			' password=' . $this->get(ISqlDump::DB_PASS, $params)
+		);
+
+		if (is_bool($sql) || is_null($sql)) {
+			throw new SqlParamsException('cannot connect to database');
+		}
+
+		$dbName = $this->get(ISqlDump::DB_NAME, $params);
+		$check = pg_query($sql, 'SELECT FROM pg_database WHERE datname=\'' . $dbName . '\'');
+		if (pg_num_rows($check) === 0) {
+			pg_query($sql, 'CREATE DATABASE \'' . $dbName . '\'');
+			$check = pg_query($sql, 'SELECT FROM pg_database WHERE datname=\'' . $dbName . '\'');
+			if (pg_num_rows($check) === 0) {
+				throw new SqlParamsException('cannot create database');
+			}
+		}
 	}
 
 
@@ -91,10 +123,10 @@ class SqlDumpPgSQL implements ISqlDump {
 	 */
 	public function import(array $params, $read): bool {
 		$sql = pg_connect(
-			'host=' . $params['dbhost'] .
-			' dbname=' . $this->get('dbname', $params) .
-			' user=' . $this->get('dbuser', $params) .
-			' password=' . $this->get('dbpassword', $params)
+			'host=' . $this->get(ISqlDump::DB_HOST, $params) .
+			' dbname=' . $this->get(ISqlDump::DB_NAME, $params) .
+			' user=' . $this->get(ISqlDump::DB_USER, $params) .
+			' password=' . $this->get(ISqlDump::DB_PASS, $params)
 		);
 
 		$request = '';
