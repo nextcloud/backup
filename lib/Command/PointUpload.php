@@ -45,6 +45,7 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -97,7 +98,9 @@ class PointUpload extends Base {
 	protected function configure() {
 		$this->setName('backup:point:upload')
 			 ->setDescription('Upload a local restoring point on others instances')
-			 ->addArgument('point', InputArgument::REQUIRED, 'Id of the restoring point');
+			 ->addArgument('point', InputArgument::REQUIRED, 'Id of the restoring point')
+			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance', '')
+			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder', '');
 	}
 
 
@@ -118,6 +121,21 @@ class PointUpload extends Base {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('point'));
 
 		$this->outputService->setOutput($output);
+		if ($input->getOption('external')) {
+			$this->uploadService->initUpload($point);
+			$this->uploadService->uploadToExternalFolder($point, (int)$input->getOption('external'));
+
+			return 0;
+		}
+
+		if ($input->getOption('remote')) {
+			$this->uploadService->initUpload($point);
+			$this->uploadService->uploadToRemoteInstances($point, $input->getOption('remote'));
+
+			return 0;
+		}
+
+
 		$this->uploadService->uploadPoint($point);
 
 		return 0;

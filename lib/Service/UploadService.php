@@ -129,6 +129,25 @@ class UploadService {
 	/**
 	 * @param RestoringPoint $point
 	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointLockException
+	 * @throws RestoringPointPackException
+	 */
+	public function initUpload(RestoringPoint $point): void {
+		if (!$point->isStatus(RestoringPoint::STATUS_PACKED)
+			|| $point->isStatus(RestoringPoint::STATUS_PACKING)) {
+			throw new RestoringPointPackException('restoring point is not packed');
+		}
+
+		$this->metadataService->isLock($point);
+		$this->pointService->initBaseFolder($point);
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 *
 	 * @throws ExternalFolderNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
@@ -137,15 +156,7 @@ class UploadService {
 	 * @throws RestoringPointLockException
 	 */
 	public function uploadPoint(RestoringPoint $point): void {
-		if (!$point->isStatus(RestoringPoint::STATUS_PACKED)
-			|| $point->isStatus(RestoringPoint::STATUS_PACKING)) {
-			throw new RestoringPointPackException('restoring point is not packed');
-		}
-
-		$this->metadataService->isLock($point);
-
-		$this->pointService->initBaseFolder($point);
-
+		$this->initUpload($point);
 		$this->uploadToRemoteInstances($point);
 		$this->uploadToExternalFolder($point);
 	}
