@@ -705,7 +705,7 @@ class PointService {
 	 * @throws InsufficientDataForMeaningfulAnswerException
 	 * @throws StorageNotAvailableException
 	 */
-	public function setExternalAppData(int $storageId, string $root): void {
+	public function setExternalAppData(int $storageId, string $root = ''): void {
 		if ($storageId === 0) {
 			try {
 				$this->destroyBackupFS();
@@ -713,9 +713,13 @@ class PointService {
 				$this->deleteAllPoints();
 			}
 
-			$this->configService->unsetAppConfig(ConfigService::EXTERNAL_APPDATA);
+			$this->configService->unsetAppValue(ConfigService::EXTERNAL_APPDATA);
 
 			return;
+		}
+
+		if ($root === '') {
+			throw new ExternalFolderNotFoundException('empty root');
 		}
 
 		$external = $this->externalFolderService->getStorageById($storageId);

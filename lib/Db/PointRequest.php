@@ -216,5 +216,4 @@ class PointRequest extends PointRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
-
 }

@@ -433,5 +433,4 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 		return $arr;
 	}
-	
 }

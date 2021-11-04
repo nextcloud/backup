@@ -189,6 +189,13 @@ class ConfigService {
 
 
 	/**
+	 * @param string $key
+	 */
+	public function unsetAppValue(string $key): void {
+		$this->config->deleteAppValue(Application::APP_ID, $key);
+	}
+
+	/**
 	 * Set a value by key
 	 *
 	 * @param string $key
