@@ -55,7 +55,13 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	private $path = '';
 
 	/** @var string */
+	private $type = '';
+
+	/** @var string */
 	private $content = '';
+
+	/** @var int */
+	private $compression = 0;
 
 	/** @var string[] */
 	private $files = [];
@@ -162,11 +168,53 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 
 	/**
+	 * @param string $type
+	 *
+	 * @return RestoringChunk
+	 */
+	public function setType(string $type): self {
+		$this->type = $type;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getType(): string {
+		return $this->type;
+	}
+
+
+	/**
+	 * @param int $compression
+	 *
+	 * @return RestoringChunk
+	 */
+	public function setCompression(int $compression): self {
+		$this->compression = $compression;
+
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getCompression(): int {
+		return $this->compression;
+	}
+
+
+	/**
 	 * @return string
 	 */
 	public function getFilename(): string {
 		if ($this->isStaticName()) {
 			return $this->getName();
+		}
+
+		if ($this->getCompression() > 0) {
+			return $this->getName() . '.zip.gz';
 		}
 
 		return $this->getName() . '.zip';
@@ -329,6 +377,8 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	public function import(array $data): IDeserializable {
 		$this->setName($this->get('name', $data))
 			 ->setPath($this->get('path', $data))
+			 ->setType($this->get('type', $data))
+			 ->setCompression($this->getInt('compression', $data))
 //			 ->setFiles($this->getArray('files', $data, []))
 			 ->setCount($this->getInt('count', $data))
 			 ->setSize($this->getInt('size', $data))
@@ -373,6 +423,15 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			$arr['content'] = $this->getContent();
 		}
 
+		if ($this->getType() !== '') {
+			$arr['type'] = $this->getType();
+		}
+
+		if ($this->getCompression() > 0) {
+			$arr['compression'] = $this->getCompression();
+		}
+
 		return $arr;
 	}
+	
 }
