@@ -108,6 +108,15 @@ class PointRequest extends PointRequestBuilder {
 
 
 	/**
+	 *
+	 */
+	public function deleteAll() {
+		$qb = $this->getPointDeleteSql();
+
+		$qb->execute();
+	}
+
+	/**
 	 * @param string $pointId
 	 */
 	public function deletePoint(string $pointId): void {
@@ -207,4 +216,5 @@ class PointRequest extends PointRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
+
 }

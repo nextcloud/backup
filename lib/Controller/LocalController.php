@@ -40,6 +40,7 @@ use OC\Files\Node\File;
 use OC\Files\Node\Folder;
 use OC\User\NoUserException;
 use OCA\Backup\Db\EventRequest;
+use OCA\Backup\Exceptions\ExternalAppdataException;
 use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
@@ -232,6 +233,43 @@ class LocalController extends OcsController {
 					'content' => $content
 				]
 			);
+		} catch (Exception $e) {
+			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+
+	/**
+	 * @return DataResponse
+	 * @throws OCSException
+	 */
+	public function getAppData(): DataResponse {
+		try {
+			return new DataResponse($this->pointService->getExternalAppData());
+		} catch (ExternalAppdataException $e) {
+			return new DataResponse([]);
+		} catch (Exception $e) {
+			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+
+	/**
+	 * @param int $storageId
+	 * @param string $root
+	 *
+	 * @return DataResponse
+	 * @throws OCSException
+	 */
+	public function setAppData(int $storageId, string $root): DataResponse {
+		try {
+			if ($root === '') {
+				throw new OcsException('empty root');
+			}
+
+			$this->pointService->setExternalAppData($storageId, $root);
+
+			return $this->getAppData();
 		} catch (Exception $e) {
 			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		}

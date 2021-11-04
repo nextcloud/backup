@@ -64,8 +64,10 @@ use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCA\Backup\SqlDump\SqlDumpPgSQL;
 use OCA\Backup\Wrappers\AppDataRootWrapper;
+use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Files\StorageNotAvailableException;
 use OCP\Util;
 use Throwable;
 
@@ -675,7 +677,7 @@ class PointService {
 	 * @throws ExternalAppdataException
 	 * @throws ExternalFolderNotFoundException
 	 */
-	private function getExternalAppData(): ExternalFolder {
+	public function getExternalAppData(): ExternalFolder {
 		$externalAppdata = $this->configService->getAppValueArray(ConfigService::EXTERNAL_APPDATA);
 
 		if (empty($externalAppdata)) {
@@ -692,6 +694,40 @@ class PointService {
 		$this->externalFolderService->initRootFolder($external);
 
 		return $external;
+	}
+
+
+	/**
+	 * @param int $storageId
+	 * @param string $root
+	 *
+	 * @throws ExternalFolderNotFoundException
+	 * @throws InsufficientDataForMeaningfulAnswerException
+	 * @throws StorageNotAvailableException
+	 */
+	public function setExternalAppData(int $storageId, string $root): void {
+		if ($storageId === 0) {
+			try {
+				$this->destroyBackupFS();
+			} catch (ExternalFolderNotFoundException | NotFoundException | NotPermittedException $e) {
+				$this->deleteAllPoints();
+			}
+
+			$this->configService->unsetAppConfig(ConfigService::EXTERNAL_APPDATA);
+
+			return;
+		}
+
+		$external = $this->externalFolderService->getStorageById($storageId);
+		$external->setRoot($root);
+
+		try {
+			$this->destroyBackupFS();
+		} catch (ExternalFolderNotFoundException | NotFoundException | NotPermittedException $e) {
+			$this->deleteAllPoints();
+		}
+
+		$this->configService->setAppValueArray(ConfigService::EXTERNAL_APPDATA, $this->serialize($external));
 	}
 
 
@@ -747,14 +783,20 @@ class PointService {
 	 *
 	 * @throws NotPermittedException
 	 * @throws NotFoundException
+	 * @throws ExternalFolderNotFoundException
 	 */
 	public function destroyBackupFS(): void {
 		$this->initBackupFS(true);
 		try {
 			$folder = $this->appDataRoot->getFolder('/');
 			$folder->delete();
+			$this->pointRequest->deleteAll();
 		} catch (NotFoundException $e) {
 		}
+	}
+
+
+	public function deleteAllPoints(): void {
 	}
 
 
