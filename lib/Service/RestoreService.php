@@ -316,28 +316,41 @@ class RestoreService {
 
 				// TODO: generate Checksum, files count ? check if zip is valid ?
 			} catch (NotFoundException $e) {
-				$isPacked = true;
-				foreach ($node->getDirectoryListing() as $item) {
-					/** @var File $item */
-					if ($item->getType() !== FileInfo::TYPE_FILE) {
-						continue;
-					}
 
-					$partName = $item->getName();
+				try {
+					/** @var File $chunkFile */
+					$chunkFile = $node->get($chunkName . '.zip.gz');
+					$chunk->setSize($chunkFile->getSize())
+						  ->setCompression(1);
 
-					[$order, $token] = explode('-', $partName);
-					$order = (int)$order;
-					if ($order === 0 || strlen($token) !== 15) {
-						continue;
-					}
-
-					$part = new RestoringChunkPart($partName, $order);
-
-					$read = $item->fopen('rb');
-					$part->setChecksum($this->getChecksumFromStream($read));
+					$read = $chunkFile->fopen('rb');
+					$chunk->setChecksum($this->getChecksumFromStream($read));
 					fclose($read);
+				} catch (NotFoundException $e) {
 
-					$chunk->addPart($part);
+					$isPacked = true;
+					foreach ($node->getDirectoryListing() as $item) {
+						/** @var File $item */
+						if ($item->getType() !== FileInfo::TYPE_FILE) {
+							continue;
+						}
+
+						$partName = $item->getName();
+
+						[$order, $token] = explode('-', $partName);
+						$order = (int)$order;
+						if ($order === 0 || strlen($token) !== 15) {
+							continue;
+						}
+
+						$part = new RestoringChunkPart($partName, $order);
+
+						$read = $item->fopen('rb');
+						$part->setChecksum($this->getChecksumFromStream($read));
+						fclose($read);
+
+						$chunk->addPart($part);
+					}
 				}
 			}
 			$data->addChunk($chunk);
