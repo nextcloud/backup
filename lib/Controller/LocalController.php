@@ -44,6 +44,7 @@ use OCA\Backup\Exceptions\ExternalAppdataException;
 use OCA\Backup\Exceptions\RestoringPointException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\BackupEvent;
+use OCA\Backup\Model\ExternalFolder;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
@@ -247,7 +248,7 @@ class LocalController extends OcsController {
 		try {
 			return new DataResponse($this->pointService->getExternalAppData());
 		} catch (ExternalAppdataException $e) {
-			return new DataResponse([]);
+			return new DataResponse(new ExternalFolder());
 		} catch (Exception $e) {
 			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		}

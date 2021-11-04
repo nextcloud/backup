@@ -316,7 +316,6 @@ class RestoreService {
 
 				// TODO: generate Checksum, files count ? check if zip is valid ?
 			} catch (NotFoundException $e) {
-
 				try {
 					/** @var File $chunkFile */
 					$chunkFile = $node->get($chunkName . '.zip.gz');
@@ -327,7 +326,6 @@ class RestoreService {
 					$chunk->setChecksum($this->getChecksumFromStream($read));
 					fclose($read);
 				} catch (NotFoundException $e) {
-
 					$isPacked = true;
 					foreach ($node->getDirectoryListing() as $item) {
 						/** @var File $item */

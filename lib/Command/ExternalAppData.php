@@ -33,6 +33,7 @@ namespace OCA\Backup\Command;
 
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use OC\Core\Command\Base;
+use OCA\Backup\Exceptions\ExternalAppdataException;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\ExternalFolderService;
@@ -40,6 +41,7 @@ use OCA\Backup\Service\PointService;
 use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCP\Files\StorageNotAvailableException;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -89,7 +91,8 @@ class ExternalAppData extends Base {
 	 */
 	protected function configure() {
 		$this->setName('backup:external:appdata')
-			 ->setDescription('Add external filesystem to store the app\'s data');
+			 ->setDescription('Add external filesystem to store the app\'s data')
+			 ->addOption('unset', '', InputOption::VALUE_NONE, 'Unset the current external appdata');
 	}
 
 
@@ -103,15 +106,56 @@ class ExternalAppData extends Base {
 	 * @throws ExternalFolderNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$output->writeln(
-			'This configuration tool will help you set the <info>Appdata</info> folder of the Backup App on an <info>external storage</info>'
-		);
-		$output->writeln('...');
+		$unset = $input->getOption('unset');
+
+		try {
+			$external = $this->pointService->getExternalAppData();
+			$output->writeln('Your <info>appdata</info> is currently on an external storage:');
+			$output->writeln('Storage Id: <info>' . $external->getStorageId() . '</info>');
+			$output->writeln('Storage: <info>' . $external->getStorage() . '</info>');
+			$output->writeln('Root: <info>' . $external->getRoot() . '</info>');
+			$output->writeln('');
+
+			if (!$unset) {
+				return 0;
+			}
+		} catch (ExternalAppdataException $e) {
+			$unset = false;
+		}
+
+		if (!$unset) {
+			$output->writeln(
+				'This configuration tool will help you set the <info>Appdata</info> folder '
+				. ' of the Backup App on an <info>external storage</info>'
+			);
+		}
+
+		$output->writeln('');
 		$output->writeln('');
 		$output->writeln('<error>All previous Restoring Point will be lost during this process</error>');
 		$output->writeln('');
 		$output->writeln('');
+
+		if ($unset) {
+			$question = new ConfirmationQuestion(
+				'<comment>Do you really want to not use this External Folder appdata anymore ?</comment> (y/N) ',
+				false,
+				'/^(y|Y)/i'
+			);
+
+			$helper = $this->getHelper('question');
+			if (!$helper->ask($input, $output, $question)) {
+				$output->writeln('Operation cancelled');
+			}
+
+			$this->pointService->setExternalAppData(0);
+
+			return 0;
+		}
+
+
 		$storageId = $this->selectStorage($input, $output);
+
 		$output->writeln('');
 		if ($storageId === 0) {
 			$output->writeln('Operation cancelled');
