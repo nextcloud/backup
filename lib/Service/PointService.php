@@ -277,11 +277,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-							   'id' => $point->getId(),
-							   'duration' => $point->getDuration(),
-							   'status' => $point->getStatus(),
-							   'complete' => $complete
-						   ]
+				'id' => $point->getId(),
+				'duration' => $point->getDuration(),
+				'status' => $point->getStatus(),
+				'complete' => $complete
+			]
 		);
 
 		return $point;
@@ -513,7 +513,8 @@ class PointService {
 				$point,
 				$data,
 				self::SQL_DUMP_FILE,
-				$tmp
+				$tmp,
+				$this->configService->getSystemValue(ISqlDump::DB_TYPE)
 			);
 			unlink($tmp);
 		} catch (Throwable $t) {
