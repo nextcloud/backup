@@ -224,11 +224,13 @@ export default {
 			if (this.generalSettings === undefined || this.generalSettings.nextFullRestoringPointTimestamp === 0) {
 				return []
 			}
-			// eslint-disable-next-line no-console
-			return [new RestoringPoint({
-				id: 'next_full_restoring_point',
-				local: { point: { date: this.generalSettings.nextFullRestoringPointTimestamp } },
-			})]
+
+			return [
+				new RestoringPoint({
+					id: 'next_full_restoring_point',
+					local: { point: { date: this.generalSettings.nextFullRestoringPointTimestamp } },
+				}),
+			]
 		},
 
 		/**

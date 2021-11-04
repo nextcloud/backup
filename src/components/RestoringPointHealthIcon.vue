@@ -12,7 +12,7 @@
 	<AlertCircle
 		v-else-if="health === 0"
 		slot="icon"
-		fill-color="red"
+		fill-color="#e9322d"
 		:title="t('backup', 'Not completed')" />
 	<AlertCircle
 		v-else-if="health === 1"
@@ -22,7 +22,7 @@
 	<Check
 		v-else-if="health === 9"
 		slot="icon"
-		fill-color="green"
+		fill-color="#46ba61"
 		:title="t('backup', 'Completed')" />
 </template>
 
