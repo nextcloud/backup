@@ -371,27 +371,30 @@ class ChunkService {
 	 * @param RestoringData $data
 	 * @param string $filename
 	 * @param string $path
+	 * @param string $type
 	 *
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	public function createSingleFileChunk(
 		RestoringPoint $point,
 		RestoringData $data,
 		string $filename,
-		string $path
+		string $path,
+		string $type = ''
 	): void {
 		$chunk = new RestoringChunk($data->getName());
 		$chunk->setCount(1);
 		$chunk->addFile(new ArchiveFile($filename));
 		$chunk->setSize(filesize($path));
+		$chunk->setType($type);
 		$data->addChunk($chunk);
 
 		$this->createSingleFileZip($point, $chunk, $filename, $path);
 
 		$this->updateChecksum($point, $chunk);
-//		$this->encryptArchive($backup, $archive, true);
-//		$this->updateChecksum($backup, $archive, true);
 	}
 
 
