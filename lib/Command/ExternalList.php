@@ -31,9 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Service\ExternalFolderService;
+use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
+use OCP\Files\StorageNotAvailableException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -77,6 +78,8 @@ class ExternalList extends Base {
 	 * @param OutputInterface $output
 	 *
 	 * @return int
+	 * @throws InsufficientDataForMeaningfulAnswerException
+	 * @throws StorageNotAvailableException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$output = new ConsoleOutput();
@@ -85,19 +88,12 @@ class ExternalList extends Base {
 		$table->setHeaders(['StorageId', 'Path', 'Storage Folder']);
 		$table->render();
 
-		foreach ($this->externalFolderService->getAll() as $externalFolder) {
-			$storagePath = '';
-			try {
-				$storage = $this->externalFolderService->getStorageById($externalFolder->getStorageId());
-				$storagePath = $storage->getStorage();
-			} catch (Exception $e) {
-			}
-
+		foreach ($this->externalFolderService->getStorages(false) as $external) {
 			$table->appendRow(
 				[
-					$externalFolder->getStorageId(),
-					$storagePath,
-					$externalFolder->getRoot()
+					$external->getStorageId(),
+					$external->getStorage(),
+					$external->getRoot()
 				]
 			);
 		}

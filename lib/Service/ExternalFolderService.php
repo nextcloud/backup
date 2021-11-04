@@ -810,7 +810,7 @@ class ExternalFolderService {
 	 * @throws InsufficientDataForMeaningfulAnswerException
 	 * @throws StorageNotAvailableException
 	 */
-	public function getStorages(): array {
+	public function getStorages(bool $includeUnusedStorage = true): array {
 		if (is_null($this->globalStoragesService)) {
 			return [];
 		}
@@ -829,8 +829,17 @@ class ExternalFolderService {
 				}
 			}
 
-			if (!$itemFound) {
+			if (!$itemFound && $includeUnusedStorage) {
 				$externals[] = new ExternalFolder($storageId, $storage->getId());
+			}
+		}
+
+		// Cleaning deprecated external storage
+		foreach ($externals as $external) {
+			if ($external->getRoot() !== '' && $external->getStorage() === '') {
+				$this->remove($external->getStorageId());
+
+				return $this->getStorages($includeUnusedStorage);
 			}
 		}
 
