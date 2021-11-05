@@ -14,6 +14,8 @@ _(documentation is still in writing)_
 - [AppData on External Storage](#external-appdata)
 - [Restoring a backup]($restoring)
 - [Available `occ` commands](#occ)
+- [Faq](#faq)
+- [Known issues]($known-issues)
 
 <a name="notes"></a>
 
@@ -469,6 +471,8 @@ generated during the export of your setup needs to be stored somewhere safe!
 
     ./occ backup:setup:import [--key <key>] < ~/backup_setup.json
 
+<a name="faq"></a>
+
 ## Questions ?
 
 **- Can the app be used to migrate an instance of Nextcloud ?**
@@ -480,13 +484,9 @@ No, you cannot switch the type of the database server (mysql, postgres, ...).
 However, the app should not be used to duplicate setup in production as each instance will be fully
 identical (`instanceid`, ...).
 
-## Known issues, because _beta_:
+<a name="known-issues"></a>
 
-* custom_apps are not included in the backup.
-* Zip's integrity are not checked during unpack, might result in a lose of data when decrypting with the
-  wrong key when restoring a backup with lost metadata file.
-* When removed from the files_external, an external storage will not be removed from the backup app's
-  list of external folder
-* When restoring in another database, the process will fail if the database does not exist.
+## Known issues:
+
 * When adding a new external storage from the files_external, the folder needs to be mounted using the
   Files App. Browsing the root folder should be enough.
