@@ -539,6 +539,7 @@ class PointService {
 		}
 
 		return [
+			ISqlDump::DB_TYPE => $this->configService->getSystemValue(ISqlDump::DB_TYPE),
 			ISqlDump::DB_NAME => $this->configService->getSystemValue(ISqlDump::DB_NAME),
 			ISqlDump::DB_HOST => $host,
 			ISqlDump::DB_PORT => $port,
@@ -561,7 +562,6 @@ class PointService {
 		} else {
 			$dbType = $this->get(ISqlDump::DB_TYPE, $params);
 		}
-
 		switch ($dbType) {
 			case ISqlDump::MYSQL:
 				$sqlDump = new SqlDumpMySQL();
