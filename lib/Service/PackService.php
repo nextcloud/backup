@@ -41,6 +41,7 @@ use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\PackDecryptException;
 use OCA\Backup\Exceptions\PackEncryptException;
+use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointLockException;
@@ -70,6 +71,7 @@ class PackService {
 
 
 	public const CHUNK_ENTRY = 'pack';
+	public const GZ_CHUNK_ENTRY = 'gz_pack';
 
 
 	/** @var PointRequest */
@@ -713,7 +715,13 @@ class PackService {
 		$parts = $this->putOutParts($point, $chunk);
 		$parts = $this->wrapPackDecrypt($point, $chunk, $parts);
 		$temp = $this->wrapPackImplode($parts);
-		$temp = $this->wrapPackChunkExtract($point, $temp);
+
+		$type = '';
+		$temp = $this->wrapPackChunkExtract($point, $temp, $type);
+		if ($chunk->getCompression() > 0 && $type === self::CHUNK_ENTRY) {
+			$chunk->setCompression(0);
+		}
+
 		$this->wrapRecreateChunk($point, $chunk, $temp);
 
 		$chunk->setParts([]);
@@ -896,17 +904,18 @@ class PackService {
 	/**
 	 * @param RestoringPoint $point
 	 * @param string $filename
+	 * @param string $type
 	 *
 	 * @return string
 	 * @throws Throwable
 	 */
-	private function wrapPackChunkExtract(RestoringPoint $point, string $filename): string {
+	private function wrapPackChunkExtract(RestoringPoint $point, string $filename, string &$type): string {
 		if ($point->isStatus(RestoringPoint::STATUS_COMPRESSED)
 			|| $point->isStatus(RestoringPoint::STATUS_UNKNOWN)) {
 			$this->o('     * Extracting <info>' . $filename . '</info>: ', false);
 
 			try {
-				$zip = $this->packChunkExtract($filename);
+				$zip = $this->packChunkExtract($filename, $type);
 				unlink($filename);
 				$filename = $zip;
 				$this->o('<info>' . $filename . '</info>');
@@ -922,17 +931,23 @@ class PackService {
 
 	/**
 	 * @param string $zipName
+	 * @param string $type
 	 *
 	 * @return string
+	 * @throws RestoreChunkException
 	 */
-	private function packChunkExtract(string $zipName): string {
+	private function packChunkExtract(string $zipName, string &$type = ''): string {
 		$tmp = $this->configService->getTempFileName();
 		$write = fopen($tmp, 'wb');
 
 		$zip = new ZipArchive();
 		$zip->open($zipName);
 		if ($zip->count() === 1 && $zip->getFromName(self::CHUNK_ENTRY) !== false) {
+			$type = self::CHUNK_ENTRY;
 			$read = $zip->getStream(self::CHUNK_ENTRY);
+		} else if ($zip->count() === 1 && $zip->getFromName(self::GZ_CHUNK_ENTRY) !== false) {
+			$type = self::GZ_CHUNK_ENTRY;
+			$read = $zip->getStream(self::GZ_CHUNK_ENTRY);
 		} else {
 			$read = fopen($zipName, 'rb');
 		}
@@ -945,7 +960,30 @@ class PackService {
 		$zip->close();
 		fclose($write);
 
+		$this->confirmUnpackedChunkContent($tmp, $type);
+
 		return $tmp;
+	}
+
+
+	/**
+	 * @param string $zipName
+	 * @param string $type
+	 *
+	 * @throws RestoreChunkException
+	 */
+	private function confirmUnpackedChunkContent(string $zipName, string $type): void {
+		if ($type === self::CHUNK_ENTRY) {
+			$zip = new ZipArchive();
+			$status = $zip->open($zipName);
+			if ($status !== true) {
+				throw new RestoreChunkException('unpacked chunk is not a zip file');
+			}
+		}
+
+		if ($type === self::GZ_CHUNK_ENTRY) {
+
+		}
 	}
 
 
@@ -953,6 +991,7 @@ class PackService {
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
 	 * @param string $path
+	 * @param string $sub
 	 *
 	 * @return ISimpleFolder
 	 * @throws NotPermittedException
