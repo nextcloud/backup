@@ -49,6 +49,7 @@ use OCA\Backup\Exceptions\SqlImportException;
 use OCA\Backup\Exceptions\SqlParamsException;
 use OCA\Backup\ISqlDump;
 use OCA\Backup\Model\ChangedFile;
+use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
@@ -350,13 +351,21 @@ class PointRestore extends Base {
 	 * @param RestoringData $data
 	 *
 	 * @throws SqlDumpException
+	 * @throws SqlImportException
 	 */
 	private function restorePointSqlDump(RestoringPoint $point, RestoringData $data): void {
 		$fromConfig = $this->getSqlParamsFromConfig($point);
 
+		// get unique chunk from data
+		$chunks = $data->getChunks();
+		if (sizeof($chunks) !== 1) {
+			throw new SqlImportException('sql dump contains no chunks');
+		}
+		$chunk = $chunks[0];
+
 		while (true) {
 			try {
-				$sqlParams = $this->requestSqlParams($fromConfig);
+				$sqlParams = $this->requestSqlParams(strtolower($chunk->getType()), $fromConfig);
 			} catch (RestoringDataNotFoundException $e) {
 				$this->output->writeln('   * ignoring sqldump');
 
@@ -367,7 +376,7 @@ class PointRestore extends Base {
 				'   > importing sqldump in <info>' . $this->displaySqlParams($sqlParams, true) . '</info>: '
 			);
 			try {
-				$this->importSqlDump($point, $data, $sqlParams);
+				$this->importSqlDump($point, $chunk, $sqlParams);
 				$this->output->writeln('<info>ok</info>');
 			} catch (SqlParamsException $e) {
 				$this->output->writeln('<error>' . $e->getMessage() . '</error>');
@@ -431,10 +440,14 @@ class PointRestore extends Base {
 
 
 	/**
+	 * @param string $type
+	 * @param array $fromConfig
+	 *
 	 * @return array
 	 * @throws RestoringDataNotFoundException
+	 * @throws SqlImportException
 	 */
-	private function requestSqlParams(array $fromConfig = []): array {
+	private function requestSqlParams(string $type = '', array $fromConfig = []): array {
 		$sqlParams = $this->pointService->getSqlParams();
 		if ($this->input->getOption('do-not-ask-sql')) {
 			return $sqlParams;
@@ -474,22 +487,33 @@ class PointRestore extends Base {
 			$question->setAutocompleterValues($options);
 
 			$ret = strtolower($helper->ask($this->input, $this->output, $question));
-			switch ($ret) {
-				case 'yes':
-					return $sqlParams;
-				case 'cancel':
-					throw new RestoringDataNotFoundException();
-			}
 
+			if ($ret === 'cancel') {
+				throw new RestoringDataNotFoundException();
+			}
 			if ($ret === 'load') {
 				$sqlParams = $fromConfig;
 				continue;
+			}
+
+			if ($ret === 'yes') {
+				$dbType = strtolower($this->get(ISqlDump::DB_TYPE, $sqlParams));
+				if ($type !== '' && $type !== $dbType) {
+					$this->output->writeln(
+						'<error>cannot import sqldump from \'' . $type . '\' into \'' . $dbType . '\'</error>'
+					);
+					continue;
+				}
+
+				return $sqlParams;
 			}
 
 			$this->output->writeln('    - current configuration:');
 			$this->displaySqlParams($sqlParams);
 
 			$this->output->writeln('    - edit configuration:  (enter \'.\' to skip this step)');
+			$this->output->writeln('      . Type: <info>' . $type . '</info>');
+
 			while (true) {
 				$question = new Question('      . Host: ', '');
 				$newHost = trim($helper->ask($this->input, $this->output, $question));
@@ -542,6 +566,7 @@ class PointRestore extends Base {
 			}
 
 			$newParams = [
+				ISqlDump::DB_TYPE => $type,
 				ISqlDump::DB_NAME => $newName,
 				ISqlDump::DB_HOST => $newHost,
 				ISqlDump::DB_PORT => $newPort,
@@ -744,20 +769,14 @@ class PointRestore extends Base {
 
 	/**
 	 * @param RestoringPoint $point
-	 * @param RestoringData $data
+	 * @param RestoringChunk $chunk
 	 * @param array $sqlParams
 	 *
 	 * @throws SqlDumpException
 	 * @throws SqlImportException
 	 * @throws SqlParamsException
 	 */
-	private function importSqlDump(RestoringPoint $point, RestoringData $data, array $sqlParams): void {
-		$chunks = $data->getChunks();
-		if (sizeof($chunks) !== 1) {
-			throw new SqlImportException('sql dump contains no chunks');
-		}
-
-		$chunk = $chunks[0];
+	private function importSqlDump(RestoringPoint $point, RestoringChunk $chunk, array $sqlParams): void {
 		try {
 			$read = $this->chunkService->getStreamFromChunk(
 				$point,
