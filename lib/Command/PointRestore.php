@@ -352,9 +352,11 @@ class PointRestore extends Base {
 	 * @throws SqlDumpException
 	 */
 	private function restorePointSqlDump(RestoringPoint $point, RestoringData $data): void {
+		$fromConfig = $this->getSqlParamsFromConfig($point);
+
 		while (true) {
 			try {
-				$sqlParams = $this->requestSqlParams();
+				$sqlParams = $this->requestSqlParams($fromConfig);
 			} catch (RestoringDataNotFoundException $e) {
 				$this->output->writeln('   * ignoring sqldump');
 
@@ -432,27 +434,56 @@ class PointRestore extends Base {
 	 * @return array
 	 * @throws RestoringDataNotFoundException
 	 */
-	private function requestSqlParams(): array {
+	private function requestSqlParams(array $fromConfig = []): array {
 		$sqlParams = $this->pointService->getSqlParams();
 		if ($this->input->getOption('do-not-ask-sql')) {
 			return $sqlParams;
 		}
 
+		$options = ['cancel', 'yes', 'no'];
+		if (!empty($fromConfig)) {
+			array_push($options, 'load');
+		}
+
 		while (true) {
 			$this->output->writeln('   > will be imported in ' . $this->displaySqlParams($sqlParams, true));
 
+			$this->output->writeln('');
+			$this->output->writeln('    * <comment>Do you want to</comment>:');
+			$this->output->writeln('      - use this settings and start importing the sqldump (yes)');
+			$this->output->writeln('      - manually editing the Sql settings (edit)');
+			if (!empty($fromConfig)) {
+				$this->output->writeln(
+					'      - load the settings from the config/config.php found in the backup (load)'
+				);
+				$displayLoad = 'load/';
+			} else {
+				$displayLoad = '';
+			}
+			$this->output->writeln(
+				'      - cancel the import of the sqldump, and go on with the restoring process (cancel)'
+			);
+			$this->output->writeln('');
+
 			$helper = $this->getHelper('question');
 			$question = new Question(
-				'    - <comment>Do you want to import the dump in the current database, or cancel the import ?</comment> (yes/No/cancel) ',
-				'no',
+				'    * <comment>Do you want to import the sqldump using those settings?</comment> (yes/Edit/'
+				. $displayLoad . 'cancel) ',
+				'edit',
 			);
-			$question->setAutocompleterValues(['cancel', 'yes', 'no']);
+			$question->setAutocompleterValues($options);
 
-			switch (strtolower($helper->ask($this->input, $this->output, $question))) {
+			$ret = strtolower($helper->ask($this->input, $this->output, $question));
+			switch ($ret) {
 				case 'yes':
 					return $sqlParams;
 				case 'cancel':
 					throw new RestoringDataNotFoundException();
+			}
+
+			if ($ret === 'load') {
+				$sqlParams = $fromConfig;
+				continue;
 			}
 
 			$this->output->writeln('    - current configuration:');
@@ -536,30 +567,40 @@ class PointRestore extends Base {
 
 	/**
 	 * @param RestoringPoint $point
+	 *
+	 * @return array
+	 */
+	private function getSqlParamsFromConfig(RestoringPoint $point): array {
+		$CONFIG = $this->getConfigDirect($point);
+		if (empty($CONFIG)) {
+			return [];
+		}
+
+		return [
+			ISqlDump::DB_TYPE => $this->get(ISqlDump::DB_TYPE, $CONFIG),
+			ISqlDump::DB_NAME => $this->get(ISqlDump::DB_NAME, $CONFIG),
+			ISqlDump::DB_HOST => $this->get(ISqlDump::DB_HOST, $CONFIG),
+			ISqlDump::DB_PORT => $this->get(ISqlDump::DB_PORT, $CONFIG),
+			ISqlDump::DB_USER => $this->get(ISqlDump::DB_USER, $CONFIG),
+			ISqlDump::DB_PASS => $this->get(ISqlDump::DB_PASS, $CONFIG)
+		];
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
 	 */
 	private function updateConfig(RestoringPoint $point): void {
 		$this->output->writeln('> Refreshing <info>config.php</info>');
 
 		$sqlParams = [];
-		$dataRoot = $configRoot = '';
+		$dataRoot = '';
 		foreach ($point->getRestoringData() as $data) {
 			if ($data->getType() === RestoringData::ROOT_DATA) {
 				if ($data->getRestoredRoot() === '') {
 					continue;
 				}
 				$dataRoot = $data->getRestoredRoot();
-			}
-
-			if ($data->getType() === RestoringData::FILE_CONFIG) {
-				if ($data->getRestoredRoot() === '') {
-					$this->output->writeln(
-						'  * do not refresh as <info>config/config.php</info> were not restored'
-					);
-					$this->configService->maintenanceMode(false);
-
-					return;
-				}
-				$configRoot = $data->getRestoredRoot();
 			}
 
 			if ($data->getType() === RestoringData::FILE_SQL_DUMP) {
@@ -573,9 +614,16 @@ class PointRestore extends Base {
 			}
 		}
 
-		$CONFIG = [];
-		$configFile = rtrim($configRoot, '/') . '/config.php';
-		include $configFile;
+		$configFile = '';
+		$CONFIG = $this->getConfigDirect($point, $configFile);
+		if (empty($CONFIG)) {
+			$this->output->writeln(
+				'  * do not refresh as <info>config/config.php</info> were not restored'
+			);
+			$this->configService->maintenanceMode(false);
+
+			return;
+		}
 
 		if ($dataRoot !== '') {
 			$this->compareConfigDataRoot($CONFIG, $dataRoot);
@@ -596,6 +644,30 @@ class PointRestore extends Base {
 		);
 	}
 
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param string $configFile
+	 *
+	 * @return array
+	 */
+	private function getConfigDirect(RestoringPoint $point, string &$configFile = ''): array {
+		$dataRoot = $configRoot = '';
+		foreach ($point->getRestoringData() as $data) {
+			if ($data->getType() === RestoringData::FILE_CONFIG) {
+				if ($data->getRestoredRoot() === '') {
+					return [];
+				}
+				$configRoot = $data->getRestoredRoot();
+			}
+		}
+
+		$CONFIG = [];
+		$configFile = rtrim($configRoot, '/') . '/config.php';
+		include $configFile;
+
+		return $CONFIG;
+	}
 
 	/**
 	 * @param array $CONFIG
@@ -626,6 +698,9 @@ class PointRestore extends Base {
 		}
 	}
 
+
+
+//	private function getConfigSqlParams();
 
 	/**
 	 * @param array $sqlParams
@@ -797,12 +872,14 @@ class PointRestore extends Base {
 	 */
 	private function displaySqlParams(array $sql, bool $oneLine = false): string {
 		if ($oneLine) {
-			return '<info>' . $this->get(ISqlDump::DB_USER, $sql) . '</info>:****@<info>'
+			return '<info>' . $this->get(ISqlDump::DB_TYPE, $sql) . '</info>::/<info>'
+				   . $this->get(ISqlDump::DB_USER, $sql) . '</info>:****@<info>'
 				   . $this->get(ISqlDump::DB_HOST, $sql) . ':' . $this->get(ISqlDump::DB_PORT, $sql)
 				   . '</info>/<info>'
 				   . $this->get(ISqlDump::DB_NAME, $sql) . '</info>';
 		}
 
+		$this->output->writeln('      . Type: <info>' . $this->get(ISqlDump::DB_TYPE, $sql) . '</info>');
 		$this->output->writeln('      . Host: <info>' . $this->get(ISqlDump::DB_HOST, $sql) . '</info>');
 		$this->output->writeln('      . Port: <info>' . $this->get(ISqlDump::DB_PORT, $sql) . '</info>');
 		$this->output->writeln('      . Database: <info>' . $this->get(ISqlDump::DB_NAME, $sql) . '</info>');
