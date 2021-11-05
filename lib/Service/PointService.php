@@ -277,11 +277,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-				'id' => $point->getId(),
-				'duration' => $point->getDuration(),
-				'status' => $point->getStatus(),
-				'complete' => $complete
-			]
+							   'id' => $point->getId(),
+							   'duration' => $point->getDuration(),
+							   'status' => $point->getStatus(),
+							   'complete' => $complete
+						   ]
 		);
 
 		return $point;
@@ -452,8 +452,7 @@ class PointService {
 	 * @param RestoringPoint $point
 	 */
 	private function addCustomApps(RestoringPoint $point): void {
-		return;
-		$customApps = $this->configService->getSystemValue('apps_paths');
+		$customApps = $this->configService->getSystemValueArray('apps_paths');
 		if (!is_array($customApps)) {
 			return;
 		}
@@ -463,8 +462,9 @@ class PointService {
 				continue;
 			}
 
-			$name = 'apps_' . $this->uuid(8);
-			$point->addRestoringData(new RestoringData(RestoringData::ROOT_DISK, $app['path'], $name));
+			$name = 'apps-' . str_replace('/', '', $this->get('url', $app) . '-' . $this->uuid(8));
+			$path = ltrim($this->get('path', $app), '/');
+			$point->addRestoringData(new RestoringData(RestoringData::ROOT_DISK, $path, $name));
 		}
 	}
 

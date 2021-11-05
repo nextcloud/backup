@@ -116,6 +116,8 @@ class ChunkService {
 	 * @throws ArchiveNotFoundException
 	 */
 	public function createChunks(RestoringPoint $point): void {
+		$this->o('> creating chunks');
+
 		foreach ($point->getRestoringData() as $data) {
 			if ($data->getType() === RestoringData::INTERNAL_DATA) {
 				continue;
@@ -428,6 +430,8 @@ class ChunkService {
 	 *
 	 * @return RestoringChunk
 	 * @throws ArchiveCreateException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	private function generateChunk(
 		RestoringPoint $point,
