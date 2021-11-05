@@ -208,7 +208,17 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	 * @return string
 	 */
 	public function getAbsolutePath(): string {
-		return $this->getRoot() . $this->getPath();
+		$root = $this->getRoot();
+		if ($root === '/') {
+			$root = '';
+		}
+
+		$path = rtrim($root, '/') . '/';
+		if ($this->getPath() !== '') {
+			$path .= rtrim($this->getPath(), '/') . '/';
+		}
+
+		return $path;
 	}
 
 

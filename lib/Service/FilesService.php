@@ -117,7 +117,7 @@ class FilesService {
 		}
 
 		if ($path !== '') {
-			$path .= '/';
+			$path = rtrim($path, '/') . '/';
 		}
 
 		if (file_exists($data->getAbsolutePath() . $path . PointService::NOBACKUP_FILE)) {

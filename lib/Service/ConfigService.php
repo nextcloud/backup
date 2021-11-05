@@ -251,6 +251,22 @@ class ConfigService {
 		return $this->config->getSystemValue($key);
 	}
 
+
+	/**
+	 * @param string $key
+	 *
+	 * @return array
+	 */
+	public function getSystemValueArray(string $key): array {
+		$result = $this->config->getSystemValue($key);
+		if (!is_array($result)) {
+			return [];
+		}
+
+		return $result;
+	}
+
+
 	/**
 	 * @param string $key
 	 *
