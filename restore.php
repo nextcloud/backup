@@ -38,6 +38,7 @@ use Exception;
 use OC\Config;
 use OC\Logger;
 use OCA\Backup\Model\Backup;
+use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCP\IConfig;
 use OCP\ILogger;
@@ -48,10 +49,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use ZipArchive;
 
-echo "\n" . 'At this moment, this script will not works. Sorry.' . "\n";
-echo 'Please follow online documentation to restore your backup.'. "\n\n";
-
-exit();
+//echo "\n" . 'At this moment, this script will not works. Sorry.' . "\n";
+//echo 'Please follow online documentation to restore your backup.'. "\n\n";
+//
+//exit();
 
 /**
  * extracting app files
@@ -69,6 +70,7 @@ if (in_array('-v', $argv) || in_array('--verbose', $argv)) {
 	$verbose = true;
 }
 
+$verbose = true;
 
 /**
  * loading libs.
@@ -79,7 +81,7 @@ if ($verbose) {
 
 $classes = [
 	'Service\ChunkService',
-	'Service\CliService',
+	'Service\OutputService',
 	'Service\ConfigService',
 	'Service\EncryptService',
 	'Service\FilesService',
@@ -94,6 +96,7 @@ $classes = [
 
 	'ISqlDump',
 	'SqlDump\SqlDumpMySQL',
+	'SqlDump\SqlDumpPgSQL',
 
 	'Exceptions\ArchiveCreateException',
 	'Exceptions\ArchiveNotFoundException',
@@ -137,9 +140,9 @@ if ($verbose) {
 
 try {
 	/**
-	 * @var CliService $cliService
+	 * @var OutputService $outputService
 	 */
-	$cliService = $container->query(CliService::class);
+	$outputService = $container->query(OutputService::class);
 } catch (DependencyInjectionException $e) {
 	echo $e->getMessage() . "\n";
 	exit();
@@ -159,7 +162,7 @@ $inputDefinition = generateInputDefinition();
 $input = new ArgvInput($argv, $inputDefinition);
 $output = new ConsoleOutput();
 $output = $output->section();
-$cliService->init($input, $output);
+$outputService->init($input, $output);
 
 if ($verbose) {
 	$output->writeln('Switching to <info>better</info> console output!');
@@ -190,7 +193,7 @@ $options->setAll($input->getOption('all'));
 $options->setArchive($input->getOption('archive'));
 $options->setFixDataDir($input->getOption('fix-datadirectory'));
 
-$cliService->displayBackupResume($backup);
+$outputService->displayBackupResume($backup);
 
 
 /**
@@ -200,15 +203,15 @@ try {
 	switch ($input->getArgument('action')) {
 
 		case 'details':
-			$cliService->displayBackupDetails($backup);
+			$outputService->displayBackupDetails($backup);
 			break;
 
 		case 'restore':
-			$cliService->displayBackupRestore($backup);
+			$outputService->displayBackupRestore($backup);
 			break;
 
 		case 'files':
-			$cliService->displayFilesList($backup);
+			$outputService->displayFilesList($backup);
 			break;
 
 		default:
