@@ -227,12 +227,21 @@ class UploadService {
 			if ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) {
 				continue;
 			}
-
-			$this->o(
-				'  * Uploading <info>' . $partHealth->getDataName() . '</info>/<info>'
-				. $partHealth->getChunkName() . '</info>/<info>' . $partHealth->getPartName() . '</info>: ',
-				false
-			);
+			
+			if ($partHealth->getChunkName() === $partHealth->getPartName()) {
+				$this->o(
+					'  * Uploading <info>' . $partHealth->getDataName() . '</info>/<info>'
+					. $partHealth->getChunkName() . '</info>: ',
+					false
+				);
+			} else {
+				$this->o(
+					'  * Uploading <info>' . $partHealth->getDataName() . '</info>/<info>'
+					. $partHealth->getChunkName() . '</info>/<info>' . $partHealth->getPartName()
+					. '</info>: ',
+					false
+				);
+			}
 
 			try {
 				$chunk = $this->chunkService->getChunkFromRP(
@@ -350,11 +359,20 @@ class UploadService {
 				continue;
 			}
 
-			$this->o(
-				'  * Uploading <info>' . $partHealth->getDataName() . '</info>/<info>'
-				. $partHealth->getChunkName() . '</info>/<info>' . $partHealth->getPartName() . '</info>: ',
-				false
-			);
+			if ($partHealth->getChunkName() === $partHealth->getPartName()) {
+				$this->o(
+					'  * Uploading <info>' . $partHealth->getDataName() . '</info>/<info>'
+					. $partHealth->getChunkName() . '</info>: ',
+					false
+				);
+			} else {
+				$this->o(
+					'  * Uploading <info>' . $partHealth->getDataName() . '</info>/<info>'
+					. $partHealth->getChunkName() . '</info>/<info>' . $partHealth->getPartName()
+					. '</info>: ',
+					false
+				);
+			}
 
 			try {
 				$chunk = $this->chunkService->getChunkFromRP(

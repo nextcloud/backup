@@ -190,6 +190,10 @@ class FilesService {
 				continue;
 			}
 
+			if ($entry === 'node_modules') {
+				continue;
+			}
+
 			if (is_dir(self::APP_ROOT . $path . $entry)) {
 				$files = array_merge($files, $this->getFilesFromApp($path . $entry . '/'));
 			}
