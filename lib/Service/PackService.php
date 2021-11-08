@@ -945,7 +945,7 @@ class PackService {
 		if ($zip->count() === 1 && $zip->getFromName(self::CHUNK_ENTRY) !== false) {
 			$type = self::CHUNK_ENTRY;
 			$read = $zip->getStream(self::CHUNK_ENTRY);
-		} else if ($zip->count() === 1 && $zip->getFromName(self::GZ_CHUNK_ENTRY) !== false) {
+		} elseif ($zip->count() === 1 && $zip->getFromName(self::GZ_CHUNK_ENTRY) !== false) {
 			$type = self::GZ_CHUNK_ENTRY;
 			$read = $zip->getStream(self::GZ_CHUNK_ENTRY);
 		} else {
@@ -982,7 +982,6 @@ class PackService {
 		}
 
 		if ($type === self::GZ_CHUNK_ENTRY) {
-
 		}
 	}
 
