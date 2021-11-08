@@ -23,8 +23,9 @@
 <template>
 	<div>
 		<GeneralSettingsSection @general-settings-change="handleGeneralSettingsChange" />
-		<ExternalLocationsSection />
+		<ExternalLocationsSection @external-storages-change="handleExternalStoragesChange" />
 		<RestoringPointsListSection :general-settings="generalSettings" />
+		<AppDataSection :external-storages="externalStorages" />
 	</div>
 </template>
 
@@ -32,6 +33,7 @@
 import GeneralSettingsSection from '../components/GeneralSettingsSection'
 import ExternalLocationsSection from '../components/ExternalLocationsSection'
 import RestoringPointsListSection from '../components/RestoringPointsListSection'
+import AppDataSection from '../components/AppDataSection'
 
 import SettingsModel from '../models/SettingsModel.js'
 
@@ -41,10 +43,12 @@ export default {
 		GeneralSettingsSection,
 		ExternalLocationsSection,
 		RestoringPointsListSection,
+		AppDataSection,
 	},
 	data: () => {
 		return {
 			generalSettings: undefined,
+			externalStorages: [],
 		}
 	},
 	methods: {
@@ -53,6 +57,12 @@ export default {
 		 */
 		handleGeneralSettingsChange(value) {
 			this.generalSettings = value
+		},
+		/**
+		 * @param {Array<object>} value - The new value.
+		 */
+		handleExternalStoragesChange(value) {
+			this.externalStorages = value
 		},
 	},
 }

@@ -156,6 +156,7 @@ export default {
 				this.loadingData = true
 				const response = await axios.get(generateOcsUrl('apps/backup/external'))
 				this.externalLocations = response.data.ocs.data
+				this.$emit('external-storages-change', this.externalLocations)
 			} catch (error) {
 				showError(t('backup', 'Unable to fetch external locations'))
 				logger.error('An error occurred while fetching external location', error)
