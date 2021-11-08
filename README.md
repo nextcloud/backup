@@ -293,6 +293,37 @@ instance)
     * you should be able to see the restoring point the external storage
 - `./occ backup:point:list`
 
+In this scenario, you have lost everything and want to fully recover your Nextcloud.
+
+The first step would be to have a basic setup of Nextcloud+Backup:
+
+- Install a version of Nextcloud compatible with the Backup App,
+- Install the **Backup** App,
+- Import your `setup` that contains the signature and encryption keys from your previous instance. You
+  can bypass this step only if your backup are not encrypted and you do not need the ability to confirm
+  the integrity of files.
+    * `./occ backup:setup:import [--key <key>] < ~/backup_setup`
+- [Enable and Configure the External Storage](#upload-to-external-storages) App, if your backups are on a
+  external storage.
+
+Then, you have to add your last valid restoring points from your previous instance. Both the last
+Full-Backup and the last Partial-Backup you have in hand:
+
+- [restoring my Nextcloud from a remote storage](#restore-remote-storage)
+- [restoring my Nextcloud from my workstation](#restore-workstation)
+
+<a name="restore-remote-storage"></a>
+
+### Restoring my Nextcloud from a remote storage
+
+If your backups are on an external storage, assuming you have already configured it in both **External
+Storage** and **Backup**, your restoring points should already be available.
+
+_Note: there is a known issues that might require you to browse the root of your Nextcloud Files after
+the creation of the external storage._
+
+- List your available restoring points:
+
 ```
 $ ./occ backup:point:list
 - retreiving data from local
@@ -354,6 +385,91 @@ Your instance will come back to a previous state from 13 hours, 17 minutes and 4
 
 Do you really want to continue this operation ? (y/N) 
 ```
+
+<a name="restore-workstation"></a>
+
+### Restoring my Nextcloud from my workstation
+
+If your backups are on your workstation, you can upload them on your Nextcloud Files, on your own
+Nextcloud account. Once uploaded, open the folder containing the restoring point to find the metadata
+file `restoring-point.data`.
+
+Right-click the file `restoring-point.data` and select '`Scan Backup Folder`'
+
+The scan of the restoring will be initiated at the next tick of your crontab. The background job will
+scan the full folder and its content, copy pertinent data into the app's appdata and create a new entry
+in the database.
+
+Once available in the listing of your available restoring points, the process will be the same as
+described in [Restoring my Nextcloud from Appdata](#restore-appdata)
+
+<a name="restore-scan"></a>
+
+### Restoring my Nextcloud from AppData
+
+After restoring a previous restoring point, you can face a situation where some restoring points are
+available in your `appdata` but not displayed in the listing. This de-synchronisation can be fixed by
+running `./occ backup:point:scan`. This will scan your appdata and add the restoring points to your
+current database.
+
+Once available in the listing, you can have a better overview of the current status of the restoring
+point:
+
+```
+$ ./occ backup:point:list
++---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
+| Restoring Point                       | Date                | Parent | Comment | Status                      | Instance   | Health       |  |
++---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
+| A 20211031232710-full-Tu4H6vOtxKoLLb9 | 2021-10-31 23:27:10 |        | beta2   | packed,compressed,encrypted | external:3 | 15H, 36M ago |  |
+|  20211101014009-full-QeTziynggIuaaD2  | 2021-11-01 01:40:09 |        |         | not packed                  | local      | 1H, 13M ago  |  |
++---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
+```
+
+In order to restore a backup, the restoring point needs to be `not packed`, if the restoring point you
+want to restore has the `packed` status, you will need to `unpack` it first:
+
+```
+$ ./occ backup:point:unpack 20211031232710-full-Tu4H6vOtxKoLLb9
+Unpacking Restoring Point 20211031232710-full-Tu4H6vOtxKoLLb9
+ > lock and set status to unpacking
+ > Browsing RestoringData data
+   > Unpacking RestoringChunk data-0540e4d6-9d7f-4c84-a8d8-ca40764257d1: proceeding
+     * copying parts to temp files
+       - 00001-B57XWKJQe5Xg1sd: /tmp/phpNnYCbZ
+       - 00002-PXHPeS6t6OXFwkP: /tmp/phpYqRSPW
+[...]
+```
+
+On your restoring point is marked as `not packed` you can proceed to the restoring. Please note that:
+
+* for each data pack, you will be able to choose the location of the extraction, (you can bypass
+  using `--do-not-ask-data`)
+* If a sqldump is available, you will be prompt to use the current configuration from the instance, the
+  one from the `config/config.php` freshly restored or use another database (you can bypass
+  using `--do-not-ask-sql`)
+* if the information from the file `config/config.php` are in conflict with the path or sql settings
+  specified during the extraction, you will be notified that the restoring process wants to update them.
+
+```
+$ ./occ backup:point:restore 20211031232710-full-Tu4H6vOtxKoLLb9
+Restoring Point: 20211031232710-full-Tu4H6vOtxKoLLb9
+Date: 2021-10-31 23:27:10
+Checking Health status: ok
+
+
+WARNING! You are about to initiate the complete restoration of your instance!
+All data generated since the creation of the selected backup will be lost...
+
+Your instance will come back to a previous state from 13 hours, 17 minutes and 48 seconds ago.
+
+Do you really want to continue this operation ? (y/N) 
+```
+
+
+<a name="restoring-partial"></a>
+
+### Restoring part of my Nextcloud
+
 
 <a name="occ"></a>
 
