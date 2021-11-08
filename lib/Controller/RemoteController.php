@@ -43,6 +43,7 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use Exception;
 use OC;
 use OC\AppFramework\Middleware\Security\Exceptions\NotLoggedInException;
+use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Exceptions\RemoteRequestException;
 use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
@@ -90,6 +91,9 @@ class RemoteController extends Controller {
 		parent::__construct($appName, $request);
 
 		$this->remoteStreamService = $remoteStreamService;
+
+		$this->setup('app', Application::APP_ID);
+		$this->setupArray('enforceSignatureHeaders', ['digest', 'content-length']);
 	}
 
 
