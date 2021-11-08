@@ -42,6 +42,7 @@ use OCA\Backup\Exceptions\RemoteInstanceUidException;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\EncryptService;
+use OCA\Backup\Service\RemoteStreamService;
 use SodiumException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -60,6 +61,9 @@ class SetupImport extends Base {
 	/** @var RemoteRequest */
 	private $remoteRequest;
 
+	/** @var RemoteStreamService */
+	private $remoteStreamService;
+
 	/** @var EncryptService */
 	private $encryptService;
 
@@ -77,11 +81,13 @@ class SetupImport extends Base {
 	public function __construct(
 		RemoteRequest $remoteRequest,
 		EncryptService $encryptService,
+		RemoteStreamService $remoteStreamService,
 		ConfigService $configService
 	) {
 		parent::__construct();
 
 		$this->remoteRequest = $remoteRequest;
+		$this->remoteStreamService = $remoteStreamService;
 		$this->encryptService = $encryptService;
 		$this->configService = $configService;
 	}
@@ -129,7 +135,20 @@ class SetupImport extends Base {
 			);
 		}
 
-		$this->configService->setAppValue('key_pairs', $this->get('signatory', $setup));
+
+		$storedPairs = $this->getArray('signatory', $setup);
+		if (sizeof($storedPairs) === 1) {
+			$stored = array_shift($storedPairs);
+
+			$this->configService->unsetAppValue('key_pairs');
+			$app = $this->remoteStreamService->getAppSignatory(true);
+
+			$stored['keyId'] = $app->getKeyId();
+			$stored['keyOwner'] = $keyOwner = $app->getKeyOwner();
+
+			$this->configService->setAppValue('key_pairs', json_encode([$keyOwner => $stored]));
+		}
+
 		$this->configService->setAppValue(
 			ConfigService::ENCRYPTION_KEYS,
 			json_encode($this->getArray('encryption', $setup))
