@@ -214,9 +214,6 @@ class ExternalAppData extends Base {
 	private function selectStorage(InputInterface $input, OutputInterface $output): int {
 		$availableStorage = [];
 		foreach ($this->externalFolderService->getStorages() as $storage) {
-			if ($storage->getRoot() !== '') {
-				continue;
-			}
 			$availableStorage[$storage->getStorageId()] =
 				$storage->getStorage() . ' (id:' . $storage->getStorageId() . ')';
 		}
