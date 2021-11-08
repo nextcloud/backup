@@ -22,6 +22,29 @@
 
 import moment from '@nextcloud/moment'
 
+/**
+ * @typedef {object} RestoringLocation
+ * @property {string} storageId - The storageId of the location
+ * @property {string} issue - The issue of the restoring point if any, else ''.
+ * @property {object} point - The information about the restoring point.
+ * @property {string} point.id - The id of the restoring location
+ * @property {object} point.health - The health of the restoring location.
+ * @property {number} point.health.checked - The date of the last health check.
+ * @property {number} point.health.status - The health status.
+ * @property {number} point.status - The status of the restoring location.
+ * @property {number} point.date - When did the restoring point was created.
+ * @property {number} point.duration - The duration of the maintenance window.
+ * @property {string} point.parent - The parent of the restoring point.
+ * @property {boolean} point.archive - Whether the restoring point is an archive or not.
+ */
+
+/**
+ * @typedef {object} RestoringPoint
+ * @property {string} id - The id of the restoring point
+ * @property {RestoringLocation} local - Information about the local restoring point
+ * @property {Array.<RestoringLocation>} externals - iInformation about the externals restoring points
+ */
+
 export default class RestoringPointModel {
 
 	_restoringPoint
@@ -29,7 +52,7 @@ export default class RestoringPointModel {
 	/**
 	 * Create the restoringPoint object.
 	 *
-	 * @param {object} rawRestoringPoint the restoringPoint object from the ocs response
+	 * @param {RestoringPoint} rawRestoringPoint - The list of restoring points
 	 */
 	constructor(rawRestoringPoint) {
 		if (typeof rawRestoringPoint !== 'object') {
@@ -39,6 +62,12 @@ export default class RestoringPointModel {
 		// Sanity checks
 		if (typeof rawRestoringPoint.id !== 'string') {
 			throw new Error('The id property is not a valid string')
+		}
+		if (typeof rawRestoringPoint.local !== 'object' && rawRestoringPoint.local !== undefined) {
+			throw new Error('The local property is not a valid object')
+		}
+		if (!Array.isArray(rawRestoringPoint.externals)) {
+			throw new Error('The externals property is not a valid array')
 		}
 
 		// store state
@@ -64,7 +93,7 @@ export default class RestoringPointModel {
 	 * @memberof RestoringPointModel
 	 */
 	get isFull() {
-		return this.local.point.parent === ''
+		return this.parent === ''
 	}
 
 	/**
@@ -75,7 +104,13 @@ export default class RestoringPointModel {
 	 * @memberof RestoringPointModel
 	 */
 	get parent() {
-		return this.local.point.parent
+		if (this.local !== undefined && this.local.point.parent !== undefined) {
+			return this.local.point.parent
+		} else if (this.externals.length !== 0) {
+			return this.externals[0].point.parent
+		} else {
+			return ''
+		}
 	}
 
 	/**
@@ -99,6 +134,23 @@ export default class RestoringPointModel {
 	}
 
 	/**
+	 * Get the status of the restoring point.
+	 *
+	 * @return {number}
+	 * @readonly
+	 * @memberof RestoringPointModel
+	 */
+	get status() {
+		if (this.local !== undefined && this.local.point.status !== undefined) {
+			return this.local.point.status
+		} else if (this.externals.length !== 0) {
+			return this.externals[0].point.status
+		} else {
+			return 0 // Not packed yet
+		}
+	}
+
+	/**
 	 * Get the health of the restoring point.
 	 *
 	 * @return {number}
@@ -106,7 +158,7 @@ export default class RestoringPointModel {
 	 * @memberof RestoringPointModel
 	 */
 	get health() {
-		if (this.local.point.health !== undefined) {
+		if (this.local !== undefined && this.local.point.health !== undefined) {
 			return this.local.point.health.status
 		} else if (this.externals.length !== 0) {
 			const external = this.externals.find(external => external.issue !== '')
@@ -121,24 +173,9 @@ export default class RestoringPointModel {
 	}
 
 	/**
-	 * @typedef {object} RestoringLocation
-	 * @property {string} storageId - The storageId of the location
-	 * @property {string} issue - The issue of the restoring point if any, else ''.
-	 * @property {object} point - The information about the restoring point.
-	 * @property {object} point.health - The health of the restoring location.
-	 * @property {number} point.health.checked - The date of the last health check.
-	 * @property {number} point.health.status - The health status.
-	 * @property {number} point.status - The status of the restoring location.
-	 * @property {number} point.date - When did the restoring point was created.
-	 * @property {number} point.duration - The duration of the maintenance window.
-	 * @property {string} point.parent - The parent of the restoring point.
-	 * @property {boolean} point.archive - Whether the restoring point is an archive or not.
-	 */
-
-	/**
 	 * Get the information about the local location.
 	 *
-	 * @return {RestoringLocation}
+	 * @return {RestoringLocation|undefined}
 	 * @readonly
 	 * @memberof RestoringPointModel
 	 */
@@ -149,30 +186,12 @@ export default class RestoringPointModel {
 	/**
 	 * Get the information about the external locations.
 	 *
-	 * @return {object.<string, RestoringLocation>}
-	 * @readonly
-	 * @memberof RestoringPointModel
-	 */
-	get external() {
-		if (this._restoringPoint.external !== undefined) {
-			return this._restoringPoint.external
-		} else {
-			return {}
-		}
-	}
-
-	/**
-	 * Get the information about the external locations.
-	 *
 	 * @return {Array<RestoringLocation>}
 	 * @readonly
 	 * @memberof RestoringPointModel
 	 */
 	get externals() {
-		return Object.keys(this.external)
-			.map(storageId => {
-				return { ...this.external[storageId], storageId }
-			})
+		return this._restoringPoint.externals
 	}
 
 	/**
@@ -183,7 +202,13 @@ export default class RestoringPointModel {
 	 * @memberof RestoringPointModel
 	 */
 	get dateTimestamp() {
-		return this.local.point.date
+		if (this.local !== undefined) {
+			return this.local.point.date
+		} else if (this.externals.length !== 0) {
+			return this.externals[0].point.date
+		} else {
+			return 0
+		}
 	}
 
 	/**

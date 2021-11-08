@@ -120,8 +120,10 @@ export default {
 	},
 
 	props: {
-		// eslint-disable-next-line vue/prop-name-casing
-		externalStorages: { type: Array, default: () => [] },
+		externalStorages: {
+			type: Array,
+			default: () => [],
+		},
 	},
 
 	data() {
