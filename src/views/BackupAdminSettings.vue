@@ -24,7 +24,7 @@
 	<div>
 		<GeneralSettingsSection @general-settings-change="handleGeneralSettingsChange" />
 		<ExternalLocationsSection @external-storages-change="handleExternalStoragesChange" />
-		<RestoringPointsListSection :general-settings="generalSettings" />
+		<RestoringPointsListSection :general-settings="generalSettings" :external-storages="externalStorages" />
 		<AppDataSection :external-storages="externalStorages" />
 	</div>
 </template>

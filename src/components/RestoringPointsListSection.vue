@@ -58,50 +58,53 @@
 								<Check
 									v-if="point.issue === ''"
 									slot="icon"
-									fill-color="green"
+									fill-color="#46ba61"
 									:title="t('backup', 'No issue')" />
 								<AlertCircle
 									v-else-if="point.issue !== ''"
 									slot="icon"
-									fill-color="red"
+									fill-color="#e9322d"
 									:title="point.issue" />
 							</template>
 							<div class="restoring-points__point__popover">
-								<div class="restoring-points__point__popover__item">
+								<div v-if="point.local !== undefined" class="restoring-points__point__popover__item">
 									<Check
 										v-if="point.local.issue === ''"
 										slot="icon"
 										class="restoring-points__point__popover__item__icon"
-										fill-color="green"
+										fill-color="#46ba61"
 										:title="t('backup', 'No issue')" />
 									<AlertCircle
 										v-else-if="point.local.issue !== ''"
 										slot="icon"
 										class="restoring-points__point__popover__item__icon"
-										fill-color="red"
+										fill-color="#e9322d"
 										:title="point.local.issue" />
-									local
+									{{ t('backup', 'Local') }}
 								</div>
-								<template
-									v-if="point.external !== undefined">
-									<div v-for="external of point.externals"
-										:key="external.storageId"
-										class="restoring-points__point__popover__item">
-										{{ external }}{{ external.storageId }}
-										<Check
-											v-if="external.issue === ''"
-											slot="icon"
-											class="restoring-points__point__popover__item__icon"
-											fill-color="green"
-											:title="t('backup', 'No issue')" />
-										<AlertCircle
-											v-else-if="external.issue !== ''"
-											slot="icon"
-											class="restoring-points__point__popover__item__icon"
-											fill-color="red"
-											:title="external.issue" />
-									</div>
-								</template>
+								<div v-for="external of point.externals"
+									:key="external.storageId"
+									class="restoring-points__point__popover__item">
+									<Check
+										v-if="external.issue === ''"
+										slot="icon"
+										class="restoring-points__point__popover__item__icon"
+										fill-color="#46ba61"
+										:title="t('backup', 'No issue')" />
+									<AlertCircle
+										v-else-if="external.issue !== ''"
+										slot="icon"
+										class="restoring-points__point__popover__item__icon"
+										fill-color="#e9322d"
+										:title="external.issue" />
+									<template v-if="externalStorages.length !== 0">
+										{{ getStorageNameFromStorageId(external.storageId) }}
+									</template>
+
+									<template v-if="external.issue !== ''">
+										- ({{ external.issue }})
+									</template>
+								</div>
 							</div>
 						</Popover>
 					</td>
@@ -113,28 +116,48 @@
 									<RestoringPointHealthIcon :health="point.health" />
 								</div>
 							</template>
-							<div v-if="point.health >= 0" class="restoring-points__point__popover">
-								<div class="restoring-points__point__popover__item">
+							<div class="restoring-points__point__popover">
+								<div v-if="point.local !== undefined && point.local.point.health !== undefined" class="restoring-points__point__popover__item">
 									<RestoringPointHealthIcon :health="point.local.point.health.status" class="restoring-points__point__popover__item__icon" />
 									{{ t('backup', 'local') }}
 								</div>
-								<template v-if="point.external !== undefined">
-									<div v-for="external of point.externals"
-										:key="external.storageId"
-										class="restoring-points__point__popover__item">
-										<RestoringPointHealthIcon :health="external.point.health.status" class="restoring-points__point__popover__item__icon" />
-										{{ external.storageId }}
-									</div>
-								</template>
+								<div v-for="external of point.externals"
+									:key="external.storageId"
+									class="restoring-points__point__popover__item">
+									<RestoringPointHealthIcon :health="external.point.health.status" class="restoring-points__point__popover__item__icon" />
+									<template v-if="externalStorages.length !== 0">
+										{{ getStorageNameFromStorageId(external.storageId) }} -
+									</template>
+									(
+									<template v-if="external.point.health.status === -2">
+										{{ t('backup', 'Scheduled') }}
+									</template>
+									<template v-else-if="external.point.health.status === -1">
+										{{ t('backup', 'Pending') }}
+									</template>
+									<template v-else-if="external.point.health.status === 0">
+										{{ t('backup', 'Not completed') }}
+									</template>
+									<template v-else-if="external.point.health.status === 1">
+										{{ t('backup', 'Orphan') }}
+									</template>
+									<template v-else-if="external.point.health.status === 9">
+										{{ t('backup', 'Completed') }}
+									</template>
+									)
+								</div>
 							</div>
 						</Popover>
 					</td>
+
 					<td class="restoring-points__point__icons">
-						<RestoringPointStatusIcon v-if="point.health !== -2" :status="point.local.point.status" />
+						<RestoringPointStatusIcon v-if="point.health !== -2" :status="point.status" />
 					</td>
+
 					<td>
 						<span v-tooltip.bottom="point.dateFormatted" class="activity-entry__date">{{ point.dateFromNow }}</span>
 					</td>
+
 					<td>
 						<template v-if="point.id === 'next_full_restoring_point'">
 							{{ t('backup', 'Next full restoring point') }}
@@ -156,7 +179,6 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
-import moment from '@nextcloud/moment'
 
 import Check from 'vue-material-design-icons/Check.vue'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
@@ -171,6 +193,13 @@ import SettingsModel from '../models/SettingsModel.js'
 import RestoringPoint from '../models/RestoringPointModel.js'
 import logger from '../logger'
 
+/**
+ * @typedef {object} ExternalLocation
+ * @property {number} storageId - The ID of the external storage.
+ * @property {string} storage - The description of the external storage.
+ * @property {string} root - The path where the restoring points will be stored.
+ */
+
 export default {
 	name: 'RestoringPointsListSection',
 	components: {
@@ -184,26 +213,14 @@ export default {
 	directives: {
 		tooltip: Tooltip,
 	},
-	filters: {
-		/**
-		 * @param {number} timestamp - The timestamp to pretty print.
-		 */
-		dateFromNow(timestamp) {
-			return moment(timestamp).fromNow()
-
-		},
-
-		/**
-		 * @param {number} timestamp - The timestamp to pretty print.
-		 */
-		formatDate(timestamp) {
-			return moment(timestamp).format('LLL')
-
-		},
-	},
 
 	props: {
 		generalSettings: SettingsModel,
+		externalStorages: {
+			type: Array,
+			default: () => [],
+		},
+
 	},
 
 	data() {
@@ -229,6 +246,7 @@ export default {
 				new RestoringPoint({
 					id: 'next_full_restoring_point',
 					local: { point: { date: this.generalSettings.nextFullRestoringPointTimestamp } },
+					externals: [],
 				}),
 			]
 		},
@@ -246,6 +264,7 @@ export default {
 			return [new RestoringPoint({
 				id: 'next_partial_restoring_point',
 				local: { point: { date: this.generalSettings.nextPartialRestoringPointTimestamp } },
+				externals: [],
 			})]
 		},
 
@@ -275,7 +294,7 @@ export default {
 				this.restoringPoints = this.handleRestoringPoints(response.data.ocs.data)
 			} catch (error) {
 				showError(t('backup', 'Unable to fetch restoring points'))
-				logger.error('An error occurred while fetching restoring points', error)
+				logger.error('An error occurred while fetching restoring points', { error })
 			} finally {
 				this.loading = false
 			}
@@ -297,26 +316,40 @@ export default {
 		 */
 
 		/**
-		 * @typedef {object} RestoringPoints
-		 * @property {PointLocation} local - The local location
-		 * @property {Array<PointLocation>} externals - The external locations
+		 * @typedef {object<string, PointLocation>} RestoringPoints
 		 */
 
 		/**
-		 * @param {RestoringPoints} restoringPoints - The list of restoring points
+		 * @param {object<string, RestoringPoints>} restoringPoints - The list of restoring points
 		 */
 		handleRestoringPoints(restoringPoints) {
-			return Object.values(restoringPoints)
-				.map(pointLocations => {
+			return Object.keys(restoringPoints)
+				.map(restoringPointId => {
+					const restoringPoint = restoringPoints[restoringPointId]
 					return {
-						id: pointLocations.local.point.id,
-						local: pointLocations.local,
-						external: pointLocations.external,
+						id: restoringPointId,
+						local: restoringPoint.local,
+						externals: Object.keys(restoringPoint).filter(storageId => storageId !== 'local').map(storageId => ({ ...restoringPoint[storageId], storageId })),
 					}
 				})
 				.map(point => new RestoringPoint(point))
 				.sort((point1, point2) => point2.dateTimestamp - point1.dateTimestamp)
 		},
+
+		/**
+		 * @param {string} storageId - The storage ID in the following format: 'external:<storageId>'
+		 */
+		getStorageNameFromStorageId(storageId) {
+			if (this.externalStorages === undefined) {
+				return storageId
+			}
+
+			// The variable assignment is useful to have type completion.
+			/** @type {Array<ExternalLocation>} */
+			const externalStorages = this.externalStorages
+			return externalStorages.find(storage => storage.storageId === parseInt(storageId.split(':')[1])).storage
+		},
+
 	},
 }
 </script>
