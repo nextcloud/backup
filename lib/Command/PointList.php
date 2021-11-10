@@ -35,6 +35,7 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
+use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\CronService;
@@ -125,7 +126,7 @@ class PointList extends Base {
 
 		$table = new Table($output);
 		$table->setHeaders(
-			['Restoring Point', 'Date', 'NC', 'Parent', 'Comment', 'Status', 'Instance', 'Health']
+			['Restoring Point', 'Date', 'NC', 'Database', 'Parent', 'Comment', 'Status', 'Instance', 'Health']
 		);
 		$table->render();
 
@@ -162,9 +163,11 @@ class PointList extends Base {
 				$table->appendRow(
 					[
 						'<comment>' . (($point->isLocked()) ? 'L' : '') .
-						(($point->isArchive()) ? 'A' : '') . '</comment> ' . (($fresh) ? $displayPointId : ''),
+						(($point->isArchive()) ? 'A' : '') . '</comment> '
+						. (($fresh) ? $displayPointId : ''),
 						($fresh) ? date('Y-m-d H:i:s', $point->getDate()) : '',
 						($fresh) ? $point->getNCVersion() : '',
+						($fresh) ? $this->getDatabaseType($point) : '',
 						($fresh) ? $point->getParent() : '',
 						$comment,
 						implode(',', $status),
@@ -211,4 +214,26 @@ class PointList extends Base {
 
 		return '<' . $embed . '>' . $def . '</' . $embed . '>';
 	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @return string
+	 */
+	private function getDatabaseType(RestoringPoint $point): string {
+		foreach ($point->getRestoringData() as $data) {
+			if ($data->getType() === RestoringData::FILE_SQL_DUMP) {
+				$chunks = $data->getChunks();
+				if (sizeof($chunks) === 1) {
+					$chunk = array_shift($chunks);
+
+					return $chunk->getType();
+				}
+			}
+		}
+
+		return 'sqlite';
+	}
+
 }
