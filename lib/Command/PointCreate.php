@@ -84,6 +84,7 @@ class PointCreate extends Base {
 
 		$this->setName('backup:point:create')
 			 ->setDescription('Generate a restoring point of the instance (complete or incremental)')
+			 ->addOption('comment', '', InputOption::VALUE_REQUIRED, 'set a comment to the restoring point', '')
 			 ->addOption('incremental', '', InputOption::VALUE_NONE, 'create an incremental restoring point');
 	}
 
@@ -109,7 +110,7 @@ class PointCreate extends Base {
 			$this->outputService->setOutput($output);
 		}
 
-		$point = $this->pointService->create(!$input->getOption('incremental'));
+		$point = $this->pointService->create(!$input->getOption('incremental'), $input->getOption('comment'));
 
 		if ($o === 'none') {
 			return 0;

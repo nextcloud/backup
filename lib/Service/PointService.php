@@ -221,18 +221,22 @@ class PointService {
 
 	/**
 	 * @param bool $complete
+	 * @param string $comment
 	 *
 	 * @return RestoringPoint
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
 	 * @throws BackupAppCopyException
 	 * @throws BackupScriptNotFoundException
+	 * @throws ExternalFolderNotFoundException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws ParentRestoringPointNotFoundException
+	 * @throws SignatoryException
 	 * @throws SqlDumpException
 	 * @throws Throwable
 	 */
-	public function create(bool $complete): RestoringPoint {
+	public function create(bool $complete, string $comment = ''): RestoringPoint {
 		// maintenance mode on
 		$initTime = time();
 		$maintenance = $this->configService->getSystemValueBool(ConfigService::MAINTENANCE);
@@ -241,6 +245,7 @@ class PointService {
 
 		try {
 			$point = $this->initRestoringPoint($complete);
+			$point->setComment($comment);
 
 			$this->chunkService->createChunks($point);
 			$this->backupSql($point);
