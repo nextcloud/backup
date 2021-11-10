@@ -119,6 +119,10 @@ class ExternalAppData extends Base {
 			if (!$unset) {
 				return 0;
 			}
+		} catch (ExternalFolderNotFoundException $e) {
+			if (!$unset) {
+				throw $e;
+			}
 		} catch (ExternalAppdataException $e) {
 			$unset = false;
 		}
