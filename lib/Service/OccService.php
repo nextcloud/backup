@@ -142,7 +142,7 @@ class OccService {
 	 * @throws NotFoundException
 	 */
 	public function updatePointBasedOnParams(RestoringPoint $point, InputInterface $input): void {
-		if ($input->getOption('all-storage')) {
+		if ($input->getOption('all-storages')) {
 			$this->pointService->updateSubInfos($point);
 			$this->metadataService->globalUpdate($point);
 
