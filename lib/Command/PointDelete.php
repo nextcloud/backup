@@ -37,7 +37,6 @@ use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkPartNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointException;
-use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\PointService;
@@ -154,12 +153,8 @@ class PointDelete extends Base {
 			return 0;
 		}
 
-		try {
-			$point = $this->pointService->getLocalRestoringPoint($pointId);
-			$this->pointService->delete($point);
-		} catch (RestoringPointNotFoundException $e) {
-		}
-
+		$point = $this->pointService->getLocalRestoringPoint($pointId);
+		$this->pointService->delete($point);
 		$output->writeln('Restoring point deleted');
 
 		return 0;
