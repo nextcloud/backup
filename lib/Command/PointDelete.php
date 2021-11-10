@@ -98,7 +98,7 @@ class PointDelete extends Base {
 			 ->setDescription('Locally delete a restoring point')
 			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to delete')
 			 ->addOption(
-				 'all-storage', '', InputOption::VALUE_NONE, 'remove restoring point from all storage'
+				 'all-storages', '', InputOption::VALUE_NONE, 'remove restoring point from all storage'
 			 )
 			 ->addOption(
 				 'remote', '', InputOption::VALUE_REQUIRED,
@@ -130,7 +130,7 @@ class PointDelete extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$pointId = $input->getArgument('pointId');
 
-		if ($input->getOption('all-storage')) {
+		if ($input->getOption('all-storages')) {
 			$this->remoteService->deletePoint($pointId);
 			$this->externalFolderService->deletePoint($pointId);
 		}

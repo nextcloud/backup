@@ -96,7 +96,7 @@ class PointComment extends Base {
 			 ->addArgument('comment', InputArgument::REQUIRED, 'comment')
 			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
 			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder')
-			 ->addOption('all-storage', '', InputOption::VALUE_NONE, 'duplicate action on all storages');
+			 ->addOption('all-storages', '', InputOption::VALUE_NONE, 'duplicate action on all storages');
 	}
 
 
