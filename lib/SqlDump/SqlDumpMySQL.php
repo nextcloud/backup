@@ -119,7 +119,7 @@ class SqlDumpMySQL implements ISqlDump {
 		if (!mysqli_select_db($sql, $dbName)) {
 			mysqli_query($sql, 'CREATE DATABASE IF NOT EXISTS ' . $dbName);
 			if (!mysqli_select_db($sql, $dbName)) {
-				throw new SqlParamsException('cannot create database');
+				throw new SqlParamsException('can connect but cannot create database ' . $dbName);
 			}
 		}
 	}
