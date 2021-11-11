@@ -63,9 +63,11 @@ use OCA\Backup\Service\RestoreService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Exception\InvalidOptionException;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
@@ -274,6 +276,9 @@ class PointRestore extends Base {
 			]
 		);
 
+
+		$this->displayResume($point);
+
 		return 0;
 	}
 
@@ -453,7 +458,7 @@ class PointRestore extends Base {
 			return $sqlParams;
 		}
 
-		$options = ['cancel', 'yes', 'no'];
+		$options = ['cancel', 'yes', 'edit'];
 		if (!empty($fromConfig)) {
 			array_push($options, 'load');
 		}
@@ -891,7 +896,7 @@ class PointRestore extends Base {
 	 */
 	private function displaySqlParams(array $sql, bool $oneLine = false): string {
 		if ($oneLine) {
-			return '<info>' . $this->get(ISqlDump::DB_TYPE, $sql) . '</info>::/<info>'
+			return '<info>' . $this->get(ISqlDump::DB_TYPE, $sql) . '</info>://<info>'
 				   . $this->get(ISqlDump::DB_USER, $sql) . '</info>:****@<info>'
 				   . $this->get(ISqlDump::DB_HOST, $sql) . ':' . $this->get(ISqlDump::DB_PORT, $sql)
 				   . '</info>/<info>'
@@ -906,5 +911,50 @@ class PointRestore extends Base {
 		$this->output->writeln('      . Password: <info>*******</info>');
 
 		return '';
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 */
+	private function displayResume(RestoringPoint $point): void {
+		$this->output->writeln('');
+		$this->output->writeln('');
+
+		$output = new ConsoleOutput();
+		$output = $output->section();
+		$table = new Table($output);
+		$table->setHeaders(['Data', 'Status', 'Path']);
+		$table->render();
+
+		foreach ($point->getRestoringData() as $data) {
+			if ($data->getType() === RestoringData::INTERNAL_DATA) {
+				continue;
+			}
+
+			$path = '';
+			if ($data->getRestoredRoot() === '') {
+				$status = 'ignored';
+			} else {
+				if ($data->getType() === RestoringData::FILE_SQL_DUMP) {
+					$status = '<info>imported</info>';
+					$path = $this->displaySqlParams(
+						json_decode($data->getRestoredRoot(), true),
+						true
+					);
+				} else {
+					$status = '<info>extracted</info>';
+					$path = $data->getRestoredRoot();
+				}
+			}
+
+			$table->appendRow(
+				[
+					'<info>' . $data->getName() . '</info>',
+					$status,
+					$path
+				]
+			);
+		}
 	}
 }
