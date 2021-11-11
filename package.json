@@ -1,7 +1,7 @@
 {
 	"name": "backup",
 	"description": "A Nextcloud app to backup your server",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"author": "Louis Chemineau <louis@chmn.me",
 	"contributors": [],
 	"bugs": {
