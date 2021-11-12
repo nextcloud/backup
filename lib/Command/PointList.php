@@ -235,5 +235,4 @@ class PointList extends Base {
 
 		return 'sqlite';
 	}
-
 }
