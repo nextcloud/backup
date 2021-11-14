@@ -105,7 +105,7 @@ class Filter implements IFilter {
 		return $this->urlGenerator->getAbsoluteURL(
 			$this->urlGenerator->imagePath(
 				Application::APP_ID,
-				'app.svg'
+				'backup.svg'
 			)
 		);
 	}

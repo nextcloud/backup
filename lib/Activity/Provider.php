@@ -139,7 +139,7 @@ class Provider implements IProvider {
 			$this->urlGenerator->getAbsoluteURL(
 				$this->urlGenerator->imagePath(
 					Application::APP_ID,
-					'app.svg'
+					'backup.svg'
 				)
 			)
 		);
