@@ -88,7 +88,7 @@ class ConfigService {
 		self::LAST_PARTIAL_RP => '',
 		self::DATE_FULL_RP => 0,
 		self::DATE_PARTIAL_RP => 0,
-		self::DELAY_FULL_RP => 14,
+		self::DELAY_FULL_RP => 24,
 		self::DELAY_PARTIAL_RP => 3,
 		self::DELAY_UNIT => 'd',
 		self::ALLOW_WEEKDAY => 0,
