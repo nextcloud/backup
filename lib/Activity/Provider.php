@@ -172,8 +172,9 @@ class Provider implements IProvider {
 
 		$this->parseSimpleEvent(
 			$activity,
-			'A new restoring point ({type}) have been generated, ' .
-			'requiring maintenance mode for {downtime}. (id: {id}, status: {status})',
+			$this->l10n->t(
+				'A new restoring point ({type}) have been generated, requiring maintenance mode for {downtime}.'
+			),
 			$params
 		);
 	}
@@ -188,7 +189,9 @@ class Provider implements IProvider {
 
 		$this->parseSimpleEvent(
 			$activity,
-			'Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})',
+			$this->l10n->t(
+				'Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})'
+			),
 			$params
 		);
 	}
@@ -203,7 +206,9 @@ class Provider implements IProvider {
 
 		$this->parseSimpleEvent(
 			$activity,
-			'The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})',
+			$this->l10n->t(
+				'The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})'
+			),
 			$params
 		);
 	}
