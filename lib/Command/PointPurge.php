@@ -79,6 +79,7 @@ class PointPurge extends Base {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->cronService->purgeRestoringPoints();
+		$this->cronService->purgeRemoteRestoringPoints();
 
 		return 0;
 	}

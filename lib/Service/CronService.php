@@ -367,6 +367,12 @@ class CronService {
 		}
 	}
 
+	/**
+	 *
+	 */
+	public function purgeRemoteRestoringPoints(): void {
+	}
+
 
 	/**
 	 * @param array $points
