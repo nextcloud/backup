@@ -69,6 +69,7 @@ class ConfigService {
 	public const PACK_REMOTE_INDEX = 'pack_remote_index';
 
 	public const STORE_ITEMS = 'store_items';
+	public const STORE_ITEMS_EXTERNAL = 'store_items_external';
 	public const ENCRYPTION_KEYS = 'encryption_keys';
 	public const FORCE_CBC = 'force_cbc';
 	public const TIME_SLOTS = 'time_slots';
@@ -93,7 +94,8 @@ class ConfigService {
 		self::DELAY_UNIT => 'd',
 		self::ALLOW_WEEKDAY => 0,
 		self::PACK_BACKUP => '1',
-		self::STORE_ITEMS => 4,
+		self::STORE_ITEMS => 3,
+		self::STORE_ITEMS_EXTERNAL => 5,
 		self::ENCRYPTION_KEYS => '{}',
 		self::FORCE_CBC => 0,
 		self::TIME_SLOTS => '23-5',
@@ -377,6 +379,7 @@ class ConfigService {
 			self::PACK_COMPRESS => $this->getAppValueBool(self::PACK_COMPRESS),
 			self::PACK_ENCRYPT => $this->getAppValueBool(self::PACK_ENCRYPT),
 			self::STORE_ITEMS => $this->getAppValueInt(self::STORE_ITEMS),
+			self::STORE_ITEMS_EXTERNAL => $this->getAppValueInt(self::STORE_ITEMS_EXTERNAL),
 			self::MOCKUP_DATE => $this->getAppValueInt(self::MOCKUP_DATE)
 		];
 	}

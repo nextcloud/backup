@@ -107,6 +107,7 @@ class Manage extends TimedJob {
 
 		// TODO: purge old restoring points.
 		$this->cronService->purgeRestoringPoints();
+		$this->cronService->purgeRemoteRestoringPoints();
 
 		// uploading
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
