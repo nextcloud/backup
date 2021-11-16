@@ -43,7 +43,7 @@
 			<input v-model="appDataForm.root"
 				class="app-data__form__input"
 				type="text"
-				:placeholder="t('backup', 'Path in which to store the data. (ex: \'app_data\')')"
+				:placeholder="t('backup', 'Path in which to store the data. (ex: \"app_data\")')"
 				:disabled="loadingAppData || appDataForm.storageId === 0"
 				name="root">
 			<button class="primary"
