@@ -104,6 +104,30 @@
 		</CheckboxRadioSwitch>
 
 		<h3 class="backup-settings__sub-headers">
+			{{ t('backup', 'Restoring point history') }}
+		</h3>
+		{{ t('backup', 'Number of restoring points to keep during a purge:') }}
+		<ul class="backup-settings__purge">
+			<li>
+				{{ t('backup', 'In the local app data') }}:
+				<input v-model.number="settings.storeItems"
+					:disabled="loadingFetchSettings"
+					class="backup-settings__input"
+					type="text"
+					@change="setSettings">
+			</li>
+
+			<li>
+				{{ t('backup', 'In external storages') }}:
+				<input v-model.number="settings.storeItemsExternal"
+					:disabled="loadingFetchSettings"
+					class="backup-settings__input"
+					type="text"
+					@change="setSettings">
+			</li>
+		</ul>
+
+		<h3 class="backup-settings__sub-headers">
 			{{ t('backup', 'Schedule summary') }}
 		</h3>
 		<ul class="backup-settings__summary">
@@ -235,6 +259,8 @@ export default {
 				mockup_date: 0,
 				partial: 0,
 				full: 0,
+				store_items: 0,
+				store_items_external: 0,
 			}),
 			exportedPrivateKey: undefined,
 			exportedSettings: undefined,
@@ -383,6 +409,10 @@ button.loading {
 
 	&__summary {
 		color: var(--color-text-lighter);
+		list-style: inside;
+	}
+
+	&__purge {
 		list-style: inside;
 	}
 

@@ -88,6 +88,12 @@ export default class SettingsModel {
 		if (typeof rawSettings.full !== 'number') {
 			throw new Error('The full property is not a valid number')
 		}
+		if (typeof rawSettings.store_items !== 'number') {
+			throw new Error('The store_items property is not a valid number')
+		}
+		if (typeof rawSettings.store_items_external !== 'number') {
+			throw new Error('The store_items_external property is not a valid number')
+		}
 
 		// store state
 		this._settings = rawSettings
@@ -418,6 +424,48 @@ export default class SettingsModel {
 	set timeSlotsEnd(value) {
 		this._timeSlots.end = value
 		this._settings.time_slots = `${this._timeSlots.start}-${this._timeSlots.end}`
+	}
+
+	/**
+	 * Get the number of restoring point to keep in the app data during a purge
+	 *
+	 * @return {number}
+	 * @readonly
+	 * @memberof SettingsModel
+	 */
+	get storeItems() {
+		return this._settings.store_items
+	}
+
+	/**
+	 * Set the number of restoring point to keep in the app data during a purge
+	 *
+	 * @param {number} value - The new value.
+	 * @memberof SettingsModel
+	 */
+	set storeItems(value) {
+		this._settings.store_items = value
+	}
+
+	/**
+	 * Get the number of restoring point to keep in external storages during a purge
+	 *
+	 * @return {number}
+	 * @readonly
+	 * @memberof SettingsModel
+	 */
+	get storeItemsExternal() {
+		return this._settings.store_items_external
+	}
+
+	/**
+	 * Set the number of restoring point to keep in external storages during a purge
+	 *
+	 * @param {number} value - The new value.
+	 * @memberof SettingsModel
+	 */
+	set storeItemsExternal(value) {
+		this._settings.store_items_external = value
 	}
 
 }
