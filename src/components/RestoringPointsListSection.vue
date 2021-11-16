@@ -23,7 +23,7 @@
 <template>
 	<SettingsSection
 		:title="t('backup', 'Restoring points history')"
-		:description="t('backup', 'List of the past and futur restoring points')">
+		:description="t('backup', 'List of the past and future restoring points')">
 		<table class="grid groups">
 			<thead>
 				<tr>
