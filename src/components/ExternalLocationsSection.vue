@@ -34,7 +34,7 @@
 			</select>
 			<input class="external-location__form__input"
 				type="text"
-				:placeholder="t('backup', 'Path in which to store the restoring points. (Ex: \'backups\')')"
+				:placeholder="t('backup', 'Path in which to store the restoring points. (ex: \"backups\")')"
 				:disabled="loadingData || loadingAddExternalLocation || availableExternalLocations.length === 0"
 				name="root">
 			<button class="primary"
