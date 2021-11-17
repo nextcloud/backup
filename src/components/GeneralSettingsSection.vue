@@ -173,7 +173,7 @@
 					{{ t('backup', 'Request the creation of a new restoring point now') }}
 				</h3>
 				<div v-if="settings.restoringPointRequested" class="backup-settings__actions__action__info">
-					{{ t('backup', 'The creation of a restoring point as been requested and will be initiated soon.') }}
+					{{ t('backup', 'The creation of a restoring point has been requested and will be initiated soon.') }}
 				</div>
 				<button class="primary" :disabled="loadingFetchSettings || settings.restoringPointRequested" @click="requestRestoringPointType = 'full'">
 					{{ t('backup', 'Create full restoring point') }}
