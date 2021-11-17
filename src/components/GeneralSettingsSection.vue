@@ -162,7 +162,7 @@
 				</button>
 			</div>
 			<div v-if="exportedPrivateKey !== undefined" class="backup-settings__export__info">
-				{{ t('backup', 'Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
+				{{ t('backup', 'Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
 				<br>
 				<code><b>{{ exportedPrivateKey }}</b></code>
 				<br>
