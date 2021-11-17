@@ -173,7 +173,7 @@ class Provider implements IProvider {
 		$this->parseSimpleEvent(
 			$activity,
 			$this->l10n->t(
-				'A new restoring point ({type}) have been generated, requiring maintenance mode for {downtime}.'
+				'A new restoring point ({type}) hase been generated, requiring maintenance mode for {downtime}.'
 			),
 			$params
 		);
