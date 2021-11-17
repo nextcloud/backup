@@ -1,0 +1,10 @@
+{ "translations": {
+    "Backup" : "Salvagarda",
+    "complete" : "terminada",
+    "partial" : "parciala",
+    "seconds" : "segondas",
+    "minutes" : "minutas",
+    "hours" : "oras",
+    "days" : "jorns"
+},"pluralForm" :"nplurals=2; plural=(n > 1);"
+}
