@@ -151,7 +151,7 @@
 				{{ t('backup', 'Export backup configuration') }}
 			</h3>
 			<div class="backup-settings__actions__action">
-				{{ t('backup', 'You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
+				{{ t('backup', 'You can export your settings with the button below. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
 				<button
 					:disabled="loadingExportSettings"
 					class="backup-settings__actions__action__export"
