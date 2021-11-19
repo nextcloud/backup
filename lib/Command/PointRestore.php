@@ -265,6 +265,7 @@ class PointRestore extends Base {
 
 		$output->writeln('> Finalization of the restoring process');
 		$output->writeln('> <info>maintenance mode</info> disabled');
+		$this->forceDisableMaintenanceMode();
 		$this->restoreService->finalizeFullRestore();
 
 		$this->activityService->newActivity(
@@ -666,7 +667,7 @@ class PointRestore extends Base {
 			$this->compareConfigSqlParams($sqlParams, $CONFIG, ISqlDump::DB_PASS);
 		}
 
-		$CONFIG['maintenance'] = false;
+		$CONFIG[ConfigService::MAINTENANCE] = false;
 		$this->output->writeln('  > Updating <info>config.php</info>');
 		$this->output->writeln('');
 		file_put_contents(
@@ -956,5 +957,29 @@ class PointRestore extends Base {
 				]
 			);
 		}
+	}
+
+
+	/**
+	 *
+	 */
+	private function forceDisableMaintenanceMode() {
+		$CONFIG = [];
+		$cwd = getcwd();
+		if (is_bool($cwd)) {
+			return;
+		}
+
+		$configFile = $cwd . '/config/config.php';
+		include $configFile;
+
+		if (empty($CONFIG) || $this->getBool(ConfigService::MAINTENANCE, $CONFIG) === false) {
+			return;
+		}
+
+		$CONFIG[ConfigService::MAINTENANCE] = false;
+		file_put_contents(
+			$configFile, '<?php' . "\n" . '$CONFIG = ' . var_export($CONFIG, true) . ';' . "\n"
+		);
 	}
 }
