@@ -47,9 +47,7 @@ use Throwable;
  * @package OCA\Backup\Cron
  */
 class Manage extends TimedJob {
-
-
-	const DELAY_CHECK_HEALTH = 86400 * 7; // 7d
+	public const DELAY_CHECK_HEALTH = 86400 * 7; // 7d
 
 	/** @var CronService */
 	private $cronService;
