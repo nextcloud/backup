@@ -36,6 +36,7 @@ use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\PointService;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
@@ -56,6 +57,8 @@ class Backup extends TimedJob {
 	/** @var ConfigService */
 	private $configService;
 
+	/** @var LoggerInterface */
+	private $loggerInterface;
 
 	/**
 	 * Backup constructor.
@@ -63,24 +66,27 @@ class Backup extends TimedJob {
 	 * @param PointService $pointService
 	 * @param CronService $cronService
 	 * @param ConfigService $configService
+	 * @param LoggerInterface $loggerInterface
 	 */
 	public function __construct(
 		PointService $pointService,
 		CronService $cronService,
-		ConfigService $configService
+		ConfigService $configService,
+		LoggerInterface $loggerInterface
 	) {
 		$this->setInterval(900);
 
 		$this->pointService = $pointService;
 		$this->cronService = $cronService;
 		$this->configService = $configService;
+		$this->loggerInterface = $loggerInterface;
 	}
 
 
 	/**
 	 * @param $argument
 	 */
-	protected function run($argument):void {
+	protected function run($argument): void {
 		if (!$this->cronService->isRealCron()) {
 			return;
 		}
@@ -115,6 +121,7 @@ class Backup extends TimedJob {
 		try {
 			$this->pointService->create(true);
 		} catch (Throwable $e) {
+			$this->loggerInterface->debug('error while running full backup - ' . json_encode(debug_backtrace()));
 		}
 	}
 
@@ -126,6 +133,7 @@ class Backup extends TimedJob {
 		try {
 			$this->pointService->create(false);
 		} catch (Throwable $e) {
+			$this->loggerInterface->error('error while running differential backup - ' . json_encode(debug_backtrace()));
 		}
 	}
 }
