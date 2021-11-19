@@ -105,9 +105,10 @@ class FilesService {
 	 */
 	public function fillRestoringData(RestoringData $data, string $path): void {
 		if (!is_dir($data->getAbsolutePath() . rtrim($path, '/'))) {
+			$log = $this->configService->getSystemValue(ConfigService::LOGFILE) ?: 'nextcloud.log';
 			if ($data->getType() === RestoringData::ROOT_DATA
 				&& !$this->configService->getAppValueBool(ConfigService::INCLUDE_LOGS)
-				&& $path === 'nextcloud.log') {
+				&& substr($path, 0, strlen($log)) === $log) {
 				return;
 			}
 

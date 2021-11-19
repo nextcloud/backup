@@ -47,7 +47,7 @@ use Throwable;
  * @package OCA\Backup\Cron
  */
 class Manage extends TimedJob {
-
+	public const DELAY_CHECK_HEALTH = 86400 * 7; // 7d
 
 	/** @var CronService */
 	private $cronService;
@@ -141,7 +141,7 @@ class Manage extends TimedJob {
 		// regenerate local health
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
 			if ($point->hasHealth()
-				&& $point->getHealth()->getChecked() > time() - 3600 * 12) {
+				&& $point->getHealth()->getChecked() > time() - self::DELAY_CHECK_HEALTH) {
 				continue;
 			}
 			try {
