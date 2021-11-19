@@ -127,8 +127,8 @@ class CronService {
 				if ($fullETA === -1 && $this->verifyFullBackup($time)) {
 					$fullETA = $time;
 				} elseif ($partialETA === -1
-						  && $this->verifyIncrementalBackup($time)
-						  && ($last > 0) // we check that the incremental backup can have a parent
+						  && $this->verifyDifferentialBackup($time)
+						  && ($last > 0) // we check that the differential backup can have a parent
 						  && ($time - $last) > $delayPartial) { // we check the time since next full rp
 					$partialETA = $time;
 				}
@@ -230,7 +230,7 @@ class CronService {
 	 *
 	 * @return bool
 	 */
-	public function verifyIncrementalBackup(int $time): bool {
+	public function verifyDifferentialBackup(int $time): bool {
 		$last = max(
 			$this->configService->getAppValueInt(ConfigService::DATE_PARTIAL_RP),
 			$this->configService->getAppValueInt(ConfigService::DATE_FULL_RP)

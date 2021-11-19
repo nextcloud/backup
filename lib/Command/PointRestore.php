@@ -871,7 +871,7 @@ class PointRestore extends Base {
 				]
 			);
 
-			// include restored file in next incremental backup
+			// include restored file in next differential backup
 			$changedFile = new ChangedFile($file->getName());
 			$this->filesService->changedFile($changedFile);
 

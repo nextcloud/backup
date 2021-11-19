@@ -166,7 +166,7 @@ class LocalController extends OcsController {
 				if ($param === 'full') {
 					return $this->initActionForceFullBackup();
 				} elseif ($param === 'partial') {
-					return $this->initActionForceIncrementalBackup();
+					return $this->initActionForceDifferentialBackup();
 				}
 		}
 
@@ -439,7 +439,7 @@ class LocalController extends OcsController {
 	/**
 	 * @return DataResponse
 	 */
-	private function initActionForceIncrementalBackup(): DataResponse {
+	private function initActionForceDifferentialBackup(): DataResponse {
 		return new DataResponse(['message' => 'action partial backup not yet implemented)']);
 	}
 }
