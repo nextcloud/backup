@@ -8,7 +8,7 @@
     "minutes" : "分钟",
     "hours" : "小时",
     "days" : "天",
-    "A new restoring point ({type}) have been generated, requiring maintenance mode for {downtime}." : "已创建了一个新还原点 ({type}），需要 {downtime} 小时的维护模式",
+    "A new restoring point ({type}) have been generated, requiring maintenance mode for {downtime}." : "已创建了一个新还原点 ({type}），需要 {downtime} 时间的维护模式",
     "Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})" : "基于 {date} 还原点已完整恢复了你的系统 （预估后退：{rewind}）",
     "The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})" : "基于 {date} 的还原点已恢复了 {file} 文件 (预估后退： {rewind}）",
     "Backup now. Restore later." : "现在备份。稍后还原。",
