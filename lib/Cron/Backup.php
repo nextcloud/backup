@@ -105,8 +105,8 @@ class Backup extends TimedJob {
 	private function runBackup(int $time): void {
 		if ($this->cronService->verifyFullBackup($time)) {
 			$this->runFullBackup();
-		} elseif ($this->cronService->verifyIncrementalBackup($time)) {
-			$this->runIncrementalBackup();
+		} elseif ($this->cronService->verifyDifferentialBackup($time)) {
+			$this->runDifferentialBackup();
 		}
 	}
 
@@ -122,7 +122,7 @@ class Backup extends TimedJob {
 	/**
 	 *
 	 */
-	private function runIncrementalBackup(): void {
+	private function runDifferentialBackup(): void {
 		try {
 			$this->pointService->create(false);
 		} catch (Throwable $e) {

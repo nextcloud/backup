@@ -10,7 +10,8 @@ _(documentation is still in writing)_
 - [How the Backup App manage your data](#backup-manage-data)
 - [Export configuration](#export)
 - [Important details about your data](#important)
-- [Upload to External Storages](#external-storages)
+- [Upload packed backup to External Storages](#external-storages)
+- [Quick compression during 1st pass](#zlib-chunk)
 - [AppData on External Storage](#external-appdata)
 - [Restoring a backup]($restoring)
 - [Available `occ` commands](#occ)
@@ -39,7 +40,7 @@ A restoring point is an image of your Nextcloud at a specific time. A restoring 
     * the local folder defined as `data` of the Nextcloud.
 
 
-- '**Partial**' (or Incremental) that contains a backup of :
+- '**Partial**' (or Differential) that contains a backup of :
     * the instance of Nextcloud, its apps and `config/config.php`
         * A dump of the database,
         * local data that have been modified/generated since the last **Full Backup**
@@ -68,7 +69,7 @@ A restoring point will **NOT** store:
 
 ### Metadata
 
-A Restoring Point also contains a file named `restoring-point.data` that contains metadata about the
+Each Restoring Point includes a file named `restoring-point.data` that contains metadata about the
 backup:
 
 - Version of your Nextcloud,
@@ -132,12 +133,12 @@ generation of your future backups.
 
 ![Settings Schedule](screenshots/settings_schedule.png)
 
-The time slot define the time of the day the Backup App might generate a backup, it is based on the local
-time on the server.
+The time slot define the time of the day the Backup App might run its **1st pass** to generate a backup,
+it is based on the local time on the server.
 
-Keep in mind that your instance will be in `maintenance mode` for the duration of the generation of the
-backup. This is the reason why, by default, **Full Backup** will only be started during the week-end,
-while **Partial Backup** are also run during week days.
+Keep in mind that, when generating a new backup, your instance will be in `maintenance mode` for the full
+duration of the **1st pass**. This is the reason why, by default, **Full Backup** will only be started
+during the week-end, while **Partial Backup** are also run during week days.
 
 If you scroll down to the bottom of this page, you can have an estimation of the date for your next
 backup based on your settings:
@@ -146,7 +147,7 @@ backup based on your settings:
 
 ### The first pass (the backup process)
 
-During the **First Pass**, data are quickly stored in the `appdata` folder of the **Backup App*.   
+During the **First Pass**, data are quickly stored in the `appdata` folder of the **Backup App**.   
 At this point, there is no compression nor encryption; the first pass needs to be as fast as possible to
 release the `maintenance mode` on the instance.   
 The data are stored in a list of zip files (named `chunk`), each one with a maximum size of 4GB (unless
@@ -160,8 +161,14 @@ By default, the `appdata` folder of the Backup App is located in the same folder
 data of your instance defined in `datadirectory`. It is estimated that the `Backup App` needs 65% of the
 available diskspace of the `datadirectory`
 
-In case there is not enough space, you can [#external-appdata](mount an External Storage) and move
-the `appdata` folder of the **Backup app** there.
+In case there is not enough space, you can:
+
+- [mount an External Storage](#external-appdata) and move the `appdata` folder of the **Backup app**
+  there,
+
+<!---
+- [add a quick compression](#zlib-chunk) during the 1st pass.
+-->
 
 ### The second pass (the packing process)
 
@@ -179,7 +186,6 @@ The packing will list each `chunk` of your backup and:
 - Encrypt each `part` (if enabled),
 - Once completed without issue, remove the original zip file of the `chunk` to free space.
 
-
 <a name="handle-external-storages"></a>
 
 ### Storing on a different hard drive
@@ -191,8 +197,8 @@ and check their integrity every day.
 
 The uploading process will check that each `part` of the packed restoring point are healthy, based on the
 checksum stored in the `metadata` file and will retry to upload any faulty `part`.  
-On top of that, the data itself from the `metadata` file are signed, making the Backup App able to
-confirm the full integrity of the backup.
+On top of that, the content from the `metadata` file is signed, making the Backup App able to confirm the
+full integrity of the backup.
 
 <a name="export"></a>
 
@@ -206,9 +212,12 @@ confirm the full integrity of the backup.
 
 - **Disk-space**: The 1st pass does not compress anything, meaning that you will need at least the
   equivalent of currently used space by your Nextcloud as available disk-space. If you have no disk-space
-  available, you can configure the app to use an external storage to store all its data.  
-  The configuration process is described in [this chapter](#external-appdata).
+  available, you can configure the app to use
+  an [external storage to store all its data](#external-appdata).
 
+<!---
+  or add a [quick compression](#zlib-compression) on the `chunks`.
+-->
 
 - **Temporary Files**: during the 2nd pass (packing process), the compression and encryption require the
   creation of temporary files. while those files are temporary and deleted when they become useless, they
@@ -216,18 +225,18 @@ confirm the full integrity of the backup.
   application.
 
 
-- **Export your setup**: If the option is not disable, Backups are encrypted with a key that is stored in
-  the database of your current instance of Nextcloud. The key is mandatory to recover any data from your
-  backups.
+- **Export your setup**: If the option is not disabled, backups are encrypted with a key that is stored
+  in the database of your current instance of Nextcloud. The key is mandatory to recover any data from
+  your backups.
 
   You can export your setup from the Admin Settings/Backup page, or using `occ`. If encrypted, the export
   process will generate and returns its own key that will be required during the import when restoring
   your instance. As an admin, you will need to store the export file and its key, preferably in different
-  location.
+  locations.
 
 
 - **.nobackup**: The presence of a `.nobackup` file in a folder will exclude all content from the current
-  folder and its subfolders at the creation of the backup.
+  folder and its subfolders from the backup.
 
 <a name="external-storages"></a>
 
@@ -243,14 +252,27 @@ The configuration is done in 2 steps:
 - The first step is to setup a folder from the **External Storage** Settings Page, it is strongly adviced
   to limit the availability of the folder to the `admin` group only,
 
-![Settings External](screenshots/settings_external_store.png)
+![Settings External Store](screenshots/settings_external_store.png)
 
 - the second step is done in the **Backup** Settings Page, the configured External Storage should be
   displayed in the listing of available storage location,
 
-![Settings External](screenshots/settings_external_folder.png)
+![Settings External Folder](screenshots/settings_external_folder.png)
 
-- set the path where your backup files will be stored.
+- set the folder where to store your backup files on the external storage, and click on '_Add new
+  external location_'.
+
+<!---
+
+<a name="zlib-chunk"></a>
+
+## Quick compression during 1st pass
+
+If you have limited disk-space available, you can define a compression level (from 0 to 9, with 0 means
+no compression) that will be applied to the `chunks` during the 1st pass. This will require more
+resources, meaning that the maintenance mode will be enabled for a longer period of time, depends on the
+chosen compression level.
+-->
 
 <a name="external-appdata"></a>
 
@@ -264,9 +286,13 @@ its data:
 - the 1st-pass will require more resources and your instance will stays in maintenance mode for a longer
   time.
 - If your external storage is not a local folder, huge network resources will be required.
+- During the configuration, old restoring points from the previous storage will be deleted.
 
-run `./occ backup:external:appdata` and follow instruction to select the configured external storage, and
-configure the path to the right folder.
+From a terminal, run `./occ backup:external:appdata` and follow the instructions to select the external
+storage and the folder.  
+From the **Backup** Settings Page, you can do the same:
+
+![Settings External Appdata](screenshots/settings_external_appdata.png)
 
 <a name="restoring"></a>
 
@@ -276,22 +302,13 @@ You can restore a single file or the whole instance to a previous state:
 
     ./occ backup:point:restore <pointId> [--file <filename>] [--data <dataPack>] [--chunk chunkName]
 
-Please note that you can go back to a previous backup of your instance from any Nextcloud compatible with
-the Backup App. There is no need to install the exact same version as it will be reverted to the one used
-when creating the Restoring Point. Meaning that you can fully restore your instance of Nextcloud even if
-you lost your harddrive, as long as you kept a copy of the Restoring Point (upload to another remote
-instance)
+Please note that you can go back to a previous backup of your instance from any version of Nextcloud
+compatible with the Backup App. There is no need to install the exact same version as it will be reverted
+to the one used when creating the Restoring Point. Meaning that you can fully restore your instance of
+Nextcloud even if you lost your harddrive, as long as you kept a copy of the Restoring Point (upload to
+another remote instance)
 
-- install nextcloud compatible with the Backup App,
-- ./occ app:enable backup
-- if the backup are encrypted (or to confirm integrity of files): `./occ backup:setup:
-  import [--key <key>] < ~/backup_setup
-- if the backup are on an external storage:
-    * `./occ app:enable files_external`
-    * add the [external storage](#upload-to-external-storages)
-    * `./occ backup:external:add` and follow instruction, add the path to the backup you want to reach
-    * you should be able to see the restoring point the external storage
-- `./occ backup:point:list`
+### Restoring my Nextcloud from scratch.
 
 In this scenario, you have lost everything and want to fully recover your Nextcloud.
 
@@ -338,10 +355,11 @@ $ ./occ backup:point:list
 +---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
 ```
 
-* download the restoring point
+- Download the one you want to restore; if you want to restore multiple backups, it is a good idea to
+  download them all at that point.
 
 ```
-$ ./occ backup:point:download --external 3 20211031232710-full-Tu4H6vOtxKoLLb9
+$ ./occ backup:point:download 20211031232710-full-Tu4H6vOtxKoLLb9 --external 3
 > downloading metadata
 check health status: 0 correct, 43 missing and 0 faulty files
   * Downloading data/data-0540e4d6-9d7f-4c84-a8d8-ca40764257d1/00001-B57XWKJQe5Xg1sd: ok
@@ -349,10 +367,10 @@ check health status: 0 correct, 43 missing and 0 faulty files
 [...]
 ```
 
-* unpack the restoring point
+- Unpack the downloaded restoring point:
 
 ```
-$ ./occ backup:point:unpack  20211031232710-full-Tu4H6vOtxKoLLb9
+$ ./occ backup:point:unpack 20211031232710-full-Tu4H6vOtxKoLLb9
 Unpacking Restoring Point 20211031232710-full-Tu4H6vOtxKoLLb9
  > lock and set status to unpacking
  > Browsing RestoringData data
@@ -363,10 +381,12 @@ Unpacking Restoring Point 20211031232710-full-Tu4H6vOtxKoLLb9
 [...]
 ```
 
-* for each data pack, you will be prompt to choose the location of the extraction.
-* If a sqldump is available, you will be prompt to use the current configuration from the instance, or
-  use another database
-
+- Start the restoring process. Please note that:
+    * for each data pack, you will be able to choose the location of the extraction, (you can bypass
+      using `--do-not-ask-data`)
+    * If a sqldump is available, you will be prompt to use the current configuration from the instance,
+      the one from the `config/config.php` freshly restored or use another database (you can bypass
+      using `--do-not-ask-sql`)
     * if the information from the file `config/config.php` are in conflict with the path or sql settings
       specified during the extraction, you will be notified that the restoring process wants to update
       them.
@@ -517,9 +537,9 @@ To restore the exported configuration:
 
 While this is managed by a background job, you can still generate a restoring point manually:
 
-    ./occ backup:point:create [--incremental]
+    ./occ backup:point:create [--differential]
 
-The `--incremental` option will create an incremental backup
+The `--differential` option will create an differential backup
 
 **Upload a Restoring Point**
 

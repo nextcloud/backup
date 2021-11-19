@@ -379,7 +379,7 @@ class PointService {
 		$this->o('> initialization of the RestoringPoint: ', false);
 		$point = new RestoringPoint();
 		$point->setDate(time());
-		$separator = ($complete) ? '-full-' : '-incremental-';
+		$separator = ($complete) ? '-full-' : '-differential-';
 		$point->setId(date('YmdHis', $point->getDate()) . $separator . $this->token());
 		$point->setNC(Util::getVersion());
 
@@ -410,7 +410,7 @@ class PointService {
 			$point->addRestoringData(new RestoringData(RestoringData::ROOT_DATA, '', RestoringData::DATA));
 		} else {
 			$this->initParent($point);
-			$this->addIncrementalData($point);
+			$this->addDifferentialData($point);
 		}
 
 		$point->addRestoringData(
@@ -445,7 +445,7 @@ class PointService {
 
 		if ($parentId === '') {
 			throw new ParentRestoringPointNotFoundException(
-				'cannot create incremental. parent cannot be found'
+				'cannot create differential. parent cannot be found'
 			);
 		}
 
@@ -477,7 +477,7 @@ class PointService {
 	/**
 	 * @param RestoringPoint $point
 	 */
-	private function addIncrementalData(RestoringPoint $point): void {
+	private function addDifferentialData(RestoringPoint $point): void {
 		$changedFiles = $this->changesRequest->getAll();
 
 		$data = new RestoringData(RestoringData::ROOT_DATA, '', RestoringData::DATA);
