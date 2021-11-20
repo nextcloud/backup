@@ -15,7 +15,7 @@
       - Compression and encryption,
       - Upload your encrypted backup on an external filesystem,
       - Download and search for your data,
-      - Restore single file or the complete instance.
+      - Restore single file or the entire instance.
 ]]>
 	</description>
 	<version>1.0.0-beta3</version>

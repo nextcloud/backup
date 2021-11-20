@@ -151,7 +151,7 @@
 				{{ t('backup', 'Export backup configuration') }}
 			</h3>
 			<div class="backup-settings__actions__action">
-				{{ t('backup', 'You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
+				{{ t('backup', 'You can export your settings with the button below. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
 				<button
 					:disabled="loadingExportSettings"
 					class="backup-settings__actions__action__export"
@@ -162,7 +162,7 @@
 				</button>
 			</div>
 			<div v-if="exportedPrivateKey !== undefined" class="backup-settings__export__info">
-				{{ t('backup', 'Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
+				{{ t('backup', 'Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
 				<br>
 				<code><b>{{ exportedPrivateKey }}</b></code>
 				<br>
@@ -173,7 +173,7 @@
 					{{ t('backup', 'Request the creation of a new restoring point now') }}
 				</h3>
 				<div v-if="settings.restoringPointRequested" class="backup-settings__actions__action__info">
-					{{ t('backup', 'The creation of a restoring point as been requested and will be initiated soon.') }}
+					{{ t('backup', 'The creation of a restoring point has been requested and will be initiated soon.') }}
 				</div>
 				<button class="primary" :disabled="loadingFetchSettings || settings.restoringPointRequested" @click="requestRestoringPointType = 'full'">
 					{{ t('backup', 'Create full restoring point') }}
