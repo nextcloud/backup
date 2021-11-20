@@ -141,7 +141,16 @@ class UploadService {
 		}
 
 		$this->metadataService->isLock($point);
+		$this->metadataService->lock($point);
 		$this->pointService->initBaseFolder($point);
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 */
+	public function closeUpload(RestoringPoint $point): void {
+		$this->metadataService->unlock($point);
 	}
 
 
@@ -159,6 +168,7 @@ class UploadService {
 		$this->initUpload($point);
 		$this->uploadToRemoteInstances($point);
 		$this->uploadToExternalFolder($point);
+		$this->closeUpload($point);
 	}
 
 

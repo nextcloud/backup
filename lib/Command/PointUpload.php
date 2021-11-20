@@ -124,6 +124,7 @@ class PointUpload extends Base {
 		if ($input->getOption('external')) {
 			$this->uploadService->initUpload($point);
 			$this->uploadService->uploadToExternalFolder($point, (int)$input->getOption('external'));
+			$this->uploadService->closeUpload($point);
 
 			return 0;
 		}
@@ -131,10 +132,10 @@ class PointUpload extends Base {
 		if ($input->getOption('remote')) {
 			$this->uploadService->initUpload($point);
 			$this->uploadService->uploadToRemoteInstances($point, $input->getOption('remote'));
+			$this->uploadService->closeUpload($point);
 
 			return 0;
 		}
-
 
 		$this->uploadService->uploadPoint($point);
 
