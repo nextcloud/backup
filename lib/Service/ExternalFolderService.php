@@ -580,14 +580,16 @@ class ExternalFolderService {
 	 *
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
-	 * @param RestoringChunkPart|null $part
 	 *
 	 * @return RestoringHealth
 	 * @throws ExternalFolderNotFoundException
 	 * @throws GenericFileException
+	 * @throws LockedException
+	 * @throws MetadataException
+	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws RestoringChunkPartNotFoundException
 	 * @throws RestoringPointException
+	 * @throws RestoringPointNotFoundException
 	 * @throws RestoringPointPackException
 	 */
 	public function generateHealth(ExternalFolder $external, RestoringPoint $point): RestoringHealth {
@@ -596,38 +598,45 @@ class ExternalFolderService {
 		}
 
 		$health = new RestoringHealth();
-		$globalStatus = RestoringHealth::STATUS_OK;
 		foreach ($point->getRestoringData() as $data) {
 			foreach ($data->getChunks() as $chunk) {
 				foreach ($chunk->getParts() as $part) {
-					$partHealth = new ChunkPartHealth(true);
-					$status = $this->generatePartHealthStatus($external, $point, $chunk, $part);
-					if ($status !== ChunkPartHealth::STATUS_OK) {
-						$globalStatus = 0;
-					}
-
-					$partHealth->setDataName($data->getName())
-							   ->setChunkName($chunk->getName())
-							   ->setPartName($part->getName())
-							   ->setStatus($status);
-					$health->addPart($partHealth);
+					$this->generateHealthPart($external, $health, $point, $data, $chunk, $part);
+					$this->updateMetadataFile($external, $point);
 				}
 			}
 		}
 
-		if ($globalStatus === RestoringHealth::STATUS_OK && $point->getParent() !== '') {
-			try {
-				$this->getRestoringPoint($external, $point->getParent());
-			} catch (RestoringPointNotFoundException $e) {
-				$globalStatus = RestoringHealth::STATUS_ORPHAN;
-			}
-		}
-
-		$health->setChecked(time())
-			   ->setStatus($globalStatus);
 		$point->setHealth($health);
 
 		return $health;
+	}
+
+
+	/**
+	 * @param ExternalFolder $external
+	 * @param RestoringHealth $health
+	 * @param RestoringPoint $point
+	 * @param RestoringData $data
+	 * @param RestoringChunk $chunk
+	 * @param RestoringChunkPart $part
+	 */
+	public function generateHealthPart(
+		ExternalFolder $external,
+		RestoringHealth $health,
+		RestoringPoint $point,
+		RestoringData $data,
+		RestoringChunk $chunk,
+		RestoringChunkPart $part
+	): void {
+		$partHealth = new ChunkPartHealth(true);
+		$status = $this->generatePartHealthStatus($external, $point, $chunk, $part);
+
+		$partHealth->setDataName($data->getName())
+				   ->setChunkName($chunk->getName())
+				   ->setPartName($part->getName())
+				   ->setStatus($status);
+		$health->addPart($partHealth);
 	}
 
 

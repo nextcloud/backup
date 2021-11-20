@@ -282,11 +282,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-				'id' => $point->getId(),
-				'duration' => $point->getDuration(),
-				'status' => $point->getStatus(),
-				'complete' => $complete
-			]
+							   'id' => $point->getId(),
+							   'duration' => $point->getDuration(),
+							   'status' => $point->getStatus(),
+							   'complete' => $complete
+						   ]
 		);
 
 		return $point;
@@ -850,26 +850,40 @@ class PointService {
 		$this->initBaseFolder($point);
 
 		$health = new RestoringHealth();
-		$globalStatus = RestoringHealth::STATUS_OK;
 		foreach ($point->getRestoringData() as $data) {
 			foreach ($data->getChunks() as $chunk) {
-				if ($chunk->hasParts()) {
-					$this->generateHealthPacked($health, $point, $data, $chunk, $globalStatus);
-					continue;
-				}
-
-				$chunkHealth = new ChunkPartHealth();
-
-				$status = $this->generateChunkHealthStatus($point, $chunk);
-				if ($status !== ChunkPartHealth::STATUS_OK) {
-					$globalStatus = 0;
-				}
-
-				$chunkHealth->setDataName($data->getName())
-							->setChunkName($chunk->getName())
-							->setStatus($status);
-				$health->addPart($chunkHealth);
+				$this->generateHealthChunk($health, $point, $data, $chunk);
 			}
+		}
+
+		$point->setHealth($health);
+		$this->confirmGlobalStatus($point);
+		$this->update($point, true);
+
+		return $health;
+	}
+
+
+	public function generateHealthChunk(
+		RestoringHealth $health,
+		RestoringPoint $point,
+		RestoringData $data,
+		RestoringChunk $chunk
+	) {
+		if ($chunk->hasParts()) {
+			$this->generateHealthPacked($health, $point, $data, $chunk);
+
+			return;
+		}
+
+		$chunkHealth = new ChunkPartHealth();
+
+		$status = $this->generateChunkHealthStatus($point, $chunk);
+		$chunkHealth->setDataName($data->getName())
+					->setChunkName($chunk->getName())
+					->setStatus($status);
+		$health->addPart($chunkHealth);
+	}
 
 
 	/**
@@ -894,10 +908,6 @@ class PointService {
 					}
 				}
 			}
-	 */
-		$globalStatus = RestoringHealth::STATUS_OK;
-		foreach ($point->getRestoringData() as $data) {
-			foreach ($data->getChunks() as $chunk) {
 		}
 
 		if ($globalStatus === RestoringHealth::STATUS_OK && $point->getParent() !== '') {
@@ -911,28 +921,36 @@ class PointService {
 		$health->setStatus($globalStatus)
 			   ->setChecked(time());
 		$point->setHealth($health);
-
-		if ($updateDb) {
-			$this->update($point, true);
-		}
-
-		return $health;
 	}
 
 
+	/**
+	 * @param RestoringPoint $point
+	 *
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+	public function storeHealth(RestoringPoint $point): void {
+		$this->pointRequest->updateHealth($point);
+		$this->metadataService->saveMetadata($point);
+	}
+
+
+	/**
+	 * @param RestoringHealth $health
+	 * @param RestoringPoint $point
+	 * @param RestoringData $data
+	 * @param RestoringChunk $chunk
+	 */
 	private function generateHealthPacked(
 		RestoringHealth $health,
 		RestoringPoint $point,
 		RestoringData $data,
-		RestoringChunk $chunk,
-		int &$globalStatus
+		RestoringChunk $chunk
 	): void {
 		foreach ($chunk->getParts() as $part) {
 			$partHealth = new ChunkPartHealth(true);
 			$status = $this->generatePartHealthStatus($point, $chunk, $part);
-			if ($status !== ChunkPartHealth::STATUS_OK) {
-				$globalStatus = 0;
-			}
 
 			$partHealth->setDataName($data->getName())
 					   ->setChunkName($chunk->getName())
@@ -1029,4 +1047,5 @@ class PointService {
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
 	}
+
 }
