@@ -11,7 +11,6 @@
     "Backup now. Restore later." : "Zálohovať teraz. Obnoviť neskôr.",
     "App Data" : "Dáta aplikácie",
     "Choose where the backup app will initially store the restoring points." : "Vyberte, kde bude zálohovacia aplikácia na začiatku ukladať body obnovenia.",
-    "Path in which to store the data. (Ex: 'app_data')" : "Cesta, do ktorej sa majú údaje uložiť. (Napríklad: 'app_data')",
     "Set as App Data" : "Nastaviť ako dáta Aplikácie",
     "Error" : "Chyba",
     "Changing the App Data will delete the data stored in the previous one including restoring points." : "Zmenou údajov aplikácie sa vymažú údaje uložené v predchádzajúcej aplikácii vrátane bodov obnovenia.",

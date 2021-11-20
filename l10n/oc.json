@@ -5,6 +5,7 @@
     "seconds" : "segondas",
     "minutes" : "minutas",
     "hours" : "oras",
-    "days" : "jorns"
+    "days" : "jorns",
+    "Settings saved" : "Paramètres salvats"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

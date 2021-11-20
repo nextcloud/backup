@@ -7,6 +7,7 @@ OC.L10N.register(
     "seconds" : "segondas",
     "minutes" : "minutas",
     "hours" : "oras",
-    "days" : "jorns"
+    "days" : "jorns",
+    "Settings saved" : "Paramètres salvats"
 },
 "nplurals=2; plural=(n > 1);");
