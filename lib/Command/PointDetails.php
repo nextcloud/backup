@@ -99,11 +99,11 @@ class PointDetails extends Base {
 	 * @param PackService $packService
 	 */
 	public function __construct(
-		RemoteService         $remoteService,
-		PointService          $pointService,
+		RemoteService $remoteService,
+		PointService $pointService,
 		ExternalFolderService $externalFolderService,
-		ChunkService          $chunkService,
-		PackService           $packService
+		ChunkService $chunkService,
+		PackService $packService
 	) {
 		parent::__construct();
 
@@ -124,6 +124,7 @@ class PointDetails extends Base {
 		$this->setName('backup:point:details')
 			 ->setDescription('Details on a restoring point')
 			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			 ->addOption('refresh-health', '', InputOption::VALUE_NONE, 'refresh health status first')
 			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
 			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder');
 	}
@@ -152,14 +153,24 @@ class PointDetails extends Base {
 		$external = $input->getOption('external');
 
 		if ($remote) {
-			$point = $this->remoteService->getRestoringPoint($remote, $pointId, true);
+			$point = $this->remoteService->getRestoringPoint(
+				$remote,
+				$pointId,
+				$input->getOption('refresh-health')
+			);
 		} elseif ($external) {
 			$externalFolder = $this->externalFolderService->getByStorageId((int)$external);
-			$point = $this->externalFolderService->getRestoringPoint($externalFolder, $pointId, true);
+			$point = $this->externalFolderService->getRestoringPoint(
+				$externalFolder,
+				$pointId,
+				$input->getOption('refresh-health')
+			);
 		} else {
 			$point = $this->pointService->getLocalRestoringPoint($pointId);
-			$this->pointService->generateHealth($point, true);
-//			$this->pointService->initBaseFolder($point);
+			if ($input->getOption('refresh-health')) {
+				$this->pointService->generateHealth($point);
+			}
+			$this->pointService->initBaseFolder($point);
 		}
 
 		if ($input->getOption('output') === 'json') {
@@ -233,13 +244,19 @@ class PointDetails extends Base {
 		$output->writeln('');
 
 		$color = 'info';
-		if ($point->getHealth()->getStatus() !== RestoringHealth::STATUS_OK) {
+		if (!$point->hasHealth() || $point->getHealth()->getStatus() !== RestoringHealth::STATUS_OK) {
 			$color = 'error';
 		}
 
+		if ($point->hasHealth()) {
+			$status = RestoringHealth::$DEF[$point->getHealth()->getStatus()];
+		} else {
+			$status = 'not checked';
+		}
+
 		$output->writeln(
-			'Status of the restoring point ' . $source . ': <' . $color . '>' .
-			RestoringHealth::$DEF[$point->getHealth()->getStatus()] . '</' . $color . '>'
+			'Status of the restoring point ' . $source . ': <' . $color . '>'
+			. $status . '</' . $color . '>'
 		);
 
 
@@ -253,23 +270,28 @@ class PointDetails extends Base {
 	 * @param RestoringChunk $chunk
 	 */
 	private function displayDetailsPacked(
-		Table          $table,
+		Table $table,
 		RestoringPoint $point,
 		RestoringChunk $chunk
 	): void {
 		$fresh = true;
-		$health = $point->getHealth();
-		foreach ($chunk->getParts() as $part) {
-			$partHealth = $health->getPart($chunk->getName(), $part->getName());
-			$status = ChunkPartHealth::$DEF_STATUS[$partHealth->getStatus()];
-//
-//			try {
-//				$checked = $this->packService->getChecksum($point, $chunk, $part);
-//			} catch (ArchiveNotFoundException $e) {
-//				$checked = '<error>missing chunk</error>';
-//			}
+		$health = null;
+		if ($point->hasHealth()) {
+			$health = $point->getHealth();
+		}
 
-			$color = ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) ? 'info' : 'error';
+		foreach ($chunk->getParts() as $part) {
+			$status = 'not checked';
+			$color = 'error';
+			try {
+				if (!is_null($health)) {
+					$partHealth = $health->getPart($chunk->getName(), $part->getName());
+					$status = ChunkPartHealth::$DEF_STATUS[$partHealth->getStatus()];
+					$color = ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) ? 'info' : 'error';
+				}
+			} catch (RestoringChunkPartNotFoundException $e) {
+			}
+
 			$status = '<' . $color . '>' . $status . '</' . $color . '>';
 
 			$table->appendRow(

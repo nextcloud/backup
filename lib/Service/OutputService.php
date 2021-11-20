@@ -33,6 +33,7 @@ namespace OCA\Backup\Service;
 
 use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringHealth;
+use OCA\Backup\Model\RestoringPoint;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -98,11 +99,15 @@ class OutputService {
 
 
 	/**
-	 * @param RestoringHealth $health
+	 * @param RestoringPoint $point
 	 *
 	 * @return string
 	 */
-	public function displayHealth(RestoringHealth $health): string {
+	public function displayHealth(RestoringPoint $point): string {
+		if (!$point->hasHealth()) {
+			return '<error>no health status</error>';
+		}
+		$health = $point->getHealth();
 		if ($health->getStatus() === RestoringHealth::STATUS_OK) {
 			return '<info>ok</info>';
 		}

@@ -117,13 +117,13 @@ class OccService {
 		$external = $input->getOption('external');
 
 		if ($remote) {
-			return $this->remoteService->getRestoringPoint($remote, $pointId, true);
+			return $this->remoteService->getRestoringPoint($remote, $pointId);
 		}
 
 		if ($external) {
 			$externalFolder = $this->externalFolderService->getByStorageId((int)$external);
 
-			return $this->externalFolderService->getRestoringPoint($externalFolder, $pointId, true);
+			return $this->externalFolderService->getRestoringPoint($externalFolder, $pointId);
 		}
 
 		return $this->pointService->getLocalRestoringPoint($pointId);

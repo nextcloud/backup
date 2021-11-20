@@ -610,7 +610,6 @@ class PointService {
 			}
 		}
 
-		$this->generateHealth($point);
 		$this->pointRequest->save($point);
 		$this->saveMetadata($point);
 
@@ -671,7 +670,6 @@ class PointService {
 			throw new RestoringPointNotFoundException('cannot read ' . MetadataService::METADATA_FILE);
 		}
 
-		$this->generateHealth($point);
 		$this->pointRequest->save($point);
 
 		return $point;
@@ -847,7 +845,7 @@ class PointService {
 	 * @throws NotPermittedException
 	 * @throws SignatoryException
 	 */
-	public function generateHealth(RestoringPoint $point, bool $updateDb = false): RestoringHealth {
+	public function generateHealth(RestoringPoint $point): RestoringHealth {
 		$this->initBackupFS();
 		$this->initBaseFolder($point);
 
@@ -872,6 +870,34 @@ class PointService {
 							->setStatus($status);
 				$health->addPart($chunkHealth);
 			}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 */
+	public function confirmGlobalStatus(RestoringPoint $point): void {
+		$health = $point->getHealth();
+		$globalStatus = RestoringHealth::STATUS_OK;
+		foreach ($point->getRestoringData() as $data) {
+			foreach ($data->getChunks() as $chunk) {
+				if ($chunk->hasParts()) {
+					foreach ($chunk->getParts() as $part) {
+						$status = $this->generatePartHealthStatus($point, $chunk, $part);
+						if ($status !== ChunkPartHealth::STATUS_OK) {
+							$globalStatus = 0;
+						}
+					}
+				} else {
+					$status = $this->generateChunkHealthStatus($point, $chunk);
+					if ($status !== ChunkPartHealth::STATUS_OK) {
+						$globalStatus = 0;
+					}
+				}
+			}
+	 */
+		$globalStatus = RestoringHealth::STATUS_OK;
+		foreach ($point->getRestoringData() as $data) {
+			foreach ($data->getChunks() as $chunk) {
 		}
 
 		if ($globalStatus === RestoringHealth::STATUS_OK && $point->getParent() !== '') {

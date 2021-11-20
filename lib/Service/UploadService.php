@@ -320,7 +320,7 @@ class UploadService {
 				}
 
 				$this->uploadMissingFilesToExternalFolder($external, $point, $health);
-				$this->externalFolderService->getRestoringPoint($external, $point->getId(), true);
+				$this->externalFolderService->getRestoringPoint($external, $point->getId());
 			} catch (RestoringChunkPartNotFoundException $e) {
 				try {
 					$this->externalFolderService->deletePointExternal($external, $point->getId());

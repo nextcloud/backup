@@ -209,16 +209,17 @@ class PointRestore extends Base {
 		$output->writeln('Date: <info>' . date('Y-m-d H:i:s', $point->getDate()) . '</info>');
 
 		$output->write('Checking Health status: ');
-		$this->pointService->generateHealth($point);
 
-		$output->writeln($this->outputService->displayHealth($point->getHealth()));
+		$output->writeln($this->outputService->displayHealth($point));
 		$output->writeln('');
 
-		$healthStatus = $point->getHealth()->getStatus();
-		if ($healthStatus !== RestoringHealth::STATUS_OK && !$force) {
+		if ((!$point->hasHealth()
+			 || $point->getHealth()->getStatus() !== RestoringHealth::STATUS_OK)
+			&& !$force) {
 			$output->writeln('Some files from your restoring point might not be available');
-			$output->writeln('You can run ./occ backup:point:details for more details on the affected files');
-			$output->writeln('or use --force to force the restoring process despite this warning');
+			$output->writeln('You can run <info>./occ backup:point:details</info> for more details on the affected files');
+			$output->writeln('You can also run <info>./occ backup:point:details --refresh-health</info> to generate a new Health Check');
+			$output->writeln('or add --force to your current command to enforce the restoring process despite this warning');
 			$output->writeln('');
 
 			return 0;

@@ -214,12 +214,13 @@ class PointDownload extends Base {
 		}
 
 		$output->write('check health status: ');
-		$this->pointService->generateHealth($point);
-		$output->writeln($this->outputService->displayHealth($point->getHealth()));
+		$output->writeln($this->outputService->displayHealth($point));
+		if (!$point->getHealth()) {
+			$this->pointService->generateHealth($point, true);
+		}
 		$this->downloadMissingFiles($output, $remote, $external, $point);
 
-		$this->pointService->generateHealth($point);
-
+		$this->pointService->confirmGlobalStatus($point);
 		// set Archive flag up after download
 		$point->setArchive(true);
 		$this->remoteStreamService->subSignPoint($point);

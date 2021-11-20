@@ -54,6 +54,7 @@ use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\ExternalFolder;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkPart;
+use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
@@ -368,7 +369,7 @@ class ExternalFolderService {
 		RestoringPoint $point
 	): RestoringPoint {
 		try {
-			$stored = $this->getRestoringPoint($folder, $point->getId(), true);
+			$stored = $this->getRestoringPoint($folder, $point->getId());
 			$this->o('  > restoring point found');
 //		} catch (RemoteInstanceException $e) {
 //			$this->o('  ! <error>check configuration on remote instance</error>');
@@ -384,11 +385,15 @@ class ExternalFolderService {
 				$this->createPoint($folder, $point);
 				$this->o('  > restoring point created');
 				$this->o('  * initiating health check');
-				$stored = $this->getRestoringPoint($folder, $point->getId(), true);
+				$stored = $this->getRestoringPoint($folder, $point->getId());
 			} catch (Exception $e) {
 				$this->o('  ! <error>cannot create restoring point</error>');
 				throw $e;
 			}
+		}
+
+		if (!$stored->hasHealth()) {
+			$stored = $this->getRestoringPoint($folder, $point->getId(), true);
 		}
 
 		return $stored;
@@ -534,6 +539,10 @@ class ExternalFolderService {
 				   ->setSubSignature($point->getSubSignature());
 		} catch (Exception $e) {
 			$stored = $point;
+		}
+
+		if ($point->hasHealth()) {
+			$stored->setHealth($point->getHealth());
 		}
 
 		$metadataFile->putContent(json_encode($stored, JSON_PRETTY_PRINT));
@@ -698,9 +707,6 @@ class ExternalFolderService {
 				/** @var File $file */
 				$file = $folder->get($part->getName());
 				$stream = $file->fopen('rb');
-//				*/
-//				$file->
-//				$stream = $file->();
 			}
 		} catch (Exception $e) {
 			throw new ArchiveNotFoundException(

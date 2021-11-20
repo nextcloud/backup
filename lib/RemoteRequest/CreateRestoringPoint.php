@@ -92,7 +92,6 @@ class CreateRestoringPoint extends CoreRequest implements IRemoteRequest {
 		/** @var RestoringPoint $point */
 		$point = $this->deserializeJson($this->getSignedRequest()->getBody(), RestoringPoint::class);
 		$point->setInstance($signatory->getInstance());
-		$this->pointService->generateHealth($point);
 
 		try {
 			$this->pointRequest->getById($point->getId());
