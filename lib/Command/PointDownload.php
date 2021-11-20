@@ -50,6 +50,7 @@ use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\ExternalFolderService;
+use OCA\Backup\Service\MetadataService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
@@ -91,6 +92,9 @@ class PointDownload extends Base {
 	/** @var RemoteService */
 	private $remoteService;
 
+	/** @var MetadataService */
+	private $metadataService;
+
 	/** @var ExternalFolderService */
 	private $externalFolderService;
 
@@ -110,6 +114,7 @@ class PointDownload extends Base {
 	 * @param PackService $packService
 	 * @param RemoteStreamService $remoteStreamService
 	 * @param RemoteService $remoteService
+	 * @param MetadataService $metadataService
 	 * @param ExternalFolderService $externalFolderService
 	 * @param OutputService $outputService
 	 * @param ConfigService $configService
@@ -121,6 +126,7 @@ class PointDownload extends Base {
 		PackService $packService,
 		RemoteStreamService $remoteStreamService,
 		RemoteService $remoteService,
+		MetadataService $metadataService,
 		ExternalFolderService $externalFolderService,
 		OutputService $outputService,
 		ConfigService $configService
@@ -133,6 +139,7 @@ class PointDownload extends Base {
 		$this->packService = $packService;
 		$this->remoteStreamService = $remoteStreamService;
 		$this->remoteService = $remoteService;
+		$this->metadataService = $metadataService;
 		$this->externalFolderService = $externalFolderService;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
@@ -287,6 +294,7 @@ class PointDownload extends Base {
 	 * @throws RestoringPointNotFoundException
 	 * @throws RestoringPointNotInitiatedException
 	 * @throws LockedException
+	 * @throws NotFoundException
 	 */
 	private function downloadMissingFiles(
 		OutputInterface $output,
@@ -305,6 +313,7 @@ class PointDownload extends Base {
 				'/' . $partHealth->getChunkName() . '/' . $partHealth->getPartName() . ': '
 			);
 
+			$data = $this->chunkService->getDataFromRP($point, $partHealth->getDataName());
 			$chunk = $this->chunkService->getChunkFromRP(
 				$point,
 				$partHealth->getChunkName(),
@@ -324,15 +333,13 @@ class PointDownload extends Base {
 					$part
 				);
 			} else {
-				$msg = 'use --external';
-				if ($this->configService->isRemoteEnabled()) {
-					$msg = 'use --remote or --external';
-				}
-				throw new InvalidOptionException($msg);
+				throw new InvalidOptionException('use --external');
 			}
 
-//			$chunk = $this->remoteService->downloadChunk($instance, $point, $restoringChunk);
 			$this->packService->saveChunkPartContent($point, $chunk, $part);
+			$this->pointService->generateHealthChunk($health, $point, $data, $chunk);
+
+			$this->pointService->storeHealth($point);
 			$output->writeln('<info>ok</info>');
 		}
 	}

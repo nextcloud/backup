@@ -193,7 +193,7 @@ class UploadService {
 				}
 
 				$health = $stored->getHealth();
-				$this->o('  > Health status: ' . $this->outputService->displayHealth($health));
+				$this->o('  > Health status: ' . $this->outputService->displayHealth($stored));
 				if ($health->getStatus() === RestoringHealth::STATUS_OK) {
 					continue;
 				}
@@ -227,7 +227,7 @@ class UploadService {
 			if ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) {
 				continue;
 			}
-			
+
 			if ($partHealth->getChunkName() === $partHealth->getPartName()) {
 				$this->o(
 					'  * Uploading <info>' . $partHealth->getDataName() . '</info>/<info>'
@@ -290,36 +290,14 @@ class UploadService {
 				);
 
 				$stored = $this->externalFolderService->confirmPoint($external, $point);
-
-				// TODO: get fresh health
-				if (!$stored->hasHealth()) {
-					$this->o('no health status available');
-					continue;
-				}
-
 				$health = $stored->getHealth();
-//			} else {
-//					try {
-//						$this->o('  > <comment>no health status attached</comment>');
-//						$this->o('  * Requesting detailed Health status: ', false);
-//						try {
-//							$health = $this->externalFolderService->getCurrentHealth($external, $point);
-//							$this->o('<info>ok</info>');
-//						} catch (Exception $e) {
-//							$this->o('<error>' . $e->getMessage() . '</error>');
-//							continue;
-//						}
-//					} catch (Exception $e) {
-//						continue;
-//					}
-//				}
 
-				$this->o('  > Health status: ' . $this->outputService->displayHealth($health));
+				$this->o('  > Health status: ' . $this->outputService->displayHealth($stored));
 				if ($health->getStatus() === RestoringHealth::STATUS_OK) {
 					continue;
 				}
 
-				$this->uploadMissingFilesToExternalFolder($external, $point, $health);
+				$this->uploadMissingFilesToExternalFolder($external, $stored);
 				$this->externalFolderService->getRestoringPoint($external, $point->getId());
 			} catch (RestoringChunkPartNotFoundException $e) {
 				try {
@@ -350,9 +328,9 @@ class UploadService {
 	 */
 	private function uploadMissingFilesToExternalFolder(
 		ExternalFolder $external,
-		RestoringPoint $point,
-		RestoringHealth $health
+		RestoringPoint $point
 	): void {
+		$health = $point->getHealth();
 		$this->pointService->initBaseFolder($point);
 		foreach ($health->getParts() as $partHealth) {
 			if ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) {
@@ -384,6 +362,19 @@ class UploadService {
 				$this->packService->getChunkPartContent($point, $chunk, $part);
 
 				$this->externalFolderService->uploadPart($external, $point, $health, $chunk, $part);
+
+				$data = $this->chunkService->getDataFromRP($point, $partHealth->getDataName());
+
+				$this->externalFolderService->generateHealthPart(
+					$external,
+					$health,
+					$point,
+					$data,
+					$chunk,
+					$part
+				);
+				$this->externalFolderService->updateMetadataFile($external, $point);
+
 				$this->o('<info>ok</info>');
 			} catch (
 			RestoringChunkNotFoundException |
