@@ -13,7 +13,6 @@ OC.L10N.register(
     "Error" : "Virhe",
     "Local storage" : "Paikallinen tallennustila",
     "Manage available storage locations for storing restoring points" : "Hallinnoi palautuspisteiden tallettamiseen käytettävissä olevia tallennustilan sijainteja",
-    "Path in which to store the restoring points. (Ex: 'backups')" : "Polku johon palautuspisteet talletetaan. (Esimerkki: 'backups')",
     "Add new external location" : "Lisää uusi ulkoinen sijainti",
     "External storage" : "Ulkoinen tallennustila",
     "Restoring point location" : "Palautuspisteen sijainti",

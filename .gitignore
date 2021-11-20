@@ -6,6 +6,7 @@ build/
 vendor/
 node_modules/
 js/*hot-update.*
-.php_cs.cache
+.php-cs-fixer.cache
 \.vscode/
 js/backup-*
+

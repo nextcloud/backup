@@ -35,6 +35,7 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
+use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
@@ -171,7 +172,7 @@ class PointList extends Base {
 						($fresh) ? $point->getParent() : '',
 						$comment,
 						implode(',', $status),
-						$instance,
+						($instance === RemoteInstance::LOCAL) ? '<info>' . $instance . '</info>' : $instance,
 						$this->displayStyleHealth($point),
 						'<error>' . $issue . '</error>'
 					]

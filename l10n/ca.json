@@ -7,7 +7,6 @@
     "days" : "dies",
     "Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})" : "El vostre sistema ha estat restablert completament en base a un punt de restauració de {date} (retrocés estimat: {rewind})",
     "Choose where the backup app will initially store the restoring points." : "Trieu on l'app de copia de seguretat guardarà inicialment els punts de restauració.",
-    "Path in which to store the data. (Ex: 'app_data')" : "Ruta on guardar les dades. (Ex: 'app_data')",
     "Set as App Data" : "Definir com APP Data",
     "Error" : "Error",
     "I understand some data will be deleted." : "Entenc que algunes dades s'esborraran",

@@ -46,6 +46,7 @@ class ConfigService {
 
 	public const MAINTENANCE = 'maintenance';
 	public const DATA_DIRECTORY = 'datadirectory';
+	public const LOGFILE = 'logfile';
 
 	public const LOCK = 'lock';
 	public const REMOTE_ENABLED = 'remote_enabled';

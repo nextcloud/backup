@@ -151,6 +151,7 @@ class PackService {
 		$this->o(' > lock and set status to <info>processing</info>');
 		$this->metadataService->isLock($point);
 		$this->metadataService->lock($point);
+
 		$point->addStatus(RestoringPoint::STATUS_PACKING);
 		$this->metadataService->updateStatus($point);
 
@@ -164,6 +165,8 @@ class PackService {
 					$this->o('<info>already packed</info>');
 					continue;
 				}
+
+				$this->metadataService->lock($point);
 
 				try {
 					$oldChunk = null;
@@ -659,6 +662,8 @@ class PackService {
 					$this->o('<info>already unpacked</info>');
 					continue;
 				}
+
+				$this->metadataService->lock($point);
 
 				try {
 					$oldChunk = clone $chunk;
