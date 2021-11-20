@@ -12,10 +12,10 @@
       - Administrator can configure the time slots for automated backup,
       - Full and Partial backup, with different frequencies,
       - 2-pass to limit downtime (maintenance mode) of your instance,
-      - compression and encryption,
-      - upload your encrypted backup on an external filesystem,
-      - download and search for your data,
-      - restore single file or the entire instance
+      - Compression and encryption,
+      - Upload your encrypted backup on an external filesystem,
+      - Download and search for your data,
+      - Restore single file or the entire instance.
 ]]>
 	</description>
 	<version>1.0.0-beta3</version>
