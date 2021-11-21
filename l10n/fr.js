@@ -10,7 +10,6 @@ OC.L10N.register(
     "minutes" : "minutes",
     "hours" : "heures",
     "days" : "jours",
-    "A new restoring point ({type}) have been generated, requiring maintenance mode for {downtime}." : "Un nouveau point de restauration ({type}) a été généré, requérant le mode de maintenance durant {downtime}.",
     "Backup now. Restore later." : "Sauvegarder maintenant. Restaurer plus tard.",
     "App Data" : "Données de l'application",
     "Choose where the backup app will initially store the restoring points." : "Choisir où l’application de sauvegarde stockera initialement les points de restauration.",

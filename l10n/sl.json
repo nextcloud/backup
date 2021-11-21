@@ -1,7 +1,6 @@
 { "translations": {
     "Backup" : "Varnostna kopija",
     "Update on all Backup's event" : "Obnovi ob vsakem dogodku varnostne kopije",
-    "A new restoring point ({type}) have been generated, requiring maintenance mode for {downtime}." : "Nova obnovitvena točka ({type}) je bila ustvarjena, zahteva za vzdrževalni način za {downtime}.",
     "Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})" : "Vaš sistem je bil v celoti obnovljen na podlagi obnovitvene točke z datumom  {date} (predvideno previjanje nazaj: {rewind})",
     "The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})" : "Datoteka {file} je bila obnovljena na podlagi obnovitvene točke z datumom {date} (predvideno previjanje nazaj: {rewind})",
     "Backup now. Restore later." : "Varnostna kopija zdaj. Obnovitev pozneje.",
