@@ -2,7 +2,7 @@
 
 This App creates and stores backup images of your Nextcloud.
 
-_(documentation is still in writing)_
+_(Documentation is still in writing)_
 
 - [Important notes](#notes)
 - [Restoring Points](#restoring-point)
@@ -35,15 +35,15 @@ _(documentation is still in writing)_
 A restoring point is an image of your Nextcloud at a specific time. A restoring point can be:
 
 - '**Full**' (or Complete) and contains a backup of :
-    * the instance of Nextcloud, its apps and `config/config.php`
+    * The instance of Nextcloud, its apps and `config/config.php`,
     * A dump of the database,
-    * the local folder defined as `data` of the Nextcloud.
+    * The local folder defined as `data` of the Nextcloud.
 
 
 - '**Partial**' (or Differential) that contains a backup of :
-    * the instance of Nextcloud, its apps and `config/config.php`
+    * The instance of Nextcloud, its apps and `config/config.php`:
         * A dump of the database,
-        * local data that have been modified/generated since the last **Full Backup**
+        * Local data that have been modified/generated since the last **Full Backup**.
 
 ### What data are available in a Restoring Point
 
@@ -53,19 +53,19 @@ As an example, remote files won't be stored.
 
 This is a list of what can be restored and what cannot be restored when using the **Backup App**:
 
-A restoring point will store
+A restoring point will store:
 
-- your current Nextcloud,
-- the configuration in `config/config.php`,
-- the `apps/` folder and any other `custom_apps/`
-- your local `data/`, defined by `'datadirectory'` in `config/config.php`,
-- a full `sqldump` of your database,
-- list of files and localisation within the backup,
-- metadata about the instance.
+- Your current Nextcloud,
+- The configuration in `config/config.php`,
+- The `apps/` folder and any other `custom_apps/`,
+- Your local `data/`, defined by `'datadirectory'` in `config/config.php`,
+- A full `sqldump` of your database,
+- List of files and localisation within the backup,
+- Metadata about the instance.
 
 A restoring point will **NOT** store:
 
-- data from External Storages, even if the mounted filesystem is available locally.
+- Data from External Storages, even if the mounted filesystem is available locally.
 
 ### Metadata
 
@@ -85,22 +85,22 @@ backup:
 While the file `restoring-point.data` is require to confirm the integrity of all files and parts of the
 backup, it is still possible to generate a restoring point based on the available files. However :
 
-- there is no way to confirm the integrity of the restoring point,
-- the restoring process will require some knowledge from the admin about the original infrastructure from
-  the original instance that generated the backup.
+- There is no way to confirm the integrity of the restoring point,
+- The restoring process will require some knowledge from the admin about the original infrastructure from
+  The original instance that generated the backup.
 
 **Generate Metadata from backup files**
 
 - Upload the files of your restoring point on your instance of Nextcloud with the Backup App installed,
-  in a **specific** folder in your Files.
+  in a **specific** folder in your Files,
 - At the root of this **specific** folder, create a file named `restoring-point.data` with this content:
 
        {"action": "generate", "id": "20211023234222-full-TFTBQewCEdcQ3cS"}
 
 - Customize your `id`; while it is advised to use the correct **Id** of the **Restoring Point** (if
-  known), any string would work. If kept empty, a new **Id** will be generated using the current time.
+  known), any string would work. If kept empty, a new **Id** will be generated using the current time,
 
-- Right-click the file `restoring-point.data` and select '`Scan Backup Folder`'
+- Right-click the file `restoring-point.data` and select `Scan Backup Folder`.
 
 After few seconds, the metadata file will be generated and stored within the same `restoring-point.data`
 itself.
@@ -109,7 +109,7 @@ itself.
 
 ## Hardware requirement
 
-- **Diskspace**: Creating and storing backups require a lot, **a lot**, of disk-space.
+- **Diskspace**: Creating and storing backups require a lot, **a lot**, of disk-space,
 
 
 - **AES Hardware Acceleration**: If your processor does not
@@ -119,8 +119,8 @@ itself.
   to a non-AES-supporting CPU (ie. old arm proc). Enforcing the use of `aes-256-cbc` before the packing
   of the restoring point on a AES-supporting CPU will fix this:
 
-    - run: `./occ config:app:set backup force_cbc --value '1' `
-    - Pack the restoring point: `./occ backup:point:pack <pointId>`
+    - Run: `./occ config:app:set backup force_cbc --value '1' `,
+    - Pack the restoring point: `./occ backup:point:pack <pointId>`.
 
 <a name="backup-manage-data"></a>
 
@@ -129,7 +129,7 @@ itself.
 ### The timing
 
 From the **Admin Settings**/**Backup** page, you can configure the time slot and the rate for the
-generation of your future backups.
+generation of your future backups:
 
 ![Settings Schedule](screenshots/settings_schedule.png)
 
@@ -163,8 +163,8 @@ available diskspace of the `datadirectory`
 
 In case there is not enough space, you can:
 
-- [mount an External Storage](#external-appdata) and move the `appdata` folder of the **Backup app**
-  there,
+- [Mount an External Storage](#external-appdata) and move the `appdata` folder of the **Backup app**
+  there.
 
 <!---
 - [add a quick compression](#zlib-chunk) during the 1st pass.
@@ -175,7 +175,7 @@ In case there is not enough space, you can:
 The second pass does not require to put your instance in `maintenance mode`. The 2nd pass consist in the
 packing of the restoring point and eventually its upload on external storage.
 
-You can configure the type of packing in the Admin Settings of the app
+You can configure the type of packing in the Admin Settings of the app:
 
 ![Settings Packing](screenshots/settings_packing.png)
 
@@ -250,16 +250,16 @@ Those external data are [fully managed](#handle-external-storages) by the app it
 The configuration is done in 2 steps:
 
 - The first step is to setup a folder from the **External Storage** Settings Page, it is strongly adviced
-  to limit the availability of the folder to the `admin` group only,
+  to limit the availability of the folder to the `admin` group only:
 
 ![Settings External Store](screenshots/settings_external_store.png)
 
-- the second step is done in the **Backup** Settings Page, the configured External Storage should be
-  displayed in the listing of available storage location,
+- The second step is done in the **Backup** Settings Page, the configured External Storage should be
+  displayed in the listing of available storage location:
 
 ![Settings External Folder](screenshots/settings_external_folder.png)
 
-- set the folder where to store your backup files on the external storage, and click on '_Add new
+- Set the folder where to store your backup files on the external storage, and click on '_Add new
   external location_'.
 
 <!---
@@ -281,11 +281,11 @@ chosen compression level.
 If you have no disk-space available, you can configure the app to use an external storage to store all
 its data:
 
-- the data generated during the 1st pass are not encrypted, Your data leaves the internal data folder
-  from your instance and are now available on an external storage.
-- the 1st-pass will require more resources and your instance will stays in maintenance mode for a longer
-  time.
-- If your external storage is not a local folder, huge network resources will be required.
+- The data generated during the 1st pass are not encrypted, Your data leaves the internal data folder
+  from your instance and are now available on an external storage,
+- The 1st-pass will require more resources and your instance will stays in maintenance mode for a longer
+  time,
+- If your external storage is not a local folder, huge network resources will be required,
 - During the configuration, old restoring points from the previous storage will be deleted.
 
 From a terminal, run `./occ backup:external:appdata` and follow the instructions to select the external
@@ -306,7 +306,7 @@ Please note that you can go back to a previous backup of your instance from any 
 compatible with the Backup App. There is no need to install the exact same version as it will be reverted
 to the one used when creating the Restoring Point. Meaning that you can fully restore your instance of
 Nextcloud even if you lost your harddrive, as long as you kept a copy of the Restoring Point (upload to
-another remote instance)
+another remote instance).
 
 ### Restoring my Nextcloud from scratch.
 
@@ -318,7 +318,7 @@ The first step would be to have a basic setup of Nextcloud+Backup:
 - Install the **Backup** App,
 - Import your `setup` that contains the signature and encryption keys from your previous instance. You
   can bypass this step only if your backup are not encrypted and you do not need the ability to confirm
-  the integrity of files.
+  the integrity of files:
     * `./occ backup:setup:import [--key <key>] < ~/backup_setup`
 - [Enable and Configure the External Storage](#upload-to-external-storages) App, if your backups are on a
   external storage.
@@ -326,8 +326,8 @@ The first step would be to have a basic setup of Nextcloud+Backup:
 Then, you have to add your last valid restoring points from your previous instance. Both the last
 Full-Backup and the last Partial-Backup you have in hand:
 
-- [restoring my Nextcloud from a remote storage](#restore-remote-storage)
-- [restoring my Nextcloud from my workstation](#restore-workstation)
+- [Restoring my Nextcloud from a remote storage](#restore-remote-storage)
+- [Restoring my Nextcloud from my workstation](#restore-workstation)
 
 <a name="restore-remote-storage"></a>
 
@@ -343,10 +343,10 @@ the creation of the external storage._
 
 ```
 $ ./occ backup:point:list
-- retreiving data from local
-- retreiving data from external:3
-> found RestoringPoint 20211031232710-full-Tu4H6vOtxKoLLb9
-> found RestoringPoint 20211101014009-full-QeTziynggIuaaD2
+- Retrieving data from local
+- Retrieving data from external:3
+> Found RestoringPoint 20211031232710-full-Tu4H6vOtxKoLLb9
+> Found RestoringPoint 20211101014009-full-QeTziynggIuaaD2
 +---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
 | Restoring Point                       | Date                | Parent | Comment | Status                      | Instance   | Health       |  |
 +---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
@@ -356,7 +356,7 @@ $ ./occ backup:point:list
 ```
 
 - Download the one you want to restore; if you want to restore multiple backups, it is a good idea to
-  download them all at that point.
+  download them all at that point:
 
 ```
 $ ./occ backup:point:download 20211031232710-full-Tu4H6vOtxKoLLb9 --external 3
@@ -375,21 +375,21 @@ Unpacking Restoring Point 20211031232710-full-Tu4H6vOtxKoLLb9
  > lock and set status to unpacking
  > Browsing RestoringData data
    > Unpacking RestoringChunk data-0540e4d6-9d7f-4c84-a8d8-ca40764257d1: proceeding
-     * copying parts to temp files
+     * Copying parts to temp files
        - 00001-B57XWKJQe5Xg1sd: /tmp/phpNnYCbZ
        - 00002-PXHPeS6t6OXFwkP: /tmp/phpYqRSPW
 [...]
 ```
 
 - Start the restoring process. Please note that:
-    * for each data pack, you will be able to choose the location of the extraction, (you can bypass
-      using `--do-not-ask-data`)
+    * For each data pack, you will be able to choose the location of the extraction, (you can bypass
+      using `--do-not-ask-data`),
     * If a sqldump is available, you will be prompt to use the current configuration from the instance,
       the one from the `config/config.php` freshly restored or use another database (you can bypass
-      using `--do-not-ask-sql`)
-    * if the information from the file `config/config.php` are in conflict with the path or sql settings
+      using `--do-not-ask-sql`),
+    * If the information from the file `config/config.php` are in conflict with the path or sql settings
       specified during the extraction, you will be notified that the restoring process wants to update
-      them.
+      them:
 
 ```
 $ ./occ backup:point:restore 20211031232710-full-Tu4H6vOtxKoLLb9
@@ -414,14 +414,14 @@ If your backups are on your workstation, you can upload them on your Nextcloud F
 Nextcloud account. Once uploaded, open the folder containing the restoring point to find the metadata
 file `restoring-point.data`.
 
-Right-click the file `restoring-point.data` and select '`Scan Backup Folder`'
+Right-click the file `restoring-point.data` and select `Scan Backup Folder`.
 
 The scan of the restoring will be initiated at the next tick of your crontab. The background job will
 scan the full folder and its content, copy pertinent data into the app's appdata and create a new entry
 in the database.
 
 Once available in the listing of your available restoring points, the process will be the same as
-described in [Restoring my Nextcloud from Appdata](#restore-appdata)
+described in [Restoring my Nextcloud from Appdata](#restore-appdata).
 
 <a name="restore-scan"></a>
 
@@ -451,10 +451,10 @@ want to restore has the `packed` status, you will need to `unpack` it first:
 ```
 $ ./occ backup:point:unpack 20211031232710-full-Tu4H6vOtxKoLLb9
 Unpacking Restoring Point 20211031232710-full-Tu4H6vOtxKoLLb9
- > lock and set status to unpacking
+ > Lock and set status to unpacking
  > Browsing RestoringData data
    > Unpacking RestoringChunk data-0540e4d6-9d7f-4c84-a8d8-ca40764257d1: proceeding
-     * copying parts to temp files
+     * Copying parts to temp files
        - 00001-B57XWKJQe5Xg1sd: /tmp/phpNnYCbZ
        - 00002-PXHPeS6t6OXFwkP: /tmp/phpYqRSPW
 [...]
@@ -462,13 +462,13 @@ Unpacking Restoring Point 20211031232710-full-Tu4H6vOtxKoLLb9
 
 On your restoring point is marked as `not packed` you can proceed to the restoring. Please note that:
 
-* for each data pack, you will be able to choose the location of the extraction, (you can bypass
-  using `--do-not-ask-data`)
+* For each data pack, you will be able to choose the location of the extraction, (you can bypass
+  using `--do-not-ask-data`),
 * If a sqldump is available, you will be prompt to use the current configuration from the instance, the
   one from the `config/config.php` freshly restored or use another database (you can bypass
-  using `--do-not-ask-sql`)
-* if the information from the file `config/config.php` are in conflict with the path or sql settings
-  specified during the extraction, you will be notified that the restoring process wants to update them.
+  using `--do-not-ask-sql`),
+* If the information from the file `config/config.php` are in conflict with the path or sql settings
+  specified during the extraction, you will be notified that the restoring process wants to update them:
 
 ```
 $ ./occ backup:point:restore 20211031232710-full-Tu4H6vOtxKoLLb9
@@ -508,7 +508,7 @@ This will create the file `~/backup.setup`.
 When using the option `--key` the setup will be encrypted and an `encryption_key` will be generated and
 returned by the occ command. This key needs to be stored somewhere and will be required to decrypt the
 saved configuration.  
-It is strongly (again) advised to use the `--key` option
+It is strongly (again) advised to use the `--key` option.
 
 To restore the exported configuration:
 
@@ -525,7 +525,7 @@ This will create the file `~/backup.setup`.
 When using the option `--key` the setup will be encrypted and an `encryption_key` will be generated and
 returned by the occ command. This key needs to be stored somewhere and will be required to decrypt the
 saved configuration.  
-It is strongly (again) advised to use the `--key` option
+It is strongly (again) advised to use the `--key` option.
 
 To restore the exported configuration:
 
@@ -539,7 +539,7 @@ While this is managed by a background job, you can still generate a restoring po
 
     ./occ backup:point:create [--differential]
 
-The `--differential` option will create an differential backup
+The `--differential` option will create an differential backup.
 
 **Upload a Restoring Point**
 
@@ -560,7 +560,7 @@ You can search and compare restoring point available locally and on configured r
 
 Search for a file, based on its name.
 
-example: `./occ backup:file:search test.jpg --since 2021-09-23`
+Example: `./occ backup:file:search test.jpg --since 2021-09-23`
 
 **History of specific a file:**
 
@@ -568,7 +568,7 @@ example: `./occ backup:file:search test.jpg --since 2021-09-23`
 
 Display the history of a file.
 
-example: `./occ backup:file:history data cult/files/backup1.md`
+Example: `./occ backup:file:history data cult/files/backup1.md`
 
 **Import a Restoring Point**
 
@@ -580,7 +580,7 @@ backup fully overwrite your database. In that case, you can run this command:
     ./occ backup:point:scan <pointId>
 
 If it cannot be found, you will need to manually copy the folder that contains the Restoring Point in the
-appdata folder: data/appdata_qwerty123/backup/
+appdata folder: `data/appdata_qwerty123/backup/`.
 
 **Verify integrity of a Restoring Point**
 
