@@ -343,8 +343,8 @@ the creation of the external storage._
 
 ```
 $ ./occ backup:point:list
-- Retreiving data from local
-- Retreiving data from external:3
+- Retrieving data from local
+- Retrieving data from external:3
 > Found RestoringPoint 20211031232710-full-Tu4H6vOtxKoLLb9
 > Found RestoringPoint 20211101014009-full-QeTziynggIuaaD2
 +---------------------------------------+---------------------+--------+---------+-----------------------------+------------+--------------+--+
