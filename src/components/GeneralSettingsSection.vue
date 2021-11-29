@@ -53,7 +53,7 @@
 				:disabled="loadingFetchSettings"
 				:checked.sync="settings.allowWeekdays"
 				@update:checked="setSettings">
-				{{ t('backup', 'Allow to create full restoring points during week day') }}
+				{{ t('backup', 'Allow to create full restoring points during weekday') }}
 			</CheckboxRadioSwitch>
 
 			<ul class="backup-settings__delays">
