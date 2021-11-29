@@ -10,7 +10,7 @@ OC.L10N.register(
     "minutes" : "minut",
     "hours" : "hodin",
     "days" : "dnů",
-    "A new restoring point ({type}) has been generated, requiring maintenance mode for {downtime}." : "Byl vytvořen nový bod obnovení ({type}), vyžadoval přepnutí do režimu údržby na dobu {downtime}.",
+    "A new restoring point ({type}) has been generated, requiring maintenance mode for {downtime}." : "Byl vytvořen nový bod obnovení ({type}), vyžadoval přepnutí do režimu údržby po dobu {downtime}.",
     "Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})" : "Váš systém byl zcela obnoven do podoby bodu obnovení z {date} (odhadovaný posun zpět: {rewind})",
     "The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})" : "Soubor {file} byl obnoven do podoby bodu obnovení z {date} (odhadovaný posun zpět: {rewind})",
     "Backup now. Restore later." : "Zálohujte nyní. Obnovujte později.",
