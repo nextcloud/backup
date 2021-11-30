@@ -49,7 +49,6 @@ OC.L10N.register(
     "Backup schedule" : "Harmonogram tworzenia kopii zapasowych",
     "Create restoring points during the following time slot during the day:" : "Utwórz punkty przywracania w następującym przedziale czasowym w ciągu dnia:",
     "and" : "i",
-    "Allow to create full restoring points during week day" : "Zezwalaj na tworzenie pełnych punktów przywracania w ciągu dnia tygodnia",
     "Delay between two full restoring points" : "Opóźnienie między dwoma punktami pełnego przywracania",
     "Delay between two partial restoring points" : "Opóźnienie między dwoma punktami częściowego przywracania",
     "Restoring point packing" : "Pakowanie punktu przywracania",

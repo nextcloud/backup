@@ -36,7 +36,6 @@ OC.L10N.register(
     "Backups configuration" : "Babeskopien konfigurazioa",
     "Backup schedule" : "Babeskopia-antolaketa",
     "and" : "eta",
-    "Allow to create full restoring points during week day" : "Baimendu astegunetan berrezartze-puntu osoak sortzea",
     "Restoring point packing" : "Berrezartze-puntuen paketatzea",
     "Enable restoring point packing" : "Gaitu berrezartze-puntuen paketatzea",
     "Enable encryption" : "Gaitu zifratzea",

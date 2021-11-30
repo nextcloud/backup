@@ -47,7 +47,6 @@
     "Backup schedule" : "График за архивиране",
     "Create restoring points during the following time slot during the day:" : "Създайте точки за възстановяване през следния времеви интервал през деня:",
     "and" : "и",
-    "Allow to create full restoring points during week day" : "Позволение за създадеване на пълни точки за възстановяване през седмичен ден",
     "Delay between two full restoring points" : "Забавяне между две точки на пълно възстановяване",
     "Delay between two partial restoring points" : "Забавяне между две точки за частично възстановяване",
     "Restoring point packing" : " Опаковане на точките за възстановяване",

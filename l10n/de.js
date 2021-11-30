@@ -45,7 +45,6 @@ OC.L10N.register(
     "Backup schedule" : "Zeitplan der Sicherungen",
     "Create restoring points during the following time slot during the day:" : "Erstelle Wiederherstellungspunkte während des folgenden Zeitfensters am Tag:",
     "and" : "und",
-    "Allow to create full restoring points during week day" : "Die Erstellung vollständiger Wiederherstellungspunkte während des Wochentags aktivieren",
     "Delay between two full restoring points" : "Abstand zwischen zwei vollen Wiederherstellungspunkten",
     "Delay between two partial restoring points" : "Abstand zwischen zwei teilweisen Wiederherstellungspunkten",
     "Restoring point packing" : "Komprimiere Wiederherstellungspunkt",

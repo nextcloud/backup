@@ -29,7 +29,6 @@ OC.L10N.register(
     "Backups configuration" : "Varmuuskopioiden kokoonpano",
     "Backup schedule" : "Varmuuskopioinnin aikataulu",
     "and" : "ja",
-    "Allow to create full restoring points during week day" : "Salli kokonaisten palautuspisteiden luominen arkipäivisin",
     "Enable encryption" : "Käytä salausta",
     "Enable compression" : "Käytä tiivistämistä",
     "Schedule summary" : "Aikataulun yhteenveto",
