@@ -16,7 +16,7 @@ _(Documentation is still in writing)_
 - [Restoring a backup]($restoring)
 - [Available `occ` commands](#occ)
 - [Faq](#faq)
-- [Known issues]($known-issues)
+- [Known issues](#known-issues)
 
 <a name="notes"></a>
 
