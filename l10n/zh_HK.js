@@ -49,6 +49,7 @@ OC.L10N.register(
     "Backup schedule" : "備份時間表",
     "Create restoring points during the following time slot during the day:" : "在以下時段內創建還原點：",
     "and" : "及",
+    "Allow to create full restoring points during weekday" : "允許在工作日創建完整還原點",
     "Delay between two full restoring points" : "兩個完整還原點之間的延誤",
     "Delay between two partial restoring points" : "兩個部分還原點之間的延誤",
     "Restoring point packing" : "還原點集裝",

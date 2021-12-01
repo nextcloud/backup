@@ -49,6 +49,7 @@ OC.L10N.register(
     "Backup schedule" : "Backup schema",
     "Create restoring points during the following time slot during the day:" : "Creëer herstelpunten tijdens de volgende tijdssloten gedurende de dag:",
     "and" : "en",
+    "Allow to create full restoring points during weekday" : "Sta toe volledige herstelpunten te creëren op weekdag",
     "Delay between two full restoring points" : "Tijd tussen twee volledige herstelpunten",
     "Delay between two partial restoring points" : "Tijd tussen twee gedeeltelijke herstelpunten",
     "Restoring point packing" : "Herstelpunt verpakken",

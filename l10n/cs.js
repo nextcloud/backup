@@ -49,6 +49,7 @@ OC.L10N.register(
     "Backup schedule" : "Plán záloh",
     "Create restoring points during the following time slot during the day:" : "Vytvářet body obnovení v průběhu následujícího časového slotu v průběhu dne:",
     "and" : "a",
+    "Allow to create full restoring points during weekday" : "Umožnit vytváření úplné body obnovení v pracovních dnech",
     "Delay between two full restoring points" : "Prodleva mezi dvěma úplnými body obnovení",
     "Delay between two partial restoring points" : "Prodleva mezi dvěma částečnými body obnovení",
     "Restoring point packing" : "Balení bodu obnovení",

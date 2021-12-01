@@ -46,6 +46,7 @@
     "Backup schedule" : "备份计划",
     "Create restoring points during the following time slot during the day:" : "在以下时间段内创建还原点：",
     "and" : "和",
+    "Allow to create full restoring points during weekday" : "允许在工作日创建完整的还原点",
     "Delay between two full restoring points" : "两个完整还原点之间的间隔",
     "Delay between two partial restoring points" : "两个部分还原点之间的间隔",
     "Restoring point packing" : "还原点打包",

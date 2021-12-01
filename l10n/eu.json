@@ -34,6 +34,7 @@
     "Backups configuration" : "Babeskopien konfigurazioa",
     "Backup schedule" : "Babeskopia-antolaketa",
     "and" : "eta",
+    "Delay between two full restoring points" : "Bi berrezartze-puntu osoen arteko denbora",
     "Restoring point packing" : "Berrezartze-puntuen paketatzea",
     "Enable restoring point packing" : "Gaitu berrezartze-puntuen paketatzea",
     "Enable encryption" : "Gaitu zifratzea",
@@ -44,10 +45,14 @@
     "Schedule summary" : "Antolakuntzaren laburpena",
     "Export backup configuration" : "Esportatu babeskopien konfigurazioa",
     "Export configuration" : "Esportatu konfigurazioa",
+    "Request the creation of a new restoring point now" : "Eskatu berrezartze-puntu baten sorketa orain",
     "Create full restoring point" : "Sortu berrezartze-puntu osoa",
+    "I understand that the server will be put in maintenance mode." : "Zerbitzaria mantentze moduan jarriko dela ulertzen dut.",
     "Request {mode} restoring point" : "Eskatu {mode} berrezarte-puntua",
+    "Unable to fetch the settings" : "Ezin izan dira ezarpenak lortu",
     "Settings saved" : "Ezarpenak gordeta",
     "Unable to save the settings" : "Ezin izan dira ezarpenak gorde",
+    "Unable to request restoring point" : "Ezin izan da berrezartze-puntua eskatu",
     "Unable to export settings" : "Ezin izan dira ezarpenak esportatu",
     "_day_::_days_" : ["egun","egun"],
     "Scheduled" : "Antolatuta",
@@ -56,6 +61,7 @@
     "Orphan" : "Umezurtza",
     "Completed" : "Osatua",
     "Not packed yet" : "Oraindik paketatu gabe",
+    "Packed" : "Paketatuta",
     "Encrypted" : "Zifratua",
     "Compressed" : "Konprimatuta",
     "Restoring points history" : "Puntuen historia berezartzen",
@@ -68,6 +74,7 @@
     "Local" : "Lokala",
     "local" : "lokala",
     "Next full restoring point" : "Hurrengo berrezartze-puntu osoa",
-    "Next partial restoring point" : "Hurrengo berrezartze-puntu partziala"
+    "Next partial restoring point" : "Hurrengo berrezartze-puntu partziala",
+    "Unable to fetch restoring points" : "Ezin izan dira berrezartze-puntuak lortu"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
