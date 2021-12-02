@@ -49,6 +49,7 @@ OC.L10N.register(
     "Backup schedule" : "Yedekleme zamanlaması",
     "Create restoring points during the following time slot during the day:" : "Gün içinde geri yükleme noktaları şu zaman aralıklarında oluşturulur:",
     "and" : "ve",
+    "Allow to create full restoring points during weekday" : "Haftanın şu gününde tam geri yükleme noktaları oluşturulur",
     "Delay between two full restoring points" : "İki tam geri yükleme noktası arasındaki gecikme",
     "Delay between two partial restoring points" : "İki parçalı geri yükleme noktası arasındaki gecikme",
     "Restoring point packing" : "Geri yükleme noktası paketlemesi",
