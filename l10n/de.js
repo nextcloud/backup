@@ -73,6 +73,7 @@ OC.L10N.register(
     "Create full restoring point" : "Vollständigen Wiederherstellungspunkt erstellen",
     "Requesting a backup will put the server in maintenance mode." : "Durch die Anforderung einer Sicherung wird der Server in den Wartungsmodus gesetzt.",
     "I understand that the server will be put in maintenance mode." : "Ich verstehe, dass der Server in den Wartungsmodus gesetzt wird.",
+    "Request {mode} restoring point" : "{mode} Wiederherstellungspunkt anfordern",
     "Unable to fetch the settings" : "Einstellungen konnten nicht geladen werden",
     "Settings saved" : "Einstellungen gespeichert",
     "Unable to save the settings" : "Einstellungen können nicht gespeichert werden",
