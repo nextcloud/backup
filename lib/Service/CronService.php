@@ -407,6 +407,12 @@ class CronService {
 	public function isRealCron(): bool {
 		$mode = $this->configService->getCoreValue('backgroundjobs_mode', '');
 
+		if (!$this->configService->getAppValueBool(ConfigService::CRON_ENABLED)) {
+			return false;
+		}
+
+		$this->configService->setAppValueBool(ConfigService::CRON_ENABLED, true);
+
 		return (strtolower($mode) === 'cron' || strtolower($mode) === 'webcron');
 	}
 }

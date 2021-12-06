@@ -74,7 +74,7 @@ class Backup extends TimedJob {
 		ConfigService $configService,
 		LoggerInterface $loggerInterface
 	) {
-		$this->setInterval(900);
+		$this->setInterval(9);
 
 		$this->pointService = $pointService;
 		$this->cronService = $cronService;
