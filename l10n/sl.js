@@ -1,6 +1,7 @@
 OC.L10N.register(
     "backup",
     {
+    "Scan Backup Folder" : "Preišči mapo varnostne kopije",
     "Backup" : "Varnostna kopija",
     "Update on all Backup's event" : "Obnovi ob vsakem dogodku varnostne kopije",
     "complete" : "končano",
@@ -30,6 +31,7 @@ OC.L10N.register(
     "External location deleted" : "Zunanje mesto je izbrisano",
     "Unable to delete the external location" : "Zunanjega mesta ni mogoče izbrisati",
     "Backup schedule" : "Urnik varnostnega kopiranja",
+    "and" : "in",
     "Delay between two full restoring points" : "Zamik med dvema polnima obnovitvenima točkama",
     "Delay between two partial restoring points" : "Zamik med dvema delnima obnovitvenima točkama",
     "Enable encryption" : "Omogoči šifriranje",
