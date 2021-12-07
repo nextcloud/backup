@@ -119,9 +119,16 @@ class Backup extends TimedJob {
 
 	private function runFullBackup(): void {
 		try {
-			$this->pointService->create(true);
+			$generateLogs = $this->configService->getAppValueBool(ConfigService::GENERATE_LOGS);
+			$this->pointService->create(
+				true,
+				'',
+				($generateLogs) ? 'Backup Background Job (complete)' : ''
+			);
 		} catch (Throwable $e) {
-			$this->loggerInterface->debug('error while running full backup - ' . json_encode(debug_backtrace()));
+			$this->loggerInterface->debug(
+				'error while running full backup - ' . json_encode(debug_backtrace())
+			);
 		}
 	}
 
@@ -131,9 +138,16 @@ class Backup extends TimedJob {
 	 */
 	private function runDifferentialBackup(): void {
 		try {
-			$this->pointService->create(false);
+			$generateLogs = $this->configService->getAppValueBool(ConfigService::GENERATE_LOGS);
+			$this->pointService->create(
+				false,
+				'',
+				($generateLogs) ? 'Backup Background Job (partial)' : ''
+			);
 		} catch (Throwable $e) {
-			$this->loggerInterface->error('error while running differential backup - ' . json_encode(debug_backtrace()));
+			$this->loggerInterface->error(
+				'error while running differential backup - ' . json_encode(debug_backtrace())
+			);
 		}
 	}
 }

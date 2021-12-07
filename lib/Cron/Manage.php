@@ -33,9 +33,11 @@ namespace OCA\Backup\Cron;
 
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
+use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\ExternalFolderService;
+use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\UploadService;
@@ -64,6 +66,9 @@ class Manage extends TimedJob {
 	/** @var ExternalFolderService */
 	private $externalFolderService;
 
+	/** @var OutputService */
+	private $outputService;
+
 	/** @var ConfigService */
 	private $configService;
 
@@ -76,6 +81,7 @@ class Manage extends TimedJob {
 	 * @param PackService $packService
 	 * @param UploadService $uploadService
 	 * @param ExternalFolderService $externalFolderService
+	 * @param OutputService $outputService
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
@@ -84,6 +90,7 @@ class Manage extends TimedJob {
 		PackService $packService,
 		UploadService $uploadService,
 		ExternalFolderService $externalFolderService,
+		OutputService $outputService,
 		ConfigService $configService
 	) {
 		$this->setInterval(3600);
@@ -93,6 +100,7 @@ class Manage extends TimedJob {
 		$this->packService = $packService;
 		$this->uploadService = $uploadService;
 		$this->externalFolderService = $externalFolderService;
+		$this->outputService = $outputService;
 		$this->configService = $configService;
 	}
 
@@ -105,6 +113,8 @@ class Manage extends TimedJob {
 			return;
 		}
 
+		$generateLogs = $this->configService->getAppValueBool(ConfigService::GENERATE_LOGS);
+
 		// TODO: purge old restoring points.
 		$this->cronService->purgeRestoringPoints();
 		$this->cronService->purgeRemoteRestoringPoints();
@@ -115,6 +125,10 @@ class Manage extends TimedJob {
 				continue;
 			}
 			try {
+				$this->pointService->initBaseFolder($point);
+				if ($generateLogs) {
+					$this->outputService->openFile($point, 'Manage Background Job (uploading)');
+				}
 				$this->uploadService->uploadPoint($point);
 			} catch (Throwable $e) {
 			}
@@ -125,8 +139,17 @@ class Manage extends TimedJob {
 			if ($point->isArchive()) {
 				continue;
 			}
+
+			if ($point->isStatus(RestoringPoint::STATUS_PACKED)
+				&& !$point->isStatus(RestoringPoint::STATUS_PACKING)) {
+				continue;
+			}
+
 			try {
 				$this->pointService->initBaseFolder($point);
+				if ($generateLogs) {
+					$this->outputService->openFile($point, 'Manage Background Job (packing)');
+				}
 				$this->packService->packPoint($point);
 			} catch (Throwable $e) {
 			}
@@ -145,6 +168,11 @@ class Manage extends TimedJob {
 				continue;
 			}
 			try {
+				$this->pointService->initBaseFolder($point);
+				if ($generateLogs) {
+					$this->outputService->openFile($point, 'Manage Background Job (health)');
+				}
+
 				$this->pointService->generateHealth($point, true);
 			} catch (Throwable $e) {
 			}
@@ -159,6 +187,12 @@ class Manage extends TimedJob {
 						continue;
 					}
 					try {
+						$this->pointService->initBaseFolder($point);
+						if ($generateLogs) {
+							$this->outputService->openFile(
+								$point, 'Manage Background Job (health (external))'
+							);
+						}
 						$this->externalFolderService->getCurrentHealth($external, $point);
 					} catch (Throwable $e) {
 					}

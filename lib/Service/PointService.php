@@ -68,6 +68,7 @@ use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\StorageNotAvailableException;
+use OCP\Lock\LockedException;
 use OCP\Util;
 use Throwable;
 
@@ -222,6 +223,7 @@ class PointService {
 	/**
 	 * @param bool $complete
 	 * @param string $comment
+	 * @param string $log - description used during the opening session; if empty, no logs are generated
 	 *
 	 * @return RestoringPoint
 	 * @throws ArchiveCreateException
@@ -235,8 +237,9 @@ class PointService {
 	 * @throws SignatoryException
 	 * @throws SqlDumpException
 	 * @throws Throwable
+	 * @throws LockedException
 	 */
-	public function create(bool $complete, string $comment = ''): RestoringPoint {
+	public function create(bool $complete, string $comment = '', string $log = ''): RestoringPoint {
 		// maintenance mode on
 		$initTime = time();
 		$maintenance = $this->configService->getSystemValueBool(ConfigService::MAINTENANCE);
@@ -247,6 +250,10 @@ class PointService {
 			$point = $this->initRestoringPoint($complete);
 			$point->setComment($comment);
 
+			// because we had no $point before, the log from crontab will be initiated here
+			if ($log !== '') {
+				$this->outputService->openFile($point, $log);
+			}
 			$this->chunkService->createChunks($point);
 			$this->backupSql($point);
 		} catch (Throwable $t) {
