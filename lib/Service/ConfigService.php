@@ -48,6 +48,7 @@ class ConfigService {
 	public const DATA_DIRECTORY = 'datadirectory';
 	public const LOGFILE = 'logfile';
 
+	public const CRON_ENABLED = 'cron_enabled';
 	public const LOCK = 'lock';
 	public const REMOTE_ENABLED = 'remote_enabled';
 	public const EXTERNAL_APPDATA = 'external_appdata';
@@ -82,6 +83,7 @@ class ConfigService {
 
 	/** @var array */
 	public $defaults = [
+		self::CRON_ENABLED => 1,
 		self::LOCK => 0,
 		self::REMOTE_ENABLED => 0,
 		self::EXTERNAL_APPDATA => '{}',
@@ -370,6 +372,7 @@ class ConfigService {
 	 */
 	public function getSettings(): array {
 		return [
+			self::CRON_ENABLED => $this->getAppValueBool(self::CRON_ENABLED),
 			self::DATE_FULL_RP => $this->getAppValueInt(self::DATE_FULL_RP),
 			self::DATE_PARTIAL_RP => $this->getAppValueInt(self::DATE_PARTIAL_RP),
 			self::TIME_SLOTS => $this->getAppValue(self::TIME_SLOTS),
@@ -394,6 +397,9 @@ class ConfigService {
 	public function setSettings(array $settings): array {
 		$data = new SimpleDataStore($settings);
 
+		if ($data->hasKey(self::CRON_ENABLED)) {
+			$this->setAppValueBool(self::CRON_ENABLED, $data->gBool(self::CRON_ENABLED));
+		}
 		if ($data->hasKey(self::TIME_SLOTS)) {
 			$this->setAppValue(self::TIME_SLOTS, $data->g(self::TIME_SLOTS));
 		}
