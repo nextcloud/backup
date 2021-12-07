@@ -139,7 +139,8 @@ class PointRequest extends PointRequestBuilder {
 	public function updateLock(RestoringPoint $point): void {
 		$qb = $this->getPointUpdateSql();
 		$qb->set('lock', $qb->createNamedParameter($point->getLock()));
-		$qb->exprLimit('uid', $point->getId());
+		$qb->limit('uid', $point->getId());
+		$qb->limit('instance', $point->getInstance());
 		$qb->execute();
 	}
 

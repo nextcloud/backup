@@ -213,6 +213,8 @@ class PointDownload extends Base {
 			$this->pointService->saveMetadata($point);
 		}
 
+		$this->metadataService->isLock($point);
+		$this->metadataService->lock($point);
 		$output->write('check health status: ');
 		$this->pointService->generateHealth($point);
 		$output->writeln($this->outputService->displayHealth($point->getHealth()));
@@ -226,6 +228,7 @@ class PointDownload extends Base {
 
 		$this->pointRequest->update($point);
 		$this->pointService->saveMetadata($point);
+		$this->metadataService->unlock($point);
 
 		return 0;
 //		$this->downloadMissingFiles($instance, $point, $point->getHealth(), $output);
