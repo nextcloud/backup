@@ -26,188 +26,226 @@
 		:title="t('backup', 'Backups configuration')"
 		:description="t('backup', 'General configuration on how and when your restoring points are created.')">
 		<form ref="settings-form">
-			<h3 class="backup-settings__sub-headers">
-				{{ t('backup', 'Backup schedule') }}
-				<span v-if="loadingSetSettings > 0" class="icon-loading" />
-			</h3>
-
-			<label class="backup-settings__time-slots">
-				{{ t('backup', 'Create restoring points during the following time slot during the day:') }}
-				<select v-model.number="settings.timeSlotsStart"
-					:disabled="loadingFetchSettings"
-					name="timeSlotsStart"
-					@change="setSettings">
-					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index | leadingZero">{{ index | leadingZero }}:00</option>
-				</select>
-				{{ t('backup', 'and') }}
-				<select v-model.number="settings.timeSlotsEnd"
-					:disabled="loadingFetchSettings"
-					name="timeSlotsEnd"
-					@change="setSettings">
-					<option v-for="(hour, index) in new Array(24)" :key="index" :value="index | leadingZero">{{ index | leadingZero }}:00</option>
-				</select>
-			</label>
-
-			<CheckboxRadioSwitch
-				:loading="loadingFetchSettings"
-				:disabled="loadingFetchSettings"
-				:checked.sync="settings.allowWeekdays"
-				@update:checked="setSettings">
-				{{ t('backup', 'Allow to create full restoring points during weekday') }}
-			</CheckboxRadioSwitch>
-
-			<ul class="backup-settings__delays">
-				<li>
-					{{ t('backup', 'Delay between two full restoring points') }}:
-					<input v-model.number="settings.delayFullRestoringPoint"
-						:disabled="loadingFetchSettings"
-						class="backup-settings__input"
-						type="text"
-						@change="setSettings"> {{ n('backup', 'day', 'days', settings.delayFullRestoringPoint) }}
-				</li>
-
-				<li>
-					{{ t('backup', 'Delay between two partial restoring points') }}:
-					<input v-model.number="settings.delayPartialRestoringPoint"
-						:disabled="loadingFetchSettings"
-						class="backup-settings__input"
-						type="text"
-						@change="setSettings"> {{ n('backup', 'day', 'days', settings.delayPartialRestoringPoint) }}
-				</li>
-			</ul>
-		</form>
-
-		<h3 class="backup-settings__sub-headers">
-			<span>
-				{{ t('backup', 'Restoring point packing') }}
-			</span>
-		</h3>
-		<CheckboxRadioSwitch
-			:loading="loadingFetchSettings"
-			:disabled="loadingFetchSettings"
-			:checked.sync="settings.packBackup"
-			@update:checked="setSettings">
-			{{ t('backup', 'Enable restoring point packing') }}
-		</CheckboxRadioSwitch>
-		<CheckboxRadioSwitch
-			:loading="loadingFetchSettings"
-			:checked.sync="settings.packEncrypt"
-			:disabled="!settings.packBackup || loadingFetchSettings"
-			@update:checked="setSettings">
-			{{ t('backup', 'Enable encryption') }}
-		</CheckboxRadioSwitch>
-		<CheckboxRadioSwitch :loading="loadingFetchSettings"
-			:checked.sync="settings.packCompress"
-			:disabled="!settings.packBackup || loadingFetchSettings"
-			@update:checked="setSettings">
-			{{ t('backup', 'Enable compression') }}
-		</CheckboxRadioSwitch>
-
-		<h3 class="backup-settings__sub-headers">
-			{{ t('backup', 'Restoring point history') }}
-		</h3>
-		{{ t('backup', 'Number of restoring points to keep during a purge:') }}
-		<ul class="backup-settings__purge">
-			<li>
-				{{ t('backup', 'In the local app data') }}:
-				<input v-model.number="settings.storeItems"
-					:disabled="loadingFetchSettings"
-					class="backup-settings__input"
-					type="text"
-					@change="setSettings">
-			</li>
-
-			<li>
-				{{ t('backup', 'In external storages') }}:
-				<input v-model.number="settings.storeItemsExternal"
-					:disabled="loadingFetchSettings"
-					class="backup-settings__input"
-					type="text"
-					@change="setSettings">
-			</li>
-		</ul>
-
-		<h3 class="backup-settings__sub-headers">
-			{{ t('backup', 'Schedule summary') }}
-		</h3>
-		<ul class="backup-settings__summary">
-			<template v-if="settings.allowWeekdays">
-				<li>
-					{{ t('backup', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings) }}
-				</li>
-			</template>
-			<template v-if="!settings.allowWeekdays">
-				<li>
-					{{ t('backup', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 during weekends.', settings) }}
-				</li>
-			</template>
-			<li>
-				{{ t('backup', 'A partial restoring point will be created {delayPartialRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings) }}
-			</li>
-		</ul>
-
-		<div class="backup-settings__actions">
-			<h3 class="backup-settings__sub-headers">
-				{{ t('backup', 'Export backup configuration') }}
-			</h3>
-			<div class="backup-settings__actions__action">
-				{{ t('backup', 'You can export your settings with the button below. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
-				<button
-					:disabled="loadingExportSettings"
-					class="backup-settings__actions__action__export"
-					:class="{loading: loadingExportSettings}"
-					@click="downloadSettings">
-					<span class="icon icon-external" />
-					{{ t('backup', 'Export configuration') }}
-				</button>
-			</div>
-			<div v-if="exportedPrivateKey !== undefined" class="backup-settings__export__info">
-				{{ t('backup', 'Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
-				<br>
-				<code><b>{{ exportedPrivateKey }}</b></code>
-				<br>
-			</div>
-
-			<div class="backup-settings__actions__action">
+			<div class="backup-settings__cron-enabled">
 				<h3 class="backup-settings__sub-headers">
-					{{ t('backup', 'Request the creation of a new restoring point now') }}
+					{{ t('backup', 'Enable background tasks') }}
+					<span v-if="loadingSetSettings > 0" class="icon-loading" />
 				</h3>
-				<div v-if="settings.restoringPointRequested" class="backup-settings__actions__action__info">
-					{{ t('backup', 'The creation of a restoring point has been requested and will be initiated soon.') }}
+
+				<div class="backup-settings__info">
+					{{ t('backup', 'You can enable background task for backups. This means that the creation, maintenance and purges of backups will be done automatically.') }}
+					<ul>
+						<li>
+							{{ t('backup', 'Creation: new restoring points will be created according to the schedule.') }}
+						</li>
+
+						<li>
+							{{ t('backup', 'Maintenance: restoring points will be packed and copied to potential external storages.') }}
+						</li>
+						<li>
+							{{ t('backup', 'Purge: old restoring points will be deleted automatically according to the retention policy.') }}
+						</li>
+					</ul>
 				</div>
-				<button class="primary" :disabled="loadingFetchSettings || settings.restoringPointRequested" @click="requestRestoringPointType = 'full'">
-					{{ t('backup', 'Create full restoring point') }}
-				</button>
 
-				<Modal v-if="requestRestoringPointType !== ''"
-					size="large"
-					@close="requestRestoringPointType = ''">
-					<div class="backup-settings__request-modal">
-						<div class="backup-settings__request-modal__header">
-							{{ t('backup', "Request a {mode} restoring point.", { mode: requestRestoringPointType}) }}
-						</div>
-						<div class="backup-settings__request-modal__content">
-							{{ t('backup', 'Requesting a backup will put the server in maintenance mode.') }}
-
-							<CheckboxRadioSwitch :loading="loadingRequestRestoringPoint" :checked.sync="validationCheckboxForRestoringPointRequest">
-								{{ t('backup', 'I understand that the server will be put in maintenance mode.') }}
-							</CheckboxRadioSwitch>
-						</div>
-						<div class="backup-settings__request-modal__actions">
-							<button @click="requestRestoringPointType = ''">
-								Cancel
-							</button>
-							<button class="primary"
-								:class="{loading: loadingRequestRestoringPoint}"
-								:disabled="!validationCheckboxForRestoringPointRequest || loadingRequestRestoringPoint"
-								@click="requestRestoringPoint">
-								{{ t('backup', 'Request {mode} restoring point', { mode: requestRestoringPointType}) }}
-							</button>
-						</div>
-					</div>
-				</Modal>
+				<CheckboxRadioSwitch
+					:loading="loadingFetchSettings"
+					:disabled="loadingFetchSettings"
+					:checked.sync="settings.cronEnabled"
+					@update:checked="setSettings">
+					{{ t('backup', 'Enable background tasks to automatically manage creation, maintenance and purge.') }}
+				</CheckboxRadioSwitch>
 			</div>
-		</div>
+
+			<div class="backup-settings__backup-schedule">
+				<h3 class="backup-settings__sub-headers" :class="{'backup-settings__sub-headers--disabled': !settings.cronEnabled}">
+					{{ t('backup', 'Backup schedule') }}
+				</h3>
+
+				<ul class="backup-settings__info">
+					<template v-if="settings.allowWeekdays">
+						<li>
+							{{ t('backup', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings) }}
+						</li>
+					</template>
+					<template v-if="!settings.allowWeekdays">
+						<li>
+							{{ t('backup', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 during weekends.', settings) }}
+						</li>
+					</template>
+					<li>
+						{{ t('backup', 'A partial restoring point will be created {delayPartialRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings) }}
+					</li>
+				</ul>
+
+				<label class="backup-settings__time-slots">
+					{{ t('backup', 'Limit restoring points creation to the following hours interval:') }}
+					<select v-model.number="settings.timeSlotsStart"
+						:disabled="loadingFetchSettings || !settings.cronEnabled"
+						name="timeSlotsStart"
+						@change="setSettings">
+						<option v-for="(hour, index) in new Array(24)" :key="index" :value="index | leadingZero">{{ index | leadingZero }}:00</option>
+					</select>
+					{{ t('backup', 'and') }}
+					<select v-model.number="settings.timeSlotsEnd"
+						:disabled="loadingFetchSettings || !settings.cronEnabled"
+						name="timeSlotsEnd"
+						@change="setSettings">
+						<option v-for="(hour, index) in new Array(24)" :key="index" :value="index | leadingZero">{{ index | leadingZero }}:00</option>
+					</select>
+				</label>
+
+				<CheckboxRadioSwitch
+					:loading="loadingFetchSettings"
+					:disabled="loadingFetchSettings || !settings.cronEnabled"
+					:checked.sync="settings.allowWeekdays"
+					@update:checked="setSettings">
+					{{ t('backup', 'Allow the creation of full restoring points during week day') }}
+				</CheckboxRadioSwitch>
+
+				<ul class="backup-settings__delays">
+					<li>
+						{{ t('backup', 'Time interval between two full restoring points') }}:
+						<input v-model.number="settings.delayFullRestoringPoint"
+							:disabled="loadingFetchSettings || !settings.cronEnabled"
+							class="backup-settings__input"
+							type="text"
+							@change="setSettings"> {{ n('backup', 'day', 'days', settings.delayFullRestoringPoint) }}
+					</li>
+
+					<li>
+						{{ t('backup', 'Time interval between two partial restoring points') }}:
+						<input v-model.number="settings.delayPartialRestoringPoint"
+							:disabled="loadingFetchSettings || !settings.cronEnabled"
+							class="backup-settings__input"
+							type="text"
+							@change="setSettings"> {{ n('backup', 'day', 'days', settings.delayPartialRestoringPoint) }}
+					</li>
+				</ul>
+			</div>
+
+			<div class="backup-settings__packing">
+				<h3 class="backup-settings__sub-headers">
+					<span>
+						{{ t('backup', 'Packing processing') }}
+					</span>
+				</h3>
+
+				<div class="backup-settings__info">
+					{{ t('backup', 'Processing that will be done on the restoring points during the packing step.') }}
+				</div>
+
+				<CheckboxRadioSwitch
+					:loading="loadingFetchSettings"
+					:checked.sync="settings.packEncrypt"
+					:disabled="loadingFetchSettings"
+					@update:checked="setSettings">
+					{{ t('backup', 'Encrypt restoring points') }}
+				</CheckboxRadioSwitch>
+				<CheckboxRadioSwitch :loading="loadingFetchSettings"
+					:checked.sync="settings.packCompress"
+					:disabled="loadingFetchSettings"
+					@update:checked="setSettings">
+					{{ t('backup', 'Compress restoring points') }}
+				</CheckboxRadioSwitch>
+			</div>
+
+			<div class="backup-settings__retention">
+				<h3 class="backup-settings__sub-headers">
+					{{ t('backup', 'Retention policy') }}
+				</h3>
+
+				<div class="backup-settings__info">
+					{{ t('backup', 'You can specify the number of restoring points to keep during a purge.') }}
+				</div>
+
+				<ul class="backup-settings__purge">
+					<li>
+						{{ t('backup', 'Policy for the local app data') }}:
+						<input v-model.number="settings.storeItems"
+							:disabled="loadingFetchSettings"
+							class="backup-settings__input"
+							type="text"
+							@change="setSettings">
+					</li>
+
+					<li>
+						{{ t('backup', 'Policy for external storages') }}:
+						<input v-model.number="settings.storeItemsExternal"
+							:disabled="loadingFetchSettings"
+							class="backup-settings__input"
+							type="text"
+							@change="setSettings">
+					</li>
+				</ul>
+			</div>
+
+			<div class="backup-settings__actions">
+				<div class="backup-settings__export-config backup-settings__actions__action">
+					<h3 class="backup-settings__sub-headers">
+						{{ t('backup', 'Export backup configuration') }}
+					</h3>
+					{{ t('backup', 'You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
+					<button
+						:disabled="loadingExportSettings"
+						class="backup-settings__actions__action__export"
+						:class="{loading: loadingExportSettings}"
+						@click.prevent="downloadSettings">
+						<span class="icon icon-external" />
+						{{ t('backup', 'Export configuration') }}
+					</button>
+					<div v-if="exportedPrivateKey !== undefined" class="backup-settings__export__info">
+						{{ t('backup', 'Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
+						<br>
+						<code><b>{{ exportedPrivateKey }}</b></code>
+						<br>
+					</div>
+				</div>
+
+				<div class="backup-settings__actions__action backup-settings__request_restoring-point">
+					<h3 class="backup-settings__sub-headers" :class="{'backup-settings__sub-headers--disabled': !settings.cronEnabled}">
+						{{ t('backup', 'Request the creation of a new restoring point now') }}
+					</h3>
+					<div v-if="settings.restoringPointRequested" class="backup-settings__actions__action__info">
+						{{ t('backup', 'The creation of a restoring point as been requested and will be initiated soon.') }}
+					</div>
+					<button
+						class="primary"
+						:disabled="loadingFetchSettings || settings.restoringPointRequested || !settings.cronEnabled"
+						@click.prevent="requestRestoringPointType = 'full'">
+						{{ t('backup', 'Create full restoring point') }}
+					</button>
+
+					<Modal v-if="requestRestoringPointType !== ''"
+						size="large"
+						@close="requestRestoringPointType = ''">
+						<div class="backup-settings__request-modal">
+							<div class="backup-settings__request-modal__header">
+								{{ t('backup', "Request a {mode} restoring point.", { mode: requestRestoringPointType}) }}
+							</div>
+							<div class="backup-settings__request-modal__content">
+								{{ t('backup', 'Requesting a backup will put the server in maintenance mode.') }}
+
+								<CheckboxRadioSwitch :loading="loadingRequestRestoringPoint" :checked.sync="validationCheckboxForRestoringPointRequest">
+									{{ t('backup', 'I understand that the server will be put in maintenance mode.') }}
+								</CheckboxRadioSwitch>
+							</div>
+							<div class="backup-settings__request-modal__actions">
+								<button @click.prevent="requestRestoringPointType = ''">
+									{{ t('backup', 'Cancel') }}
+								</button>
+								<button class="primary"
+									:class="{loading: loadingRequestRestoringPoint}"
+									:disabled="!validationCheckboxForRestoringPointRequest || loadingRequestRestoringPoint"
+									@click.prevent="requestRestoringPoint">
+									{{ t('backup', 'Request {mode} restoring point', { mode: requestRestoringPointType}) }}
+								</button>
+							</div>
+						</div>
+					</Modal>
+				</div>
+			</div>
+		</form>
 	</SettingsSection>
 </template>
 
@@ -247,6 +285,7 @@ export default {
 		return {
 			// Init settings with dummy value to have the form displayed initial during loading.
 			settings: new SettingsModel({
+				cron_enabled: false,
 				date_full_rp: 0,
 				date_partial_rp: 0,
 				time_slots: '0-0',
@@ -405,9 +444,13 @@ button.loading {
 .backup-settings {
 	&__sub-headers {
 		font-weight: bold;
+
+		&--disabled {
+			color: var(--color-text-lighter);
+		}
 	}
 
-	&__summary {
+	&__info, &__info ul {
 		color: var(--color-text-lighter);
 		list-style: inside;
 	}

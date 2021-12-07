@@ -38,6 +38,9 @@ export default class SettingsModel {
 		}
 
 		// Sanity checks
+		if (typeof rawSettings.cron_enabled !== 'boolean') {
+			throw new Error('The cron_enabled property is not a valid boolean')
+		}
 		if (typeof rawSettings.date_full_rp !== 'number') {
 			throw new Error('The date_full_rp property is not a valid number')
 		}
@@ -101,6 +104,28 @@ export default class SettingsModel {
 
 	get settings() {
 		return this._settings
+	}
+
+	/**
+	 * Get wether background tasks will be run.
+	 *
+	 * @return {boolean}
+	 * @readonly
+	 * @memberof SettingsModel
+	 */
+	get cronEnabled() {
+		return this._settings.cron_enabled
+	}
+
+	/**
+	 * Set wether background tasks will be run.
+	 *
+	 * @param {boolean} value - The new value.
+	 * @readonly
+	 * @memberof SettingsModel
+	 */
+	set cronEnabled(value) {
+		this._settings.cron_enabled = value
 	}
 
 	/**
