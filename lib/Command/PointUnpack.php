@@ -40,8 +40,10 @@ use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteStreamService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Lock\LockedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
@@ -97,7 +99,8 @@ class PointUnpack extends Base {
 
 		$this->setName('backup:point:unpack')
 			 ->setDescription('Increase compression of a restoring point and prepare for upload')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point');
+			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			 ->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file');
 	}
 
 
@@ -115,8 +118,15 @@ class PointUnpack extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->outputService->setOutput($output);
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('pointId'));
-
 		$this->pointService->initBaseFolder($point);
+
+		if ($input->getOption('generate-log')) {
+			try {
+				$this->outputService->openFile($point, 'occ backup:point:unpack');
+			} catch (NotPermittedException | LockedException $e) {
+			}
+		}
+
 		$this->packService->unpackPoint($point);
 
 

@@ -43,6 +43,7 @@ use OCA\Backup\Service\RemoteService;
 use OCA\Backup\Service\UploadService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Lock\LockedException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -100,7 +101,8 @@ class PointUpload extends Base {
 			 ->setDescription('Upload a local restoring point on others instances')
 			 ->addArgument('point', InputArgument::REQUIRED, 'Id of the restoring point')
 			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance', '')
-			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder', '');
+			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder', '')
+			 ->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file');
 	}
 
 
@@ -119,6 +121,14 @@ class PointUpload extends Base {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$point = $this->pointService->getLocalRestoringPoint($input->getArgument('point'));
+
+		if ($input->getOption('generate-log')) {
+			try {
+				$this->pointService->initBaseFolder($point);
+				$this->outputService->openFile($point, 'occ backup:point:upload');
+			} catch (NotPermittedException | LockedException $e) {
+			}
+		}
 
 		$this->outputService->setOutput($output);
 		if ($input->getOption('external')) {

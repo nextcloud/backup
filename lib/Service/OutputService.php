@@ -33,6 +33,10 @@ namespace OCA\Backup\Service;
 
 use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\RestoringHealth;
+use OCA\Backup\Model\RestoringPoint;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
+use OCP\Lock\LockedException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -49,6 +53,12 @@ class OutputService {
 	/** @var bool */
 	private $debug = false;
 
+	/** @var resource */
+	private $openedFile;
+
+
+	public function __construct() {
+	}
 
 	/**
 	 * @param string $line
@@ -57,6 +67,9 @@ class OutputService {
 	public function o(string $line, bool $ln = true): void {
 		if ($this->isDebug()) {
 			echo $line . (($ln) ? "\n" : '');
+		}
+		if (!is_null($this->openedFile)) {
+			fputs($this->openedFile, date('Y-m-d H:i:s') . ' - ' . $line . (($ln) ? "\n" : ''));
 		}
 		if (!$this->hasOutput()) {
 			return;
@@ -82,6 +95,35 @@ class OutputService {
 	 */
 	public function isDebug(): bool {
 		return $this->debug;
+	}
+
+
+	/**
+	 * @param RestoringPoint $point
+	 * @param string $reason
+	 *
+	 * @throws LockedException
+	 * @throws NotPermittedException
+	 */
+	public function openFile(RestoringPoint $point, string $reason = ''): void {
+		$appDataRootWrapper = $point->getAppDataRootWrapper();
+		$new = false;
+		try {
+			$file = $appDataRootWrapper->getNode('/' . $point->getId() . '/' . $point->getId() . '.log');
+		} catch (NotFoundException $e) {
+			try {
+				$file = $appDataRootWrapper->newFile('/' . $point->getId() . '/' . $point->getId() . '.log');
+				$new = true;
+			} catch (NotPermittedException $e) {
+				return;
+			}
+		}
+
+		$this->openedFile = $file->fopen('a');
+		if (!$new) {
+			fputs($this->openedFile, "\n\n");
+		}
+		fputs($this->openedFile, date('Y-m-d H:i:s') . ' - Opening log session: ' . $reason . "\n");
 	}
 
 

@@ -63,6 +63,7 @@ class ConfigService {
 	public const LAST_PARTIAL_RP = 'last_partial_rp';
 	public const PACK_BACKUP = 'pack_backup';
 	public const BACKUP_DAYS = 'backup_days';
+	public const GENERATE_LOGS = 'generate_logs';
 
 	public const INCLUDE_LOGS = 'include_logs';
 	public const PACK_ENCRYPT = 'pack_encrypt';
@@ -104,6 +105,7 @@ class ConfigService {
 		self::TIME_SLOTS => '23-5',
 		self::MOCKUP_DATE => 0,
 		self::BACKUP_DAYS => 60,
+		self::GENERATE_LOGS => 0,
 
 		self::INCLUDE_LOGS => '1',
 		self::PACK_ENCRYPT => '1',

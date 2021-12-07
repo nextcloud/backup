@@ -31,14 +31,20 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Wrappers;
 
+use OC\Config;
+use OC\Files\Node\File;
+use OC\Files\Node\Folder;
 use OC\Files\Node\Node;
 use OC\Files\SimpleFS\SimpleFolder;
+use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Model\ExternalFolder;
 use OCP\Files\FileInfo;
+use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\Files\SimpleFS\ISimpleRoot;
+use OCP\IConfig;
 
 /**
  * Class AppDataRootWrapper
@@ -146,6 +152,48 @@ class AppDataRootWrapper {
 
 
 	/**
+	 * @return Folder
+	 * @throws NotFoundException
+	 */
+	public function getRoot(): Folder {
+		if ($this->isSimpleRoot()) {
+			/** @var IRootFolder $rootFolder */
+			$rootFolder = \OC::$server->get(IRootFolder::class);
+			$root = $rootFolder->get($this->getAppDataPath());
+		} else {
+			$root = $this->getExternalFolder()->getRootFolder();
+		}
+
+		if (!($root instanceof Folder)) {
+			throw new NotFoundException();
+		}
+
+		return $root;
+	}
+
+	/**
+	 * @param string $path
+	 *
+	 * @return Node
+	 * @throws NotFoundException
+	 */
+	public function getNode(string $path): Node {
+		return $this->getRoot()->get($path);
+	}
+
+
+	/**
+	 * @param string $path
+	 *
+	 * @return File
+	 * @throws NotPermittedException
+	 */
+	public function newFile(string $path): File {
+		return $this->getRoot()->newFile($path);
+	}
+
+
+	/**
 	 * @param string $path
 	 *
 	 * @return ISimpleFolder
@@ -207,5 +255,22 @@ class AppDataRootWrapper {
 		}
 
 		return new SimpleFolder($folder);
+	}
+
+
+	/**
+	 * based on OC\Files\AppData\AppData::getAppDataFolderName() which is private.
+	 *
+	 * @return string
+	 */
+	private function getAppDataPath(): string {
+		/** @var Config $config */
+		$config = \OC::$server->get(IConfig::class);
+		$instanceId = $config->getSystemValue('instanceid', null);
+		if ($instanceId === null) {
+			throw new \RuntimeException('no instance id!');
+		}
+
+		return 'appdata_' . $instanceId . '/' . Application::APP_ID;
 	}
 }

@@ -86,7 +86,10 @@ class PointCreate extends Base {
 		$this->setName('backup:point:create')
 			 ->setDescription('Generate a restoring point of the instance (complete or incremental)')
 			 ->addArgument('comment', InputArgument::OPTIONAL, 'set a comment to the restoring point', '')
-			 ->addOption('differential', '', InputOption::VALUE_NONE, 'create an differential restoring point');
+			 ->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file')
+			 ->addOption(
+				 'differential', '', InputOption::VALUE_NONE, 'create an differential restoring point'
+			 );
 	}
 
 
@@ -111,7 +114,11 @@ class PointCreate extends Base {
 			$this->outputService->setOutput($output);
 		}
 
-		$point = $this->pointService->create(!$input->getOption('differential'), $input->getArgument('comment'));
+		$point = $this->pointService->create(
+			!$input->getOption('differential'),
+			$input->getArgument('comment'),
+			($input->getOption('generate-log')) ? 'occ backup:point:create' : '',
+		);
 
 		if ($o === 'none') {
 			return 0;
