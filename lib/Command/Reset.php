@@ -33,6 +33,7 @@ namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
 use OCA\Backup\Db\CoreRequestBuilder;
+use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\PointService;
 use OCP\Files\NotFoundException;
@@ -138,7 +139,7 @@ class Reset extends Base {
 		$this->coreRequestBuilder->cleanDatabase();
 		try {
 			$this->pointService->destroyBackupFS();
-		} catch (NotFoundException | NotPermittedException $e) {
+		} catch (NotFoundException | NotPermittedException | ExternalFolderNotFoundException $e) {
 		}
 
 		$this->configService->setAppValue(ConfigService::LAST_FULL_RP, '');
