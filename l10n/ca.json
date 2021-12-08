@@ -22,8 +22,6 @@
     "Unable to fetch external locations" : "Incapaç d'obtenir localitzacions externes",
     "New external location added" : "Afegida nova localització externa afegida",
     "and" : "i",
-    "Delay between two full restoring points" : "Retard entre dos punts de restauració complerta",
-    "Delay between two partial restoring points" : "Retard entre dos punts de restauració parcial",
     "Local" : "Local",
     "local" : "local",
     "Next full restoring point" : "Següent punt de restauració complerta"
