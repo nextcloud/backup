@@ -39,6 +39,7 @@ use Exception;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\EncryptionKeyException;
+use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Exceptions\PackDecryptException;
 use OCA\Backup\Exceptions\PackEncryptException;
 use OCA\Backup\Exceptions\RestoreChunkException;
@@ -89,6 +90,9 @@ class PackService {
 	/** @var EncryptService */
 	private $encryptService;
 
+	/** @var CronService */
+	private $cronService;
+
 	/** @var OutputService */
 	private $outputService;
 
@@ -104,6 +108,7 @@ class PackService {
 	 * @param RemoteStreamService $remoteStreamService
 	 * @param ChunkService $chunkService
 	 * @param EncryptService $encryptService
+	 * @param CronService $cronService
 	 * @param OutputService $outputService
 	 * @param ConfigService $configService
 	 */
@@ -113,6 +118,7 @@ class PackService {
 		RemoteStreamService $remoteStreamService,
 		ChunkService $chunkService,
 		EncryptService $encryptService,
+		CronService $cronService,
 		OutputService $outputService,
 		ConfigService $configService
 	) {
@@ -121,6 +127,7 @@ class PackService {
 		$this->remoteStreamService = $remoteStreamService;
 		$this->chunkService = $chunkService;
 		$this->encryptService = $encryptService;
+		$this->cronService = $cronService;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
 	}
@@ -134,6 +141,7 @@ class PackService {
 	 * @throws NotPermittedException
 	 * @throws RestoringPointLockException
 	 * @throws RestoringPointPackException
+	 * @throws JobsTimeSlotException
 	 */
 	public function packPoint(RestoringPoint $point, bool $force = false): void {
 		$this->o('Packing Restoring Point <info>' . $point->getId() . '</info>');
@@ -167,6 +175,7 @@ class PackService {
 				}
 
 				$this->metadataService->lock($point);
+				$this->cronService->lockCron();
 
 				try {
 					$oldChunk = null;

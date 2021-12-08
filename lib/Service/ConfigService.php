@@ -50,6 +50,7 @@ class ConfigService {
 
 	public const CRON_ENABLED = 'cron_enabled';
 	public const LOCK = 'lock';
+	public const CRON_LOCK = 'cron_lock';
 	public const REMOTE_ENABLED = 'remote_enabled';
 	public const EXTERNAL_APPDATA = 'external_appdata';
 	public const SELF_SIGNED_CERT = 'self_signed_cert';
@@ -86,6 +87,7 @@ class ConfigService {
 	public $defaults = [
 		self::CRON_ENABLED => 1,
 		self::LOCK => 0,
+		self::CRON_LOCK => 0,
 		self::REMOTE_ENABLED => 0,
 		self::EXTERNAL_APPDATA => '{}',
 		self::SELF_SIGNED_CERT => '0',

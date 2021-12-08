@@ -35,6 +35,7 @@ use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
+use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
@@ -86,6 +87,9 @@ class UploadService {
 	/** @var MetadataService */
 	private $metadataService;
 
+	/** @var CronService */
+	private $cronService;
+
 	/** @var OutputService */
 	private $outputService;
 
@@ -102,6 +106,7 @@ class UploadService {
 	 * @param RemoteService $remoteService
 	 * @param ExternalFolderService $externalFolderService
 	 * @param MetadataService $metadataService
+	 * @param CronService $cronService
 	 * @param OutputService $outputService
 	 * @param ConfigService $configService
 	 */
@@ -112,6 +117,7 @@ class UploadService {
 		RemoteService $remoteService,
 		ExternalFolderService $externalFolderService,
 		MetadataService $metadataService,
+		CronService $cronService,
 		OutputService $outputService,
 		ConfigService $configService
 	) {
@@ -121,6 +127,7 @@ class UploadService {
 		$this->remoteService = $remoteService;
 		$this->externalFolderService = $externalFolderService;
 		$this->metadataService = $metadataService;
+		$this->cronService = $cronService;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
 	}
@@ -158,11 +165,12 @@ class UploadService {
 	 * @param RestoringPoint $point
 	 *
 	 * @throws ExternalFolderNotFoundException
+	 * @throws JobsTimeSlotException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws RemoteInstanceNotFoundException
-	 * @throws RestoringPointPackException
 	 * @throws RestoringPointLockException
+	 * @throws RestoringPointPackException
 	 */
 	public function uploadPoint(RestoringPoint $point): void {
 		$this->initUpload($point);
@@ -177,6 +185,7 @@ class UploadService {
 	 * @param string $instance
 	 *
 	 * @throws RemoteInstanceNotFoundException
+	 * @throws JobsTimeSlotException
 	 */
 	public function uploadToRemoteInstances(RestoringPoint $point, string $instance = ''): void {
 		if (!$this->configService->isRemoteEnabled()) {
@@ -217,6 +226,8 @@ class UploadService {
 				} catch (Exception $e) {
 					$this->o('<error>cannot delete out of sync package</error>');
 				}
+			} catch (JobsTimeSlotException $e) {
+				throw $e;
 			} catch (Exception $e) {
 			}
 		}
@@ -227,6 +238,8 @@ class UploadService {
 	 * @param string $instance
 	 * @param RestoringPoint $point
 	 * @param RestoringHealth $health
+	 *
+	 * @throws JobsTimeSlotException
 	 */
 	private function uploadMissingFilesToRemoteInstance(
 		string $instance,
@@ -237,7 +250,9 @@ class UploadService {
 			if ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) {
 				continue;
 			}
-			
+
+			$this->cronService->lockCron();
+
 			if ($partHealth->getChunkName() === $partHealth->getPartName()) {
 				$this->o(
 					'  * Uploading <info>' . $partHealth->getDataName() . '</info>/<info>'
@@ -282,6 +297,7 @@ class UploadService {
 	 * @param int $storageId
 	 *
 	 * @throws ExternalFolderNotFoundException
+	 * @throws JobsTimeSlotException
 	 */
 	public function uploadToExternalFolder(RestoringPoint $point, int $storageId = 0): void {
 		$this->o('- uploading ' . $point->getId() . ' to external folders');
@@ -338,6 +354,8 @@ class UploadService {
 				} catch (Exception $e) {
 					$this->o('<error>cannot delete out of sync package</error>');
 				}
+			} catch (JobsTimeSlotException $e) {
+				throw $e;
 			} catch (Exception $e) {
 				$this->o(
 					' ! issue while checking external folder: <error>' . get_class($e) .
@@ -357,6 +375,7 @@ class UploadService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws RestoringChunkPartNotFoundException
+	 * @throws JobsTimeSlotException
 	 */
 	private function uploadMissingFilesToExternalFolder(
 		ExternalFolder $external,
@@ -368,6 +387,8 @@ class UploadService {
 			if ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) {
 				continue;
 			}
+
+			$this->cronService->lockCron();
 
 			if ($partHealth->getChunkName() === $partHealth->getPartName()) {
 				$this->o(

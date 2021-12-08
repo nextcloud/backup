@@ -243,7 +243,6 @@ class ExternalFolderService {
 	 * @throws ExternalFolderNotFoundException
 	 * @throws GenericFileException
 	 * @throws LockedException
-	 * @throws MetadataException
 	 * @throws NotPermittedException
 	 * @throws RestoringChunkPartNotFoundException
 	 * @throws RestoringPointException

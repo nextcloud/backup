@@ -35,6 +35,7 @@ use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
+use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Exceptions\RemoteInstanceException;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
@@ -54,6 +55,7 @@ class CronService {
 
 	public const MARGIN = 1800;
 	public const HOURS_FOR_NEXT = 4000;
+	public const LOCK_TIMEOUT = 3600;
 
 
 	/** @var PointService */
@@ -73,6 +75,10 @@ class CronService {
 
 	/** @var ConfigService */
 	private $configService;
+
+
+	/** @var bool */
+	private $ranFromCron = false;
 
 
 	/**
@@ -402,17 +408,48 @@ class CronService {
 
 
 	/**
+	 * we assume that calling this method indicate the process was initiated from BackgroundJobs
+	 *
 	 * @return bool
 	 */
-	public function isRealCron(): bool {
-		$mode = $this->configService->getCoreValue('backgroundjobs_mode', '');
+	public function isRunnable(): bool {
+		$mode = strtolower($this->configService->getCoreValue('backgroundjobs_mode', ''));
+		if ($mode !== 'cron' && $mode !== 'webcron') {
+			return false;
+		}
 
 		if (!$this->configService->getAppValueBool(ConfigService::CRON_ENABLED)) {
 			return false;
 		}
 
 		$this->configService->setAppValueBool(ConfigService::CRON_ENABLED, true);
+		$this->ranFromCron = true;
 
-		return (strtolower($mode) === 'cron' || strtolower($mode) === 'webcron');
+		return ($this->configService->getAppValueInt(ConfigService::CRON_LOCK) < time() - self::LOCK_TIMEOUT);
+	}
+
+
+	/**
+	 * @param bool $verifyTime
+	 *
+	 * @throws JobsTimeSlotException
+	 */
+	public function lockCron(bool $verifyTime = true): void {
+		if (!$this->ranFromCron) {
+			return;
+		}
+
+		if ($verifyTime && !$this->verifyTime()) {
+			throw new JobsTimeSlotException();
+		}
+
+		$this->configService->setAppValueInt(ConfigService::CRON_LOCK, time());
+	}
+
+	/**
+	 *
+	 */
+	public function unlockCron(): void {
+		$this->configService->setAppValueInt(ConfigService::CRON_LOCK, 0);
 	}
 }

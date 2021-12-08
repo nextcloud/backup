@@ -41,6 +41,7 @@ use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
 use OCA\Backup\Exceptions\BackupAppCopyException;
 use OCA\Backup\Exceptions\BackupScriptNotFoundException;
+use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Exceptions\RestoreChunkException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
@@ -80,6 +81,9 @@ class ChunkService {
 	/** @var EncryptService */
 	private $encryptService;
 
+	/** @var CronService */
+	private $cronService;
+
 	/** @var OutputService */
 	private $outputService;
 
@@ -98,11 +102,13 @@ class ChunkService {
 	public function __construct(
 		FilesService $filesService,
 		EncryptService $encryptService,
+		CronService $cronService,
 		OutputService $outputService,
 		ConfigService $configService
 	) {
 		$this->filesService = $filesService;
 		$this->encryptService = $encryptService;
+		$this->cronService = $cronService;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
 	}
@@ -114,6 +120,8 @@ class ChunkService {
 	 * @return void
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	public function createChunks(RestoringPoint $point): void {
 		$this->o('> creating chunks');
@@ -121,6 +129,12 @@ class ChunkService {
 		foreach ($point->getRestoringData() as $data) {
 			if ($data->getType() === RestoringData::INTERNAL_DATA) {
 				continue;
+			}
+
+			// now would be a good place to refresh tick on lock from cronjob
+			try {
+				$this->cronService->lockCron(false);
+			} catch (JobsTimeSlotException $e) {
 			}
 
 			$this->o('  * <info>' . $data->getName() . '</info>: ', false);
@@ -355,6 +369,8 @@ class ChunkService {
 	 *
 	 * @throws ArchiveCreateException
 	 * @throws ArchiveNotFoundException
+	 * @throws NotPermittedException
+	 * @throws RestoringPointNotInitiatedException
 	 */
 	private function fillChunks(RestoringPoint $point, RestoringData $data) {
 		$files = $data->getFiles();
@@ -440,6 +456,12 @@ class ChunkService {
 	): RestoringChunk {
 		$chunk = new RestoringChunk($data->getName());
 		$chunkSize = $this->configService->getAppValueInt(ConfigService::CHUNK_SIZE) * 1024 * 1024;
+
+		// now would be a good place to refresh tick on lock from cronjob
+		try {
+			$this->cronService->lockCron(false);
+		} catch (JobsTimeSlotException $e) {
+		}
 
 		$zip = $this->generateZip($point, $chunk);
 		$zipSize = 0;
