@@ -36,14 +36,14 @@
 					{{ t('backup', 'You can enable background task for backups. This means that the creation, maintenance and purges of backups will be done automatically.') }}
 					<ul>
 						<li>
-							{{ t('backup', 'Creation: new restoring points will be created according to the schedule.') }}
+							{{ t('backup', 'Creation: New restoring points will be created according to the schedule.') }}
 						</li>
 
 						<li>
-							{{ t('backup', 'Maintenance: restoring points will be packed and copied to potential external storages.') }}
+							{{ t('backup', 'Maintenance: Restoring points will be packed and copied to potential external storages.') }}
 						</li>
 						<li>
-							{{ t('backup', 'Purge: old restoring points will be deleted automatically according to the retention policy.') }}
+							{{ t('backup', 'Purge: Old restoring points will be deleted automatically according to the retention policy.') }}
 						</li>
 					</ul>
 				</div>
