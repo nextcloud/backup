@@ -39,6 +39,7 @@
     "Request the creation of a new restoring point now" : "Eskatu berrezartze-puntu baten sorketa orain",
     "Create full restoring point" : "Sortu berrezartze-puntu osoa",
     "I understand that the server will be put in maintenance mode." : "Zerbitzaria mantentze moduan jarriko dela ulertzen dut.",
+    "Cancel" : "Utzi",
     "Request {mode} restoring point" : "Eskatu {mode} berrezarte-puntua",
     "Unable to fetch the settings" : "Ezin izan dira ezarpenak lortu",
     "Settings saved" : "Ezarpenak gordeta",
