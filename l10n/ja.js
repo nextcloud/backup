@@ -9,6 +9,10 @@ OC.L10N.register(
     "seconds" : "秒",
     "minutes" : "分",
     "hours" : "時間",
-    "days" : "日"
+    "days" : "日",
+    "Error" : "エラー",
+    "Local storage" : "ローカルストレージ",
+    "External storage" : "外部ストレージ",
+    "Delete" : "削除"
 },
 "nplurals=1; plural=0;");
