@@ -13,6 +13,14 @@ OC.L10N.register(
     "Error" : "エラー",
     "Local storage" : "ローカルストレージ",
     "External storage" : "外部ストレージ",
-    "Delete" : "削除"
+    "Delete" : "削除",
+    "Backup schedule" : "バックアップスケジュール",
+    "Cancel" : "キャンセル",
+    "Settings saved" : "設定を保存しました",
+    "Encrypted" : "暗号化済み",
+    "Compressed" : "圧縮",
+    "Status" : "ステータス",
+    "Local" : "ローカル",
+    "local" : "ローカル"
 },
 "nplurals=1; plural=0;");
