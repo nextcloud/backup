@@ -59,7 +59,7 @@
     "Allow the creation of full restoring points during week day" : "Erlauben Sie die Erstellung vollständiger Wiederherstellungspunkte an Wochentagen",
     "Time interval between two full restoring points" : "Zeitintervall zwischen zwei vollständigen Wiederherstellungspunkten",
     "Time interval between two partial restoring points" : "Zeitintervall zwischen zwei Teilwiederherstellungspunkten",
-    "Packing processing" : "Komprimierung läuft",
+    "Packing processing" : "Verpackung läuft",
     "Processing that will be done on the restoring points during the packing step." : "Verarbeitung, die an den Wiederherstellungspunkten während des Verpackungsschritts durchgeführt wird.",
     "Encrypt restoring points" : "Wiederherstellungspunkte verschlüsseln",
     "Compress restoring points" : "Wiederherstellungspunkte komprimieren",
