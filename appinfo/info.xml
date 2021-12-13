@@ -8,14 +8,14 @@
 		<![CDATA[
 		 The Backup App creates and stores backup images of your Nextcloud:
 
-      - Backup the instance, its apps, your data and your database,
-      - Administrator can configure the time slots for automated backup,
-      - Full and Partial backup, with different frequencies,
-      - 2-pass to limit downtime (maintenance mode) of your instance,
-      - Compression and encryption,
-      - Upload your encrypted backup on an external filesystem,
-      - Download and search for your data,
-      - Restore single file or the entire instance.
+- Backup the instance, its apps, your data and your database,
+- Administrator can configure the time slots for automated backup,
+- Full and Partial backup, with different frequencies,
+- 2-pass to limit downtime (maintenance mode) of your instance,
+- Compression and encryption,
+- Upload your encrypted backup on an external filesystem,
+- Download and search for your data,
+- Restore single file or the entire instance.
 ]]>
 	</description>
 	<version>1.0.1</version>
