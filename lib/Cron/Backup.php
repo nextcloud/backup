@@ -33,6 +33,7 @@ namespace OCA\Backup\Cron;
 
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OC\BackgroundJob\TimedJob;
+use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\PointService;
@@ -87,18 +88,28 @@ class Backup extends TimedJob {
 	 * @param $argument
 	 */
 	protected function run($argument): void {
-		if (!$this->cronService->isRealCron()) {
+		if (!$this->cronService->isRunnable()) {
 			return;
 		}
 
+		try {
+			$this->cronService->lockCron(false);
+			$this->manage();
+			$this->cronService->unlockCron();
+		} catch (JobsTimeSlotException $e) {
+			return;
+		}
+	}
+
+
+	/**
+	 *
+	 */
+	private function manage(): void {
 		$time = time();
 		if ($this->configService->getAppValueInt(ConfigService::MOCKUP_DATE) > 0) {
 			$time = $this->configService->getAppValueInt(ConfigService::MOCKUP_DATE);
 			$this->configService->setAppValueInt(ConfigService::MOCKUP_DATE, 0);
-		}
-
-		if (!$this->cronService->verifyTime($time)) {
-			return;
 		}
 
 		$this->runBackup($time);
@@ -106,7 +117,7 @@ class Backup extends TimedJob {
 
 
 	/**
-	 *
+	 * @param int $time
 	 */
 	private function runBackup(int $time): void {
 		if ($this->cronService->verifyFullBackup($time)) {

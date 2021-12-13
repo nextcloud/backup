@@ -34,6 +34,7 @@ namespace OCA\Backup\Cron;
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\ExternalFolderService;
@@ -109,15 +110,31 @@ class Manage extends TimedJob {
 	 * @param $argument
 	 */
 	protected function run($argument) {
-		if (!$this->cronService->isRealCron()) {
+		if (!$this->cronService->isRunnable()) {
 			return;
 		}
 
+		try {
+			$this->cronService->lockCron(false);
+			$this->manage();
+			$this->cronService->unlockCron();
+		} catch (JobsTimeSlotException $e) {
+		}
+	}
+
+
+	/**
+	 * @throws JobsTimeSlotException
+	 */
+	private function manage() {
 		$generateLogs = $this->configService->getAppValueBool(ConfigService::GENERATE_LOGS);
 
 		// TODO: purge old restoring points.
 		$this->cronService->purgeRestoringPoints();
 		$this->cronService->purgeRemoteRestoringPoints();
+
+		// next steps are only available during night shift
+		$this->cronService->lockCron();
 
 		// uploading
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
@@ -130,11 +147,14 @@ class Manage extends TimedJob {
 					$this->outputService->openFile($point, 'Manage Background Job (uploading)');
 				}
 				$this->uploadService->uploadPoint($point);
+			} catch (JobsTimeSlotException $e) {
+				break;
 			} catch (Throwable $e) {
 			}
 		}
 
 		// packing
+		$this->cronService->lockCron();
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
 			if ($point->isArchive()) {
 				continue;
@@ -151,34 +171,35 @@ class Manage extends TimedJob {
 					$this->outputService->openFile($point, 'Manage Background Job (packing)');
 				}
 				$this->packService->packPoint($point);
+			} catch (JobsTimeSlotException $e) {
+				break;
 			} catch (Throwable $e) {
 			}
 		}
 
-		// next step are only executed during the night shift
-		if (!$this->cronService->verifyTime()) {
-			return;
-		}
-
-
 		// regenerate local health
+		$this->cronService->lockCron();
 		foreach ($this->pointService->getLocalRestoringPoints() as $point) {
 			if ($point->hasHealth()
 				&& $point->getHealth()->getChecked() > time() - self::DELAY_CHECK_HEALTH) {
 				continue;
 			}
 			try {
+				$this->cronService->lockCron();
 				$this->pointService->initBaseFolder($point);
 				if ($generateLogs) {
 					$this->outputService->openFile($point, 'Manage Background Job (health)');
 				}
 
 				$this->pointService->generateHealth($point, true);
+			} catch (JobsTimeSlotException $e) {
+				break;
 			} catch (Throwable $e) {
 			}
 		}
 
 		// regenerate health on ExternalFolder
+		$this->cronService->lockCron();
 		foreach ($this->externalFolderService->getAll() as $external) {
 			try {
 				foreach ($this->externalFolderService->getRestoringPoints($external) as $point) {
@@ -187,6 +208,7 @@ class Manage extends TimedJob {
 						continue;
 					}
 					try {
+						$this->cronService->lockCron();
 						$this->pointService->initBaseFolder($point);
 						if ($generateLogs) {
 							$this->outputService->openFile(
@@ -194,6 +216,8 @@ class Manage extends TimedJob {
 							);
 						}
 						$this->externalFolderService->getCurrentHealth($external, $point);
+					} catch (JobsTimeSlotException $e) {
+						return;
 					} catch (Throwable $e) {
 					}
 				}

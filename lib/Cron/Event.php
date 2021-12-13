@@ -95,7 +95,7 @@ class Event extends TimedJob {
 	 * @param $argument
 	 */
 	protected function run($argument) {
-		if (!$this->cronService->isRealCron()) {
+		if (!$this->cronService->isRunnable()) {
 			return;
 		}
 
