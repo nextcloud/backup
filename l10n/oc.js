@@ -8,6 +8,14 @@ OC.L10N.register(
     "minutes" : "minutas",
     "hours" : "oras",
     "days" : "jorns",
-    "Settings saved" : "Paramètres salvats"
+    "Error" : "Error",
+    "Actions" : "Accions",
+    "Settings saved" : "Paramètres salvats",
+    "_day_::_days_" : ["jorn","jorns"],
+    "Encrypted" : "Chifrat",
+    "Compressed" : "Compressat",
+    "Health" : "Santat",
+    "ID" : "ID",
+    "Local" : "Local"
 },
 "nplurals=2; plural=(n > 1);");
