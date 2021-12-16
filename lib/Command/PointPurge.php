@@ -32,7 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
-use OCA\Backup\Service\CronService;
+use OCA\Backup\Service\PointService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -44,19 +44,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PointPurge extends Base {
 
 
-	/** @var CronService */
-	private $cronService;
+	/** @var PointService */
+	private $pointService;
 
 
 	/**
 	 * PointPurge constructor.
 	 *
-	 * @param CronService $cronService
+	 * @param PointService $pointService
 	 */
-	public function __construct(CronService $cronService) {
+	public function __construct(PointService $pointService) {
 		parent::__construct();
 
-		$this->cronService = $cronService;
+		$this->pointService = $pointService;
 	}
 
 
@@ -78,8 +78,8 @@ class PointPurge extends Base {
 	 * @return int
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$this->cronService->purgeRestoringPoints();
-		$this->cronService->purgeRemoteRestoringPoints();
+		$this->pointService->purgeRestoringPoints();
+		$this->pointService->purgeRemoteRestoringPoints();
 
 		return 0;
 	}
