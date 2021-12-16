@@ -39,8 +39,8 @@ use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
-use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\OutputService;
+use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteStreamService;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -57,8 +57,8 @@ class PointList extends Base {
 	use TStringTools;
 
 
-	/** @var CronService */
-	private $cronService;
+	/** @var PointService */
+	private $pointService;
 
 	/** @var OutputService */
 	private $outputService;
@@ -71,16 +71,16 @@ class PointList extends Base {
 	 * PointList constructor.
 	 *
 	 * @param OutputService $outputService
-	 * @param CronService $cronService
+	 * @param PointService $pointService
 	 * @param RemoteStreamService $remoteStreamService
 	 */
 	public function __construct(
 		OutputService $outputService,
-		CronService $cronService,
+		PointService $pointService,
 		RemoteStreamService $remoteStreamService
 	) {
 		$this->outputService = $outputService;
-		$this->cronService = $cronService;
+		$this->pointService = $pointService;
 		$this->remoteStreamService = $remoteStreamService;
 
 		parent::__construct();
@@ -116,7 +116,7 @@ class PointList extends Base {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->outputService->setOutput($output);
-		$rp = $this->cronService->getRPFromInstances(
+		$rp = $this->pointService->getRPFromInstances(
 			$input->getOption('local'),
 			$input->getOption('remote'),
 			$input->getOption('external')

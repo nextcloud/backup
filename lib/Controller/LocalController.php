@@ -31,6 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Controller;
 
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Controller;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
@@ -176,9 +177,10 @@ class LocalController extends OcsController {
 
 	/**
 	 * @return DataResponse
+	 * @throws SignatureException
 	 */
 	public function getRestoringPoints(): DataResponse {
-		$points = $this->cronService->getRPFromInstances();
+		$points = $this->pointService->getRPFromInstances();
 
 		return new DataResponse($points);
 	}
