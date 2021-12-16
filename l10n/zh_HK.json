@@ -12,6 +12,7 @@
     "Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})" : "您的系統已根據 {date} 的還原點完全還原（估計倒回：{rewind}）",
     "The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})" : "檔案 {file} 已根據 {date} 的還原點進行還原（估計倒回：{rewind}）",
     "Backup now. Restore later." : "立即備份。 稍後還原。",
+    "The Backup App creates and stores backup images of your Nextcloud:\n\n- Backup the instance, its apps, your data and your database,\n- Administrator can configure the time slots for automated backup,\n- Full and Partial backup, with different frequencies,\n- 2-pass to limit downtime (maintenance mode) of your instance,\n- Compression and encryption,\n- Upload your encrypted backup on an external filesystem,\n- Download and search for your data,\n- Restore single file or the entire instance." : "備份應用程式創建並存儲 Nextcloud 的備份圖像：\n\n- 備份實例、其應用程序、您的數據和您的數據庫\n- 管理員可以配置自動備份的時間段\n- 完整和部分備份，具有不同的頻率\n- 2-pass 限制實例的停機時間（維護模式），\n- 壓縮和加密，\n- 將您的加密備份上傳到外部文件系統，\n- 下載並蒐索您的數據，\n- 恢復單個文件或整個實例",
     "App Data" : "應用程式數據",
     "Choose where the backup app will initially store the restoring points." : "選擇備份應用程式最初存儲還原點的位置。",
     "Path in which to store the data. (ex: app_data)" : "存儲數據的路徑。（如：app_data）",
