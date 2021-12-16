@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.0.2
+
+- fixing a loop in DI
+
+
 ### 1.0.1
 
 - ignore exception during the uninstall process if external appdata is not found
