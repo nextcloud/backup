@@ -33,8 +33,8 @@ namespace OCA\Backup\Cron;
 
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
-use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Exceptions\JobsTimeSlotException;
+use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\ExternalFolderService;
@@ -130,8 +130,8 @@ class Manage extends TimedJob {
 		$generateLogs = $this->configService->getAppValueBool(ConfigService::GENERATE_LOGS);
 
 		// TODO: purge old restoring points.
-		$this->cronService->purgeRestoringPoints();
-		$this->cronService->purgeRemoteRestoringPoints();
+		$this->pointService->purgeRestoringPoints();
+		$this->pointService->purgeRemoteRestoringPoints();
 
 		// next steps are only available during night shift
 		$this->cronService->lockCron();

@@ -33,6 +33,7 @@ namespace OCA\Backup\Service;
 
 use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
 use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
+use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Signatory;
@@ -50,12 +51,16 @@ use OCA\Backup\Exceptions\BackupScriptNotFoundException;
 use OCA\Backup\Exceptions\ExternalAppdataException;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Exceptions\ParentRestoringPointNotFoundException;
+use OCA\Backup\Exceptions\RemoteInstanceException;
+use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
+use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Exceptions\RestoringChunkNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\ISqlDump;
 use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\ExternalFolder;
+use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Model\RestoringData;
@@ -93,6 +98,9 @@ class PointService {
 
 	/** @var ChangesRequest */
 	private $changesRequest;
+
+	/** @var RemoteService */
+	private $remoteService;
 
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
@@ -133,6 +141,7 @@ class PointService {
 	 *
 	 * @param PointRequest $pointRequest
 	 * @param ChangesRequest $changesRequest
+	 * @param RemoteService $remoteService
 	 * @param RemoteStreamService $remoteStreamService
 	 * @param ExternalFolderService $externalFolderService
 	 * @param ChunkService $chunkService
@@ -146,6 +155,7 @@ class PointService {
 	public function __construct(
 		PointRequest $pointRequest,
 		ChangesRequest $changesRequest,
+		RemoteService $remoteService,
 		RemoteStreamService $remoteStreamService,
 		ExternalFolderService $externalFolderService,
 		ChunkService $chunkService,
@@ -158,6 +168,7 @@ class PointService {
 	) {
 		$this->pointRequest = $pointRequest;
 		$this->changesRequest = $changesRequest;
+		$this->remoteService = $remoteService;
 		$this->remoteStreamService = $remoteStreamService;
 		$this->externalFolderService = $externalFolderService;
 		$this->chunkService = $chunkService;
@@ -207,16 +218,6 @@ class PointService {
 	 */
 	public function getLocalRestoringPoints(int $since = 0, int $until = 0, bool $asc = true): array {
 		return $this->pointRequest->getLocal($since, $until, $asc);
-	}
-
-
-	/**
-	 * @param string $instance
-	 *
-	 * @return RestoringPoint[]
-	 */
-	public function getRPByInstance(string $instance): array {
-		return $this->pointRequest->getByInstance($instance);
 	}
 
 
@@ -814,6 +815,158 @@ class PointService {
 
 
 	public function deleteAllPoints(): void {
+	}
+
+
+	/**
+	 * @param string $instance
+	 *
+	 * @return RestoringPoint[]
+	 */
+	public function getRPByInstance(string $instance): array {
+		return $this->pointRequest->getByInstance($instance);
+	}
+
+
+	/**
+	 * TODO: explode the method as some part of the process is external folder related...
+	 *
+	 * @param bool $local
+	 * @param string $remote
+	 * @param string $external
+	 *
+	 * @return array
+	 * @throws SignatureException
+	 */
+	public function getRPFromInstances(
+		bool $local = false,
+		string $remote = '',
+		string $external = ''
+	): array {
+		if ($local) {
+			$instances = [RemoteInstance::LOCAL];
+		} elseif ($remote !== '') {
+			$instances = ['remote:' . $remote];
+		} elseif ($external !== '') {
+			$instances = ['external:' . $external];
+		} else {
+			$instances = array_merge(
+				[RemoteInstance::LOCAL],
+				array_map(
+					function (RemoteInstance $remoteInstance): string {
+						return 'remote:' . $remoteInstance->getInstance();
+					}, $this->remoteService->getOutgoing()
+				),
+				array_map(
+					function (ExternalFolder $externalFolder): string {
+						return 'external:' . $externalFolder->getStorageId();
+					}, $this->externalFolderService->getAll()
+				)
+			);
+		}
+
+		$points = $dates = [];
+		foreach ($instances as $instance) {
+			$this->o('- retreiving data from <info>' . $instance . '</info>');
+
+			$list = [];
+			try {
+				if ($instance === RemoteInstance::LOCAL) {
+					$list = $this->getLocalRestoringPoints();
+				} else {
+					[$source, $id] = explode(':', $instance, 2);
+					if ($source === 'remote') {
+						$list = $this->remoteService->getRestoringPoints($id);
+					} elseif ($source === 'external') {
+						try {
+							$external = $this->externalFolderService->getByStorageId((int)$id);
+							$list = $this->externalFolderService->getRestoringPoints($external);
+						} catch (ExternalFolderNotFoundException $e) {
+						}
+					}
+				}
+			} catch (RemoteInstanceException
+			| RemoteInstanceNotFoundException
+			| RemoteResourceNotFoundException $e) {
+				continue;
+			}
+
+			foreach ($list as $item) {
+				$this->o(' > found RestoringPoint <info>' . $item->getId() . '</info>');
+				if (!array_key_exists($item->getId(), $points)) {
+					$points[$item->getId()] = [];
+				}
+
+				$issue = '';
+				if ($instance !== RemoteInstance::LOCAL) {
+					$storedDate = $this->getInt($item->getId(), $dates);
+					if ($storedDate > 0 && $storedDate !== $item->getDate()) {
+						$this->o('  <error>! different date</error>');
+						$issue = 'different date';
+					}
+
+					try {
+						$this->remoteStreamService->verifyPoint($item);
+					} catch (SignatoryException | SignatureException $e) {
+						$this->o('  <error>! cannot confirm integrity</error>');
+						$issue = 'cannot confirm integrity';
+					}
+				}
+
+				$points[$item->getId()][$instance] = [
+					'point' => $item,
+					'issue' => $issue
+				];
+
+				$dates[$item->getId()] = $item->getDate();
+			}
+		}
+
+		return $this->orderByDate($points, $dates);
+	}
+
+
+	/**
+	 * @param array $points
+	 * @param array $dates
+	 *
+	 * @return array
+	 */
+	private function orderByDate(array $points, array $dates): array {
+		asort($dates);
+
+		$result = [];
+		foreach ($dates as $pointId => $date) {
+			$result[$pointId] = $points[$pointId];
+		}
+
+		return $result;
+	}
+
+	/**
+	 *
+	 */
+	public function purgeRestoringPoints(): void {
+		$c = $this->configService->getAppValue(ConfigService::STORE_ITEMS);
+		$i = 0;
+		foreach ($this->getLocalRestoringPoints(0, 0, false) as $point) {
+			if ($point->isArchive()) {
+				continue;
+			}
+			$i++;
+			if ($i > $c) {
+				try {
+					$this->delete($point);
+				} catch (Throwable $e) {
+				}
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	public function purgeRemoteRestoringPoints(): void {
 	}
 
 
