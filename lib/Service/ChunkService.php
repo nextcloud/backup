@@ -472,7 +472,7 @@ class ChunkService {
 			}
 
 			if ($zipSize > 0 && ($zipSize + $fileSize) > $chunkSize) {
-				$this->finalizeZip($zip, $chunk->setCount()->setSize($zipSize));
+				$this->finalizeZip($zip, $chunk->setCount()->setSize((int)$zipSize));
 				$this->finalizeChunk($point, $chunk);
 				array_unshift($files, $filename);
 
@@ -487,7 +487,7 @@ class ChunkService {
 			$chunk->addFile($archiveFile);
 		}
 
-		$this->finalizeZip($zip, $chunk->setCount()->setSize($zipSize));
+		$this->finalizeZip($zip, $chunk->setCount()->setSize((int)$zipSize));
 		$this->finalizeChunk($point, $chunk);
 
 		return $chunk;
