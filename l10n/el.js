@@ -1,0 +1,28 @@
+OC.L10N.register(
+    "backup",
+    {
+    "Backup" : "Αντίγραφο ασφαλείας",
+    "complete" : "Ολοκληρώθηκε",
+    "partial" : "Μερικός",
+    "seconds" : "δευτερόλεπτα",
+    "minutes" : "λεπτά",
+    "hours" : "ώρες",
+    "days" : "ημέρες",
+    "A new restoring point ({type}) has been generated, requiring maintenance mode for {downtime}." : "Δημιουργήθηκε ένα νέο σημείο επαναφοράς ({type}), το οποίο απαιτεί λειτουργία συντήρησης για {downtime}.",
+    "Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})" : "Το σύστημά σας έχει αποκατασταθεί πλήρως με βάση ένα σημείο επαναφοράς από τις {date} (εκτιμώμενη επαναφορά: {rewind})",
+    "The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})" : "Το αρχείο {file} έχει αποκατασταθεί με βάση ένα σημείο επαναφοράς από {date} (εκτιμώμενη επαναφορά: {rewind})",
+    "Backup now. Restore later." : "Δημιουργία αντιγράφων ασφαλείας τώρα. Επαναφορά αργότερα.",
+    "The Backup App creates and stores backup images of your Nextcloud:\n\n- Backup the instance, its apps, your data and your database,\n- Administrator can configure the time slots for automated backup,\n- Full and Partial backup, with different frequencies,\n- 2-pass to limit downtime (maintenance mode) of your instance,\n- Compression and encryption,\n- Upload your encrypted backup on an external filesystem,\n- Download and search for your data,\n- Restore single file or the entire instance." : "Η εφαρμογή Backup δημιουργεί και αποθηκεύει εφεδρικές εικόνες του Nextcloud σας:\n\n- Δημιουργήστε αντίγραφα ασφαλείας του Nextcloud, των εφαρμογών της, των δεδομένων σας και της βάσης δεδομένων σας,\n- Ο διαχειριστής μπορεί να προκαθορίσει τα χρονικά διαστήματα για την αυτόματη δημιουργία αντιγράφων ασφαλείας,\n- Πλήρης και μερική δημιουργία αντιγράφων ασφαλείας, με διαφορετικές συχνότητες,\n- 2 περάσματα για τον περιορισμό του χρόνου διακοπής λειτουργίας (λειτουργία συντήρησης) της παρουσίας σας,\n- Συμπίεση και κρυπτογράφηση,\n- Ανεβάστε το κρυπτογραφημένο αντίγραφο ασφαλείας σας σε ένα εξωτερικό σύστημα αρχείων,\n- Λήψη και αναζήτηση των δεδομένων σας,\n- Επαναφορά μεμονωμένου αρχείου ή ολόκληρης της παρουσίας.",
+    "App Data" : "Αρχεία εφαρμογής",
+    "Choose where the backup app will initially store the restoring points." : "Επιλέξτε πού θα αποθηκεύσει αρχικά η εφαρμογή δημιουργίας αντιγράφων ασφαλείας τα σημεία επαναφοράς.",
+    "Path in which to store the data. (ex: app_data)" : "Διαδρομή στην οποία αποθηκεύονται τα δεδομένα. (π.χ.: app_data)",
+    "Error" : "Σφάλμα",
+    "Local storage" : "Τοπικός αποθηκευτικός χώρος",
+    "Path in which to store the restoring points. (ex: backups)" : "Διαδρομή στην οποία αποθηκεύονται τα δεδομένα. (π.χ.: app_data)",
+    "Add new external location" : "Προσθήκη εξωτερικού διαχειριστή",
+    "External storage" : "Εξωτερικός αποθηκευτικός χώρος",
+    "Actions" : "Ενέργειες",
+    "Delete" : "Διαγραφή",
+    "No external storage available" : "Δεν έχει ρυθμιστεί κανένα εξωτερικό μέσο αποθήκευσης"
+},
+"nplurals=2; plural=(n != 1);");
