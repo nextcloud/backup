@@ -475,7 +475,12 @@ class PointService {
 				continue;
 			}
 
-			$name = 'apps-' . str_replace('/', '', $this->get('url', $app) . '-' . $this->uuid(8));
+			$customUrl = str_replace('/', '', $this->get('url', $app));
+			if ($this->get('path', $app) === OC::$SERVERROOT . '/apps' && $customUrl === 'apps') {
+				continue;
+			}
+
+			$name = 'apps-' . $customUrl . '-' . $this->uuid(8);
 			$path = ltrim($this->get('path', $app), '/');
 			$point->addRestoringData(new RestoringData(RestoringData::ROOT_DISK, $path, $name));
 		}
