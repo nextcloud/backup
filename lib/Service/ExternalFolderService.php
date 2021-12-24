@@ -58,7 +58,9 @@ use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCA\Files_External\Lib\StorageConfig;
+use OCA\Files_External\MountConfig;
 use OCA\Files_External\Service\GlobalStoragesService;
+use OCP\AppFramework\QueryException;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\GenericFileException;
 use OCP\Files\InvalidPathException;
@@ -816,6 +818,12 @@ class ExternalFolderService {
 
 		$externals = $this->getAll();
 		foreach ($this->globalStoragesService->getAllStorages() as $globalStorage) {
+			try {
+				$this->prepareStorageConfig($globalStorage);
+			} catch (Exception $e) {
+				$this->e($e);
+				continue;
+			}
 			$storage = $this->constructStorage($globalStorage);
 			$storageId = Storage::getNumericStorageId($storage->getId());
 
@@ -863,6 +871,34 @@ class ExternalFolderService {
 		throw new ExternalFolderNotFoundException('storage not found');
 	}
 
+
+	/**
+	 * Process storage ready for mounting
+	 * based on apps/files_external/lib/Config/ConfigAdapter.php
+	 *
+	 * @param StorageConfig $storage
+	 *
+	 * @throws InsufficientDataForMeaningfulAnswerException
+	 * @throws StorageNotAvailableException
+	 * @throws QueryException
+	 */
+	private function prepareStorageConfig(StorageConfig &$storage) {
+		foreach ($storage->getBackendOptions() as $option => $value) {
+			$storage->setBackendOption($option, MountConfig::substitutePlaceholdersInConfig($value));
+		}
+
+		$objectStore = $storage->getBackendOption('objectstore');
+		if ($objectStore) {
+			$objectClass = $objectStore['class'];
+			if (!is_subclass_of($objectClass, '\OCP\Files\ObjectStore\IObjectStore')) {
+				throw new \InvalidArgumentException('Invalid object store');
+			}
+			$storage->setBackendOption('objectstore', new $objectClass($objectStore));
+		}
+
+		$storage->getAuthMechanism()->manipulateStorageConfig($storage, $user);
+		$storage->getBackend()->manipulateStorageConfig($storage, $user);
+	}
 
 	/**
 	 * Construct the storage implementation
