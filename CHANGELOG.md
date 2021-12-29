@@ -1,5 +1,12 @@
 # Changelog
 
+
+### 1.0.4
+
+- fixing an issue with some types of external storage,
+- ignoring default apps/ folder when parsing custom_apps
+
+
 ### 1.0.3
 
 - fixing a loop in DI
