@@ -197,7 +197,6 @@ class EncryptService {
 	 * @param string $output
 	 *
 	 * @throws EncryptionKeyException
-	 * @throws SodiumException
 	 * @throws PackEncryptException
 	 */
 	public function encryptFileCBC(string $input, string $output): void {
@@ -214,6 +213,7 @@ class EncryptService {
 			OPENSSL_RAW_DATA,
 			$iv
 		);
+		unset($plain);
 
 		if (!$encrypted) {
 			throw new PackEncryptException('data were not encrypted');
@@ -221,7 +221,6 @@ class EncryptService {
 
 		fwrite($write, $encrypted);
 		fclose($write);
-		sodium_memzero($plain);
 	}
 
 
