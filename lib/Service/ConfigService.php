@@ -428,6 +428,9 @@ class ConfigService {
 		if ($data->hasKey(self::STORE_ITEMS)) {
 			$this->setAppValueInt(self::STORE_ITEMS, $data->gInt(self::STORE_ITEMS));
 		}
+		if ($data->hasKey(self::STORE_ITEMS_EXTERNAL)) {
+			$this->setAppValueInt(self::STORE_ITEMS_EXTERNAL, $data->gInt(self::STORE_ITEMS_EXTERNAL));
+		}
 
 		return $this->getSettings();
 	}
