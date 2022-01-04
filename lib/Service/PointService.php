@@ -290,11 +290,11 @@ class PointService {
 
 		$this->activityService->newActivity(
 			'backup_create', [
-				'id' => $point->getId(),
-				'duration' => $point->getDuration(),
-				'status' => $point->getStatus(),
-				'complete' => $complete
-			]
+							   'id' => $point->getId(),
+							   'duration' => $point->getDuration(),
+							   'status' => $point->getStatus(),
+							   'complete' => $complete
+						   ]
 		);
 
 		return $point;
@@ -308,6 +308,7 @@ class PointService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws SignatoryException
+	 * @throws ExternalFolderNotFoundException
 	 */
 	public function update(RestoringPoint $point, bool $updateMetadata = false): void {
 		$this->initBaseFolder($point);
@@ -963,18 +964,13 @@ class PointService {
 		}
 	}
 
-	/**
-	 *
-	 */
-	public function purgeRemoteRestoringPoints(): void {
-	}
-
 
 	/**
 	 * @param RestoringPoint $point
 	 *
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @throws ExternalFolderNotFoundException
 	 */
 	public function initBaseFolder(RestoringPoint $point): void {
 		if ($point->hasBaseFolder()) {

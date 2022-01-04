@@ -129,9 +129,8 @@ class Manage extends TimedJob {
 	private function manage() {
 		$generateLogs = $this->configService->getAppValueBool(ConfigService::GENERATE_LOGS);
 
-		// TODO: purge old restoring points.
 		$this->pointService->purgeRestoringPoints();
-		$this->pointService->purgeRemoteRestoringPoints();
+		$this->externalFolderService->purgeRestoringPoints();
 
 		// next steps are only available during night shift
 		$this->cronService->lockCron();
