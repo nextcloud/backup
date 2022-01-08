@@ -17,6 +17,7 @@ OC.L10N.register(
     "Choose where the backup app will initially store the restoring points." : "Επιλέξτε πού θα αποθηκεύσει αρχικά η εφαρμογή δημιουργίας αντιγράφων ασφαλείας τα σημεία επαναφοράς.",
     "Path in which to store the data. (ex: app_data)" : "Διαδρομή στην οποία αποθηκεύονται τα δεδομένα. (π.χ.: app_data)",
     "Error" : "Σφάλμα",
+    "Change the App Data" : "Αλλαγή των δεδομένων της εφαρμογής",
     "Local storage" : "Τοπικός αποθηκευτικός χώρος",
     "Path in which to store the restoring points. (ex: backups)" : "Διαδρομή στην οποία αποθηκεύονται τα δεδομένα. (π.χ.: app_data)",
     "Add new external location" : "Προσθήκη εξωτερικού διαχειριστή",
