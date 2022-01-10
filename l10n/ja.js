@@ -17,6 +17,7 @@ OC.L10N.register(
     "Backup schedule" : "バックアップスケジュール",
     "Cancel" : "キャンセル",
     "Settings saved" : "設定を保存しました",
+    "_day_::_days_" : ["日"],
     "Encrypted" : "暗号化済み",
     "Compressed" : "圧縮",
     "Status" : "ステータス",
