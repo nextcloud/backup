@@ -10,6 +10,8 @@ OC.L10N.register(
     "minutes" : "分",
     "hours" : "時間",
     "days" : "日",
+    "App Data" : "アプリデータ",
+    "Set as App Data" : "アプリデータとして設定",
     "Error" : "エラー",
     "Local storage" : "ローカルストレージ",
     "External storage" : "外部ストレージ",
