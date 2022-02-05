@@ -968,15 +968,12 @@ class PointService {
 		// iterate over all fulls and delete incrementals more than ConfigServer::STORE_ITEMS
 		foreach($fulls as $fullpoint){
 
-			//printf("%s\n", $fullpoint->getId());
-
 			// iterate over this full's incrementals and delete all but the
 			// most recent backups for $keep; IMPORTANT: this assumes there is no
 			// timestamp overlaps
 			$thisincs = [];
 			foreach($incs as $incpoint){
 				if($incpoint->getParent() == $fullpoint->getId()){
-					//printf("\t-- %s : %s\n", $incpoint->getId(), $incpoint->getDate());
 					$thisincs[$incpoint->getDate()] = $incpoint;
 				}
 			}
@@ -988,7 +985,6 @@ class PointService {
 			}
 
 			foreach($thisincs as $k => $inc){
-				//printf("Purging %s: %s\n", $k, $v);
 				$this->delete($inc);
 				
 			}
@@ -1011,11 +1007,9 @@ class PointService {
 		foreach($thisfulls as $fk => $fullpoint){
 			foreach($incs as $incpoint){
                	if($incpoint->getParent() == $fullpoint->getId()){
-                    //printf("\t-- %s : %s\n", $incpoint->getId(), $incpoint->getDate());
 					$this->delete($incpoint);
        	        }
             }
-			//printf("Purging %s: %s\n", $k, $v);
 			$this->delete($fullpoint);
 		}
 	}
