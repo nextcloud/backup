@@ -31,7 +31,7 @@
 		"@nextcloud/logger": "^2.1.0",
 		"@nextcloud/moment": "^1.1.1",
 		"@nextcloud/router": "^2.0.0",
-		"@nextcloud/vue": "^4.3.0",
+		"@nextcloud/vue": "^5.0.0",
 		"vue": "^2.6.14",
 		"vue-material-design-icons": "^5.0.0"
 	},
