@@ -13,6 +13,7 @@ OC.L10N.register(
     "App Data" : "アプリデータ",
     "Set as App Data" : "アプリデータとして設定",
     "Error" : "エラー",
+    "I understand some data will be deleted." : "いくつかのデータが削除されることを了解しました。",
     "Local storage" : "ローカルストレージ",
     "External storage" : "外部ストレージ",
     "Delete" : "削除",
@@ -23,6 +24,7 @@ OC.L10N.register(
     "Encrypted" : "暗号化済み",
     "Compressed" : "圧縮",
     "Status" : "ステータス",
+    "ID" : "ID",
     "Local" : "ローカル",
     "local" : "ローカル"
 },

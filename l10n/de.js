@@ -89,6 +89,7 @@ OC.L10N.register(
     "Scheduled" : "geplant",
     "Pending" : "Ausstehend",
     "Not completed" : "Nicht fertiggestellt",
+    "Orphan" : "Verwaist",
     "Completed" : "Fertiggestellt",
     "Not packed yet" : "Noch nicht gepackt",
     "Packed" : "Gepackt",
