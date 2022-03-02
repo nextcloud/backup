@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Scan Backup Folder" : "Eskaneatu babeskopien karpeta",
     "Backup" : "Babeskopia",
+    "Update on all Backup's event" : "Eguneratu babeskopia gertaera guztietan",
     "complete" : "osoa",
     "partial" : "partziala",
     "seconds" : "segundo",
