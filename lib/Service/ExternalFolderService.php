@@ -896,8 +896,8 @@ class ExternalFolderService {
 			$storage->setBackendOption('objectstore', new $objectClass($objectStore));
 		}
 
-		$storage->getAuthMechanism()->manipulateStorageConfig($storage, $user);
-		$storage->getBackend()->manipulateStorageConfig($storage, $user);
+		$storage->getAuthMechanism()->manipulateStorageConfig($storage);
+		$storage->getBackend()->manipulateStorageConfig($storage);
 	}
 
 	/**
