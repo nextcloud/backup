@@ -50,6 +50,7 @@ use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\ExternalFolderService;
+use OCA\Backup\Service\MetadataService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
@@ -99,6 +100,9 @@ class PointDownload extends Base {
 
 	/** @var ConfigService */
 	private $configService;
+	
+	/** @var MetadataService */
+	private $metadataService;
 
 
 	/**
@@ -113,6 +117,7 @@ class PointDownload extends Base {
 	 * @param ExternalFolderService $externalFolderService
 	 * @param OutputService $outputService
 	 * @param ConfigService $configService
+	 * @param MetadataService $metadataService
 	 */
 	public function __construct(
 		PointRequest $pointRequest,
@@ -123,7 +128,8 @@ class PointDownload extends Base {
 		RemoteService $remoteService,
 		ExternalFolderService $externalFolderService,
 		OutputService $outputService,
-		ConfigService $configService
+		ConfigService $configService,
+		MetadataService $metadataService
 	) {
 		parent::__construct();
 
@@ -136,6 +142,7 @@ class PointDownload extends Base {
 		$this->externalFolderService = $externalFolderService;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
+		$this->metadataService = $metadataService;
 	}
 
 
