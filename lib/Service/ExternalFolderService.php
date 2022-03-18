@@ -947,7 +947,9 @@ class ExternalFolderService {
 			$thisincs = [];
 			foreach($incs as $incpoint){
 				if($incpoint->getParent() == $fullpoint->getId()){
-					$thisincs[$incpoint->getDate()] = $incpoint;
+					if( ! $incpoint->isArchive() ){
+						$thisincs[$incpoint->getDate()] = $incpoint;
+					}
 				}
 			}
 
@@ -978,12 +980,19 @@ class ExternalFolderService {
 
 		// delete each full's remaining increments and then the full
 		foreach($thisfulls as $fk => $fullpoint){
+			$isarchive = $fullpoint->isArchive();
 			foreach($incs as $incpoint){
                	if($incpoint->getParent() == $fullpoint->getId()){
-					$this->deletePointExternal($external, $incpoint->getId());
+					if( ! $incpoint->isArchive() ){
+						$this->deletePointExternal($external, $incpoint->getId());
+					} else {
+						$isarchive = true;
+					}
        	        }
             }
-			$this->deletePointExternal($external, $fullpoint->getId());
+			if( ! $isarchive ){
+				$this->deletePointExternal($external, $fullpoint->getId());
+			}
 		}
 	}
 }
