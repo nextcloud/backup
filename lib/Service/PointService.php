@@ -970,11 +970,13 @@ class PointService {
 
 			// iterate over this full's incrementals and delete all but the
 			// most recent backups for $keep; IMPORTANT: this assumes there is no
-			// timestamp overlaps
+			// timestamp overlaps. Ignore any incremental with isArchive() set true.
 			$thisincs = [];
 			foreach($incs as $incpoint){
 				if($incpoint->getParent() == $fullpoint->getId()){
-					$thisincs[$incpoint->getDate()] = $incpoint;
+					if( ! $incpoint->isArchive() ){
+						$thisincs[$incpoint->getDate()] = $incpoint;
+					}
 				}
 			}
 
@@ -986,7 +988,6 @@ class PointService {
 
 			foreach($thisincs as $k => $inc){
 				$this->delete($inc);
-				
 			}
 		}
 
@@ -1004,13 +1005,22 @@ class PointService {
 		}
 
 		// delete each full's remaining increments and then the full
+		// skip and inherit isArchive() as needed
 		foreach($thisfulls as $fk => $fullpoint){
+			$isarchive = $fullpoint->isArchive();
 			foreach($incs as $incpoint){
                	if($incpoint->getParent() == $fullpoint->getId()){
-					$this->delete($incpoint);
+					if( ! $incpoint->isArchive() ){
+						$this->delete($incpoint);
+					} else {
+						$isarchive = true;
+					}
        	        }
             }
-			$this->delete($fullpoint);
+
+			if( ! $isarchive ){
+				$this->delete($fullpoint);
+			}
 		}
 	}
 
