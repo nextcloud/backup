@@ -980,7 +980,7 @@ class ExternalFolderService {
 		foreach($thisfulls as $fk => $fullpoint){
 			foreach($incs as $incpoint){
                	if($incpoint->getParent() == $fullpoint->getId()){
-					$this->delete($external, $incpoint->getId());
+					$this->deletePointExternal($external, $incpoint->getId());
        	        }
             }
 			$this->deletePointExternal($external, $fullpoint->getId());
