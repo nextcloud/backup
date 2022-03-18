@@ -148,6 +148,24 @@ class ExternalFolderService {
 
 	/**
 	 * @param ExternalFolder $external
+	 * @param bool $asc
+	 *
+	 * @return RestoringPoint[]
+	 * @throws ExternalFolderNotFoundException
+	 */
+	public function getRestoringPointsSorted(ExternalFolder $external, bool $asc = true): array {
+		$points = $this->getRestoringPoints($external);
+		
+		\usort($points, function($a, $b) use (&$asc) {
+			return ($asc ? $a->getDate() <=> $b->getDate() : $b->getDate() <=> $a->getDate()) ;
+		});
+
+		return $points;
+	}
+
+
+	/**
+	 * @param ExternalFolder $external
 	 *
 	 * @return RestoringPoint[]
 	 * @throws ExternalFolderNotFoundException
@@ -926,15 +944,27 @@ class ExternalFolderService {
 	public function purgeExternalRestoringPoints(ExternalFolder $external) {
 		$c = $this->configService->getAppValue(ConfigService::STORE_ITEMS_EXTERNAL);
 		$i = 0;
-		foreach ($this->getRestoringPoints($external) as $point) {
+		$parentIds = [];
+		foreach ($this->getRestoringPointsSorted($external, false) as $point) {
 			if ($point->isArchive()) {
 				continue;
 			}
 			$i++;
 			if ($i > $c) {
+				foreach ($parentIds as $parent) {
+					if ($point->getId() === $parent ) {
+						continue 2; // continue with outer loop
+					}
+				}
 				try {
 					$this->deletePointExternal($external, $point->getId());
 				} catch (Throwable $e) {
+				}
+			} else {
+				if (($parent = $point->getParent()) !== '') {
+					if (!\in_array($parent, $parentIds)) {
+						$parentIds[] = $parent;
+					}
 				}
 			}
 		}
