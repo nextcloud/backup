@@ -924,18 +924,74 @@ class ExternalFolderService {
 	 * @throws ExternalFolderNotFoundException
 	 */
 	public function purgeExternalRestoringPoints(ExternalFolder $external) {
-		$c = $this->configService->getAppValue(ConfigService::STORE_ITEMS_EXTERNAL);
-		$i = 0;
-		foreach ($this->getRestoringPoints($external) as $point) {
-			if ($point->isArchive()) {
-				continue;
+
+		$keep = $this->configService->getAppValue(ConfigService::STORE_ITEMS_EXTERNAL);
+
+		// get the working set of fulls and incrementals
+		$fulls = [];
+		$incs = [];
+		foreach($this->getRestoringPoints($external) as $point) {
+			if( $point->getParent() == "" ){
+				array_push($fulls, $point);
+			} else {
+				array_push($incs, $point);
 			}
-			$i++;
-			if ($i > $c) {
-				try {
-					$this->deletePointExternal($external, $point->getId());
-				} catch (Throwable $e) {
+		}
+
+		// iterate over all fulls and delete incrementals more than ConfigServer::STORE_ITEMS
+		foreach($fulls as $fullpoint){
+
+			// iterate over this full's incrementals and delete all but the
+			// most recent backups for $keep; IMPORTANT: this assumes there is no
+			// timestamp overlaps
+			$thisincs = [];
+			foreach($incs as $incpoint){
+				if($incpoint->getParent() == $fullpoint->getId()){
+					if( ! $incpoint->isArchive() ){
+						$thisincs[$incpoint->getDate()] = $incpoint;
+					}
 				}
+			}
+
+			// Put the newest at the bottom and keep the last $keep
+			ksort($thisincs);
+			for($i = 0; $i < $keep; $i++){
+				array_pop($thisincs);
+			}
+
+			foreach($thisincs as $k => $inc){
+				$this->deletePointExternal($external, $inc->getId());
+				
+			}
+		}
+
+		// interate over the fulls delete fulls and associated remaining incrementals
+		// specified by ConfigServer::STORE_ITEMS
+		$thisfulls = [];
+		foreach($fulls as $fullpoint){
+			$thisfulls[$fullpoint->getDate()] = $fullpoint;
+		}
+
+		//put the newest at the bottom and keep the last $keep
+		ksort($thisfulls);
+		for($i = 0; $i < $keep; $i++){
+			array_pop($thisfulls);
+		}
+
+		// delete each full's remaining increments and then the full
+		foreach($thisfulls as $fk => $fullpoint){
+			$isarchive = $fullpoint->isArchive();
+			foreach($incs as $incpoint){
+               	if($incpoint->getParent() == $fullpoint->getId()){
+					if( ! $incpoint->isArchive() ){
+						$this->deletePointExternal($external, $incpoint->getId());
+					} else {
+						$isarchive = true;
+					}
+       	        }
+            }
+			if( ! $isarchive ){
+				$this->deletePointExternal($external, $fullpoint->getId());
 			}
 		}
 	}
