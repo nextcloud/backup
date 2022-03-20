@@ -103,6 +103,11 @@ class SqlDumpMySQL implements ISqlDump {
 		if ($port === 0) {
 			$port = null;
 		}
+
+		if (!extension_loaded('mysqli')) {
+			throw new SqlParamsException('PHP extension \'mysqli\' is missing. Please install first.');
+		}
+
 		$sql = mysqli_connect(
 			$this->get(ISqlDump::DB_HOST, $params),
 			$this->get(ISqlDump::DB_USER, $params),
