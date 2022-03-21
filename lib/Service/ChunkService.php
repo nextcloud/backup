@@ -507,7 +507,7 @@ class ChunkService {
 		$folder = $this->getChunkFolder($point, $chunk);
 
 		try {
-			$file = $folder->newFile($chunk->getFilename());
+			$file = $folder->newFile($chunk->getFilename(), '');
 			$zip = new ZipStreamer(
 				[
 					'outstream' => $file->write(),
@@ -709,7 +709,7 @@ class ChunkService {
 	public function copyApp(RestoringPoint $point): void {
 		$folder = $point->getBaseFolder();
 		try {
-			$file = $folder->newFile(self::APP_ZIP);
+			$file = $folder->newFile(self::APP_ZIP, '');
 			$zip = new ZipStreamer(
 				[
 					'outstream' => $file->write(),
@@ -736,7 +736,7 @@ class ChunkService {
 
 		$script = file_get_contents(FilesService::APP_ROOT . self::BACKUP_SCRIPT);
 		try {
-			$scriptFile = $folder->newFile(self::BACKUP_SCRIPT);
+			$scriptFile = $folder->newFile(self::BACKUP_SCRIPT, '');
 			$scriptFile->putContent($script);
 		} catch (Exception $e) {
 			throw new BackupScriptNotFoundException('Could not create ' . self::BACKUP_SCRIPT);

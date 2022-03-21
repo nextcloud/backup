@@ -189,7 +189,7 @@ class AppDataRootWrapper {
 	 * @throws NotPermittedException
 	 */
 	public function newFile(string $path): File {
-		return $this->getRoot()->newFile($path);
+		return $this->getRoot()->newFile($path, '');
 	}
 
 

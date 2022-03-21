@@ -534,7 +534,7 @@ class PackService {
 			$item = clone $temp;
 			$prefix = str_pad((string)$item->getOrder(), 5, '0', STR_PAD_LEFT) . '-';
 			$filename = $prefix . $this->token();
-			$file = $folder->newFile($filename);
+			$file = $folder->newFile($filename, '');
 			$read = fopen($item->getName(), 'rb');
 			$write = $file->write();
 			while (($r = fgets($read, 4096)) !== false) {
@@ -1073,7 +1073,7 @@ class PackService {
 		try {
 			$file = $folder->getFile($chunk->getFilename());
 		} catch (NotFoundException $e) {
-			$file = $folder->newFile($chunk->getFilename());
+			$file = $folder->newFile($chunk->getFilename(), '');
 		}
 
 		$write = $file->write();
@@ -1191,7 +1191,7 @@ class PackService {
 			try {
 				$file = $folder->getFile($part->getName());
 			} catch (NotFoundException $e) {
-				$file = $folder->newFile($part->getName());
+				$file = $folder->newFile($part->getName(), '');
 			}
 
 			$file->putContent(base64_decode($part->getContent()));

@@ -188,7 +188,7 @@ class RestoreService {
 		try {
 			$metadata = $folder->get(MetadataService::METADATA_FILE);
 		} catch (NotFoundException $e) {
-			$metadata = $folder->newFile(MetadataService::METADATA_FILE);
+			$metadata = $folder->newFile(MetadataService::METADATA_FILE, '');
 		}
 
 		if ($metadata->getType() !== FileInfo::TYPE_FILE) {

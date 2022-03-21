@@ -309,7 +309,7 @@ class FilesService {
 		try {
 			$dest = $output->getFile($filename);
 		} catch (NotFoundException $e) {
-			$dest = $output->newFile($filename);
+			$dest = $output->newFile($filename, '');
 		}
 
 		$dest->putContent($orig->getContent());
