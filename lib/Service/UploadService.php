@@ -34,6 +34,7 @@ namespace OCA\Backup\Service;
 use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
+use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Exceptions\RemoteInstanceException;
@@ -130,6 +131,8 @@ class UploadService {
 		$this->cronService = $cronService;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
+
+		$this->setup('app', Application::APP_ID);
 	}
 
 
@@ -425,7 +428,7 @@ class UploadService {
 			GenericFileException |
 			NotPermittedException |
 			LockedException $e) {
-				$this->o('<error>' . get_class($e) . $e->getMessage() . '</error>');
+				$this->o('<error>' . get_class($e) . ' ' . $e->getMessage() . '</error>');
 			}
 		}
 	}

@@ -258,7 +258,7 @@ class ExternalFolderService {
 		RestoringChunkPart $part
 	): void {
 		$folder = $this->getExternalChunkFolder($external, $point, $chunk, true);
-		$file = $folder->newFile($part->getName());
+		$file = $folder->newFile($part->getName(), '');
 		$file->putContent(base64_decode($part->getContent()));
 		$this->updateChunkPartHealth($external, $point, $health, $chunk, $part);
 	}
@@ -744,7 +744,7 @@ class ExternalFolderService {
 			}
 
 			$node = $folder->newFolder($pointId);
-			$node->newFile(PointService::NOBACKUP_FILE);
+			$node->newFile(PointService::NOBACKUP_FILE, '');
 		}
 
 		if ($node->getType() !== FileInfo::TYPE_FOLDER) {
