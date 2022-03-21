@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.0.5
+
+- new file's content is now empty instead of null.
+- general improvement of the user experience.
+
 
 ### 1.0.4
 
