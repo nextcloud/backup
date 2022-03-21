@@ -92,6 +92,11 @@ class SqlDumpPgSQL implements ISqlDump {
 		if ($port === 0) {
 			$port = null;
 		}
+
+		if (!extension_loaded('pgsql')) {
+			throw new SqlParamsException('PHP extension \'pgsql\' is missing. Please install first.');
+		}
+
 		$sql = pg_connect(
 			'host=' . $this->get(ISqlDump::DB_HOST, $params) .
 			' dbname=' . $this->get(ISqlDump::DB_NAME, $params) .

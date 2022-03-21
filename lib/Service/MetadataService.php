@@ -87,7 +87,7 @@ class MetadataService {
 		try {
 			$file = $folder->getFile(self::METADATA_FILE);
 		} catch (NotFoundException $e) {
-			$file = $folder->newFile(self::METADATA_FILE);
+			$file = $folder->newFile(self::METADATA_FILE, '');
 		}
 
 		$file->putContent(json_encode($point, JSON_PRETTY_PRINT));
