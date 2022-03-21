@@ -13,7 +13,7 @@ _(Documentation is still in writing)_
 - [Upload packed backup to External Storages](#external-storages)
 - [Quick compression during 1st pass](#zlib-chunk)
 - [AppData on External Storage](#external-appdata)
-- [Restoring a backup]($restoring)
+- [Restoring a backup](#restoring)
 - [Available `occ` commands](#occ)
 - [Faq](#faq)
 - [Known issues](#known-issues)
