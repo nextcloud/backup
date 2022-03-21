@@ -66,9 +66,6 @@ class UploadService {
 	use TNC23Logger;
 
 
-	public const PACK_SIZE = 1000000;
-	public const CHUNK_ENTRY = 'pack';
-
 
 	/** @var PointService */
 	private $pointService;
