@@ -21,8 +21,7 @@
   -->
 
 <template>
-	<SettingsSection
-		:title="t('backup', 'Restoring points history')"
+	<SettingsSection :title="t('backup', 'Restoring points history')"
 		:description="t('backup', 'List of the past and future restoring points')">
 		<table class="grid groups">
 			<thead>
@@ -55,27 +54,23 @@
 					<td class="restoring-points__point__icons">
 						<Popover v-if="point.health !== -2">
 							<template #trigger>
-								<Check
-									v-if="point.issue === ''"
+								<Check v-if="point.issue === ''"
 									slot="icon"
 									fill-color="#46ba61"
 									:title="t('backup', 'No issue')" />
-								<AlertCircle
-									v-else-if="point.issue !== ''"
+								<AlertCircle v-else-if="point.issue !== ''"
 									slot="icon"
 									fill-color="#e9322d"
 									:title="point.issue" />
 							</template>
 							<div class="restoring-points__point__popover">
 								<div v-if="point.local !== undefined" class="restoring-points__point__popover__item">
-									<Check
-										v-if="point.local.issue === ''"
+									<Check v-if="point.local.issue === ''"
 										slot="icon"
 										class="restoring-points__point__popover__item__icon"
 										fill-color="#46ba61"
 										:title="t('backup', 'No issue')" />
-									<AlertCircle
-										v-else-if="point.local.issue !== ''"
+									<AlertCircle v-else-if="point.local.issue !== ''"
 										slot="icon"
 										class="restoring-points__point__popover__item__icon"
 										fill-color="#e9322d"
@@ -85,14 +80,12 @@
 								<div v-for="external of point.externals"
 									:key="external.storageId"
 									class="restoring-points__point__popover__item">
-									<Check
-										v-if="external.issue === ''"
+									<Check v-if="external.issue === ''"
 										slot="icon"
 										class="restoring-points__point__popover__item__icon"
 										fill-color="#46ba61"
 										:title="t('backup', 'No issue')" />
-									<AlertCircle
-										v-else-if="external.issue !== ''"
+									<AlertCircle v-else-if="external.issue !== ''"
 										slot="icon"
 										class="restoring-points__point__popover__item__icon"
 										fill-color="#e9322d"

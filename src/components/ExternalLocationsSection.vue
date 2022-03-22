@@ -21,8 +21,7 @@
   -->
 
 <template>
-	<SettingsSection
-		:title="t('backup', 'Restoring points locations')"
+	<SettingsSection :title="t('backup', 'Restoring points locations')"
 		:description="t('backup', 'Manage available storage locations for storing restoring points')">
 		<form ref="external-location-form" class="external-location__form">
 			<select class="external-location__form__select" name="storageId" :disabled="loadingData || availableExternalLocations.length === 0">
@@ -68,8 +67,7 @@
 					<td>{{ external.storage }}</td>
 					<td>{{ external.root }}</td>
 					<td>
-						<button
-							class="error external-locations__location__delete"
+						<button class="error external-locations__location__delete"
 							:disabled="loadingDeleteExternalLocation !== '' && loadingDeleteExternalLocation !== external.storageId"
 							:class="{loading: loadingDeleteExternalLocation === external.storageId }"
 							@click="deleteExternalLocation(external)">

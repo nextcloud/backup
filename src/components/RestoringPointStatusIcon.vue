@@ -1,22 +1,18 @@
 <template>
 	<span class="icon-container">
-		<PackageVariant
-			v-if="!isPacked"
+		<PackageVariant v-if="!isPacked"
 			slot="icon"
 			fill-color="#eca700"
 			:title="t('backup', 'Not packed yet')" />
-		<PackageVariantClosed
-			v-if="isPacked"
+		<PackageVariantClosed v-if="isPacked"
 			slot="icon"
 			fill-color="gray"
 			:title="t('backup', 'Packed')" />
-		<Lock
-			v-if="isEncrypted"
+		<Lock v-if="isEncrypted"
 			slot="icon"
 			fill-color="gray"
 			:title="t('backup', 'Encrypted')" />
-		<FolderZip
-			v-if="isCompressed"
+		<FolderZip v-if="isCompressed"
 			slot="icon"
 			fill-color="gray"
 			:title="t('backup', 'Compressed')" />
