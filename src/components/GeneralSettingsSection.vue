@@ -21,8 +21,7 @@
   -->
 
 <template>
-	<SettingsSection
-		class="backup-settings"
+	<SettingsSection class="backup-settings"
 		:title="t('backup', 'Backups configuration')"
 		:description="t('backup', 'General configuration on how and when your restoring points are created.')">
 		<form ref="settings-form">
@@ -48,8 +47,7 @@
 					</ul>
 				</div>
 
-				<CheckboxRadioSwitch
-					:loading="loadingFetchSettings"
+				<CheckboxRadioSwitch :loading="loadingFetchSettings"
 					:disabled="loadingFetchSettings"
 					:checked.sync="settings.cronEnabled"
 					@update:checked="setSettings">
@@ -95,8 +93,7 @@
 					</select>
 				</label>
 
-				<CheckboxRadioSwitch
-					:loading="loadingFetchSettings"
+				<CheckboxRadioSwitch :loading="loadingFetchSettings"
 					:disabled="loadingFetchSettings || !settings.cronEnabled"
 					:checked.sync="settings.allowWeekdays"
 					@update:checked="setSettings">
@@ -135,8 +132,7 @@
 					{{ t('backup', 'Processing that will be done on the restoring points during the packing step.') }}
 				</div>
 
-				<CheckboxRadioSwitch
-					:loading="loadingFetchSettings"
+				<CheckboxRadioSwitch :loading="loadingFetchSettings"
 					:checked.sync="settings.packEncrypt"
 					:disabled="loadingFetchSettings"
 					@update:checked="setSettings">
@@ -186,8 +182,7 @@
 						{{ t('backup', 'Export backup configuration') }}
 					</h3>
 					{{ t('backup', 'You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
-					<button
-						:disabled="loadingExportSettings"
+					<button :disabled="loadingExportSettings"
 						class="backup-settings__actions__action__export"
 						:class="{loading: loadingExportSettings}"
 						@click.prevent="downloadSettings">
@@ -209,8 +204,7 @@
 					<div v-if="settings.restoringPointRequested" class="backup-settings__actions__action__info">
 						{{ t('backup', 'The creation of a restoring point as been requested and will be initiated soon.') }}
 					</div>
-					<button
-						class="primary"
+					<button class="primary"
 						:disabled="loadingFetchSettings || settings.restoringPointRequested || !settings.cronEnabled"
 						@click.prevent="requestRestoringPointType = 'full'">
 						{{ t('backup', 'Create full restoring point') }}

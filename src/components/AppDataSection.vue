@@ -21,17 +21,14 @@
   -->
 
 <template>
-	<SettingsSection
-		:title="t('backup', 'App Data')"
+	<SettingsSection :title="t('backup', 'App Data')"
 		:description="t('backup', 'Choose where the backup app will initially store the restoring points.')">
 		<form ref="app-data-form" class="app-data__form">
-			<select
-				v-model="appDataForm.storageId"
+			<select v-model="appDataForm.storageId"
 				class="app-data__form__select"
 				name="storageId"
 				:disabled="loadingAppData">
-				<template
-					v-if="appDataForm !== undefined">
+				<template v-if="appDataForm !== undefined">
 					<option v-for="external in externalStoragesWithLocal"
 						:key="external.storageId"
 						:selected="external.storageId === appDataForm.storageId"
@@ -53,8 +50,7 @@
 			</button>
 
 			<span v-if="loadingAppData" class="icon-loading" />
-			<WindowClose
-				v-else-if="error"
+			<WindowClose v-else-if="error"
 				slot="icon"
 				fill-color="#e9322d"
 				:title="t('backup', 'Error')" />
