@@ -63,16 +63,16 @@
 				<ul class="backup-settings__info">
 					<template v-if="settings.allowWeekdays">
 						<li>
-							{{ t('backup', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings) }}
+							{{ n('backup', 'A full restoring point will be created {delayFullRestoringPoint} day after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings.delayFullRestoringPoint, settings) }}
 						</li>
 					</template>
 					<template v-if="!settings.allowWeekdays">
 						<li>
-							{{ t('backup', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 during weekends.', settings) }}
+							{{ n('backup', 'A full restoring point will be created {delayFullRestoringPoint} day after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 during weekends.', 'A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 during weekends.', settings.delayFullRestoringPoint, settings) }}
 						</li>
 					</template>
 					<li>
-						{{ t('backup', 'A partial restoring point will be created {delayPartialRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings) }}
+						{{ n('backup', 'A partial restoring point will be created {delayPartialRestoringPoint} day after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', 'A partial restoring point will be created {delayPartialRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week.', settings.delayPartialRestoringPoint, settings) }}
 					</li>
 				</ul>
 
