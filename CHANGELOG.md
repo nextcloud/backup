@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.0.6
+
+- composer php7.3
+
+
 ### 1.0.5
 
 - new file's content is now empty instead of null.
