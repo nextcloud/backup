@@ -8,7 +8,7 @@ package_name=$(shell echo $(app_name) | tr '[:upper:]' '[:lower:]')
 cert_dir=$(HOME)/.nextcloud/certificates
 github_account=nextcloud
 release_account=nextcloud-releases
-branch=master
+branch=stable23
 version=1.0.5
 since_tag=1.0.4
 
