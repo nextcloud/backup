@@ -1,0 +1,11 @@
+{ "translations": {
+    "Error" : "خاتالىق",
+    "Local storage" : "Local storage",
+    "External storage" : "External storage",
+    "Actions" : "مەشغۇلاتلار",
+    "Delete" : "ئۆچۈر",
+    "Cancel" : "ۋاز كەچ",
+    "Pending" : "كۈتۈۋاتىدۇ",
+    "Date" : "Date"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

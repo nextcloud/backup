@@ -1,0 +1,22 @@
+{ "translations": {
+    "Backup" : "Sao lưu",
+    "seconds" : "giây",
+    "minutes" : "phút",
+    "hours" : "giờ",
+    "days" : "ngày",
+    "Error" : "Lỗi",
+    "Local storage" : "Local storage",
+    "External storage" : "External storage",
+    "Actions" : "Hành động",
+    "Delete" : "Xóa",
+    "Cancel" : "Hủy",
+    "Settings saved" : "Cấu hình đã được lưu",
+    "Pending" : "Đang dừng",
+    "Completed" : "Hoàn thành",
+    "Encrypted" : "Đã mã hóa",
+    "Health" : "Sức khỏe",
+    "Status" : "Trạng thái",
+    "Date" : "Date",
+    "ID" : "ID"
+},"pluralForm" :"nplurals=1; plural=0;"
+}

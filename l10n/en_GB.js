@@ -1,0 +1,26 @@
+OC.L10N.register(
+    "backup",
+    {
+    "Backup" : "Backup",
+    "seconds" : "seconds",
+    "minutes" : "minutes",
+    "hours" : "hours",
+    "days" : "days",
+    "Error" : "Error",
+    "Local storage" : "Local storage",
+    "External storage" : "External storage",
+    "Actions" : "Actions",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Settings saved" : "Settings saved",
+    "Pending" : "Pending",
+    "Completed" : "Completed",
+    "Encrypted" : "Encrypted",
+    "Health" : "Health",
+    "Status" : "Status",
+    "Date" : "Date",
+    "ID" : "ID",
+    "Local" : "Local",
+    "local" : "local"
+},
+"nplurals=2; plural=(n != 1);");

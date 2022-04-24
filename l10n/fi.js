@@ -2,6 +2,7 @@ OC.L10N.register(
     "backup",
     {
     "Scan Backup Folder" : "Kartoita varmuuskopiokansio",
+    "Backup" : "Varmuuskopioi",
     "complete" : "valmis",
     "partial" : "osittainen",
     "seconds" : "sekuntia",
@@ -52,10 +53,13 @@ OC.L10N.register(
     "Compressed" : "Tiivistetty",
     "Restoring points history" : "Palautuspisteiden historia",
     "Issue" : "Ongelma",
+    "Health" : "Hyvinvointi",
     "Status" : "Tila",
     "Date" : "Päivä",
+    "ID" : "ID",
     "No issue" : "Ei ongelmaa",
     "Local" : "Paikallinen",
+    "local" : "paikallinen",
     "Next full restoring point" : "Seuraava täysi palautuspiste",
     "Next partial restoring point" : "Seuraava osittainen palautuspiste"
 },

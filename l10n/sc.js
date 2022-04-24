@@ -1,0 +1,27 @@
+OC.L10N.register(
+    "backup",
+    {
+    "Backup" : "Còpia de seguresa",
+    "seconds" : "segundos",
+    "minutes" : "minutos",
+    "hours" : "oras",
+    "days" : "dies",
+    "Error" : "Errore",
+    "Local storage" : "Archiviatzione locale",
+    "External storage" : "Archiviatzione de foras",
+    "Actions" : "Atziones",
+    "Delete" : "Cantzella",
+    "and" : "e",
+    "Cancel" : "Annulla",
+    "Settings saved" : "Impostatziones sarvadas",
+    "Pending" : "In suspesu",
+    "Completed" : "Cumpletadu",
+    "Encrypted" : "Tzifradu",
+    "Health" : "Salude",
+    "Status" : "Status",
+    "Date" : "Data",
+    "ID" : "ID",
+    "Local" : "Locale",
+    "local" : "locale"
+},
+"nplurals=2; plural=(n != 1);");
