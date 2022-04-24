@@ -1,0 +1,26 @@
+OC.L10N.register(
+    "backup",
+    {
+    "seconds" : "sekunder",
+    "minutes" : "minuter",
+    "hours" : "timmar",
+    "days" : "dagar",
+    "Error" : "Fel",
+    "Local storage" : "Lokalt lagringsutrymme",
+    "External storage" : "Extern lagring",
+    "Actions" : "Åtgärder",
+    "Delete" : "Radera",
+    "and" : "och",
+    "Cancel" : "Avbryt",
+    "Settings saved" : "Inställningar sparade",
+    "Pending" : "Väntande",
+    "Completed" : "Slutförd",
+    "Encrypted" : "Krypterad",
+    "Health" : "Hälsa",
+    "Status" : "Status",
+    "Date" : "Datum",
+    "ID" : "ID",
+    "Local" : "Lokal",
+    "local" : "lokal"
+},
+"nplurals=2; plural=(n != 1);");

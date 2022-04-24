@@ -1,0 +1,11 @@
+{ "translations": {
+    "Error" : "ຜິດພາດ",
+    "Local storage" : "ຊ່ອງເກັບຂໍ້ມຸນ",
+    "External storage" : "ບ່ອນເກັບຂໍ້ມູນສຳຮອງ",
+    "Delete" : "ລຶບ",
+    "Cancel" : "ຍົກເລີກ",
+    "Pending" : "ທີ່ກໍາລັງລໍຖ້າ",
+    "Completed" : "ສຳເລັດ",
+    "Date" : "ວັນທີ"
+},"pluralForm" :"nplurals=1; plural=0;"
+}

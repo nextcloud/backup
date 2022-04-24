@@ -24,6 +24,18 @@ OC.L10N.register(
     "External storage" : "Εξωτερικός αποθηκευτικός χώρος",
     "Actions" : "Ενέργειες",
     "Delete" : "Διαγραφή",
-    "No external storage available" : "Δεν έχει ρυθμιστεί κανένα εξωτερικό μέσο αποθήκευσης"
+    "No external storage available" : "Δεν έχει ρυθμιστεί κανένα εξωτερικό μέσο αποθήκευσης",
+    "and" : "και",
+    "Cancel" : "Ακύρωση",
+    "Settings saved" : "Οι ρυθμίσεις αποθηκεύτηκαν",
+    "Pending" : "Εκκρεμεί",
+    "Completed" : "Ολοκληρωμένες",
+    "Encrypted" : "Κρυπτογραφημένο",
+    "Health" : "Υγεία",
+    "Status" : "Κατάσταση",
+    "Date" : "Ημερομηνία",
+    "ID" : "ID",
+    "Local" : "Τοπικός",
+    "local" : "τοπικά"
 },
 "nplurals=2; plural=(n != 1);");

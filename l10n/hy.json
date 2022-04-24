@@ -1,0 +1,14 @@
+{ "translations": {
+    "seconds" : "վայրկյան",
+    "minutes" : "րոպե",
+    "hours" : "ժամ",
+    "days" : "օր",
+    "Error" : "Սխալ",
+    "Local storage" : "Local storage",
+    "External storage" : "External storage",
+    "Delete" : "հեռացնել",
+    "Cancel" : "ընդհատել",
+    "Completed" : "Ավարտվեց",
+    "Date" : "Date"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
