@@ -4,6 +4,7 @@ OC.L10N.register(
     "seconds" : "sekund",
     "minutes" : "minutt",
     "hours" : "timar",
+    "days" : "dagar",
     "Error" : "Feil",
     "Local storage" : "Local storage",
     "External storage" : "External storage",
@@ -14,6 +15,7 @@ OC.L10N.register(
     "Encrypted" : "Kryptert",
     "Status" : "Status",
     "Date" : "Dato",
-    "ID" : "ID"
+    "ID" : "ID",
+    "Local" : "Lokal"
 },
 "nplurals=2; plural=(n != 1);");
