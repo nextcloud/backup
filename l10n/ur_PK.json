@@ -1,0 +1,9 @@
+{ "translations": {
+    "Error" : "ایرر",
+    "Local storage" : "Local storage",
+    "External storage" : "External storage",
+    "Delete" : "حذف کریں",
+    "Cancel" : "منسوخ کریں",
+    "Date" : "Date"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

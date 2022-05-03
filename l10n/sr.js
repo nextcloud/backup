@@ -1,0 +1,24 @@
+OC.L10N.register(
+    "backup",
+    {
+    "seconds" : "секунди",
+    "minutes" : "минута",
+    "hours" : "сати",
+    "days" : "дана",
+    "Error" : "Грешка",
+    "Local storage" : "Локално складиште",
+    "External storage" : "Спољашње складиште",
+    "Actions" : "Радње",
+    "Delete" : "Избриши",
+    "and" : "и",
+    "Cancel" : "Поништи",
+    "Settings saved" : "Поставке сачуване",
+    "Pending" : "На чекању",
+    "Completed" : "Завршено",
+    "Encrypted" : "Шифровано",
+    "Status" : "Статус",
+    "Date" : "Датум",
+    "ID" : "ID",
+    "Local" : "Локално"
+},
+"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
