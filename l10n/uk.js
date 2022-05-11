@@ -14,6 +14,7 @@ OC.L10N.register(
     "Settings saved" : "Налаштування збережено",
     "Pending" : "Очікування",
     "Completed" : "Завершені",
+    "Encrypted" : "Зашифровано",
     "Health" : "Здоров'я",
     "Status" : "Статус",
     "Date" : "Дата",
