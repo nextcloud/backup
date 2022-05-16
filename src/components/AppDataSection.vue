@@ -43,11 +43,11 @@
 				:placeholder="t('backup', 'Path in which to store the data. (ex: app_data)')"
 				:disabled="loadingAppData || appDataForm.storageId === 0"
 				name="root">
-			<button class="primary"
+			<Button type="primary"
 				:disabled="loadingAppData || !formIsTouched()"
 				@click.prevent="showSetAppDataPopup = true">
 				{{ t('backup', 'Set as App Data') }}
-			</button>
+			</Button>
 
 			<span v-if="loadingAppData" class="icon-loading" />
 			<WindowClose v-else-if="error"
@@ -71,15 +71,15 @@
 					</CheckboxRadioSwitch>
 				</div>
 				<div class="app-data__set-popup__actions">
-					<button @click="showSetAppDataPopup = false">
+					<Button @click="showSetAppDataPopup = false">
 						Cancel
-					</button>
-					<button class="primary"
+					</Button>
+					<Button type="primary"
 						:class="{loading: loadingSetAppData}"
 						:disabled="!validationCheckboxGorSetAppData || loadingSetAppData"
 						@click="setAppData">
 						{{ t('backup', 'Change the App Data') }}
-					</button>
+					</Button>
 				</div>
 			</div>
 		</Modal>
@@ -93,6 +93,7 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
+import Button from '@nextcloud/vue/dist/Components/Button'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 
 import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
@@ -112,6 +113,7 @@ export default {
 		SettingsSection,
 		WindowClose,
 		Modal,
+		Button,
 		CheckboxRadioSwitch,
 	},
 

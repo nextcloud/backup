@@ -182,13 +182,16 @@
 						{{ t('backup', 'Export backup configuration') }}
 					</h3>
 					{{ t('backup', 'You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
-					<button :disabled="loadingExportSettings"
+					<Button :disabled="loadingExportSettings"
 						class="backup-settings__actions__action__export"
 						:class="{loading: loadingExportSettings}"
 						@click.prevent="downloadSettings">
-						<span class="icon icon-external" />
+						<template #icon>
+							<span class="icon icon-external" />
+						</template>
+
 						{{ t('backup', 'Export configuration') }}
-					</button>
+					</Button>
 					<div v-if="exportedPrivateKey !== undefined" class="backup-settings__export__info">
 						{{ t('backup', 'Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
 						<br>
@@ -204,11 +207,11 @@
 					<div v-if="settings.restoringPointRequested" class="backup-settings__actions__action__info">
 						{{ t('backup', 'The creation of a restoring point as been requested and will be initiated soon.') }}
 					</div>
-					<button class="primary"
+					<Button type="primary"
 						:disabled="loadingFetchSettings || settings.restoringPointRequested || !settings.cronEnabled"
 						@click.prevent="requestRestoringPointType = 'full'">
 						{{ t('backup', 'Create full restoring point') }}
-					</button>
+					</Button>
 
 					<Modal v-if="requestRestoringPointType !== ''"
 						size="large"
@@ -225,15 +228,15 @@
 								</CheckboxRadioSwitch>
 							</div>
 							<div class="backup-settings__request-modal__actions">
-								<button @click.prevent="requestRestoringPointType = ''">
+								<Button @click.prevent="requestRestoringPointType = ''">
 									{{ t('backup', 'Cancel') }}
-								</button>
-								<button class="primary"
+								</Button>
+								<Button type="primary"
 									:class="{loading: loadingRequestRestoringPoint}"
 									:disabled="!validationCheckboxForRestoringPointRequest || loadingRequestRestoringPoint"
 									@click.prevent="requestRestoringPoint">
 									{{ t('backup', 'Request {mode} restoring point', { mode: requestRestoringPointType}) }}
-								</button>
+								</Button>
 							</div>
 						</div>
 					</Modal>
@@ -251,6 +254,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 import logger from '../logger'
 import SettingsModel from '../models/SettingsModel.js'
@@ -261,6 +265,7 @@ export default {
 		SettingsSection,
 		CheckboxRadioSwitch,
 		Modal,
+		Button,
 	},
 
 	filters: {

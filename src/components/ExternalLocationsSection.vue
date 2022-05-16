@@ -36,13 +36,16 @@
 				:placeholder="t('backup', 'Path in which to store the restoring points. (ex: backups)')"
 				:disabled="loadingData || loadingAddExternalLocation || availableExternalLocations.length === 0"
 				name="root">
-			<button class="primary"
+			<Button type="primary"
 				:disabled="loadingData || availableExternalLocations.length === 0"
 				:class="{loading: loadingAddExternalLocation }"
 				@click.prevent="addExternalLocation">
-				<span class="icon icon-add-white" />
+				<template #icon>
+					<span class="icon icon-add-white" />
+				</template>
+
 				{{ t('backup', 'Add new external location') }}
-			</button>
+			</Button>
 		</form>
 
 		<div v-if="loadingData" class="icon-loading" />
@@ -67,13 +70,17 @@
 					<td>{{ external.storage }}</td>
 					<td>{{ external.root }}</td>
 					<td>
-						<button class="error external-locations__location__delete"
+						<Button type="error"
+							class="external-locations__location__delete"
 							:disabled="loadingDeleteExternalLocation !== '' && loadingDeleteExternalLocation !== external.storageId"
 							:class="{loading: loadingDeleteExternalLocation === external.storageId }"
 							@click="deleteExternalLocation(external)">
-							<span class="icon icon-delete-white" />
+							<template #icon>
+								<span class="icon icon-delete-white" />
+							</template>
+
 							{{ t('backup', 'Delete') }}
-						</button>
+						</Button>
 					</td>
 				</tr>
 			</tbody>
@@ -101,6 +108,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 import logger from '../logger'
 
@@ -116,6 +124,7 @@ export default {
 	components: {
 		SettingsSection,
 		EmptyContent,
+		Button,
 	},
 
 	data() {
@@ -262,6 +271,8 @@ th {
 
 .external-location__form {
 	margin: 24px 0;
+	display: flex;
+	align-items: center;
 
 	&__select {
 		width: 400px;
@@ -269,6 +280,10 @@ th {
 
 	&__input {
 		width: 400px;
+	}
+
+	& button {
+		margin-left: 8px;
 	}
 }
 
