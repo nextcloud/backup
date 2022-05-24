@@ -79,7 +79,7 @@ OC.L10N.register(
     "Unable to save the settings" : "Echec de la sauvegarde des paramètres",
     "Unable to request restoring point" : "Impossible de demander un point de restauration.",
     "Unable to export settings" : "Echec de l'export des paramètres",
-    "_day_::_days_" : ["jour","jours"],
+    "_day_::_days_" : ["jour","jours","jours"],
     "Scheduled" : "Planifié",
     "Pending" : "En attente",
     "Not completed" : "Non terminé",
@@ -100,4 +100,4 @@ OC.L10N.register(
     "Next full restoring point" : "Prochain point de restauration complet",
     "Next partial restoring point" : "Prochain point de restauration partiel"
 },
-"nplurals=2; plural=(n > 1);");
+"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
