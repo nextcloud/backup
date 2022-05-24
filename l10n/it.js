@@ -82,7 +82,7 @@ OC.L10N.register(
     "Unable to save the settings" : "Impossibile salvare le impostazioni",
     "Unable to request restoring point" : "Impossibile richiedere il punto di ripristino",
     "Unable to export settings" : "Impossibile esportare le impostazioni",
-    "_day_::_days_" : ["giorno","giorni"],
+    "_day_::_days_" : ["giorno","giorni","giorni"],
     "Scheduled" : "Programmato",
     "Pending" : "In attesa",
     "Not completed" : "Non completato",
@@ -106,4 +106,4 @@ OC.L10N.register(
     "Next partial restoring point" : "Prossimo punto di ripristino parziale",
     "Unable to fetch restoring points" : "Impossibile recuperare i punti di ripristino"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
