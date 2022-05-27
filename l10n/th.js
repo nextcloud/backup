@@ -17,6 +17,7 @@ OC.L10N.register(
     "Completed" : "เสร็จสมบูรณ์",
     "Status" : "สถานะ",
     "Date" : "วันที่",
+    "ID" : "ID",
     "Local" : "ต้นทาง"
 },
 "nplurals=1; plural=0;");
