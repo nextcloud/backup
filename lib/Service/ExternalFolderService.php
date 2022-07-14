@@ -173,14 +173,14 @@ class ExternalFolderService {
 			try {
 				$points[] = $this->getRestoringPoint($external, $node->getName());
 			} catch (
-			ExternalFolderNotFoundException |
-			RestoringChunkPartNotFoundException |
-			RestoringPointException |
-			RestoringPointNotFoundException |
-			RestoringPointPackException |
-			GenericFileException |
-			NotPermittedException $e) {
-			}
+				ExternalFolderNotFoundException |
+				RestoringChunkPartNotFoundException |
+				RestoringPointException |
+				RestoringPointNotFoundException |
+				RestoringPointPackException |
+				GenericFileException |
+				NotPermittedException $e) {
+				}
 		}
 
 		return $points;
@@ -225,11 +225,11 @@ class ExternalFolderService {
 
 			return $point;
 		} catch (
-		InvalidItemException |
-		NotFoundException |
-		NotPermittedException |
-		LockedException $e) {
-		}
+			InvalidItemException |
+			NotFoundException |
+			NotPermittedException |
+			LockedException $e) {
+			}
 
 		throw new RestoringPointNotFoundException();
 	}
