@@ -31,12 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Controller;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Controller;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use Exception;
-use OC\AppFramework\Http;
 use OC\Files\Node\File;
 use OC\Files\Node\Folder;
 use OC\User\NoUserException;
@@ -54,6 +49,10 @@ use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RestoreService;
+use OCA\Backup\Tools\Exceptions\SignatureException;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TNCLogger;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
@@ -70,9 +69,8 @@ use OCP\Lock\LockedException;
  * @package OCA\Backup\Controller
  */
 class LocalController extends OcsController {
-	use TNC23Controller;
-	use TNC23Logger;
-	use TNC23Deserialize;
+	use TNCLogger;
+	use TDeserialize;
 
 
 	/** @var IUserSession */

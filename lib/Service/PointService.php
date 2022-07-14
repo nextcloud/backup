@@ -31,13 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Signatory;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use OC;
 use OC\Files\AppData\Factory;
@@ -68,6 +61,13 @@ use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\SqlDump\SqlDumpMySQL;
 use OCA\Backup\SqlDump\SqlDumpPgSQL;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
+use OCA\Backup\Tools\Exceptions\SignatureException;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TNCLogger;
+use OCA\Backup\Tools\Traits\TNCSignatory;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCA\Backup\Wrappers\AppDataRootWrapper;
 use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCP\Files\NotFoundException;
@@ -83,10 +83,10 @@ use Throwable;
  * @package OCA\Backup\Service
  */
 class PointService {
-	use TNC23Signatory;
-	use TNC23Logger;
+	use TNCSignatory;
+	use TNCLogger;
 	use TStringTools;
-	use TNC23Deserialize;
+	use TDeserialize;
 
 
 	public const NOBACKUP_FILE = '.nobackup';

@@ -31,10 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\SqlDump;
 
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\Exceptions\SqlParamsException;
 use OCA\Backup\ISqlDump;
+use OCA\Backup\Tools\Traits\TArrayTools;
 use Spatie\DbDumper\Databases\PostgreSql;
 use Throwable;
 

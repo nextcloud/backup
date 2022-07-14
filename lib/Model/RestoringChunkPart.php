@@ -31,10 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
+use OCA\Backup\Tools\IDeserializable;
+use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TStringTools;
 
 /**
  * Class RestoringChunkPart

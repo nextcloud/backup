@@ -31,11 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
-use ArtificialOwl\MySmallPhpTools\Model\Request;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc22\TNC22Logger;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use Exception;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\RemoteRequest;
@@ -50,6 +45,11 @@ use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
+use OCA\Backup\Tools\Model\Request;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TNCLogger;
 
 /**
  * Class RemoteService
@@ -57,8 +57,8 @@ use OCA\Backup\Model\RestoringPoint;
  * @package OCA\Backup\Service
  */
 class RemoteService {
-	use TNC22Logger;
-	use TNC23Deserialize;
+	use TNCLogger;
+	use TDeserialize;
 
 
 	/** @var RemoteRequest */
@@ -482,20 +482,20 @@ class RemoteService {
 			$this->o('  ! <error>check configuration on remote instance</error>');
 			throw $e;
 		} catch (
-		RemoteInstanceNotFoundException
-		| RemoteResourceNotFoundException $e) {
-			$this->o('  ! <error>cannot communicate with remote instance</error>');
-			throw $e;
-		} catch (RestoringPointNotFoundException $e) {
-			$this->o('  > <comment>restoring point not found</comment>');
-			try {
-				$stored = $this->createPoint($remote, $point);
-				$this->o('  > restoring point created');
-			} catch (Exception $e) {
-				$this->o('  ! <error>cannot create restoring point</error>');
+			RemoteInstanceNotFoundException
+			| RemoteResourceNotFoundException $e) {
+				$this->o('  ! <error>cannot communicate with remote instance</error>');
 				throw $e;
+			} catch (RestoringPointNotFoundException $e) {
+				$this->o('  > <comment>restoring point not found</comment>');
+				try {
+					$stored = $this->createPoint($remote, $point);
+					$this->o('  > restoring point created');
+				} catch (Exception $e) {
+					$this->o('  ! <error>cannot create restoring point</error>');
+					throw $e;
+				}
 			}
-		}
 
 		return $stored;
 	}

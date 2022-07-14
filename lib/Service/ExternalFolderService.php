@@ -31,14 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
-use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
 use Exception;
+use InvalidArgumentException;
 use OC;
 use OC\Files\Cache\Storage;
-use OC\Files\FileInfo;
 use OC\Files\Node\File;
 use OC\Files\Node\Folder;
 use OCA\Backup\Db\ExternalFolderRequest;
@@ -56,12 +52,17 @@ use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TFileTools;
+use OCA\Backup\Tools\Traits\TNCLogger;
 use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCA\Files_External\Lib\StorageConfig;
 use OCA\Files_External\MountConfig;
 use OCA\Files_External\Service\GlobalStoragesService;
 use OCP\AppFramework\QueryException;
 use OCP\Files\Config\IUserMountCache;
+use OCP\Files\FileInfo;
 use OCP\Files\GenericFileException;
 use OCP\Files\InvalidPathException;
 use OCP\Files\NotFoundException;
@@ -76,8 +77,8 @@ use OCP\Lock\LockedException;
  * @package OCA\Backup\Service
  */
 class ExternalFolderService {
-	use TNC23Deserialize;
-	use TNC23Logger;
+	use TDeserialize;
+	use TNCLogger;
 	use TFileTools;
 
 
@@ -891,7 +892,7 @@ class ExternalFolderService {
 		if ($objectStore) {
 			$objectClass = $objectStore['class'];
 			if (!is_subclass_of($objectClass, '\OCP\Files\ObjectStore\IObjectStore')) {
-				throw new \InvalidArgumentException('Invalid object store');
+				throw new InvalidArgumentException('Invalid object store');
 			}
 			$storage->setBackendOption('objectstore', new $objectClass($objectStore));
 		}

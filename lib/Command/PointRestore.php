@@ -31,9 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
@@ -60,8 +57,11 @@ use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RestoreService;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
+use OCA\Backup\Tools\Traits\TArrayTools;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCA\Backup\Tools\Traits\TStringTools;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -339,13 +339,13 @@ class PointRestore extends Base {
 				$this->chunkService->restoreChunk($point, $chunk, $root);
 				$this->output->writeln('<info>ok</info>');
 			} catch (
-			ArchiveCreateException
-			| ArchiveNotFoundException
-			| NotFoundException
-			| NotPermittedException
-			| RestoreChunkException $e) {
-				$this->output->writeln('<error>' . $e->getMessage() . '</error>');
-			}
+				ArchiveCreateException
+				| ArchiveNotFoundException
+				| NotFoundException
+				| NotPermittedException
+				| RestoreChunkException $e) {
+					$this->output->writeln('<error>' . $e->getMessage() . '</error>');
+				}
 		}
 
 		$data->setRestoredRoot($root);

@@ -31,9 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringData;
@@ -42,6 +39,9 @@ use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteStreamService;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
+use OCA\Backup\Tools\Exceptions\SignatureException;
+use OCA\Backup\Tools\Traits\TStringTools;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -94,16 +94,16 @@ class PointList extends Base {
 		$this->setName('backup:point:list')
 			 ->setDescription('List restoring point')
 			 ->addOption(
-				 'local', '', InputOption::VALUE_NONE,
-				 'list restoring point from local only'
+			 	'local', '', InputOption::VALUE_NONE,
+			 	'list restoring point from local only'
 			 )
 			 ->addOption(
-				 'remote', '', InputOption::VALUE_REQUIRED,
-				 'list restoring point from a remote instance (or local)', ''
+			 	'remote', '', InputOption::VALUE_REQUIRED,
+			 	'list restoring point from a remote instance (or local)', ''
 			 )
 			 ->addOption(
-				 'external', '', InputOption::VALUE_REQUIRED,
-				 'list restoring point from an external folder', ''
+			 	'external', '', InputOption::VALUE_REQUIRED,
+			 	'list restoring point from an external folder', ''
 			 );
 	}
 

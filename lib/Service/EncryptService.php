@@ -31,11 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use Exception;
 use OCA\Backup\Exceptions\EncryptionKeyException;
 use OCA\Backup\Exceptions\PackDecryptException;
 use OCA\Backup\Exceptions\PackEncryptException;
+use OCA\Backup\Tools\Traits\TArrayTools;
 use SodiumException;
 
 /**

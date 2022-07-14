@@ -31,13 +31,13 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteStreamService;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Lock\LockedException;

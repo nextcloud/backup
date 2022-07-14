@@ -31,12 +31,12 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Handlers;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OC\URLGenerator;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\RemoteStreamService;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
+use OCA\Backup\Tools\Traits\TArrayTools;
 use OCP\Http\WellKnown\IHandler;
 use OCP\Http\WellKnown\IRequestContext;
 use OCP\Http\WellKnown\IResponse;
