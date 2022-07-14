@@ -32,12 +32,9 @@ declare(strict_types=1);
 namespace OCA\Backup;
 
 use Composer\Autoload\ClassLoader;
-use ArtificialOwl\MySmallPhpTools\DI\DIContainer;
-use ArtificialOwl\MySmallPhpTools\Exceptions\DependencyInjectionException;
 use Exception;
 use OC\Config;
 use OC\Logger;
-use OCA\Backup\Model\Backup;
 use OCA\Backup\Service\PointService;
 use OCP\IConfig;
 use OCP\ILogger;

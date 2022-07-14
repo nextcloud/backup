@@ -31,10 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\RemoteRequest;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\IDeserializable;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
@@ -42,6 +40,8 @@ use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TNCLogger;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 
@@ -51,8 +51,8 @@ use OCP\Files\NotPermittedException;
  * @package OCA\Backup\RemoteRequest
  */
 class CreateRestoringPoint extends CoreRequest implements IRemoteRequest {
-	use TNC23Deserialize;
-	use TNC23Logger;
+	use TDeserialize;
+	use TNCLogger;
 
 
 	/** @var PointRequest */

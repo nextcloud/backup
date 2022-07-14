@@ -31,12 +31,12 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Request;
-use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use Exception;
 use OC;
 use OCA\Backup\AppInfo\Application;
+use OCA\Backup\Tools\Model\NCRequest;
+use OCA\Backup\Tools\Model\SimpleDataStore;
+use OCA\Backup\Tools\Traits\TArrayTools;
 use OCA\Files_External\Service\GlobalStoragesService;
 use OCP\IConfig;
 
@@ -319,10 +319,10 @@ class ConfigService {
 	}
 
 	/**
-	 * @param NC23Request $request
+	 * @param NCRequest $request
 	 * @param bool $longTimeout
 	 */
-	public function configureRequest(NC23Request $request, bool $longTimeout = false): void {
+	public function configureRequest(NCRequest $request, bool $longTimeout = false): void {
 		$request->setVerifyPeer($this->getAppValue(self::SELF_SIGNED_CERT) !== '1');
 		$request->setProtocols(['https', 'http']);
 		$request->setHttpErrorsAllowed(true);

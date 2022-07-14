@@ -31,11 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
+use OCA\Backup\Tools\IDeserializable;
+use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TStringTools;
 
 /**
  * Class RestoringChunk
@@ -45,7 +45,7 @@ use JsonSerializable;
 class RestoringData implements IDeserializable, JsonSerializable {
 	use TArrayTools;
 	use TStringTools;
-	use TNC23Deserialize;
+	use TDeserialize;
 
 
 	public const INTERNAL_DATA = 0;

@@ -31,11 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Listeners;
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\FilesService;
+use OCA\Backup\Tools\Traits\TNCLogger;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\NodeCreatedEvent;
@@ -49,7 +49,7 @@ use OCP\Files\NotFoundException;
  * @package OCA\Backup\Listeners
  */
 class NodeEvent implements IEventListener {
-	use TNC23Logger;
+	use TNCLogger;
 
 
 	/** @var FilesService */

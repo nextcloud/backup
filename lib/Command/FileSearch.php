@@ -31,9 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
@@ -45,8 +42,11 @@ use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TDeserialize;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCA\Backup\Tools\Traits\TStringTools;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -61,7 +61,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FileSearch extends Base {
 	use TArrayTools;
 	use TStringTools;
-	use TNC23Deserialize;
+	use TDeserialize;
 
 
 	/** @var PointService */
@@ -95,7 +95,7 @@ class FileSearch extends Base {
 			 ->setDescription('Search a specific file in your restoring points')
 			 ->addArgument('search', InputArgument::REQUIRED, 'path/name to search')
 			 ->addOption(
-				 'point', '', InputOption::VALUE_REQUIRED, 'Id of a restoring point for targeted search'
+			 	'point', '', InputOption::VALUE_REQUIRED, 'Id of a restoring point for targeted search'
 			 )
 			 ->addOption('since', '', InputOption::VALUE_REQUIRED, 'search in a specific timeline')
 			 ->addOption('until', '', InputOption::VALUE_REQUIRED, 'search in a specific timeline');

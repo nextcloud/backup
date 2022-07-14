@@ -31,8 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
@@ -56,6 +54,8 @@ use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
 use OCA\Backup\Service\RemoteStreamService;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
+use OCA\Backup\Tools\Exceptions\SignatureException;
 use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -100,7 +100,7 @@ class PointDownload extends Base {
 
 	/** @var ConfigService */
 	private $configService;
-	
+
 	/** @var MetadataService */
 	private $metadataService;
 
@@ -156,7 +156,7 @@ class PointDownload extends Base {
 			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
 			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'storageId of the external storage')
 			 ->addOption(
-				 'no-check', '', InputOption::VALUE_NONE, 'do not check integrity of restoring point'
+			 	'no-check', '', InputOption::VALUE_NONE, 'do not check integrity of restoring point'
 			 );
 	}
 

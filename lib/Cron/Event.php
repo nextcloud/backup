@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Cron;
 
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OC\BackgroundJob\TimedJob;
 use OCA\Backup\Db\EventRequest;
 use OCA\Backup\Model\BackupEvent;
@@ -39,6 +38,7 @@ use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\FilesService;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Tools\Traits\TArrayTools;
 
 /**
  * Class Event

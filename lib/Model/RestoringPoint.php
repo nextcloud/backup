@@ -31,16 +31,16 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\ISignedModel;
-use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
 use OCA\Backup\Exceptions\RestoringDataNotFoundException;
+use OCA\Backup\Tools\Db\IQueryRow;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\IDeserializable;
+use OCA\Backup\Tools\ISignedModel;
+use OCA\Backup\Tools\Model\SimpleDataStore;
+use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TNCLogger;
 use OCA\Backup\Wrappers\AppDataRootWrapper;
 use OCP\Files\SimpleFS\ISimpleFolder;
 
@@ -49,10 +49,10 @@ use OCP\Files\SimpleFS\ISimpleFolder;
  *
  * @package OCA\Backup\Model
  */
-class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, JsonSerializable {
+class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSerializable {
 	use TArrayTools;
-	use TNC23Deserialize;
-	use TNC23Logger;
+	use TDeserialize;
+	use TNCLogger;
 
 
 	public const STATUS_UNPACKED = 0;
@@ -615,10 +615,10 @@ class RestoringPoint implements IDeserializable, INC23QueryRow, ISignedModel, Js
 	/**
 	 * @param array $data
 	 *
-	 * @return INC23QueryRow
+	 * @return IQueryRow
 	 * @throws InvalidItemException
 	 */
-	public function importFromDatabase(array $data): INC23QueryRow {
+	public function importFromDatabase(array $data): IQueryRow {
 		$this->setId($this->get('uid', $data))
 			 ->setInstance($this->get('instance', $data))
 			 ->setParent($this->get('parent', $data))

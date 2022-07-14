@@ -111,6 +111,7 @@ class RemoteRequest extends RemoteRequestBuilder {
 
 
 	/**
+	 * @return RemoteInstance
 	 * @throws RemoteInstanceNotFoundException
 	 */
 	public function getByInstance(string $instance): RemoteInstance {

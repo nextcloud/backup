@@ -31,7 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
 use SodiumException;
 
 /**

@@ -31,10 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
-use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\ArchiveNotFoundException;
@@ -52,6 +48,10 @@ use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
+use OCA\Backup\Tools\Traits\TFileTools;
+use OCA\Backup\Tools\Traits\TNCLogger;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -67,7 +67,7 @@ use ZipArchive;
  */
 class PackService {
 	use TStringTools;
-	use TNC23Logger;
+	use TNCLogger;
 	use TFileTools;
 
 

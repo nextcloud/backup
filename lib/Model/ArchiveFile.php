@@ -31,8 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use OCA\Backup\Tools\IDeserializable;
+use OCA\Backup\Tools\Traits\TArrayTools;
 use JsonSerializable;
 
 /**

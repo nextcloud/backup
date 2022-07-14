@@ -31,16 +31,16 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
+use OCA\Backup\Tools\Db\IQueryRow;
+use OCA\Backup\Tools\Traits\TArrayTools;
 
 /**
  * Class ChangedFile
  *
  * @package OCA\Backup\Model
  */
-class ChangedFile implements INC23QueryRow, JsonSerializable {
+class ChangedFile implements IQueryRow, JsonSerializable {
 	use TArrayTools;
 
 
@@ -105,9 +105,9 @@ class ChangedFile implements INC23QueryRow, JsonSerializable {
 	/**
 	 * @param array $data
 	 *
-	 * @return INC23QueryRow
+	 * @return IQueryRow
 	 */
-	public function importFromDatabase(array $data): INC23QueryRow {
+	public function importFromDatabase(array $data): IQueryRow {
 		$this->setPath($this->get('path', $data));
 		$this->setHash($this->get('hash', $data));
 

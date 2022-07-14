@@ -31,8 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\RemoteRequest;
 
-use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
-use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use OCA\Backup\Tools\Model\NCSignedRequest;
+use OCA\Backup\Tools\Model\SimpleDataStore;
 
 /**
  * Class RemoteRequest
@@ -42,7 +42,7 @@ use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 class CoreRequest {
 
 
-	/** @var NC23SignedRequest */
+	/** @var NCSignedRequest */
 	private $signedRequest;
 
 	/** @var SimpleDataStore */
@@ -61,16 +61,16 @@ class CoreRequest {
 
 
 	/**
-	 * @param NC23SignedRequest $signedRequest
+	 * @param NCSignedRequest $signedRequest
 	 */
-	public function setSignedRequest(NC23SignedRequest $signedRequest): void {
+	public function setSignedRequest(NCSignedRequest $signedRequest): void {
 		$this->signedRequest = $signedRequest;
 	}
 
 	/**
-	 * @return NC23SignedRequest
+	 * @return NCSignedRequest
 	 */
-	public function getSignedRequest(): NC23SignedRequest {
+	public function getSignedRequest(): NCSignedRequest {
 		return $this->signedRequest;
 	}
 
