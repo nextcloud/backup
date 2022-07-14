@@ -85,7 +85,7 @@ class ConfigService {
 
 	/** @var array */
 	public $defaults = [
-		self::CRON_ENABLED => 1,
+		self::CRON_ENABLED => 0,
 		self::LOCK => 0,
 		self::CRON_LOCK => 0,
 		self::REMOTE_ENABLED => 0,
