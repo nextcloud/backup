@@ -409,9 +409,9 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 		if ($cs) {
-			return $expr->like($field, $this->createNamedParameter($value));
+			return (string) $expr->like($field, $this->createNamedParameter($value));
 		} else {
-			return $expr->iLike($field, $this->createNamedParameter($value));
+			return (string) $expr->iLike($field, $this->createNamedParameter($value));
 		}
 	}
 
@@ -431,14 +431,14 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 		if ($value === '') {
-			return $expr->emptyString($field);
+			return (string) $expr->emptyString($field);
 		}
 		if ($cs) {
-			return $expr->eq($field, $this->createNamedParameter($value));
+			return (string) $expr->eq($field, $this->createNamedParameter($value));
 		} else {
 			$func = $this->func();
 
-			return $expr->eq($func->lower($field), $func->lower($this->createNamedParameter($value)));
+			return (string) $expr->eq($func->lower($field), $func->lower($this->createNamedParameter($value)));
 		}
 	}
 
@@ -457,7 +457,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 
-		return $expr->eq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
+		return (string) $expr->eq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
 	}
 
 
@@ -475,7 +475,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 
-		return $expr->eq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_BOOL));
+		return (string) $expr->eq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_BOOL));
 	}
 
 	/**
@@ -576,7 +576,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 
-		return $expr->in($field, $this->createNamedParameter($values, IQueryBuilder::PARAM_STR_ARRAY));
+		return (string) $expr->in($field, $this->createNamedParameter($values, IQueryBuilder::PARAM_STR_ARRAY));
 	}
 
 
@@ -594,7 +594,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 
-		return $expr->gt(
+		return (string) $expr->gt(
 			$expr->bitwiseAnd($field, $flag),
 			$this->createNamedParameter(0, IQueryBuilder::PARAM_INT)
 		);
@@ -617,9 +617,9 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		$expr = $this->expr();
 
 		if ($lte) {
-			return $expr->lte($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
+			return (string)  $expr->lte($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
 		} else {
-			return $expr->lt($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
+			return (string) $expr->lt($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
 		}
 	}
 
@@ -639,9 +639,9 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		$expr = $this->expr();
 
 		if ($gte) {
-			return $expr->gte($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
+			return (string) $expr->gte($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
 		} else {
-			return $expr->gt($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
+			return (string) $expr->gt($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
 		}
 	}
 
@@ -747,11 +747,11 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 		if ($cs) {
-			return $expr->notLike($field, $this->createNamedParameter($value));
+			return (string) $expr->notLike($field, $this->createNamedParameter($value));
 		} else {
 			$func = $this->func();
 
-			return $expr->notLike($func->lower($field), $func->lower($this->createNamedParameter($value)));
+			return (string) $expr->notLike($func->lower($field), $func->lower($this->createNamedParameter($value)));
 		}
 	}
 
@@ -771,14 +771,14 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 		if ($value === '') {
-			return $expr->nonEmptyString($field);
+			return (string) $expr->nonEmptyString($field);
 		}
 		if ($cs) {
-			return $expr->neq($field, $this->createNamedParameter($value));
+			return (string) $expr->neq($field, $this->createNamedParameter($value));
 		} else {
 			$func = $this->func();
 
-			return $expr->neq($func->lower($field), $func->lower($this->createNamedParameter($value)));
+			return (string) $expr->neq($func->lower($field), $func->lower($this->createNamedParameter($value)));
 		}
 	}
 
@@ -797,7 +797,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 
-		return $expr->neq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
+		return (string) $expr->neq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
 	}
 
 
@@ -815,7 +815,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 
-		return $expr->neq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_BOOL));
+		return (string) $expr->neq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_BOOL));
 	}
 
 	/**
@@ -916,7 +916,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 
-		return $expr->notIn($field, $this->createNamedParameter($values, IQueryBuilder::PARAM_STR_ARRAY));
+		return (string) $expr->notIn($field, $this->createNamedParameter($values, IQueryBuilder::PARAM_STR_ARRAY));
 	}
 
 
@@ -934,7 +934,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$expr = $this->expr();
 
-		return $expr->eq(
+		return (string) $expr->eq(
 			$expr->bitwiseAnd($field, $flag),
 			$this->createNamedParameter(0, IQueryBuilder::PARAM_INT)
 		);
