@@ -31,9 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use DateTime;
 use Exception;
 use OC\Files\Node\File;
@@ -46,6 +43,9 @@ use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringChunkPart;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TFileTools;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\Files\FileInfo;
 use OCP\Files\GenericFileException;
 use OCP\Files\InvalidPathException;

@@ -31,11 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\Exceptions\RowNotFoundException;
 use OCA\Backup\Exceptions\ChangedFileNotFoundException;
 use OCA\Backup\Model\ChangedFile;
+use OCA\Backup\Tools\Traits\TArrayTools;
 
 /**
  * Class ChangesRequestBuilder

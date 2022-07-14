@@ -31,13 +31,13 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
 use OC\Core\Command\Base;
 use OCA\Backup\Exceptions\ExternalAppdataException;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Tools\Traits\TDeserialize;
 use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCP\Files\StorageNotAvailableException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,7 +53,7 @@ use Symfony\Component\Console\Question\Question;
  * @package OCA\Backup\Command
  */
 class ExternalAppData extends Base {
-	use TNC23Deserialize;
+	use TDeserialize;
 
 
 	/** @var PointService */

@@ -31,10 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
 use OC\Core\Command\Base;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Tools\Traits\TNCLogger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -44,7 +44,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package OCA\Backup\Command
  */
 class PointHistory extends Base {
-	use TNC23Logger;
+	use TNCLogger;
 
 
 	/** @var PointService */

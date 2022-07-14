@@ -89,7 +89,7 @@ class Reset extends Base {
 		$this->setName('backup:reset')
 			 ->setDescription('Remove all data related to the Backup App')
 			 ->addOption(
-				 'uninstall', '', InputOption::VALUE_NONE, 'Also uninstall the app from the instance'
+			 	'uninstall', '', InputOption::VALUE_NONE, 'Also uninstall the app from the instance'
 			 );
 	}
 

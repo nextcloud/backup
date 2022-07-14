@@ -31,6 +31,7 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Wrappers;
 
+use OC;
 use OC\Config;
 use OC\Files\Node\File;
 use OC\Files\Node\Folder;
@@ -45,6 +46,7 @@ use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\Files\SimpleFS\ISimpleRoot;
 use OCP\IConfig;
+use RuntimeException;
 
 /**
  * Class AppDataRootWrapper
@@ -158,7 +160,7 @@ class AppDataRootWrapper {
 	public function getRoot(): Folder {
 		if ($this->isSimpleRoot()) {
 			/** @var IRootFolder $rootFolder */
-			$rootFolder = \OC::$server->get(IRootFolder::class);
+			$rootFolder = OC::$server->get(IRootFolder::class);
 			$root = $rootFolder->get($this->getAppDataPath());
 		} else {
 			$root = $this->getExternalFolder()->getRootFolder();
@@ -265,10 +267,10 @@ class AppDataRootWrapper {
 	 */
 	private function getAppDataPath(): string {
 		/** @var Config $config */
-		$config = \OC::$server->get(IConfig::class);
+		$config = OC::$server->get(IConfig::class);
 		$instanceId = $config->getSystemValue('instanceid', null);
 		if ($instanceId === null) {
-			throw new \RuntimeException('no instance id!');
+			throw new RuntimeException('no instance id!');
 		}
 
 		return 'appdata_' . $instanceId . '/' . Application::APP_ID;

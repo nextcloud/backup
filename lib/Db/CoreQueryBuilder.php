@@ -31,14 +31,14 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\NC23ExtendedQueryBuilder;
+use OCA\Backup\Tools\Db\ExtendedQueryBuilder;
 
 /**
  * Class CoreQueryBuilder
  *
  * @package OCA\Backup\Db
  */
-class CoreQueryBuilder extends NC23ExtendedQueryBuilder {
+class CoreQueryBuilder extends ExtendedQueryBuilder {
 
 
 	/**

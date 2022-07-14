@@ -31,12 +31,12 @@ declare(strict_types=1);
 
 namespace OCA\Backup\SqlDump;
 
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use Ifsnop\Mysqldump\Mysqldump;
 use OCA\Backup\Exceptions\SqlDumpException;
 use OCA\Backup\Exceptions\SqlParamsException;
 use OCA\Backup\ISqlDump;
 use OCA\Backup\Service\ConfigService;
+use OCA\Backup\Tools\Traits\TArrayTools;
 use Throwable;
 
 /**

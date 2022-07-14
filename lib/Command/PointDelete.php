@@ -98,15 +98,15 @@ class PointDelete extends Base {
 			 ->setDescription('Locally delete a restoring point')
 			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to delete')
 			 ->addOption(
-				 'all-storages', '', InputOption::VALUE_NONE, 'remove restoring point from all storage'
+			 	'all-storages', '', InputOption::VALUE_NONE, 'remove restoring point from all storage'
 			 )
 			 ->addOption(
-				 'remote', '', InputOption::VALUE_REQUIRED,
-				 'remove a restoring point from a remote instance (or local)', ''
+			 	'remote', '', InputOption::VALUE_REQUIRED,
+			 	'remove a restoring point from a remote instance (or local)', ''
 			 )
 			 ->addOption(
-				 'external', '', InputOption::VALUE_REQUIRED,
-				 'remove a restoring point from an external folder', ''
+			 	'external', '', InputOption::VALUE_REQUIRED,
+			 	'remove a restoring point from an external folder', ''
 			 );
 	}
 

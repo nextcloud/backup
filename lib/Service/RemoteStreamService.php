@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Nextcloud - Backup now. Restore later.
  *
  * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
+ * later. See the COPYING file.s
  *
  * @author Maxence Lange <maxence@artificial-owl.com>
  * @copyright 2021, Maxence Lange <maxence@artificial-owl.com>
@@ -31,20 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\ActivityPub\Nextcloud\nc23\NC23Signature;
-use ArtificialOwl\MySmallPhpTools\Exceptions\RequestNetworkException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatoryException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\SignatureException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\WellKnownLinkNotFoundException;
-use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Request;
-use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Signatory;
-use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
-use ArtificialOwl\MySmallPhpTools\Model\Request;
-use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23LocalSignatory;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23WellKnown;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\RemoteRequest;
@@ -53,6 +39,20 @@ use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteResourceNotFoundException;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Tools\ActivityPub\NCSignature;
+use OCA\Backup\Tools\Exceptions\RequestNetworkException;
+use OCA\Backup\Tools\Exceptions\SignatoryException;
+use OCA\Backup\Tools\Exceptions\SignatureException;
+use OCA\Backup\Tools\Exceptions\WellKnownLinkNotFoundException;
+use OCA\Backup\Tools\Model\NCRequest;
+use OCA\Backup\Tools\Model\NCSignatory;
+use OCA\Backup\Tools\Model\NCSignedRequest;
+use OCA\Backup\Tools\Model\Request;
+use OCA\Backup\Tools\Model\SimpleDataStore;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TNCLocalSignatory;
+use OCA\Backup\Tools\Traits\TNCWellKnown;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\AppFramework\Http;
 use OCP\IURLGenerator;
 
@@ -61,11 +61,11 @@ use OCP\IURLGenerator;
  *
  * @package OCA\Backup\Service
  */
-class RemoteStreamService extends NC23Signature {
-	use TNC23Deserialize;
-	use TNC23LocalSignatory;
+class RemoteStreamService extends NCSignature {
+	use TDeserialize;
+	use TNCLocalSignatory;
 	use TStringTools;
-	use TNC23WellKnown;
+	use TNCWellKnown;
 
 
 	/** @var IURLGenerator */
@@ -213,14 +213,14 @@ class RemoteStreamService extends NC23Signature {
 	 * @param string $keyId
 	 * @param bool $refresh
 	 *
-	 * @return NC23Signatory
+	 * @return NCSignatory
 	 * @throws SignatoryException
 	 * @throws SignatureException
 	 */
-	public function retrieveSignatory(string $keyId, bool $refresh = true): NC23Signatory {
+	public function retrieveSignatory(string $keyId, bool $refresh = true): NCSignatory {
 		if (!$refresh) {
 			try {
-				return $this->remoteRequest->getFromHref(NC23Signatory::removeFragment($keyId));
+				return $this->remoteRequest->getFromHref(NCSignatory::removeFragment($keyId));
 			} catch (RemoteInstanceNotFoundException $e) {
 				throw new SignatoryException();
 			}
@@ -229,7 +229,7 @@ class RemoteStreamService extends NC23Signature {
 		$remoteInstance = new RemoteInstance($keyId);
 		$confirm = $this->uuid();
 
-		$request = new NC23Request();
+		$request = new NCRequest();
 		$this->configService->configureRequest($request);
 
 		$this->downloadSignatory($remoteInstance, $keyId, ['auth' => $confirm], $request);
@@ -294,7 +294,7 @@ class RemoteStreamService extends NC23Signature {
 	 * @param array $params
 	 * @param bool $longTimeout
 	 *
-	 * @return NC23SignedRequest
+	 * @return NCSignedRequest
 	 * @throws RemoteInstanceException
 	 * @throws RemoteInstanceNotFoundException
 	 * @throws RemoteResourceNotFoundException
@@ -306,8 +306,8 @@ class RemoteStreamService extends NC23Signature {
 		?JsonSerializable $object = null,
 		array $params = [],
 		bool $longTimeout = false
-	): NC23SignedRequest {
-		$request = new NC23Request('', $type);
+	): NCSignedRequest {
+		$request = new NCRequest('', $type);
 		$this->configService->configureRequest($request, $longTimeout);
 		$link = $this->getRemoteInstanceEntry($instance, $item, $params);
 		$request->basedOnUrl($link);

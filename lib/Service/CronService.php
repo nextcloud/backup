@@ -31,9 +31,9 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Exceptions\SettingsException;
+use OCA\Backup\Tools\Traits\TArrayTools;
 
 /**
  * Class CronService

@@ -31,10 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TFileTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use OCA\Backup\Exceptions\ArchiveCreateException;
 use OCA\Backup\Exceptions\ArchiveFileNotFoundException;
@@ -50,6 +46,10 @@ use OCA\Backup\Model\ArchiveFile;
 use OCA\Backup\Model\RestoringChunk;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TFileTools;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -67,7 +67,7 @@ class ChunkService {
 	use TArrayTools;
 	use TStringTools;
 	use TFileTools;
-	use TNC23Deserialize;
+	use TDeserialize;
 
 
 	public const BACKUP_SCRIPT = 'restore.php';
@@ -914,12 +914,12 @@ class ChunkService {
 			try {
 				return $this->getArchiveFileFromChunk($point, $chunk, $filename);
 			} catch (
-			ArchiveCreateException
-			| ArchiveNotFoundException
-			| ArchiveFileNotFoundException
-			| NotFoundException
-			| NotPermittedException $e) {
-			}
+				ArchiveCreateException
+				| ArchiveNotFoundException
+				| ArchiveFileNotFoundException
+				| NotFoundException
+				| NotPermittedException $e) {
+				}
 		}
 
 		throw new ArchiveFileNotFoundException();

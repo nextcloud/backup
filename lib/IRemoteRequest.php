@@ -31,9 +31,9 @@ declare(strict_types=1);
 
 namespace OCA\Backup;
 
-use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23SignedRequest;
-use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
+use OCA\Backup\Tools\IDeserializable;
+use OCA\Backup\Tools\Model\NCSignedRequest;
+use OCA\Backup\Tools\Model\SimpleDataStore;
 
 /**
  * Interface IRemoteRequest
@@ -43,9 +43,9 @@ use ArtificialOwl\MySmallPhpTools\Model\SimpleDataStore;
 interface IRemoteRequest extends IDeserializable {
 
 	/**
-	 * @param NC23SignedRequest $signedRequest
+	 * @param NCSignedRequest $signedRequest
 	 */
-	public function setSignedRequest(NC23SignedRequest $signedRequest): void;
+	public function setSignedRequest(NCSignedRequest $signedRequest): void;
 
 	/**
 	 * @param SimpleDataStore $config
