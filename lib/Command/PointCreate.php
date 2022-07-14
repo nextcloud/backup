@@ -88,7 +88,7 @@ class PointCreate extends Base {
 			 ->addArgument('comment', InputArgument::OPTIONAL, 'set a comment to the restoring point', '')
 			 ->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file')
 			 ->addOption(
-				 'differential', '', InputOption::VALUE_NONE, 'create an differential restoring point'
+			 	'differential', '', InputOption::VALUE_NONE, 'create an differential restoring point'
 			 );
 	}
 

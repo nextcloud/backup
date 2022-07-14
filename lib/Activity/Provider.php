@@ -31,17 +31,17 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Activity;
 
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use Exception;
 use InvalidArgumentException;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Service\ActivityService;
+use OCA\Backup\Tools\Traits\TArrayTools;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Activity\IProvider;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCA\Backup\Tools\Traits\TStringTools;
 
 /**
  * Class Provider

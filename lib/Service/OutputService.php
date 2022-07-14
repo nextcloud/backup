@@ -112,7 +112,7 @@ class OutputService {
 			$file = $appDataRootWrapper->getNode('/' . $point->getId() . '/' . $point->getId() . '.log');
 		} catch (NotFoundException $e) {
 			try {
-				$file = $appDataRootWrapper->newFile('/' . $point->getId() . '/' . $point->getId() . '.log', '');
+				$file = $appDataRootWrapper->newFile('/' . $point->getId() . '/' . $point->getId() . '.log');
 				$new = true;
 			} catch (NotPermittedException $e) {
 				return;

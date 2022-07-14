@@ -39,7 +39,6 @@ use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Exceptions\RestoringPointPackException;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
-use OCA\Backup\Service\RemoteService;
 use OCA\Backup\Service\UploadService;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -60,9 +59,6 @@ class PointUpload extends Base {
 	/** @var PointService */
 	private $pointService;
 
-	/** @var RemoteService */
-	private $remoteService;
-
 	/** @var UploadService */
 	private $uploadService;
 
@@ -74,20 +70,17 @@ class PointUpload extends Base {
 	 * PointUpload constructor.
 	 *
 	 * @param PointService $pointService
-	 * @param RemoteService $remoteService
 	 * @param UploadService $uploadService
 	 * @param OutputService $outputService
 	 */
 	public function __construct(
 		PointService $pointService,
-		RemoteService $remoteService,
 		UploadService $uploadService,
 		OutputService $outputService
 	) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
-		$this->remoteService = $remoteService;
 		$this->uploadService = $uploadService;
 		$this->outputService = $outputService;
 	}

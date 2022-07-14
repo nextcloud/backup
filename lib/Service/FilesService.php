@@ -31,12 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TPathTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC;
 use OC\Files\Node\File;
 use OC\Files\Node\Folder;
@@ -47,6 +41,11 @@ use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\ChangedFile;
 use OCA\Backup\Model\RestoringData;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TDeserialize;
+use OCA\Backup\Tools\Traits\TNCLogger;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -62,9 +61,8 @@ use OCP\Lock\LockedException;
 class FilesService {
 	use TArrayTools;
 	use TStringTools;
-	use TPathTools;
-	use TNC23Deserialize;
-	use TNC23Logger;
+	use TDeserialize;
+	use TNCLogger;
 
 	public const APP_ROOT = __DIR__ . '/../../';
 
@@ -174,7 +172,7 @@ class FilesService {
 		}
 
 		if ($root !== '') {
-			$data->setRoot($this->withEndSlash($root));
+			$data->setRoot(rtrim(str_replace('//', '/', $root), '/') . '/');
 		}
 	}
 

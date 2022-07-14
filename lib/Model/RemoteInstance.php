@@ -31,20 +31,20 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
-use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Model\Nextcloud\nc23\NC23Signatory;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use JsonSerializable;
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
 use OCA\Backup\Exceptions\RemoteInstanceUidException;
+use OCA\Backup\Tools\Db\IQueryRow;
+use OCA\Backup\Tools\IDeserializable;
+use OCA\Backup\Tools\Model\NCSignatory;
+use OCA\Backup\Tools\Traits\TArrayTools;
 
 /**
  * Class AppService
  *
  * @package OCA\Backup\Model
  */
-class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializable, JsonSerializable {
+class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, JsonSerializable {
 	use TArrayTools;
 
 
@@ -310,8 +310,6 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 	}
 
 
-
-
 	/**
 	 * @param string $RPDelete
 	 *
@@ -468,10 +466,10 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 	/**
 	 * @param array $data
 	 *
-	 * @return NC23Signatory
+	 * @return NCSignatory
 	 */
-	public function importSignatory(array $data): NC23Signatory {
-		parent::importSignatory($data);
+	public function importSignatory(array $data): self {
+//		parent::importSignatory($data);
 
 		$this->setRoot($this->get(self::ROOT, $data))
 			 ->setRPList($this->get(self::RP_LIST, $data))
@@ -540,7 +538,7 @@ class RemoteInstance extends NC23Signatory implements INC23QueryRow, IDeserializ
 	 * @return self
 	 * @throws RemoteInstanceNotFoundException
 	 */
-	public function importFromDatabase(array $data): INC23QueryRow {
+	public function importFromDatabase(array $data): IQueryRow {
 		if ($this->getInt('id', $data) === 0) {
 			throw new RemoteInstanceNotFoundException();
 		}

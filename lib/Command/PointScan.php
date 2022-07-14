@@ -31,13 +31,13 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Service\ChunkService;
 use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
@@ -100,7 +100,7 @@ class PointScan extends Base {
 	protected function configure() {
 		$this->setName('backup:point:scan')
 			 ->setDescription(
-				 'Scan a folder containing the data of a restoring point to add it in the list of available restoring point'
+			 	'Scan a folder containing the data of a restoring point to add it in the list of available restoring point'
 			 )
 			 ->addOption('owner', '', InputOption::VALUE_REQUIRED, 'owner of the metadata file')
 			 ->addOption('file', '', InputOption::VALUE_REQUIRED, 'file_id of the metadata file');

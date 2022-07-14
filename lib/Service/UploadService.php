@@ -31,8 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Logger;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
+use OCA\Backup\Tools\Traits\TNCLogger;
+use OCA\Backup\Tools\Traits\TStringTools;
 use Exception;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
@@ -63,7 +63,7 @@ use OCP\Lock\LockedException;
  */
 class UploadService {
 	use TStringTools;
-	use TNC23Logger;
+	use TNCLogger;
 
 
 
@@ -280,14 +280,14 @@ class UploadService {
 				$this->remoteService->uploadPart($instance, $point, $chunk, $part);
 				$this->o('<info>ok</info>');
 			} catch (
-			RestoringChunkNotFoundException
-			| RemoteInstanceException
-			| RemoteInstanceNotFoundException
-			| RestoringChunkPartNotFoundException
-			| RestoringPointNotInitiatedException
-			| RemoteResourceNotFoundException $e) {
-				$this->o('<error>' . get_class($e) . $e->getMessage() . '</error>');
-			}
+				RestoringChunkNotFoundException
+				| RemoteInstanceException
+				| RemoteInstanceNotFoundException
+				| RestoringChunkPartNotFoundException
+				| RestoringPointNotInitiatedException
+				| RemoteResourceNotFoundException $e) {
+					$this->o('<error>' . get_class($e) . $e->getMessage() . '</error>');
+				}
 		}
 	}
 
@@ -417,16 +417,16 @@ class UploadService {
 				$this->externalFolderService->uploadPart($external, $point, $health, $chunk, $part);
 				$this->o('<info>ok</info>');
 			} catch (
-			RestoringChunkNotFoundException |
-			RestoringPointNotInitiatedException |
-			RestoringPointException |
-			RestoringPointNotFoundException |
-			ExternalFolderNotFoundException |
-			GenericFileException |
-			NotPermittedException |
-			LockedException $e) {
-				$this->o('<error>' . get_class($e) . ' ' . $e->getMessage() . '</error>');
-			}
+				RestoringChunkNotFoundException |
+				RestoringPointNotInitiatedException |
+				RestoringPointException |
+				RestoringPointNotFoundException |
+				ExternalFolderNotFoundException |
+				GenericFileException |
+				NotPermittedException |
+				LockedException $e) {
+					$this->o('<error>' . get_class($e) . ' ' . $e->getMessage() . '</error>');
+				}
 		}
 	}
 

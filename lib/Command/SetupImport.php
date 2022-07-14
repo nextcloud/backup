@@ -31,8 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Command;
 
-use ArtificialOwl\MySmallPhpTools\Traits\Nextcloud\nc23\TNC23Deserialize;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use Exception;
 use OC\Core\Command\Base;
 use OCA\Backup\Db\RemoteRequest;
@@ -43,6 +41,8 @@ use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\EncryptService;
 use OCA\Backup\Service\RemoteStreamService;
+use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TDeserialize;
 use SodiumException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -55,7 +55,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SetupImport extends Base {
 	use TArrayTools;
-	use TNC23Deserialize;
+	use TDeserialize;
 
 
 	/** @var RemoteRequest */

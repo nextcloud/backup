@@ -31,18 +31,18 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Model;
 
-use ArtificialOwl\MySmallPhpTools\Db\Nextcloud\nc23\INC23QueryRow;
-use ArtificialOwl\MySmallPhpTools\IDeserializable;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
-use ArtificialOwl\MySmallPhpTools\Traits\TStringTools;
 use JsonSerializable;
+use OCA\Backup\Tools\Db\IQueryRow;
+use OCA\Backup\Tools\IDeserializable;
+use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TStringTools;
 
 /**
  * Class BackupEvent
  *
  * @package OCA\Backup\Model
  */
-class BackupEvent implements JsonSerializable, INC23QueryRow, IDeserializable {
+class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 	use TArrayTools;
 	use TStringTools;
 
@@ -195,7 +195,7 @@ class BackupEvent implements JsonSerializable, INC23QueryRow, IDeserializable {
 	 *
 	 * @return ExternalFolder
 	 */
-	public function importFromDatabase(array $data): INC23QueryRow {
+	public function importFromDatabase(array $data): IQueryRow {
 		$this->setId($this->getInt('id', $data))
 			 ->setAuthor($this->get('author', $data))
 			 ->setType($this->get('type', $data))

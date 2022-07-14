@@ -31,11 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-use ArtificialOwl\MySmallPhpTools\Exceptions\InvalidItemException;
-use ArtificialOwl\MySmallPhpTools\Exceptions\RowNotFoundException;
-use ArtificialOwl\MySmallPhpTools\Traits\TArrayTools;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\Exceptions\RowNotFoundException;
+use OCA\Backup\Tools\Traits\TArrayTools;
 
 /**
  * Class BackupRequestBuilder
