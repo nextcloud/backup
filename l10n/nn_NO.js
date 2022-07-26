@@ -12,6 +12,7 @@ OC.L10N.register(
     "Delete" : "Slett",
     "Cancel" : "Avbryt",
     "Pending" : "Under vegs",
+    "Completed" : "Fullført",
     "Encrypted" : "Kryptert",
     "Status" : "Status",
     "Date" : "Dato",
