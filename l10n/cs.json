@@ -48,7 +48,7 @@
     "You can enable background task for backups. This means that the creation, maintenance and purges of backups will be done automatically." : "Ohledně zálohování je možné zapnout spouštění úloh na pozadí. To znamená, že vytváření, údržba a čištění záloh se bude dít automaticky.",
     "Creation: New restoring points will be created according to the schedule." : "Vytváření: nové body obnovení budou vytvářeny podle plánu.",
     "Maintenance: Restoring points will be packed and copied to potential external storages." : "Údržba: body obnovení budou zabaleny a zkopírovány na případná externí úložiště.",
-    "Purge: Old restoring points will be deleted automatically according to the retention policy." : "Čistění: staré body obnovení budou automaticky mazány v souladu se zásadami ponechávání.",
+    "Purge: Old restoring points will be deleted automatically according to the retention policy." : "Čistění: staré body obnovení budou automaticky mazány v souladu se zásadami uchovávání.",
     "Enable background tasks to automatically manage creation, maintenance and purge." : "Zapnout úlohy na pozadí a automaticky tak spravovat vytváření, údržbu a čistění.",
     "Backup schedule" : "Plán záloh",
     "Limit restoring points creation to the following hours interval:" : "Omezit vytváření bodů obnovení na následující časové okno:",
