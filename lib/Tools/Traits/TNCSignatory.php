@@ -212,9 +212,12 @@ trait TNCSignatory {
 	 * @throws SignatureException
 	 */
 	public function verifyString(
-		string $clear, string $signed, string $publicKey, string $algo = NCSignatory::SHA256
+		string $clear,
+		string $signed,
+		string $publicKey,
+		string $algo = NCSignatory::SHA256
 	) {
-		if (openssl_verify($clear, $signed, $publicKey, $algo) !== 1) {
+		if (openssl_verify($clear, base64_decode($signed), $publicKey, $algo) !== 1) {
 			throw new SignatureException('signature issue');
 		}
 	}
