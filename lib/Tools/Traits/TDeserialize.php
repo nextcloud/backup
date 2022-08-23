@@ -77,7 +77,6 @@ trait TDeserialize {
 	}
 
 
-
 	/**
 	 * @param array $data
 	 * @param string $class
@@ -137,6 +136,10 @@ trait TDeserialize {
 	 */
 	public function deserializeJson(string $json, string $class): IDeserializable {
 		$data = json_decode($json, true);
+
+		if (!is_array($data)) {
+			throw new InvalidItemException();
+		}
 
 		return $this->deserialize($data, $class);
 	}
