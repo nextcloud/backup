@@ -525,7 +525,7 @@ class ExternalFolderService {
 				throw new MetadataException('metadata file not found');
 			}
 
-			$metadataFile = $folder->newFile(MetadataService::METADATA_FILE, '');
+			return $folder->newFile(MetadataService::METADATA_FILE, json_encode($point, JSON_PRETTY_PRINT));
 		}
 
 		try {
