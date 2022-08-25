@@ -14,6 +14,7 @@ OC.L10N.register(
     "and" : "i",
     "Cancel" : "Odustani",
     "Settings saved" : "Postavke spremljene",
+    "Unable to save the settings" : "Nije moguće spremiti postavke",
     "Pending" : "Na čekanju",
     "Completed" : "Završeno",
     "Encrypted" : "Šifrirano",
