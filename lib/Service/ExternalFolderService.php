@@ -259,8 +259,7 @@ class ExternalFolderService {
 		RestoringChunkPart $part
 	): void {
 		$folder = $this->getExternalChunkFolder($external, $point, $chunk, true);
-		$file = $folder->newFile($part->getName(), '');
-		$file->putContent(base64_decode($part->getContent()));
+		$folder->newFile($part->getName(), base64_decode($part->getContent()));
 		$this->updateChunkPartHealth($external, $point, $health, $chunk, $part);
 	}
 
@@ -520,6 +519,9 @@ class ExternalFolderService {
 		$folder = $this->getExternalPointFolder($external, $point->getId());
 		try {
 			$metadataFile = $folder->get(MetadataService::METADATA_FILE);
+			if (!$metadataFile instanceof File) {
+				throw new MetadataException('metadata file is a folder');
+			}
 		} catch (NotFoundException $e) {
 			if (!$create) {
 				throw new MetadataException('metadata file not found');
@@ -700,9 +702,6 @@ class ExternalFolderService {
 				/** @var File $file */
 				$file = $folder->get($part->getName());
 				$stream = $file->fopen('rb');
-//				*/
-//				$file->
-//				$stream = $file->();
 			}
 		} catch (Exception $e) {
 			throw new ArchiveNotFoundException(
@@ -790,6 +789,10 @@ class ExternalFolderService {
 			$folder = $sub;
 		}
 
+
+		return $folder;
+
+		// not sure this is useful in the end.
 		if (!$pack) {
 			return $folder;
 		}

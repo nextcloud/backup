@@ -913,6 +913,7 @@ class PointService {
 					try {
 						$this->remoteStreamService->verifyPoint($item);
 					} catch (SignatoryException | SignatureException $e) {
+						$this->e($e);
 						$this->o('  <error>! cannot confirm integrity</error>');
 						$issue = 'cannot confirm integrity';
 					}
