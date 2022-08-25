@@ -745,6 +745,7 @@ class ExternalFolderService {
 
 			$node = $folder->newFolder($pointId);
 			$node->newFile(PointService::NOBACKUP_FILE, '');
+			$node->newFile(PointService::NOINDEX_FILE, '');
 		}
 
 		if ($node->getType() !== FileInfo::TYPE_FOLDER) {
