@@ -784,11 +784,13 @@ class PointRestore extends Base {
 	 */
 	private function importSqlDump(RestoringPoint $point, RestoringChunk $chunk, array $sqlParams): void {
 		try {
-			$read = $this->chunkService->getStreamFromChunk(
-				$point,
-				$chunk,
-				PointService::SQL_DUMP_FILE
-			);
+			$zip = $this->chunkService->openZipArchive($point, $chunk, true);
+			$stream = $zip->getStream(PointService::SQL_DUMP_FILE);
+			unlink($zip->filename);
+
+			if ($stream === false) {
+				throw new RestoreChunkException('cannot open stream');
+			}
 		} catch (ArchiveCreateException
 		| ArchiveNotFoundException
 		| RestoreChunkException
@@ -801,7 +803,7 @@ class PointRestore extends Base {
 		$sqlDump = $this->pointService->getSqlDump($sqlParams);
 		$sqlDump->setup($sqlParams);
 
-		$sqlDump->import($sqlParams, $read);
+		$sqlDump->import($sqlParams, $stream);
 	}
 
 
