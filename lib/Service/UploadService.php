@@ -426,6 +426,7 @@ class UploadService {
 				NotPermittedException |
 				LockedException $e) {
 					$this->o('<error>' . get_class($e) . ' ' . $e->getMessage() . '</error>');
+					$this->e($e);
 				}
 		}
 	}

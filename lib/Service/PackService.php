@@ -497,11 +497,11 @@ class PackService {
 	 */
 	private function wrapStoreParts(RestoringPoint $point, RestoringChunk $chunk, array $parts): void {
 		try {
-			$this->o('     - storing parts in appdata ', false);
+			$this->o('     - storing parts in appdata', false);
 			$this->storeParts($point, $chunk, $parts);
-			$this->o('<info>ok</info>');
+			$this->o(' <info>ok</info>');
 		} catch (Throwable $t) {
-			$this->o('<error>fail ' . $t->getMessage() . '</error>');
+			$this->o(' <error>fail ' . $t->getMessage() . '</error>');
 			foreach ($parts as $item) {
 				try {
 					unlink($item->getName());
