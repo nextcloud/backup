@@ -1,5 +1,11 @@
 # Changelog
 
+### 1.1.3
+
+- fix a bunch of small issues/glitchs when uploading backups
+- fix an issue with reading the stream from sqldump zipfile
+- tell fulltextsearch to not index backups
+
 ### 1.0.5
 
 - new file's content is now empty instead of null.
