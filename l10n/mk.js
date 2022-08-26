@@ -13,6 +13,7 @@ OC.L10N.register(
     "and" : "и",
     "Cancel" : "Откажи",
     "Settings saved" : "Параматрите се зачувани",
+    "Unable to save the settings" : "Неуспешно зачувување на параметрите",
     "Pending" : "Чекање",
     "Completed" : "Завршено",
     "Health" : "Здравје",
