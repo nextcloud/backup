@@ -300,31 +300,6 @@ class ChunkService {
 
 
 	/**
-	 * @param RestoringPoint $point
-	 * @param RestoringChunk $chunk
-	 * @param string $filename
-	 *
-	 * @return resource
-	 * @throws ArchiveCreateException
-	 * @throws ArchiveNotFoundException
-	 * @throws NotFoundException
-	 * @throws NotPermittedException
-	 * @throws RestoreChunkException
-	 */
-	public function getStreamFromChunk(RestoringPoint $point, RestoringChunk $chunk, string $filename) {
-		$zip = $this->openZipArchive($point, $chunk, true);
-		$stream = $zip->getStream($filename);
-		unlink($zip->filename);
-
-		if ($stream === false) {
-			throw new RestoreChunkException('cannot open stream');
-		}
-
-		return $stream;
-	}
-
-
-	/**
 	 * @param ZipArchive $zip
 	 * @param string $root
 	 * @param ArchiveFile[] $archiveFiles
