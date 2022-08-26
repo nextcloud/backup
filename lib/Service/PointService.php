@@ -90,6 +90,7 @@ class PointService {
 
 
 	public const NOBACKUP_FILE = '.nobackup';
+	public const NOINDEX_FILE = '.noindex'; // so that fulltextsearch does not index backup
 	public const SQL_DUMP_FILE = 'backup.sql';
 
 
@@ -793,6 +794,7 @@ class PointService {
 
 		$folder = $this->appDataRoot->getFolder($path);
 		$folder->newFile(self::NOBACKUP_FILE, '');
+		$folder->newFile(self::NOINDEX_FILE, '');
 
 		$this->backupFSInitiated = true;
 	}
@@ -996,6 +998,7 @@ class PointService {
 		}
 
 		$folder->newFile(PointService::NOBACKUP_FILE, '');
+		$folder->newFile(PointService::NOINDEX_FILE, '');
 
 		$point->setAppDataRootWrapper($this->appDataRoot);
 		$point->setBaseFolder($folder);
