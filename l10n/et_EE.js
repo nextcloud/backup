@@ -12,6 +12,7 @@ OC.L10N.register(
     "Delete" : "Kustuta",
     "Cancel" : "Loobu",
     "Settings saved" : "Seaded salvestatud",
+    "Unable to save the settings" : "Seadeid ei saa salvestada",
     "Pending" : "Ootel",
     "Completed" : "Lõpetatud",
     "Health" : "Tervis",
