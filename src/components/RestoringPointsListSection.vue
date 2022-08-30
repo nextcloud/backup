@@ -169,22 +169,19 @@
 </template>
 
 <script>
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-import { showError } from '@nextcloud/dialogs'
-
 import Check from 'vue-material-design-icons/Check.vue'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 
-import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
-import Popover from '@nextcloud/vue/dist/Components/Popover'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
+import { showError } from '@nextcloud/dialogs'
+import { SettingsSection, Popover, Tooltip } from '@nextcloud/vue'
 
 import RestoringPointHealthIcon from './RestoringPointHealthIcon.vue'
 import RestoringPointStatusIcon from './RestoringPointStatusIcon.vue'
 import SettingsModel from '../models/SettingsModel.js'
 import RestoringPoint from '../models/RestoringPointModel.js'
-import logger from '../logger'
+import logger from '../logger.js'
 
 /**
  * @typedef {object} ExternalLocation
@@ -309,11 +306,11 @@ export default {
 		 */
 
 		/**
-		 * @typedef {object<string, PointLocation>} RestoringPoints
+		 * @typedef {Object<string, PointLocation>} RestoringPoints
 		 */
 
 		/**
-		 * @param {object<string, RestoringPoints>} restoringPoints - The list of restoring points
+		 * @param {Object<string, RestoringPoints>} restoringPoints - The list of restoring points
 		 */
 		handleRestoringPoints(restoringPoints) {
 			return Object.keys(restoringPoints)

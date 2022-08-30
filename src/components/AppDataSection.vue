@@ -92,12 +92,9 @@ import WindowClose from 'vue-material-design-icons/WindowClose.vue'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+import { SettingsSection, CheckboxRadioSwitch, Modal } from '@nextcloud/vue'
 
-import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
-
-import logger from '../logger'
+import logger from '../logger.js'
 
 /**
  * @typedef {object} ExternalLocation

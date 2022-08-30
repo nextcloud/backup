@@ -98,11 +98,9 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
+import { EmptyContent, SettingsSection } from '@nextcloud/vue'
 
-import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
-
-import logger from '../logger'
+import logger from '../logger.js'
 
 /**
  * @typedef {object} ExternalLocation

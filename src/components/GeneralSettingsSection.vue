@@ -248,11 +248,9 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
-import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
+import { SettingsSection, CheckboxRadioSwitch, Modal } from '@nextcloud/vue'
 
-import logger from '../logger'
+import logger from '../logger.js'
 import SettingsModel from '../models/SettingsModel.js'
 
 export default {
