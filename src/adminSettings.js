@@ -25,7 +25,7 @@ import Vue from 'vue'
 import { translate as t, translatePlural as n } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
-import BackupAdminSettings from './views/BackupAdminSettings'
+import BackupAdminSettings from './views/BackupAdminSettings.vue'
 
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath(appName, '', 'js/')

@@ -39,7 +39,8 @@
 		"@nextcloud/moment": "^1.2.1",
 		"@nextcloud/router": "^2.0.0",
 		"@nextcloud/vue": "^5.4.0",
-		"vue-material-design-icons": "^5.1.2"
+		"vue-material-design-icons": "^5.1.2",
+		"vue": "^2.7.8"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.13",
