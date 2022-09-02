@@ -1,6 +1,8 @@
 OC.L10N.register(
     "backup",
     {
+    "Scan Backup Folder" : "فحص مجلد النسخ الاحتياطي",
+    "Backup" : "النسخ الاحتياطي",
     "seconds" : "ثواني",
     "hours" : "ساعات",
     "days" : "أيام",
