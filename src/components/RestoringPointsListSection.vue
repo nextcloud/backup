@@ -112,7 +112,7 @@
 							<div class="restoring-points__point__popover">
 								<div v-if="point.local !== undefined && point.local.point.health !== undefined" class="restoring-points__point__popover__item">
 									<RestoringPointHealthIcon :health="point.local.point.health.status" class="restoring-points__point__popover__item__icon" />
-									{{ t('backup', 'local') }}
+									{{ t('backup', 'Local') }}
 								</div>
 								<div v-for="external of point.externals"
 									:key="external.storageId"
