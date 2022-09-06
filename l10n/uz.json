@@ -1,0 +1,10 @@
+{ "translations": {
+    "minutes" : "daqiqalar",
+    "Error" : "Xato",
+    "Delete" : "O'chir",
+    "Cancel" : "Bekor qilish",
+    "Settings saved" : "sozlamalar saqlandi",
+    "Pending" : "Kutilmoqda",
+    "Local" : "mahalliy"
+},"pluralForm" :"nplurals=1; plural=0;"
+}

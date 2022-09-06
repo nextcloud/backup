@@ -12,6 +12,7 @@ OC.L10N.register(
     "Delete" : "Вилучити",
     "Cancel" : "Скасувати",
     "Settings saved" : "Налаштування збережено",
+    "Unable to save the settings" : "Не вдалося зберегти налаштування",
     "Pending" : "Очікування",
     "Completed" : "Завершені",
     "Encrypted" : "Зашифровано",

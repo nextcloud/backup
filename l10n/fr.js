@@ -99,8 +99,8 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "Pas d'incident",
     "Local" : "Local",
-    "local" : "local",
     "Next full restoring point" : "Prochain point de restauration complet",
-    "Next partial restoring point" : "Prochain point de restauration partiel"
+    "Next partial restoring point" : "Prochain point de restauration partiel",
+    "local" : "local"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

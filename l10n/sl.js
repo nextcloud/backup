@@ -80,8 +80,8 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "Brez napak",
     "Local" : "Krajevno",
-    "local" : "krajevno",
     "Next full restoring point" : "Naslednja polna obnovitvena točka",
-    "Next partial restoring point" : "Naslednja delna obnovitvena točka"
+    "Next partial restoring point" : "Naslednja delna obnovitvena točka",
+    "local" : "krajevno"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");
