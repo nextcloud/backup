@@ -101,9 +101,9 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "Geen probleem",
     "Local" : "Lokaal",
-    "local" : "lokaal",
     "Next full restoring point" : "Volgende herstelpunt",
     "Next partial restoring point" : "Volgend gedeeltelijk herstelpunt",
-    "Unable to fetch restoring points" : "Kan herstelpunten niet ophalen"
+    "Unable to fetch restoring points" : "Kan herstelpunten niet ophalen",
+    "local" : "lokaal"
 },
 "nplurals=2; plural=(n != 1);");

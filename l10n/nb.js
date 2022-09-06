@@ -47,9 +47,9 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "Ingen problem",
     "Local" : "Lokal",
-    "local" : "lokal",
     "Next full restoring point" : "Neste fullstendig gjenopprettingspunkt",
     "Next partial restoring point" : "Neste delvis gjenopprettingspunkt",
-    "Unable to fetch restoring points" : "Kan ikke hente gjenopprettingspunkter"
+    "Unable to fetch restoring points" : "Kan ikke hente gjenopprettingspunkter",
+    "local" : "lokal"
 },
 "nplurals=2; plural=(n != 1);");

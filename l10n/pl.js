@@ -103,10 +103,10 @@ OC.L10N.register(
     "Date" : "Data",
     "ID" : "ID",
     "No issue" : "Bez problemu",
-    "Local" : "Lokalne",
-    "local" : "lokalny",
+    "Local" : "Lokalnie",
     "Next full restoring point" : "Następny pełny punkt przywracania",
     "Next partial restoring point" : "Następny punkt przywracania częściowego",
-    "Unable to fetch restoring points" : "Nie można pobrać punktów przywracania"
+    "Unable to fetch restoring points" : "Nie można pobrać punktów przywracania",
+    "local" : "Lokalnie"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

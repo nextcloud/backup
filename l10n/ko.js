@@ -92,9 +92,9 @@ OC.L10N.register(
     "Date" : "날짜",
     "ID" : "ID",
     "Local" : "로컬",
-    "local" : "로컬",
     "Next full restoring point" : "다음 완전한 복원 포인트",
     "Next partial restoring point" : "다음 부분적인 복원 포인트",
-    "Unable to fetch restoring points" : "복원 포인트를 불러올 수 없습니다"
+    "Unable to fetch restoring points" : "복원 포인트를 불러올 수 없습니다",
+    "local" : "로컬"
 },
 "nplurals=1; plural=0;");

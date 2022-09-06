@@ -104,9 +104,9 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "沒有任何問題",
     "Local" : "近端",
-    "local" : "近端",
     "Next full restoring point" : "下個完整還原點",
     "Next partial restoring point" : "下個部分還原點",
-    "Unable to fetch restoring points" : "無法擷取還原點"
+    "Unable to fetch restoring points" : "無法擷取還原點",
+    "local" : "近端"
 },
 "nplurals=1; plural=0;");

@@ -104,9 +104,9 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "Žiadny problém",
     "Local" : "Lokálne",
-    "local" : "lokálne",
     "Next full restoring point" : "Ďalší kompletný bod obnovenia",
     "Next partial restoring point" : "Ďalší čiastočný bod obnovenia",
-    "Unable to fetch restoring points" : "Nemôžem získať body obnovenia"
+    "Unable to fetch restoring points" : "Nemôžem získať body obnovenia",
+    "local" : "lokálne"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
