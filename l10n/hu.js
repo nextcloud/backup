@@ -104,9 +104,9 @@ OC.L10N.register(
     "ID" : "Azonosító",
     "No issue" : "Nincs probléma",
     "Local" : "Helyi",
-    "local" : "helyi",
     "Next full restoring point" : "Következő teljes helyreállítási pont",
     "Next partial restoring point" : "Következő részleges helyreállítási pont",
-    "Unable to fetch restoring points" : "Nem sikerült a helyreállítási pontok lekérése"
+    "Unable to fetch restoring points" : "Nem sikerült a helyreállítási pontok lekérése",
+    "local" : "helyi"
 },
 "nplurals=2; plural=(n != 1);");

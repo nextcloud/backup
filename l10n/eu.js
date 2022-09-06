@@ -104,9 +104,9 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "Arazorik ez",
     "Local" : "Lokala",
-    "local" : "lokala",
     "Next full restoring point" : "Hurrengo leheneratze-puntu osoa",
     "Next partial restoring point" : "Hurrengo leheneratze-puntu partziala",
-    "Unable to fetch restoring points" : "Ezin izan dira leheneratze-puntuak lortu"
+    "Unable to fetch restoring points" : "Ezin izan dira leheneratze-puntuak lortu",
+    "local" : "lokala"
 },
 "nplurals=2; plural=(n != 1);");

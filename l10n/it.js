@@ -101,9 +101,9 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "Nessun problema",
     "Local" : "Locale",
-    "local" : "locale",
     "Next full restoring point" : "Prossimo punto di ripristino completo",
     "Next partial restoring point" : "Prossimo punto di ripristino parziale",
-    "Unable to fetch restoring points" : "Impossibile recuperare i punti di ripristino"
+    "Unable to fetch restoring points" : "Impossibile recuperare i punti di ripristino",
+    "local" : "locale"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -59,8 +59,8 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "Ei ongelmaa",
     "Local" : "Paikallinen",
-    "local" : "paikallinen",
     "Next full restoring point" : "Seuraava täysi palautuspiste",
-    "Next partial restoring point" : "Seuraava osittainen palautuspiste"
+    "Next partial restoring point" : "Seuraava osittainen palautuspiste",
+    "local" : "paikallinen"
 },
 "nplurals=2; plural=(n != 1);");

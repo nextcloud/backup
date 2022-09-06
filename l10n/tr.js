@@ -104,9 +104,9 @@ OC.L10N.register(
     "ID" : "Kod",
     "No issue" : "Sorunsuz",
     "Local" : "Yerel",
-    "local" : "yerel",
     "Next full restoring point" : "Sonraki tam geri yükleme noktası",
     "Next partial restoring point" : "Sonraki parçalı geri yükleme noktası",
-    "Unable to fetch restoring points" : "Geri yükleme noktaları alınamadı"
+    "Unable to fetch restoring points" : "Geri yükleme noktaları alınamadı",
+    "local" : "yerel"
 },
 "nplurals=2; plural=(n > 1);");

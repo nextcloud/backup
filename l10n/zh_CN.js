@@ -100,9 +100,9 @@ OC.L10N.register(
     "ID" : "ID",
     "No issue" : "没有问题",
     "Local" : "本地",
-    "local" : "本地",
     "Next full restoring point" : "下个完整还原点",
     "Next partial restoring point" : "下个部分还原点",
-    "Unable to fetch restoring points" : "无法获取还原点"
+    "Unable to fetch restoring points" : "无法获取还原点",
+    "local" : "本地"
 },
 "nplurals=1; plural=0;");
