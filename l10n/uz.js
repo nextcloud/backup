@@ -1,12 +1,15 @@
 OC.L10N.register(
     "backup",
     {
-    "minutes" : "daqiqalar",
-    "Error" : "Xato",
-    "Delete" : "O'chir",
-    "Cancel" : "Bekor qilish",
-    "Settings saved" : "sozlamalar saqlandi",
-    "Pending" : "Kutilmoqda",
-    "Local" : "mahalliy"
+    "minutes" : "minutes",
+    "days" : "days",
+    "Error" : "Error",
+    "Actions" : "Actions",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Settings saved" : "Settings saved",
+    "Pending" : "Pending",
+    "Status" : "Status",
+    "Local" : "Local"
 },
 "nplurals=1; plural=0;");
