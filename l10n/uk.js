@@ -1,6 +1,7 @@
 OC.L10N.register(
     "backup",
     {
+    "Backup" : "Резервне копіювання",
     "seconds" : "секунди",
     "minutes" : "хвилини",
     "hours" : "години",
