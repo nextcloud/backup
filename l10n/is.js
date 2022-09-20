@@ -13,6 +13,7 @@ OC.L10N.register(
     "Delete" : "Eyða",
     "Cancel" : "Hætta við",
     "Settings saved" : "Stillingar vistaðar",
+    "Unable to save the settings" : "Tókst ekki að vista stillingarnar",
     "Pending" : "Í bið",
     "Completed" : "Lokið",
     "Encrypted" : "Dulritað",
