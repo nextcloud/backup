@@ -13,6 +13,7 @@ OC.L10N.register(
     "and" : "וגם",
     "Cancel" : "ביטול",
     "Settings saved" : "הגדרות נשמרו",
+    "Unable to save the settings" : "שמירת ההגדרות נכשלה",
     "Pending" : "בהמתנה",
     "Completed" : "הושלם",
     "Encrypted" : "מוצפן",
