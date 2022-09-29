@@ -13,6 +13,7 @@ OC.L10N.register(
     "and" : "och",
     "Cancel" : "Avbryt",
     "Settings saved" : "Inställningar sparade",
+    "Unable to save the settings" : "Kunde inte spara inställningarna",
     "Pending" : "Väntande",
     "Completed" : "Slutförd",
     "Encrypted" : "Krypterad",
