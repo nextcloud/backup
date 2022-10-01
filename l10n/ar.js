@@ -13,6 +13,7 @@ OC.L10N.register(
     "Delete" : "إزالة",
     "Cancel" : "إلغاء",
     "Settings saved" : "تم حفظ الإعدادات",
+    "Unable to save the settings" : "لايمكن حفظ هذه الاعدادات",
     "Pending" : "معلّق",
     "Completed" : "إكتمل",
     "Encrypted" : "مشفّر",
