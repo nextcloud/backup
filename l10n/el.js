@@ -28,6 +28,7 @@ OC.L10N.register(
     "and" : "και",
     "Cancel" : "Ακύρωση",
     "Settings saved" : "Οι ρυθμίσεις αποθηκεύτηκαν",
+    "Unable to save the settings" : "Αδυναμία αποθήκευσης των ρυθμίσεων",
     "Pending" : "Εκκρεμεί",
     "Completed" : "Ολοκληρωμένες",
     "Encrypted" : "Κρυπτογραφημένο",
