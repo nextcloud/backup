@@ -28,6 +28,7 @@ OC.L10N.register(
     "and" : "og",
     "Cancel" : "Avbryt",
     "Settings saved" : "Innstillinger lagret",
+    "Unable to save the settings" : "Klarte ikke å lagre innstillingen",
     "_day_::_days_" : ["dag","dager"],
     "Scheduled" : "Planlagt",
     "Pending" : "Venter",
