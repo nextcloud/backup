@@ -1,6 +1,7 @@
 OC.L10N.register(
     "backup",
     {
+    "Scan Backup Folder" : "Сканувати резервну папку",
     "Backup" : "Резервне копіювання",
     "seconds" : "секунди",
     "minutes" : "хвилини",
