@@ -18,6 +18,7 @@ OC.L10N.register(
     "Delete" : "حذف",
     "Cancel" : "لغو",
     "Settings saved" : "تنظیمات ذخیره شد",
+    "Unable to save the settings" : "امکان ذخیره تنظیمات وجود ندارد",
     "Pending" : "در انتظار",
     "Completed" : "نکمیل شده",
     "Health" : "سلامتی",
