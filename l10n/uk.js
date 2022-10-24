@@ -12,6 +12,7 @@ OC.L10N.register(
     "External storage" : "External storage",
     "Actions" : "Дії",
     "Delete" : "Вилучити",
+    "Enable background tasks" : "Увімкнути завдання в фоні",
     "Cancel" : "Скасувати",
     "Settings saved" : "Налаштування збережено",
     "Unable to save the settings" : "Не вдалося зберегти налаштування",
