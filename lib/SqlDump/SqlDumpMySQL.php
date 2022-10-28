@@ -88,7 +88,7 @@ class SqlDumpMySQL implements ISqlDump {
 		];
 
 		try {
-			$dump = new Mysqldump($connect, ISqlDump::DB_USER, ISqlDump::DB_PASS, $settings);
+			$dump = new Mysqldump($connect, $params[ISqlDump::DB_USER], $params[ISqlDump::DB_PASS], $settings);
 			$dump->start($filename);
 		} catch (Throwable $t) {
 			throw new SqlDumpException($t->getMessage());
