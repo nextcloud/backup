@@ -67,7 +67,10 @@ class SqlDumpMySQL implements ISqlDump {
 	 * @throws SqlDumpException
 	 */
 	public function export(array $params, string $filename): void {
-		$connect = 'mysql:host=' . $params['dbhost'] . ';dbname=' . $params['dbname'];
+		$connect = sprintf('mysql:host=%s;dbname=%s', $params[ISqlDump::DB_HOST], $params[ISqlDump::DB_NAME]);
+		if(false === empty($params[ISqlDump::DB_PORT])){
+			$connect .= sprintf(';port=%u', $params[ISqlDump::DB_PORT]);
+		}
 		$settings = [
 			'compress' => Mysqldump::NONE,
 			'no-data' => false,
@@ -85,7 +88,7 @@ class SqlDumpMySQL implements ISqlDump {
 		];
 
 		try {
-			$dump = new Mysqldump($connect, $params['dbuser'], $params['dbpassword'], $settings);
+			$dump = new Mysqldump($connect, ISqlDump::DB_USER, ISqlDump::DB_PASS, $settings);
 			$dump->start($filename);
 		} catch (Throwable $t) {
 			throw new SqlDumpException($t->getMessage());
