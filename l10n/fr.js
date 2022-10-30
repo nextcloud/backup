@@ -88,6 +88,8 @@ OC.L10N.register(
     "Not completed" : "Non terminé",
     "Orphan" : "Orphelin",
     "Completed" : "Terminé",
+    "Not packed yet" : "Pas encore paqueté",
+    "Packed" : "Paqueté",
     "Encrypted" : "Chiffré",
     "Compressed" : "Compressé",
     "Restoring points history" : "Historique des points de restauration",
@@ -101,6 +103,7 @@ OC.L10N.register(
     "Local" : "Local",
     "Next full restoring point" : "Prochain point de restauration complet",
     "Next partial restoring point" : "Prochain point de restauration partiel",
+    "Unable to fetch restoring points" : "Incapable de récupérer les points de sauvegarde",
     "local" : "local"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
