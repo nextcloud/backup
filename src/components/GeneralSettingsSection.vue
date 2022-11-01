@@ -459,7 +459,7 @@ button.loading {
 	}
 
 	&__input {
-		width: 30px;
+		width: 50px;
 		text-align: center;
 	}
 
