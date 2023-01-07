@@ -8,7 +8,7 @@
     "minutes" : "minutu",
     "hours" : "ordu",
     "days" : "egun",
-    "A new restoring point ({type}) has been generated, requiring maintenance mode for {downtime}." : "({mota}) motako leheneratze-puntu berri bat sortu da, eta {downtime}-rako mantentze-modua behar du.",
+    "A new restoring point ({type}) has been generated, requiring maintenance mode for {downtime}." : "({mota}) motako leheneratze-puntu berri bat sortu da, eta {downtime}-rako mantentze modua behar du.",
     "Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})" : "Zure sistema guztiz leheneratu da leheneratze-puntu honetan oinarrituta {date} (estimated rewind: {rewind})",
     "The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})" : "{file} fitxategia leheneratua izan da leheneratze-puntu honetan oinarrituta {date} (estimated rewind: {rewind})",
     "Backup now. Restore later." : "Babestu orain. Berezarri gero.",
