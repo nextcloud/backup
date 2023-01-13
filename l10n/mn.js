@@ -11,6 +11,7 @@ OC.L10N.register(
     "Delete" : "Устгах",
     "Cancel" : "болиулах",
     "Settings saved" : "Тохиргоо хадгалагдлаа",
+    "Unable to save the settings" : "Тохиргоог хадгалах боломжгүй байна",
     "Pending" : "Хүлээгдэж байгаа",
     "Completed" : "Гүйцэтгэгдсэн",
     "Status" : "төлөв",
