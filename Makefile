@@ -73,7 +73,6 @@ cs-fix: composer-dev
 clean:
 	rm -rf $(build_dir)
 	rm -rf node_modules
-	find ./js/ -type f ! -name "files.js" -delete
 
 # composer packages
 composer:
