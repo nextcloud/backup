@@ -18,7 +18,7 @@
 - Restore single file or the entire instance.
 ]]>
 	</description>
-	<version>1.1.0</version>
+	<version>1.2.0</version>
 	<licence>agpl</licence>
 	<author mail="maxence@artificial-owl.com">Maxence Lange</author>
 	<namespace>Backup</namespace>
@@ -28,7 +28,7 @@
 	<repository type="git">https://github.com/nextcloud/backup.git</repository>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/backup/master/screenshots/app.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="24" max-version="24"/>
+		<nextcloud min-version="25" max-version="25"/>
 	</dependencies>
 
 	<background-jobs>

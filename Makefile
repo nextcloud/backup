@@ -9,7 +9,7 @@ cert_dir=$(HOME)/.nextcloud/certificates
 github_account=nextcloud
 release_account=nextcloud-releases
 branch=master
-version=1.1.0
+version=1.2.0
 since_tag=
 
 all: appstore
@@ -114,7 +114,7 @@ appstore: clean composer js
 		-C $(sign_dir) $(package_name)
 	@if [ -f $(cert_dir)/$(package_name).key ]; then \
 		echo "Signing package…"; \
-		openssl dgst -sha512 -sign $(cert_dir)/$(package_name).key $(build_dir)/$(package_name).tar.gz | openssl base64; \
+		openssl dgst -sha512 -sign $(cert_dir)/$(package_name).key $(build_dir)/$(package_name)-$(version).tar.gz | openssl base64; \
 	fi
 
 js: npm-init npm-update build-js-production
