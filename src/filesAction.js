@@ -25,6 +25,10 @@
 
 /** global: OCA */
 
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
+import { showSuccess, showWarning } from '@nextcloud/dialogs'
+
 const Backup = function() {
 	this.init()
 }
@@ -53,23 +57,20 @@ Backup.prototype = {
 		})
 	},
 
-	scanBackupFile(fileName, context) {
+	async scanBackupFile(fileName, context) {
 		const fileId = context.$file.data('id')
-		$.ajax({
-			method: 'POST',
-			url: OC.linkToOCS('apps/backup/action/scan', 2) + fileId + '?format=json',
-		}).done(function(res) {
-			OCP.Toast.success(res.ocs.data.message)
-		}).fail(function(res) {
-			const message = res.responseJSON.ocs.meta.message
-			OCP.Toast.warning((message) || 'failed to initiate scan')
-		})
-	},
 
+		try {
+			const res = await axios.post(generateOcsUrl('apps/backup/action/scan/') + fileId + '?format=json')
+			showSuccess(res.data.ocs.data.message)
+		} catch (e) {
+			showWarning((e.message) || 'failed to initiate scan')
+		}
+	},
 }
 
 OCA.Files.Backup = Backup
 
-$(document).ready(function() {
+window.addEventListener('DOMContentLoaded', function() {
 	OCA.Files.Backup = new Backup()
 })
