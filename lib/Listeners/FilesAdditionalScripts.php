@@ -77,6 +77,6 @@ class FilesAdditionalScripts implements IEventListener {
 			return;
 		}
 
-		Util::addScript(Application::APP_ID, 'files');
+		Util::addScript(Application::APP_ID, 'backup-filesAction');
 	}
 }
