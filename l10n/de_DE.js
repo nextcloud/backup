@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Sicherungsordner durchsuchen",
     "Backup" : "Sicherung",
     "Update on all Backup's event" : "Aktualisiere an allen Sicherungsterminen",
     "complete" : "Komplett",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Nächster vollständiger Wiederherstellungspunkt",
     "Next partial restoring point" : "Nächster teilweiser Wiederherstellungspunkt",
     "Unable to fetch restoring points" : "Fehler beim Laden der Wiederherstellungspunkte",
+    "Scan Backup Folder" : "Sicherungsordner durchsuchen",
     "local" : "Lokal"
 },
 "nplurals=2; plural=(n != 1);");

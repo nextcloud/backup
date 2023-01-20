@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Yedek klasörünü tara",
     "Backup" : "Yedekle",
     "Update on all Backup's event" : "Tüm yedekleme işlemlerinde güncelle",
     "complete" : "tam",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Sonraki tam geri yükleme noktası",
     "Next partial restoring point" : "Sonraki parçalı geri yükleme noktası",
     "Unable to fetch restoring points" : "Geri yükleme noktaları alınamadı",
+    "Scan Backup Folder" : "Yedek klasörünü tara",
     "local" : "yerel"
 },
 "nplurals=2; plural=(n > 1);");

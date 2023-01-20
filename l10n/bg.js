@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Сканиране на папка за архивиране",
     "Backup" : "Архивиране",
     "Update on all Backup's event" : "Актуализация за всички събития на архивиране",
     "complete" : "завършено",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Следваща точка за пълно възстановяване",
     "Next partial restoring point" : "Следваща частична точка за възстановяване",
     "Unable to fetch restoring points" : "Не може да се извлекат точки за възстановяване",
+    "Scan Backup Folder" : "Сканиране на папка за архивиране",
     "local" : "локален"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "اسکن پوشه بک‌‌آپ",
     "Backup" : "پشتیبان‌گیری",
     "Update on all Backup's event" : "به‌روزرسانی همه رویدادهای پشتیبان‌گیری",
     "complete" : "کامل",
@@ -25,6 +24,7 @@ OC.L10N.register(
     "Status" : "وضعیت",
     "Date" : "تاریخ",
     "ID" : "شناسه",
-    "Local" : "محلی"
+    "Local" : "محلی",
+    "Scan Backup Folder" : "اسکن پوشه بک‌‌آپ"
 },
 "nplurals=2; plural=(n > 1);");

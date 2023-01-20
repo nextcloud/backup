@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Kartoita varmuuskopiokansio",
     "Backup" : "Varmuuskopioi",
     "complete" : "valmis",
     "partial" : "osittainen",
@@ -61,6 +60,7 @@ OC.L10N.register(
     "Local" : "Paikallinen",
     "Next full restoring point" : "Seuraava täysi palautuspiste",
     "Next partial restoring point" : "Seuraava osittainen palautuspiste",
+    "Scan Backup Folder" : "Kartoita varmuuskopiokansio",
     "local" : "paikallinen"
 },
 "nplurals=2; plural=(n != 1);");

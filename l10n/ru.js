@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Сканировать резервную папку",
     "Backup" : "Резервное копирование",
     "Update on all Backup's event" : "Обновление всех событий резервного копирования",
     "complete" : "завершить",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Следующая точка полного восстановления",
     "Next partial restoring point" : "Следующая точка частичного восстановления",
     "Unable to fetch restoring points" : "Невозможно получить точки восстановления",
+    "Scan Backup Folder" : "Сканировать резервную папку",
     "local" : "локальный"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");
