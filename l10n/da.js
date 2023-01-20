@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Scan backup-mappe",
     "Backup" : "Backup",
     "Update on all Backup's event" : "Opdatering på alle Backups begivenheder",
     "complete" : "fuldført",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Næste fulde gendannelsespunkt",
     "Next partial restoring point" : "Næste delvis gendannelsespunkt",
     "Unable to fetch restoring points" : "Kan ikke hente gendannelsespunkter",
+    "Scan Backup Folder" : "Scan backup-mappe",
     "local" : "lokal"
 },
 "nplurals=2; plural=(n != 1);");

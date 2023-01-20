@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Eskaneatu babeskopien karpeta",
     "Backup" : "Babeskopia",
     "Update on all Backup's event" : "Eguneratu babeskopia gertaera guztietan",
     "complete" : "osoa",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Hurrengo leheneratze-puntu osoa",
     "Next partial restoring point" : "Hurrengo leheneratze-puntu partziala",
     "Unable to fetch restoring points" : "Ezin izan dira leheneratze-puntuak lortu",
+    "Scan Backup Folder" : "Eskaneatu babeskopien karpeta",
     "local" : "lokala"
 },
 "nplurals=2; plural=(n != 1);");

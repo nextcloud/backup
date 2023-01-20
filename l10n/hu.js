@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Biztonsági mentés mappájának átvizsgálása",
     "Backup" : "Biztonsági mentés",
     "Update on all Backup's event" : "Frissítés minden biztonsági mentési eseménynél",
     "complete" : "teljes",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Következő teljes helyreállítási pont",
     "Next partial restoring point" : "Következő részleges helyreállítási pont",
     "Unable to fetch restoring points" : "Nem sikerült a helyreállítási pontok lekérése",
+    "Scan Backup Folder" : "Biztonsági mentés mappájának átvizsgálása",
     "local" : "helyi"
 },
 "nplurals=2; plural=(n != 1);");

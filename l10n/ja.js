@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "バックアップフォルダーをスキャンする",
     "Backup" : "バックアップ",
     "Update on all Backup's event" : "全てのバックアップイベントを更新する",
     "complete" : "完了する",
@@ -35,6 +34,7 @@ OC.L10N.register(
     "Date" : "日付",
     "ID" : "ID",
     "Local" : "ローカル",
+    "Scan Backup Folder" : "バックアップフォルダーをスキャンする",
     "local" : "ローカル"
 },
 "nplurals=1; plural=0;");

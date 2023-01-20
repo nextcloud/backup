@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Scan Backup Map",
     "Backup" : "Backup",
     "Update on all Backup's event" : "Update bij elke Backupgebeurtenis",
     "complete" : "voltooid",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Volgende herstelpunt",
     "Next partial restoring point" : "Volgend gedeeltelijk herstelpunt",
     "Unable to fetch restoring points" : "Kan herstelpunten niet ophalen",
+    "Scan Backup Folder" : "Scan Backup Map",
     "local" : "lokaal"
 },
 "nplurals=2; plural=(n != 1);");
