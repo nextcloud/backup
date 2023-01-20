@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Skann katalog for sikkerhetskopi",
     "Backup" : "Sikkerhetskopi",
     "Update on all Backup's event" : "Oppdater for alle hendelser for sikkerhetskopi",
     "complete" : "ferdig",
@@ -51,6 +50,7 @@ OC.L10N.register(
     "Next full restoring point" : "Neste fullstendig gjenopprettingspunkt",
     "Next partial restoring point" : "Neste delvis gjenopprettingspunkt",
     "Unable to fetch restoring points" : "Kan ikke hente gjenopprettingspunkter",
+    "Scan Backup Folder" : "Skann katalog for sikkerhetskopi",
     "local" : "lokal"
 },
 "nplurals=2; plural=(n != 1);");

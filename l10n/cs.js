@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Skenovat složku se zálohou",
     "Backup" : "Záloha",
     "Update on all Backup's event" : "Aktualizovat při všech událostech v Záloze",
     "complete" : "úplná",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Následující úplný bod obnovení",
     "Next partial restoring point" : "Následující částečný bod obnovení",
     "Unable to fetch restoring points" : "Nedaří se získat body obnovení",
+    "Scan Backup Folder" : "Skenovat složku se zálohou",
     "local" : "lokální"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

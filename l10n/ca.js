@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Escaneja la carpeta de còpia de seguretat",
     "Backup" : "Fes una còpia de seguretat",
     "Update on all Backup's event" : "Actualització de tots els esdeveniments de Còpia de seguretat",
     "complete" : "complert",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Següent punt de restauració complerta",
     "Next partial restoring point" : "Següent punt de restauració parcial",
     "Unable to fetch restoring points" : "No s'han pogut recuperar els punts de restauració",
+    "Scan Backup Folder" : "Escaneja la carpeta de còpia de seguretat",
     "local" : "local"
 },
 "nplurals=2; plural=(n != 1);");

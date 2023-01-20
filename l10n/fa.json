@@ -1,5 +1,4 @@
 { "translations": {
-    "Scan Backup Folder" : "اسکن پوشه بک‌‌آپ",
     "Backup" : "پشتیبان‌گیری",
     "Update on all Backup's event" : "به‌روزرسانی همه رویدادهای پشتیبان‌گیری",
     "complete" : "کامل",
@@ -23,6 +22,7 @@
     "Status" : "وضعیت",
     "Date" : "تاریخ",
     "ID" : "شناسه",
-    "Local" : "محلی"
+    "Local" : "محلی",
+    "Scan Backup Folder" : "اسکن پوشه بک‌‌آپ"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

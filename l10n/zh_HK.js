@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "掃描備份資料夾",
     "Backup" : "備份",
     "Update on all Backup's event" : "更新所有備份的事件",
     "complete" : "完整",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "下個完整還原點",
     "Next partial restoring point" : "下個部分還原點",
     "Unable to fetch restoring points" : "無法擷取還原點",
+    "Scan Backup Folder" : "掃描備份資料夾",
     "local" : "近端"
 },
 "nplurals=1; plural=0;");

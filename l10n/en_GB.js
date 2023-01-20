@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Scan Backup Folder",
     "Backup" : "Backup",
     "Update on all Backup's event" : "Update on all Backup's event",
     "complete" : "complete",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Next full restoring point",
     "Next partial restoring point" : "Next partial restoring point",
     "Unable to fetch restoring points" : "Unable to fetch restoring points",
+    "Scan Backup Folder" : "Scan Backup Folder",
     "local" : "local"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1,5 +1,4 @@
 { "translations": {
-    "Scan Backup Folder" : "Skenovať priečinok so zálohami",
     "Backup" : "Záloha",
     "Update on all Backup's event" : "Aktualizovať všetky udalosti zálohovania",
     "complete" : "dokončené",
@@ -105,6 +104,7 @@
     "Next full restoring point" : "Ďalší kompletný bod obnovenia",
     "Next partial restoring point" : "Ďalší čiastočný bod obnovenia",
     "Unable to fetch restoring points" : "Nemôžem získať body obnovenia",
+    "Scan Backup Folder" : "Skenovať priečinok so zálohami",
     "local" : "lokálne"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }

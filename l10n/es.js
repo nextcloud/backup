@@ -1,7 +1,6 @@
 OC.L10N.register(
     "backup",
     {
-    "Scan Backup Folder" : "Escanear carpeta de respaldo",
     "Backup" : "Respaldo",
     "Update on all Backup's event" : "Actualización sobre todos los eventos de Respaldo",
     "complete" : "completo",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "Next full restoring point" : "Siguiente punto de restauración completo",
     "Next partial restoring point" : "Siguiente punto de restauración parcial",
     "Unable to fetch restoring points" : "No se han podido obtener puntos de restauración",
+    "Scan Backup Folder" : "Escanear carpeta de respaldo",
     "local" : "local"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
