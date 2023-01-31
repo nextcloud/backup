@@ -12,6 +12,7 @@ OC.L10N.register(
     "Delete" : "Borrar",
     "Cancel" : "Cancelar",
     "Settings saved" : "Se han guardado las configuraciones ",
+    "Unable to save the settings" : "No se pudo guardar la configuración",
     "Pending" : "Pendiente",
     "Completed" : "Completado",
     "Status" : "Estatus",
