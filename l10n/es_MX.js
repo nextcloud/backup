@@ -16,6 +16,7 @@ OC.L10N.register(
     "Unable to save the settings" : "No se puede guarder la configuración",
     "Pending" : "Pendiente",
     "Completed" : "Completado",
+    "Health" : "Salud",
     "Status" : "Estatus",
     "Date" : "Fecha",
     "ID" : "ID",
