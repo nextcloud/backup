@@ -10,6 +10,7 @@ OC.L10N.register(
     "External storage" : "External storage",
     "Delete" : "հեռացնել",
     "Cancel" : "ընդհատել",
+    "Unable to save the settings" : "Չի ստացվում պահել կարգավորումները",
     "Completed" : "Ավարտվեց",
     "Date" : "Date"
 },
