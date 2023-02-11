@@ -23,7 +23,7 @@
     }
   },
   "require": {
-    "ifsnop/mysqldump-php": "2.9",
+    "ifsnop/mysqldump-php": "2.10",
     "spatie/db-dumper": "2.21.1",
     "pimple/pimple": "~3.0"
   },
