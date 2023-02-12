@@ -13,6 +13,7 @@ OC.L10N.register(
     "Delete" : "Xóa",
     "Cancel" : "Hủy",
     "Settings saved" : "Cấu hình đã được lưu",
+    "Unable to save the settings" : "Không thể lưu cài đặt",
     "Pending" : "Đang dừng",
     "Completed" : "Hoàn thành",
     "Encrypted" : "Đã mã hóa",
