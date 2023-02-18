@@ -13,6 +13,7 @@ OC.L10N.register(
     "and" : "и",
     "Cancel" : "Поништи",
     "Settings saved" : "Поставке сачуване",
+    "Unable to save the settings" : "Чување поставки није успело.",
     "Pending" : "На чекању",
     "Completed" : "Завршено",
     "Encrypted" : "Шифровано",
