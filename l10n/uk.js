@@ -12,6 +12,7 @@ OC.L10N.register(
     "Actions" : "Дії",
     "Delete" : "Вилучити",
     "Enable background tasks" : "Увімкнути завдання в фоні",
+    "and" : "та",
     "Cancel" : "Скасувати",
     "Settings saved" : "Налаштування збережено",
     "Unable to save the settings" : "Не вдалося зберегти налаштування",
