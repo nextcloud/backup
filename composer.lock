@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e60ad1f6aebc7b99bda0bf749e5a91b2",
+    "content-hash": "fad0ca8edfa8a41f9af2d4c480495066",
     "packages": [
         {
             "name": "ifsnop/mysqldump-php",
-            "version": "v2.9",
+            "version": "v2.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ifsnop/mysqldump-php.git",
-                "reference": "fc9c119fe5d70af9a685cad6a8ac612fd7589e25"
+                "reference": "ec6a777062b287cd25cb1cd916b3d14c595ebdb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ifsnop/mysqldump-php/zipball/fc9c119fe5d70af9a685cad6a8ac612fd7589e25",
-                "reference": "fc9c119fe5d70af9a685cad6a8ac612fd7589e25",
+                "url": "https://api.github.com/repos/ifsnop/mysqldump-php/zipball/ec6a777062b287cd25cb1cd916b3d14c595ebdb8",
+                "reference": "ec6a777062b287cd25cb1cd916b3d14c595ebdb8",
                 "shasum": ""
             },
             "require": {
@@ -61,9 +61,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ifsnop/mysqldump-php/issues",
-                "source": "https://github.com/ifsnop/mysqldump-php/tree/master"
+                "source": "https://github.com/ifsnop/mysqldump-php/tree/v2.11"
             },
-            "time": "2020-04-03T14:40:40+00:00"
+            "time": "2023-03-18T00:37:42+00:00"
         },
         {
             "name": "pimple/pimple",
