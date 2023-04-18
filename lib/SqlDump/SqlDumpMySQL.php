@@ -68,7 +68,7 @@ class SqlDumpMySQL implements ISqlDump {
 	 */
 	public function export(array $params, string $filename): void {
 		$connect = sprintf('mysql:host=%s;dbname=%s', $params[ISqlDump::DB_HOST], $params[ISqlDump::DB_NAME]);
-		if(false === empty($params[ISqlDump::DB_PORT])){
+		if (false === empty($params[ISqlDump::DB_PORT])) {
 			$connect .= sprintf(';port=%u', $params[ISqlDump::DB_PORT]);
 		}
 		$settings = [
