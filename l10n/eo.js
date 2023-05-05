@@ -13,6 +13,7 @@ OC.L10N.register(
     "and" : "kaj",
     "Cancel" : "Nuligi",
     "Settings saved" : "Agordoj konservitaj",
+    "Unable to save the settings" : "Ne eblis konservi la agordojn",
     "Pending" : "Pritraktota",
     "Completed" : "Plenumita",
     "Status" : "Stato",
