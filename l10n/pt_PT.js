@@ -15,6 +15,7 @@ OC.L10N.register(
     "Unable to save the settings" : "Não foi possível salvar as configurações",
     "Pending" : "Pendente",
     "Completed" : "Concluída",
+    "Encrypted" : "Encriptado",
     "Health" : "Saúde",
     "Status" : "Estado",
     "Date" : "Data",
