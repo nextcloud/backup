@@ -1,0 +1,11 @@
+{ "translations": {
+    "seconds" : "segundos",
+    "minutes" : "minutos",
+    "hours" : "Hores",
+    "Error" : "Error",
+    "Actions" : "Aiciones",
+    "Delete" : "Desaniciar",
+    "Date" : "Data",
+    "ID" : "ID"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
