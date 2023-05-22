@@ -5,6 +5,7 @@ OC.L10N.register(
     "minutes" : "minutos",
     "hours" : "Hores",
     "Error" : "Error",
+    "External storage" : "Almacenamientu esternu",
     "Actions" : "Aiciones",
     "Delete" : "Desaniciar",
     "Date" : "Data",
