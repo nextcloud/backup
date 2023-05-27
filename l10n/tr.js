@@ -106,7 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Sonraki tam geri yükleme noktası",
     "Next partial restoring point" : "Sonraki parçalı geri yükleme noktası",
     "Unable to fetch restoring points" : "Geri yükleme noktaları alınamadı",
-    "Scan Backup Folder" : "Yedek klasörünü tara",
-    "local" : "yerel"
+    "Scan Backup Folder" : "Yedek klasörünü tara"
 },
 "nplurals=2; plural=(n > 1);");

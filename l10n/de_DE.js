@@ -106,7 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Nächster vollständiger Wiederherstellungspunkt",
     "Next partial restoring point" : "Nächster teilweiser Wiederherstellungspunkt",
     "Unable to fetch restoring points" : "Fehler beim Laden der Wiederherstellungspunkte",
-    "Scan Backup Folder" : "Sicherungsordner durchsuchen",
-    "local" : "Lokal"
+    "Scan Backup Folder" : "Sicherungsordner durchsuchen"
 },
 "nplurals=2; plural=(n != 1);");

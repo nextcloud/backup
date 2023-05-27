@@ -34,7 +34,6 @@ OC.L10N.register(
     "Date" : "日付",
     "ID" : "ID",
     "Local" : "ローカル",
-    "Scan Backup Folder" : "バックアップフォルダーをスキャンする",
-    "local" : "ローカル"
+    "Scan Backup Folder" : "バックアップフォルダーをスキャンする"
 },
 "nplurals=1; plural=0;");

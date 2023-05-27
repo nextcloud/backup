@@ -20,7 +20,6 @@
     "Status" : "Status",
     "Date" : "Datum",
     "ID" : "ID",
-    "Local" : "Lokal",
-    "local" : "lokal"
+    "Local" : "Lokal"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -81,7 +81,6 @@ OC.L10N.register(
     "Local" : "Krajevno",
     "Next full restoring point" : "Naslednja polna obnovitvena točka",
     "Next partial restoring point" : "Naslednja delna obnovitvena točka",
-    "Scan Backup Folder" : "Preišči mapo varnostne kopije",
-    "local" : "krajevno"
+    "Scan Backup Folder" : "Preišči mapo varnostne kopije"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

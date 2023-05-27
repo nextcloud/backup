@@ -19,7 +19,6 @@ OC.L10N.register(
     "Status" : "Staatus",
     "Date" : "Kuupäev",
     "ID" : "ID",
-    "Local" : "Kohalik",
-    "local" : "kohalik"
+    "Local" : "Kohalik"
 },
 "nplurals=2; plural=(n != 1);");
