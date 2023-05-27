@@ -106,7 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Следваща точка за пълно възстановяване",
     "Next partial restoring point" : "Следваща частична точка за възстановяване",
     "Unable to fetch restoring points" : "Не може да се извлекат точки за възстановяване",
-    "Scan Backup Folder" : "Сканиране на папка за архивиране",
-    "local" : "локален"
+    "Scan Backup Folder" : "Сканиране на папка за архивиране"
 },
 "nplurals=2; plural=(n != 1);");

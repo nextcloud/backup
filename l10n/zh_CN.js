@@ -102,7 +102,6 @@ OC.L10N.register(
     "Next full restoring point" : "下个完整还原点",
     "Next partial restoring point" : "下个部分还原点",
     "Unable to fetch restoring points" : "无法获取还原点",
-    "Scan Backup Folder" : "扫描备份文件夹",
-    "local" : "本地"
+    "Scan Backup Folder" : "扫描备份文件夹"
 },
 "nplurals=1; plural=0;");

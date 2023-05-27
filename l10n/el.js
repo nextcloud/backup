@@ -36,7 +36,6 @@ OC.L10N.register(
     "Status" : "Κατάσταση",
     "Date" : "Ημερομηνία",
     "ID" : "ID",
-    "Local" : "Τοπικός",
-    "local" : "τοπικά"
+    "Local" : "Τοπικός"
 },
 "nplurals=2; plural=(n != 1);");

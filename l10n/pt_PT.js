@@ -20,7 +20,6 @@ OC.L10N.register(
     "Status" : "Estado",
     "Date" : "Data",
     "ID" : "ID",
-    "Local" : "Local",
-    "local" : "localização"
+    "Local" : "Local"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

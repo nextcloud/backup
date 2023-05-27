@@ -21,7 +21,6 @@ OC.L10N.register(
     "Status" : "Staða",
     "Date" : "Dagsetning",
     "ID" : "ID",
-    "Local" : "Staðvært",
-    "local" : "staðvært"
+    "Local" : "Staðvært"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
