@@ -106,7 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Næste fulde gendannelsespunkt",
     "Next partial restoring point" : "Næste delvis gendannelsespunkt",
     "Unable to fetch restoring points" : "Kan ikke hente gendannelsespunkter",
-    "Scan Backup Folder" : "Scan backup-mappe",
-    "local" : "lokal"
+    "Scan Backup Folder" : "Scan backup-mappe"
 },
 "nplurals=2; plural=(n != 1);");

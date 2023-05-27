@@ -104,7 +104,6 @@
     "Next full restoring point" : "Наредна потпуна тачка враћања",
     "Next partial restoring point" : "Наредна делимична тачка враћања",
     "Unable to fetch restoring points" : "Не могу да се преузму тачке враћања",
-    "Scan Backup Folder" : "Скенирај фолдер са резервним копијама",
-    "local" : "локална"
+    "Scan Backup Folder" : "Скенирај фолдер са резервним копијама"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

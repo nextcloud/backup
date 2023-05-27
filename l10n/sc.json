@@ -19,7 +19,6 @@
     "Status" : "Status",
     "Date" : "Data",
     "ID" : "ID",
-    "Local" : "Locale",
-    "local" : "locale"
+    "Local" : "Locale"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

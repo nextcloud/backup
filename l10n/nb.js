@@ -50,7 +50,6 @@ OC.L10N.register(
     "Next full restoring point" : "Neste fullstendig gjenopprettingspunkt",
     "Next partial restoring point" : "Neste delvis gjenopprettingspunkt",
     "Unable to fetch restoring points" : "Kan ikke hente gjenopprettingspunkter",
-    "Scan Backup Folder" : "Skann katalog for sikkerhetskopi",
-    "local" : "lokal"
+    "Scan Backup Folder" : "Skann katalog for sikkerhetskopi"
 },
 "nplurals=2; plural=(n != 1);");

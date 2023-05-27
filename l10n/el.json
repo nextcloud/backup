@@ -34,7 +34,6 @@
     "Status" : "Κατάσταση",
     "Date" : "Ημερομηνία",
     "ID" : "ID",
-    "Local" : "Τοπικός",
-    "local" : "τοπικά"
+    "Local" : "Τοπικός"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

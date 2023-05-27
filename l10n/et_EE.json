@@ -17,7 +17,6 @@
     "Status" : "Staatus",
     "Date" : "Kuupäev",
     "ID" : "ID",
-    "Local" : "Kohalik",
-    "local" : "kohalik"
+    "Local" : "Kohalik"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

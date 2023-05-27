@@ -22,7 +22,6 @@ OC.L10N.register(
     "Status" : "Status",
     "Date" : "Datum",
     "ID" : "ID",
-    "Local" : "Lokal",
-    "local" : "lokal"
+    "Local" : "Lokal"
 },
 "nplurals=2; plural=(n != 1);");

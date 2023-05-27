@@ -103,7 +103,6 @@ OC.L10N.register(
     "Next full restoring point" : "다음 완전한 복원 포인트",
     "Next partial restoring point" : "다음 부분적인 복원 포인트",
     "Unable to fetch restoring points" : "복원 포인트를 불러올 수 없습니다",
-    "Scan Backup Folder" : "백업 폴더를 스캔합니다",
-    "local" : "로컬"
+    "Scan Backup Folder" : "백업 폴더를 스캔합니다"
 },
 "nplurals=1; plural=0;");
