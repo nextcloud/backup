@@ -73,7 +73,7 @@ OC.L10N.register(
     "Restoring points history" : "Zgodovina obnovitvenih točk",
     "List of the past and future restoring points" : "Seznam predhodnih in prihodnjih obnovitvenih točk",
     "Issue" : "Napaka",
-    "Health" : "Stanje‧",
+    "Health" : "‧ Stanje",
     "Status" : "Stanje",
     "Date" : "Datum",
     "ID" : "ID",
