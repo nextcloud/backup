@@ -14,7 +14,7 @@ OC.L10N.register(
     "and" : "e",
     "Cancel" : "Cancelar",
     "Settings saved" : "Axustes gardados",
-    "Unable to save the settings" : "Non foi posíbel gardar os axustes",
+    "Unable to save the settings" : "Non é posíbel gardar os axustes",
     "Pending" : "Pendentes",
     "Completed" : "Completado",
     "Encrypted" : "Cifrado",
