@@ -1,7 +1,7 @@
 OC.L10N.register(
     "backup",
     {
-    "Backup" : "Copia de seguridade",
+    "Backup" : "Copia de seguranza",
     "seconds" : "segundos",
     "minutes" : "minutos",
     "hours" : "horas",
