@@ -19,6 +19,7 @@ OC.L10N.register(
     "Health" : "صحة",
     "Status" : "الحاله",
     "Date" : "التاريخ ",
+    "ID" : "مُعرّف ID",
     "Local" : "المحلي",
     "Scan Backup Folder" : "فحص مجلد النسخ الاحتياطي"
 },
