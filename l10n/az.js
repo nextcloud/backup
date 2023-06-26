@@ -11,6 +11,7 @@ OC.L10N.register(
     "Actions" : "İşlər",
     "Delete" : "Sil",
     "Cancel" : "Dayandır",
+    "Settings saved" : "Parametrlər yaddaşa verildi",
     "Pending" : "Gözləmə",
     "Completed" : "Bitmişdir",
     "Date" : "Date",
