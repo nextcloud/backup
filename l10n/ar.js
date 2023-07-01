@@ -10,6 +10,7 @@ OC.L10N.register(
     "External storage" : "التخزين الخارجي",
     "Actions" : "الإجراءات",
     "Delete" : "إزالة",
+    "and" : "و",
     "Cancel" : "إلغاء",
     "Settings saved" : "تم حفظ الإعدادات",
     "Unable to save the settings" : "لايمكن حفظ هذه الاعدادات",
