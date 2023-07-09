@@ -81,6 +81,7 @@ OC.L10N.register(
     "Unable to save the settings" : "تعذّر حفظ الإعدادات",
     "Unable to request restoring point" : "تعذّر طلب نقطة استعادة",
     "Unable to export settings" : "تعذّر تصدير الإعدادات",
+    "_day_::_days_" : ["أيام","يوم","أيام","أيام","أيام","أيام"],
     "Scheduled" : "مُجدول",
     "Pending" : "مُعلّق",
     "Not completed" : "غير مكتمل",
