@@ -4,6 +4,7 @@ OC.L10N.register(
     "Error" : "Erreur",
     "Delete" : "Kkes",
     "Cancel" : "Sefsex",
+    "Unable to save the settings" : "D awezɣi ad ttwaskelsen yiɣewwaren",
     "Pending" : "Yegguni",
     "Completed" : "Yemmed",
     "Encrypted" : "Yettwawgelhen",
