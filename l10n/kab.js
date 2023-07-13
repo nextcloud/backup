@@ -1,6 +1,7 @@
 OC.L10N.register(
     "backup",
     {
+    "days" : "ussan",
     "Error" : "Erreur",
     "Delete" : "Kkes",
     "Cancel" : "Sefsex",
