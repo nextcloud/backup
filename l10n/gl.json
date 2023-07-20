@@ -7,7 +7,7 @@
     "minutes" : "minutos",
     "hours" : "horas",
     "days" : "días",
-    "A new restoring point ({type}) has been generated, requiring maintenance mode for {downtime}." : "Xerouse un novo punto de restauración ({type}), que necesita do modo de mantemento durante {downtime}.",
+    "A new restoring point ({type}) has been generated, requiring maintenance mode for {downtime}." : "Xerouse un novo punto de restauración ({type}), que precisa do modo de mantemento durante {downtime}.",
     "Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})" : "O seu sistema foi restaurado por completo en función dun punto de restauración a partir do {date} (volta atrás estimada: {wind})",
     "The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})" : "O ficheiro {file} foi restaurado en función dun punto de restauración a partir do {date} (volta atrás estimada: {wind})",
     "Backup now. Restore later." : "Faga unha copia de seguranza agora. Restaure máis adiante.",
