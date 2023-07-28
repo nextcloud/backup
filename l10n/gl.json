@@ -62,7 +62,7 @@
     "Retention policy" : "Directiva de retención",
     "You can specify the number of restoring points to keep during a purge." : "Pode especificar o número de puntos de restauración a manter durante unha purga.",
     "Policy for the local app data" : "Directiva para os datos da aplicación local",
-    "Policy for external storages" : "Directiva de almacenamentos externos",
+    "Policy for external storages" : "Directiva de almacenamento externo",
     "Export backup configuration" : "Exportar a configuración de copia de seguranza",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Pode exportar a súa configuración co botón seguinte. O ficheiro exportado é importante xa que lle permite restaurar a súa copia de seguranza en caso de perder os datos completos. Gárdeo nun lugar seguro!",
     "Export configuration" : "Exportar a configuración",
