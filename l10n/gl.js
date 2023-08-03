@@ -36,7 +36,7 @@ OC.L10N.register(
     "Delete" : "Eliminar",
     "No external storage available" : "Non hai almacenamento externo dispoñíbel",
     "If you want to store your restoring points on an external location, configure an external storage in the \"External storage\" app." : "Se quere almacenar os seus puntos de restauración nunha localización externa, configure un almacenamento externo na aplicación «Almacenamento externo».",
-    "No external locations set" : "Non se definiu ningunha localización externa",
+    "No external locations set" : "Non se estabeleceu ningunha localización externa",
     "You can add a new location with the above form." : "Pode engadir unha nova localización co formulario anterior.",
     "Unable to fetch external locations" : "Non é posíbel recuperar localizacións externas",
     "New external location added" : "Engadiuse unha nova localización externa",
