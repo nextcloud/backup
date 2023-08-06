@@ -8,6 +8,7 @@ OC.L10N.register(
     "External storage" : "Almacenamientu esternu",
     "Actions" : "Aiciones",
     "Delete" : "Desaniciar",
+    "Unable to save the settings" : "Nun ye posible guardar la configuración",
     "Date" : "Data",
     "ID" : "ID"
 },
