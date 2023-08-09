@@ -20,6 +20,7 @@ OC.L10N.register(
     "Health" : "Sức khỏe",
     "Status" : "Trạng thái",
     "Date" : "Date",
-    "ID" : "ID"
+    "ID" : "ID",
+    "Local" : "Cục bộ(ngoại tuyến)"
 },
 "nplurals=1; plural=0;");

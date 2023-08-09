@@ -18,6 +18,7 @@
     "Health" : "Sức khỏe",
     "Status" : "Trạng thái",
     "Date" : "Date",
-    "ID" : "ID"
+    "ID" : "ID",
+    "Local" : "Cục bộ(ngoại tuyến)"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
