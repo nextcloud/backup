@@ -6,6 +6,7 @@ OC.L10N.register(
     "External storage" : "ບ່ອນເກັບຂໍ້ມູນສຳຮອງ",
     "Delete" : "ລຶບ",
     "Cancel" : "ຍົກເລີກ",
+    "Unable to save the settings" : "ບໍ່ສາມາດບັນທຶກການຕັ້ງຄ່າ",
     "Pending" : "ທີ່ກໍາລັງລໍຖ້າ",
     "Completed" : "ສຳເລັດ",
     "Date" : "ວັນທີ"
