@@ -14,6 +14,7 @@ OC.L10N.register(
     "Cancel" : "Nuligi",
     "Settings saved" : "Agordoj konservitaj",
     "Unable to save the settings" : "Ne eblis konservi la agordojn",
+    "_day_::_days_" : ["tago","tagoj"],
     "Pending" : "Pritraktota",
     "Completed" : "Plenumita",
     "Status" : "Stato",
