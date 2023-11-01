@@ -9,6 +9,7 @@ OC.L10N.register(
     "External storage" : "Almacenamientu esternu",
     "Actions" : "Aiciones",
     "Delete" : "Desaniciar",
+    "Cancel" : "Encaboxar",
     "Unable to save the settings" : "Nun ye posible guardar la configuración",
     "_day_::_days_" : ["día","díes"],
     "Status" : "Estáu",
