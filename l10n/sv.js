@@ -16,6 +16,7 @@ OC.L10N.register(
     "Settings saved" : "Inställningar sparade",
     "Unable to save the settings" : "Kunde inte spara inställningarna",
     "Pending" : "Väntande",
+    "Not completed" : "Ej slutförd",
     "Completed" : "Slutförd",
     "Encrypted" : "Krypterad",
     "Health" : "Hälsa",
