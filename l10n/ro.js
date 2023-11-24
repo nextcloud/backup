@@ -18,6 +18,7 @@ OC.L10N.register(
     "Settings saved" : "Setările au fost salvate",
     "Unable to save the settings" : "Nu se pot salva setările",
     "Pending" : "În așteptare",
+    "Not completed" : "Necompletat",
     "Completed" : "Terminat",
     "Status" : "Stare",
     "Date" : "Date",
