@@ -20,6 +20,7 @@ OC.L10N.register(
     "Pending" : "În așteptare",
     "Not completed" : "Necompletat",
     "Completed" : "Terminat",
+    "Health" : "Sănătate",
     "Status" : "Stare",
     "Date" : "Date",
     "ID" : "ID",
