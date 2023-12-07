@@ -15,6 +15,7 @@ OC.L10N.register(
     "Settings saved" : "Stillingar vistaðar",
     "Unable to save the settings" : "Tókst ekki að vista stillingarnar",
     "Pending" : "Í bið",
+    "Not completed" : "Er ekki lokið",
     "Completed" : "Lokið",
     "Encrypted" : "Dulritað",
     "Health" : "Heilsa",
