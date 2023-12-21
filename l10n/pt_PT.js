@@ -1,6 +1,7 @@
 OC.L10N.register(
     "backup",
     {
+    "Backup" : "Backup",
     "seconds" : "segundos",
     "minutes" : "minutos",
     "hours" : "horas",
