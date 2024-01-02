@@ -26,21 +26,21 @@
   },
   "dependencies": {
     "@nextcloud/axios": "^2.4.0",
-    "@nextcloud/dialogs": "^3.2.0",
+    "@nextcloud/dialogs": "^4.2.2",
     "@nextcloud/l10n": "^1.6.0",
     "@nextcloud/logger": "^2.7.0",
     "@nextcloud/moment": "^1.2.2",
     "@nextcloud/router": "^2.1.2",
     "@nextcloud/vue": "^5.4.0",
-    "vue": "^2.7.15",
+    "vue": "^2.7.16",
     "vue-material-design-icons": "^5.2.0"
   },
   "browserslist": [
     "extends @nextcloud/browserslist-config"
   ],
   "engines": {
-    "node": "^16.0.0",
-    "npm": "^7.0.0 || ^8.0.0"
+    "node": "^20.0.0",
+    "npm": "^9.0.0"
   },
   "devDependencies": {
     "@nextcloud/babel-config": "^1.0.0",

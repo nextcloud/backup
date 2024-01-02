@@ -205,7 +205,7 @@ class PackService {
 						  ->s('pack_error', $t->getMessage())
 						  ->sInt('pack_date', time());
 
-//					$this->pointRequest->update($point);
+					//					$this->pointRequest->update($point);
 					$this->metadataService->unlock($point);
 					throw new RestoringPointPackException(
 						'issue on chunk ' . $chunk->getName() . ' - ' . $t->getMessage()
@@ -214,7 +214,7 @@ class PackService {
 			}
 		}
 
-//		$this->removeOldChunkFiles($point, $oldChunks);
+		//		$this->removeOldChunkFiles($point, $oldChunks);
 
 		$this->o(' > removing status <info>processing</info>, adding status <info>packed</info>');
 		$point->removeStatus(RestoringPoint::STATUS_PACKING)
@@ -845,7 +845,7 @@ class PackService {
 				$this->o('<info>' . $new->getName() . '</info>, <info>' . $algorithm . '</info>');
 
 				// TODO checksums
-//				echo '-checksum: ' . $this->getTempChecksum($new->getName()) . "\n";
+				//				echo '-checksum: ' . $this->getTempChecksum($new->getName()) . "\n";
 			} catch (PackDecryptException
 			| SodiumException
 			| EncryptionKeyException $e) {

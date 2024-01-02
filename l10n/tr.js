@@ -100,7 +100,7 @@ OC.L10N.register(
     "Health" : "Sağlık",
     "Status" : "Durum",
     "Date" : "Tarih",
-    "ID" : "Kod",
+    "ID" : "Kimlik",
     "No issue" : "Sorunsuz",
     "Local" : "Yerel",
     "Next full restoring point" : "Sonraki tam geri yükleme noktası",

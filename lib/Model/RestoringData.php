@@ -335,24 +335,24 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	}
 
 
-//	/**
-//	 * @param RestoringChunk $chunk
-//	 *
-//	 * @return $this
-//	 */
-//	public function updateChunk(RestoringChunk $chunk): self {
-//		$new = [];
-//		foreach ($this->getChunks() as $restoringChunk) {
-//			if ($restoringChunk->getName() === $chunk->getName()) {
-//				$restoringChunk = $chunk;
-//			}
-//
-//			$new[] = $restoringChunk;
-//		}
-//		$this->setChunks($new);
-//
-//		return $this;
-//	}
+	//	/**
+	//	 * @param RestoringChunk $chunk
+	//	 *
+	//	 * @return $this
+	//	 */
+	//	public function updateChunk(RestoringChunk $chunk): self {
+	//		$new = [];
+	//		foreach ($this->getChunks() as $restoringChunk) {
+	//			if ($restoringChunk->getName() === $chunk->getName()) {
+	//				$restoringChunk = $chunk;
+	//			}
+	//
+	//			$new[] = $restoringChunk;
+	//		}
+	//		$this->setChunks($new);
+	//
+	//		return $this;
+	//	}
 
 
 	/**

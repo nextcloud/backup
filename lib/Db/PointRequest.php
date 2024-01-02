@@ -157,9 +157,9 @@ class PointRequest extends PointRequestBuilder {
 		$qb->limitToInstance('');
 		$qb->orderBy('date', ($asc) ? 'asc' : 'desc');
 
-//		if ($fullOnly) {
-//			$qb->limitEmpty('parent', true);
-//		}
+		//		if ($fullOnly) {
+		//			$qb->limitEmpty('parent', true);
+		//		}
 
 		if ($since > 0) {
 			$qb->gt('date', $since, true);

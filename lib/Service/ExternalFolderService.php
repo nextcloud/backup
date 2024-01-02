@@ -371,14 +371,14 @@ class ExternalFolderService {
 		try {
 			$stored = $this->getRestoringPoint($folder, $point->getId(), true);
 			$this->o('  > restoring point found');
-//		} catch (RemoteInstanceException $e) {
-//			$this->o('  ! <error>check configuration on remote instance</error>');
-//			throw $e;
-//		} catch (
-//		RemoteInstanceNotFoundException
-//		| RemoteResourceNotFoundException $e) {
-//			$this->o('  ! <error>cannot communicate with remote instance</error>');
-//			throw $e;
+			//		} catch (RemoteInstanceException $e) {
+			//			$this->o('  ! <error>check configuration on remote instance</error>');
+			//			throw $e;
+			//		} catch (
+			//		RemoteInstanceNotFoundException
+			//		| RemoteResourceNotFoundException $e) {
+			//			$this->o('  ! <error>cannot communicate with remote instance</error>');
+			//			throw $e;
 		} catch (RestoringPointNotFoundException $e) {
 			$this->o('  > <comment>restoring point not found</comment>');
 			try {

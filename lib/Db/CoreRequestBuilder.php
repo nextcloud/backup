@@ -180,9 +180,9 @@ class CoreRequestBuilder {
 	 */
 	public function uninstallFromJobs(): void {
 		$qb = $this->getQueryBuilder();
-//		$qb->delete('jobs');
-//		$qb->where($this->exprLimitToDBField($qb, 'class', 'OCA\Backup\', true, true));
-//		$qb->execute();
+		//		$qb->delete('jobs');
+		//		$qb->where($this->exprLimitToDBField($qb, 'class', 'OCA\Backup\', true, true));
+		//		$qb->execute();
 	}
 
 

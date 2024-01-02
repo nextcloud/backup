@@ -31,10 +31,10 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Db;
 
-use OCA\Backup\Tools\Exceptions\InvalidItemException;
-use OCA\Backup\Tools\Exceptions\RowNotFoundException;
 use OCA\Backup\Exceptions\ChangedFileNotFoundException;
 use OCA\Backup\Model\ChangedFile;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\Exceptions\RowNotFoundException;
 use OCA\Backup\Tools\Traits\TArrayTools;
 
 /**

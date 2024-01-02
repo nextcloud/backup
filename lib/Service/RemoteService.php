@@ -323,12 +323,12 @@ class RemoteService {
 				['pointId' => $pointId]
 			);
 
-//			/** @var RestoringPoint $stored */
-//			try {
-//				$stored = $this->deserialize($result, RestoringPoint::class);
-//			} catch (InvalidItemException $e) {
-//				throw new RestoringPointNotFoundException('');
-//			}
+			//			/** @var RestoringPoint $stored */
+			//			try {
+			//				$stored = $this->deserialize($result, RestoringPoint::class);
+			//			} catch (InvalidItemException $e) {
+			//				throw new RestoringPointNotFoundException('');
+			//			}
 		} catch (RemoteInstanceException
 		| RemoteResourceNotFoundException
 		| RestoringPointNotFoundException
@@ -409,7 +409,7 @@ class RemoteService {
 			true
 		);
 
-//		echo '****** ' . json_Encode($result);
+		//		echo '****** ' . json_Encode($result);
 
 		return;
 	}

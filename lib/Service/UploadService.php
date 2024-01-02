@@ -31,8 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Service;
 
-use OCA\Backup\Tools\Traits\TNCLogger;
-use OCA\Backup\Tools\Traits\TStringTools;
 use Exception;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
@@ -51,6 +49,8 @@ use OCA\Backup\Model\ChunkPartHealth;
 use OCA\Backup\Model\ExternalFolder;
 use OCA\Backup\Model\RestoringHealth;
 use OCA\Backup\Model\RestoringPoint;
+use OCA\Backup\Tools\Traits\TNCLogger;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -221,7 +221,7 @@ class UploadService {
 				$this->remoteService->getRestoringPoint($remote->getInstance(), $point->getId(), true);
 			} catch (RestoringChunkPartNotFoundException $e) {
 				try {
-//					$this->remoteService->deletePointExternal($remote, $point->getId());
+					//					$this->remoteService->deletePointExternal($remote, $point->getId());
 					$this->o('<error>package is out of sync</error>');
 				} catch (Exception $e) {
 					$this->o('<error>cannot delete out of sync package</error>');
@@ -324,21 +324,21 @@ class UploadService {
 				}
 
 				$health = $stored->getHealth();
-//			} else {
-//					try {
-//						$this->o('  > <comment>no health status attached</comment>');
-//						$this->o('  * Requesting detailed Health status: ', false);
-//						try {
-//							$health = $this->externalFolderService->getCurrentHealth($external, $point);
-//							$this->o('<info>ok</info>');
-//						} catch (Exception $e) {
-//							$this->o('<error>' . $e->getMessage() . '</error>');
-//							continue;
-//						}
-//					} catch (Exception $e) {
-//						continue;
-//					}
-//				}
+				//			} else {
+				//					try {
+				//						$this->o('  > <comment>no health status attached</comment>');
+				//						$this->o('  * Requesting detailed Health status: ', false);
+				//						try {
+				//							$health = $this->externalFolderService->getCurrentHealth($external, $point);
+				//							$this->o('<info>ok</info>');
+				//						} catch (Exception $e) {
+				//							$this->o('<error>' . $e->getMessage() . '</error>');
+				//							continue;
+				//						}
+				//					} catch (Exception $e) {
+				//						continue;
+				//					}
+				//				}
 
 				$this->o('  > Health status: ' . $this->outputService->displayHealth($health));
 				if ($health->getStatus() === RestoringHealth::STATUS_OK) {
