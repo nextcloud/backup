@@ -30,7 +30,15 @@
   "scripts": {
     "cs:check": "php-cs-fixer fix --dry-run --diff",
     "cs:fix": "php-cs-fixer fix",
-    "lint": "find . -name \\*.php -not -path './vendor/*' -print0 | xargs -0 -n1 php -l"
+    "lint": "find . -name \\*.php -not -path './vendor/*' -print0 | xargs -0 -n1 php -l",
+    "psalm": "psalm --threads=1 --update-baseline",
+    "psalm:update-baseline": "psalm --threads=1 --update-baseline",
+    "psalm:clear": "psalm --clear-cache && psalm --clear-global-cache",
+    "psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType",
+    "test": [
+      "@test:unit"
+    ],
+    "test:unit": "vendor/bin/phpunit -c tests/phpunit.xml"
   },
   "require-dev": {
     "nextcloud/coding-standard": "^1.0.0",
