@@ -31,11 +31,11 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Tools\Traits;
 
-use OCA\Backup\Tools\Model\NCRequest;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
 use OC;
 use OCA\Backup\Tools\Exceptions\RequestNetworkException;
+use OCA\Backup\Tools\Model\NCRequest;
 use OCA\Backup\Tools\Model\NCRequestResult;
 use OCA\Backup\Tools\Model\Request;
 use OCP\Http\Client\IClientService;

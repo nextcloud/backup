@@ -59,9 +59,9 @@ use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RestoreService;
 use OCA\Backup\Tools\Exceptions\SignatoryException;
 use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCA\Backup\Tools\Traits\TStringTools;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -731,7 +731,7 @@ class PointRestore extends Base {
 
 
 
-//	private function getConfigSqlParams();
+	//	private function getConfigSqlParams();
 
 	/**
 	 * @param array $sqlParams

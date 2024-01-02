@@ -36,12 +36,12 @@ use InvalidArgumentException;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Service\ActivityService;
 use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Activity\IProvider;
 use OCP\IL10N;
 use OCP\IURLGenerator;
-use OCA\Backup\Tools\Traits\TStringTools;
 
 /**
  * Class Provider

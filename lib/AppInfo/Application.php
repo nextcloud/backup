@@ -76,7 +76,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(NodeWrittenEvent::class, NodeEvent::class);
 		$context->registerEventListener(NodeRenamedEvent::class, NodeEvent::class);
 
-//		$context->registerWellKnownHandler(WebfingerHandler::class);
+		//		$context->registerWellKnownHandler(WebfingerHandler::class);
 
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesAdditionalScripts::class);
 	}

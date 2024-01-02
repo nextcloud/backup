@@ -94,12 +94,12 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			return;
 		}
 
-//		if (!$staticName) {
-//			$name .= '-';
-//			$uuid = $this->uuid();
-//			$this->setPath($name . substr($uuid, 0, 1) . '/' . substr($uuid, 0, 2) . '/');
-//			$name .= $uuid;
-//		}
+		//		if (!$staticName) {
+		//			$name .= '-';
+		//			$uuid = $this->uuid();
+		//			$this->setPath($name . substr($uuid, 0, 1) . '/' . substr($uuid, 0, 2) . '/');
+		//			$name .= $uuid;
+		//		}
 
 		if (!$staticName) {
 			$this->name = $name . '-' . $this->uuid();

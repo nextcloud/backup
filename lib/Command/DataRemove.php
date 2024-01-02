@@ -71,17 +71,17 @@ class DataRemove extends Base {
 	 * @throws ExternalFolderNotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-//		$storageId = (int)$input->getArgument('storage_id');
+		//		$storageId = (int)$input->getArgument('storage_id');
 
-//		try {
-//			$this->restoringDataRequest->getByStorageId($storageId);
-//		} catch (ExternalFolderNotFoundException $e) {
-//			throw new ExternalFolderNotFoundException('Unknown external folder');
-//		}
-//
-//		$this->externalFolderRequest->remove($storageId);
-//		$output->writeln('external filesystem removed.');
-//
+		//		try {
+		//			$this->restoringDataRequest->getByStorageId($storageId);
+		//		} catch (ExternalFolderNotFoundException $e) {
+		//			throw new ExternalFolderNotFoundException('Unknown external folder');
+		//		}
+		//
+		//		$this->externalFolderRequest->remove($storageId);
+		//		$output->writeln('external filesystem removed.');
+		//
 		return 0;
 	}
 }

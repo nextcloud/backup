@@ -52,10 +52,10 @@ use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\RemoteService;
 use OCA\Backup\Tools\Traits\TArrayTools;
+use OCA\Backup\Tools\Traits\TStringTools;
 use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCA\Backup\Tools\Traits\TStringTools;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -159,11 +159,11 @@ class PointDetails extends Base {
 		} else {
 			$point = $this->pointService->getLocalRestoringPoint($pointId);
 			$this->pointService->generateHealth($point, true);
-//			$this->pointService->initBaseFolder($point);
+			//			$this->pointService->initBaseFolder($point);
 		}
 
 		if ($input->getOption('output') === 'json') {
-//			$output->writeln(json_encode($point) . "\n");
+			//			$output->writeln(json_encode($point) . "\n");
 			$output->writeln(json_encode($point, JSON_PRETTY_PRINT)) . "\n";
 
 			return 0;
@@ -262,12 +262,12 @@ class PointDetails extends Base {
 		foreach ($chunk->getParts() as $part) {
 			$partHealth = $health->getPart($chunk->getName(), $part->getName());
 			$status = ChunkPartHealth::$DEF_STATUS[$partHealth->getStatus()];
-//
-//			try {
-//				$checked = $this->packService->getChecksum($point, $chunk, $part);
-//			} catch (ArchiveNotFoundException $e) {
-//				$checked = '<error>missing chunk</error>';
-//			}
+			//
+			//			try {
+			//				$checked = $this->packService->getChecksum($point, $chunk, $part);
+			//			} catch (ArchiveNotFoundException $e) {
+			//				$checked = '<error>missing chunk</error>';
+			//			}
 
 			$color = ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) ? 'info' : 'error';
 			$status = '<' . $color . '>' . $status . '</' . $color . '>';

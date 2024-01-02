@@ -77,15 +77,15 @@ class DataList extends Base {
 		$table->setHeaders(['StorageId', 'Path', 'Storage Folder']);
 		$table->render();
 
-//		foreach ($this->externalFolderService->getAll() as $externalFolder) {
-//			$table->appendRow(
-//				[
-//					$externalFolder->getStorageId(),
-//					$storagePath,
-//					$externalFolder->getRoot()
-//				]
-//			);
-//		}
+		//		foreach ($this->externalFolderService->getAll() as $externalFolder) {
+		//			$table->appendRow(
+		//				[
+		//					$externalFolder->getStorageId(),
+		//					$storagePath,
+		//					$externalFolder->getRoot()
+		//				]
+		//			);
+		//		}
 
 		return 0;
 	}

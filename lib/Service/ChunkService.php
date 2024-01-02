@@ -315,28 +315,28 @@ class ChunkService {
 	}
 
 
-//	/**
-//	 * @param Backup $backup
-//	 * @param RestoringChunk $archive
-//	 * @param bool $encrypted
-//	 *
-//	 * @return bool
-//	 * @throws ArchiveNotFoundException
-//	 */
-//	public function verifyChecksum(Backup $backup, RestoringChunk $archive, bool $encrypted): bool {
-//		$sum = $this->getChecksum($backup, $archive);
-//
-//		if (!$encrypted && $sum === $archive->getChecksum()) {
-//			return true;
-//		}
-//
-//		if ($encrypted && $sum === $archive->getEncryptedChecksum()) {
-//			return true;
-//		}
-//
-//		return false;
-//	}
-//
+	//	/**
+	//	 * @param Backup $backup
+	//	 * @param RestoringChunk $archive
+	//	 * @param bool $encrypted
+	//	 *
+	//	 * @return bool
+	//	 * @throws ArchiveNotFoundException
+	//	 */
+	//	public function verifyChecksum(Backup $backup, RestoringChunk $archive, bool $encrypted): bool {
+	//		$sum = $this->getChecksum($backup, $archive);
+	//
+	//		if (!$encrypted && $sum === $archive->getChecksum()) {
+	//			return true;
+	//		}
+	//
+	//		if ($encrypted && $sum === $archive->getEncryptedChecksum()) {
+	//			return true;
+	//		}
+	//
+	//		return false;
+	//	}
+	//
 
 	/**
 	 * @param RestoringPoint $point
@@ -576,103 +576,103 @@ class ChunkService {
 	}
 
 
-//	/**
-//	 * @param Backup $backup
-//	 * @param RestoringChunk $archive
-//	 * @param string $ext
-//	 *
-//	 * @throws ArchiveDeleteException
-//	 */
-//	public function deleteArchive(Backup $backup, RestoringChunk $archive, $ext = '') {
-//		if ($backup->isLocal()) {
-//			unlink('./' . $archive->getName($ext));
-//		} else {
-//			$folder = $backup->getBaseFolder();
-//			try {
-//				$file = $folder->getFile($archive->getName($ext));
-//				$file->delete();
-//			} catch (Exception $e) {
-//				throw new ArchiveDeleteException('Could not delete Archive');
-//			}
-//		}
-//	}
+	//	/**
+	//	 * @param Backup $backup
+	//	 * @param RestoringChunk $archive
+	//	 * @param string $ext
+	//	 *
+	//	 * @throws ArchiveDeleteException
+	//	 */
+	//	public function deleteArchive(Backup $backup, RestoringChunk $archive, $ext = '') {
+	//		if ($backup->isLocal()) {
+	//			unlink('./' . $archive->getName($ext));
+	//		} else {
+	//			$folder = $backup->getBaseFolder();
+	//			try {
+	//				$file = $folder->getFile($archive->getName($ext));
+	//				$file->delete();
+	//			} catch (Exception $e) {
+	//				throw new ArchiveDeleteException('Could not delete Archive');
+	//			}
+	//		}
+	//	}
 
-//
-//	/**
-//	 * @param Backup $backup
-//	 * @param RestoringChunk $archive
-//	 * @param bool $delete
-//	 *
-//	 * @throws ArchiveNotFoundException
-//	 * @throws ArchiveDeleteException
-//	 */
-//	public function encryptArchive(Backup $backup, RestoringChunk $archive, bool $delete): void {
-//		$folder = $backup->getBaseFolder();
-//		try {
-//			$file = $folder->getFile($archive->getName('zip'));
-//		} catch (Exception $e) {
-//			throw new ArchiveNotFoundException('Could not read Archive to encrypt');
-//		}
-//
-//		try {
-//			$encrypted = $folder->newFile($archive->getName());
-//		} catch (Exception $e) {
-//			throw new ArchiveNotFoundException('Could not write to encrypted Archive');
-//		}
-//
-//		$key = substr(sha1($backup->getEncryptionKey(), true), 0, 16);
-//		try {
-//			$this->encryptService->encryptFile($file->read(), $encrypted->write(), $key);
-//		} catch (Exception $e) {
-//			throw new ArchiveNotFoundException('Could not encrypt Archive');
-//		}
-//
-//		if ($delete) {
-//			try {
-//				$file->delete();
-//			} catch (Exception $e) {
-//				throw new ArchiveDeleteException('Could not delete non-encrypted Archive !');
-//			}
-//		}
-//	}
-//
-//
-//	/**
-//	 * @param Backup $backup
-//	 * @param RestoringChunk $archive
-//	 *
-//	 * @throws EncryptionKeyException
-//	 * @throws ArchiveNotFoundException
-//	 * @throws ArchiveNotFoundException
-//	 */
-//	public function decryptArchive(Backup $backup, RestoringChunk $archive) {
-//		if ($backup->isLocal()) {
-//			if (!file_exists('./' . $archive->getName())) {
-//				throw new ArchiveNotFoundException('Archive not found');
-//			}
-//			$stream = fopen('./' . $archive->getName(''), 'rb');
-//			$write = fopen('./' . $archive->getName('zip'), 'wb');
-//		} else {
-//			$folder = $backup->getBaseFolder();
-//
-//			try {
-//				$encrypted = $folder->getFile($archive->getName());
-//				$stream = $encrypted->read();
-//			} catch (Exception $e) {
-//				throw new ArchiveNotFoundException('Archive not found');
-//			}
-//
-//			try {
-//				$file = $folder->newFile($archive->getName('zip'));
-//				$write = $file->write();
-//			} catch (Exception $e) {
-//				throw new ArchiveNotFoundException('Zip file not created');
-//			}
-//		}
-//
-//		$key = substr(sha1($backup->getEncryptionKey(), true), 0, 16);
-//		$this->encryptService->decryptFile($stream, $write, $key);
-//	}
+	//
+	//	/**
+	//	 * @param Backup $backup
+	//	 * @param RestoringChunk $archive
+	//	 * @param bool $delete
+	//	 *
+	//	 * @throws ArchiveNotFoundException
+	//	 * @throws ArchiveDeleteException
+	//	 */
+	//	public function encryptArchive(Backup $backup, RestoringChunk $archive, bool $delete): void {
+	//		$folder = $backup->getBaseFolder();
+	//		try {
+	//			$file = $folder->getFile($archive->getName('zip'));
+	//		} catch (Exception $e) {
+	//			throw new ArchiveNotFoundException('Could not read Archive to encrypt');
+	//		}
+	//
+	//		try {
+	//			$encrypted = $folder->newFile($archive->getName());
+	//		} catch (Exception $e) {
+	//			throw new ArchiveNotFoundException('Could not write to encrypted Archive');
+	//		}
+	//
+	//		$key = substr(sha1($backup->getEncryptionKey(), true), 0, 16);
+	//		try {
+	//			$this->encryptService->encryptFile($file->read(), $encrypted->write(), $key);
+	//		} catch (Exception $e) {
+	//			throw new ArchiveNotFoundException('Could not encrypt Archive');
+	//		}
+	//
+	//		if ($delete) {
+	//			try {
+	//				$file->delete();
+	//			} catch (Exception $e) {
+	//				throw new ArchiveDeleteException('Could not delete non-encrypted Archive !');
+	//			}
+	//		}
+	//	}
+	//
+	//
+	//	/**
+	//	 * @param Backup $backup
+	//	 * @param RestoringChunk $archive
+	//	 *
+	//	 * @throws EncryptionKeyException
+	//	 * @throws ArchiveNotFoundException
+	//	 * @throws ArchiveNotFoundException
+	//	 */
+	//	public function decryptArchive(Backup $backup, RestoringChunk $archive) {
+	//		if ($backup->isLocal()) {
+	//			if (!file_exists('./' . $archive->getName())) {
+	//				throw new ArchiveNotFoundException('Archive not found');
+	//			}
+	//			$stream = fopen('./' . $archive->getName(''), 'rb');
+	//			$write = fopen('./' . $archive->getName('zip'), 'wb');
+	//		} else {
+	//			$folder = $backup->getBaseFolder();
+	//
+	//			try {
+	//				$encrypted = $folder->getFile($archive->getName());
+	//				$stream = $encrypted->read();
+	//			} catch (Exception $e) {
+	//				throw new ArchiveNotFoundException('Archive not found');
+	//			}
+	//
+	//			try {
+	//				$file = $folder->newFile($archive->getName('zip'));
+	//				$write = $file->write();
+	//			} catch (Exception $e) {
+	//				throw new ArchiveNotFoundException('Zip file not created');
+	//			}
+	//		}
+	//
+	//		$key = substr(sha1($backup->getEncryptionKey(), true), 0, 16);
+	//		$this->encryptService->decryptFile($stream, $write, $key);
+	//	}
 
 
 	/**
