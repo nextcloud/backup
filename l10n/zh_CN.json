@@ -1,7 +1,7 @@
 { "translations": {
     "Backup" : "备份",
     "Update on all Backup's event" : "在所有备份事件时更新",
-    "complete" : "完整",
+    "complete" : "完成",
     "partial" : "部分",
     "seconds" : "秒",
     "minutes" : "分钟",
@@ -11,6 +11,7 @@
     "Your system have been fully restored based on a restoring point from {date} (estimated rewind: {rewind})" : "基于 {date} 还原点已完整恢复了你的系统 （预估后退：{rewind}）",
     "The file {file} have been restored based on a restoring point from {date} (estimated rewind: {rewind})" : "基于 {date} 的还原点已恢复了 {file} 文件 (预估后退： {rewind}）",
     "Backup now. Restore later." : "现在备份。稍后还原。",
+    "The Backup App creates and stores backup images of your Nextcloud:\n\n- Backup the instance, its apps, your data and your database,\n- Administrator can configure the time slots for automated backup,\n- Full and Partial backup, with different frequencies,\n- 2-pass to limit downtime (maintenance mode) of your instance,\n- Compression and encryption,\n- Upload your encrypted backup on an external filesystem,\n- Download and search for your data,\n- Restore single file or the entire instance." : "- 备份应用程式创建并存储 Nextcloud 的备份图像：\n- 备份实例、其应用程序、您的数据和您的数据库\n- 管理员可以配置自动备份的时间段\n- 完整和部分备份，具有不同的频率\n- 2-pass 限制实例的停机时间（维护模式），\n- 压缩和加密，\n- 将您的加密备份上传到外部文件系统，\n- 下载并搜索您的数据，\n- 恢复单个文件或整个实例",
     "App Data" : "应用数据",
     "Choose where the backup app will initially store the restoring points." : "选择备份应用程序存储还原点的初始位置。",
     "Path in which to store the data. (ex: app_data)" : "存储数据的路径（如，app_data）",
@@ -55,7 +56,7 @@
     "Time interval between two full restoring points" : "两个完整还原点之间的时间间隔",
     "Time interval between two partial restoring points" : "两个部分还原点之间的时间间隔",
     "Packing processing" : "打包处理",
-    "Processing that will be done on the restoring points during the packing step." : "打包步骤中将对还原点进行的处理。",
+    "Processing that will be done on the restoring points during the packing step." : "在打包步骤期间对还原点将进行的处理。",
     "Encrypt restoring points" : "加密还原点",
     "Compress restoring points" : "压缩还原点",
     "Retention policy" : "保留政策",
@@ -78,11 +79,14 @@
     "Unable to save the settings" : "无法保存设置",
     "Unable to request restoring point" : "无法请求还原点",
     "Unable to export settings" : "无法导出设置",
+    "_A full restoring point will be created {delayFullRestoringPoint} day after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week._::_A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week._" : ["完整还原点将会在一周中的任何一天开始于{timeSlotsStart}:00 到 {timeSlotsEnd}:00 之间，最后一个还原点之后的{delayFullRestoringPoint} 天被创建。"],
+    "_A full restoring point will be created {delayFullRestoringPoint} day after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 during weekends._::_A full restoring point will be created {delayFullRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 during weekends._" : ["将在周末 {timeSlotsStart}:00 和 {timeSlotsEnd}:00 之间的最后一个还原点之后 {delayFullRestoringPoint} 天建立一个完整还原点。"],
+    "_A partial restoring point will be created {delayPartialRestoringPoint} day after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week._::_A partial restoring point will be created {delayPartialRestoringPoint} days after the last one between {timeSlotsStart}:00 and {timeSlotsEnd}:00 any day of the week._" : ["将在一星期中的任何一天 {timeSlotsStart}:00 和 {timeSlotsEnd}:00 之间的最后一个还原点之后的 {delayPartialRestoringPoint} 天建立部分还原点。"],
     "_day_::_days_" : ["天"],
     "Scheduled" : "计划的",
     "Pending" : "待执行",
-    "Not completed" : "未完成",
-    "Orphan" : "Orphan",
+    "Not completed" : "没完成",
+    "Orphan" : "孤儿",
     "Completed" : "已完成",
     "Not packed yet" : "尚未打包",
     "Packed" : "已打包",
@@ -100,7 +104,6 @@
     "Next full restoring point" : "下个完整还原点",
     "Next partial restoring point" : "下个部分还原点",
     "Unable to fetch restoring points" : "无法获取还原点",
-    "Scan Backup Folder" : "扫描备份文件夹",
-    "local" : "本地"
+    "Scan Backup Folder" : "扫描备份文件夹"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

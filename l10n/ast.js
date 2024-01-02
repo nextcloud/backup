@@ -3,20 +3,17 @@ OC.L10N.register(
     {
     "seconds" : "segundos",
     "minutes" : "minutos",
-    "hours" : "hores",
+    "hours" : "Hores",
     "days" : "díes",
-    "Error" : "Fallu",
-    "Local storage" : "Local storage",
-    "External storage" : "External storage",
+    "Error" : "Error",
+    "External storage" : "Almacenamientu esternu",
     "Actions" : "Aiciones",
     "Delete" : "Desaniciar",
     "Cancel" : "Encaboxar",
-    "Settings saved" : "Axustes guardaos",
-    "Pending" : "Pendiente",
-    "Completed" : "Completáu",
+    "Unable to save the settings" : "Nun ye posible guardar la configuración",
+    "_day_::_days_" : ["día","díes"],
     "Status" : "Estáu",
-    "Date" : "Date",
-    "ID" : "ID",
-    "Local" : "Llocal"
+    "Date" : "Data",
+    "ID" : "ID"
 },
 "nplurals=2; plural=(n != 1);");

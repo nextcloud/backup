@@ -9,8 +9,10 @@
     "Actions" : "İşlər",
     "Delete" : "Sil",
     "Cancel" : "Dayandır",
+    "Settings saved" : "Parametrlər yaddaşa verildi",
     "Pending" : "Gözləmə",
     "Completed" : "Bitmişdir",
+    "Status" : "Status",
     "Date" : "Date",
     "Local" : "Yerli"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

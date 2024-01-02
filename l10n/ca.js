@@ -59,14 +59,14 @@ OC.L10N.register(
     "Time interval between two partial restoring points" : "Interval de temps entre dos punts de restauració parcial",
     "Packing processing" : "Processament d'empaquetat",
     "Processing that will be done on the restoring points during the packing step." : "Processament que es farà als punts de restauració durant l'etapa d'empaquetat.",
-    "Encrypt restoring points" : "Xifrar els punts de restauració",
+    "Encrypt restoring points" : "Xifrat dels punts de restauració",
     "Compress restoring points" : "Comprimir els punts de restauració",
     "Retention policy" : "Política de retenció",
     "You can specify the number of restoring points to keep during a purge." : "Podeu especificar el nombre de punts de restauració que cal mantenir durant una purga.",
     "Policy for the local app data" : "Política per a les dades d'aplicació local",
     "Policy for external storages" : "Política d'emmagatzematge extern",
     "Export backup configuration" : "Exporta la configuració de còpia de seguretat",
-    "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Podeu exportar la vostra paràmetres amb el botó següent. El fitxer exportat és important, ja que us permet restaurar la vostra còpia de seguretat en cas de pèrdua de dades completes. Guardeu-lo en un lloc segur!",
+    "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Podeu exportar els vostres paràmetres amb el botó següent. El fitxer exportat és important, ja que us permet restaurar la vostra còpia de seguretat en cas de pèrdua de dades completes. Guardeu-lo en un lloc segur!",
     "Export configuration" : "Exporta la configuració",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Els teus paràmetres s'exporten tal com s'ha baixat xifrats. Per poder desxifrar-lo més tard, manteniu la clau privada següent en un lloc segur:",
     "Request the creation of a new restoring point now" : "Sol·liciteu ara la creació d'un nou punt de restauració",
@@ -106,7 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Següent punt de restauració complerta",
     "Next partial restoring point" : "Següent punt de restauració parcial",
     "Unable to fetch restoring points" : "No s'han pogut recuperar els punts de restauració",
-    "Scan Backup Folder" : "Escaneja la carpeta de còpia de seguretat",
-    "local" : "local"
+    "Scan Backup Folder" : "Escaneja la carpeta de còpia de seguretat"
 },
 "nplurals=2; plural=(n != 1);");

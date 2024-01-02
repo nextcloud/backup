@@ -15,13 +15,13 @@ OC.L10N.register(
     "Settings saved" : "Stillingar vistaðar",
     "Unable to save the settings" : "Tókst ekki að vista stillingarnar",
     "Pending" : "Í bið",
+    "Not completed" : "Er ekki lokið",
     "Completed" : "Lokið",
     "Encrypted" : "Dulritað",
     "Health" : "Heilsa",
     "Status" : "Staða",
     "Date" : "Dagsetning",
     "ID" : "ID",
-    "Local" : "Staðvært",
-    "local" : "staðvært"
+    "Local" : "Staðvært"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

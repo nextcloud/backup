@@ -28,11 +28,11 @@
     "Manage available storage locations for storing restoring points" : "Administrer tilgængelige lagerpladser til lagring af gendannelsespunkter",
     "Path in which to store the restoring points. (ex: backups)" : "Sti til lagring af gendannelsespunkter. (eks: backups)",
     "Add new external location" : "Tilføj ny ekstern placering",
-    "External storage" : "External storage",
+    "External storage" : "Eksternt lager",
     "Restoring point location" : "Placering af gendannelsespunkt",
     "Actions" : "Handlinger",
     "Delete" : "Slet",
-    "No external storage available" : "Ingen ekstern lagerplads tilgængelig",
+    "No external storage available" : "Intet eksternt lager tilgængelig",
     "If you want to store your restoring points on an external location, configure an external storage in the \"External storage\" app." : "Hvis du vil gemme dine gendannelsespunkter på en ekstern placering, skal du konfigurere en ekstern lagring i appen \"Ekstern lagring\".",
     "No external locations set" : "Ingen eksterne placeringer angivet",
     "You can add a new location with the above form." : "Du kan tilføje en ny placering med ovenstående formular.",
@@ -104,7 +104,6 @@
     "Next full restoring point" : "Næste fulde gendannelsespunkt",
     "Next partial restoring point" : "Næste delvis gendannelsespunkt",
     "Unable to fetch restoring points" : "Kan ikke hente gendannelsespunkter",
-    "Scan Backup Folder" : "Scan backup-mappe",
-    "local" : "lokal"
+    "Scan Backup Folder" : "Scan backup-mappe"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

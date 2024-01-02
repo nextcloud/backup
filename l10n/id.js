@@ -5,6 +5,7 @@ OC.L10N.register(
     "minutes" : "menit",
     "hours" : "jam",
     "days" : "hari",
+    "Backup now. Restore later." : "Cadangkan sekarang. Pulihkan nanti.",
     "Error" : "Galat",
     "Local storage" : "Local storage",
     "External storage" : "External storage",

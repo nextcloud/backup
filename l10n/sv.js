@@ -16,13 +16,13 @@ OC.L10N.register(
     "Settings saved" : "Inställningar sparade",
     "Unable to save the settings" : "Kunde inte spara inställningarna",
     "Pending" : "Väntande",
+    "Not completed" : "Ej slutförd",
     "Completed" : "Slutförd",
     "Encrypted" : "Krypterad",
     "Health" : "Hälsa",
     "Status" : "Status",
     "Date" : "Datum",
     "ID" : "ID",
-    "Local" : "Lokal",
-    "local" : "lokal"
+    "Local" : "Lokal"
 },
 "nplurals=2; plural=(n != 1);");

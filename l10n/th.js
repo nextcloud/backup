@@ -13,6 +13,7 @@ OC.L10N.register(
     "Delete" : "ลบ",
     "Cancel" : "ยกเลิก",
     "Settings saved" : "บันทึกการตั้งค่าแล้ว",
+    "Unable to save the settings" : "ไม่สามารถบันทึกการตั้งค่าได้",
     "Pending" : "รอดำเนินการ",
     "Completed" : "เสร็จสมบูรณ์",
     "Status" : "สถานะ",

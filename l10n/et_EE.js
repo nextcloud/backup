@@ -13,13 +13,13 @@ OC.L10N.register(
     "Cancel" : "Loobu",
     "Settings saved" : "Seaded salvestatud",
     "Unable to save the settings" : "Seadeid ei saa salvestada",
+    "_day_::_days_" : ["päev","päeva"],
     "Pending" : "Ootel",
     "Completed" : "Lõpetatud",
     "Health" : "Tervis",
     "Status" : "Staatus",
     "Date" : "Kuupäev",
     "ID" : "ID",
-    "Local" : "Kohalik",
-    "local" : "kohalik"
+    "Local" : "Kohalik"
 },
 "nplurals=2; plural=(n != 1);");

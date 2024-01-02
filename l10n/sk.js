@@ -106,7 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Ďalší kompletný bod obnovenia",
     "Next partial restoring point" : "Ďalší čiastočný bod obnovenia",
     "Unable to fetch restoring points" : "Nemôžem získať body obnovenia",
-    "Scan Backup Folder" : "Skenovať priečinok so zálohami",
-    "local" : "lokálne"
+    "Scan Backup Folder" : "Skenovať priečinok so zálohami"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

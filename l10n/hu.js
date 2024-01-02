@@ -106,7 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Következő teljes helyreállítási pont",
     "Next partial restoring point" : "Következő részleges helyreállítási pont",
     "Unable to fetch restoring points" : "Nem sikerült a helyreállítási pontok lekérése",
-    "Scan Backup Folder" : "Biztonsági mentés mappájának átvizsgálása",
-    "local" : "helyi"
+    "Scan Backup Folder" : "Biztonsági mentés mappájának átvizsgálása"
 },
 "nplurals=2; plural=(n != 1);");
