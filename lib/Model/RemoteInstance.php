@@ -469,7 +469,7 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 	 * @return NCSignatory
 	 */
 	public function importSignatory(array $data): self {
-//		parent::importSignatory($data);
+		//		parent::importSignatory($data);
 
 		$this->setRoot($this->get(self::ROOT, $data))
 			 ->setRPList($this->get(self::RP_LIST, $data))

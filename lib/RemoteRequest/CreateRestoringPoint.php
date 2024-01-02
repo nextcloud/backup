@@ -31,8 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Backup\RemoteRequest;
 
-use OCA\Backup\Tools\Exceptions\InvalidItemException;
-use OCA\Backup\Tools\IDeserializable;
 use OCA\Backup\AppInfo\Application;
 use OCA\Backup\Db\PointRequest;
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
@@ -40,6 +38,8 @@ use OCA\Backup\IRemoteRequest;
 use OCA\Backup\Model\RemoteInstance;
 use OCA\Backup\Model\RestoringPoint;
 use OCA\Backup\Service\PointService;
+use OCA\Backup\Tools\Exceptions\InvalidItemException;
+use OCA\Backup\Tools\IDeserializable;
 use OCA\Backup\Tools\Traits\TDeserialize;
 use OCA\Backup\Tools\Traits\TNCLogger;
 use OCP\Files\NotFoundException;

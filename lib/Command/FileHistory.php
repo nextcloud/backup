@@ -136,7 +136,7 @@ class FileHistory extends Base {
 			}
 		}
 
-//		$output->writeln('Restoring Point ID: <info>' . $point->getId() . '</info>');
+		//		$output->writeln('Restoring Point ID: <info>' . $point->getId() . '</info>');
 
 		return 0;
 	}

@@ -8,7 +8,7 @@
     "classmap-authoritative": true,
     "autoloader-suffix": "Backup",
     "platform": {
-      "php": "7.4"
+      "php": "8.1"
     }
   },
   "authors": [
@@ -24,7 +24,7 @@
   },
   "require": {
     "ifsnop/mysqldump-php": "2.12",
-    "spatie/db-dumper": "2.21.1",
+    "spatie/db-dumper": "^3.4",
     "pimple/pimple": "~3.0"
   },
   "scripts": {

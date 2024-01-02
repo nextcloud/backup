@@ -201,7 +201,7 @@ class PointDownload extends Base {
 			$output->writeln('> downloading metadata');
 
 			$point = $this->getRestoringPoint($remote, $external, $pointId);
-//			$point = $this->remoteService->getRestoringPoint($instance, $pointId);
+			//			$point = $this->remoteService->getRestoringPoint($instance, $pointId);
 			if (!$input->getOption('no-check')) {
 				try {
 					$this->remoteStreamService->verifyPoint($point);
@@ -238,43 +238,43 @@ class PointDownload extends Base {
 		$this->metadataService->unlock($point);
 
 		return 0;
-//		$this->downloadMissingFiles($instance, $point, $point->getHealth(), $output);
+		//		$this->downloadMissingFiles($instance, $point, $point->getHealth(), $output);
 
-//		$point = $this->getRestoringPoint($remote, $external, $pointId);
+		//		$point = $this->getRestoringPoint($remote, $external, $pointId);
 
 
-//		echo json_encode($point->getHealth());
+		//		echo json_encode($point->getHealth());
 
-//		$checks = $this->remoteService->verifyPoint($point);
-//
-//		foreach ($checks as $instance => $item) {
-//			$output->writeln('');
-//			$output->writeln('- <info>' . $instance . '</info>: ' . $this->displayHealth($item));
-//
-//			if (is_null($item)) {
-//				$item = $this->createRemotePoint($instance, $point, $output);
-//			}
-//
-//			if (is_null($item)) {
-//				continue;
-//			}
-//
-//			if (!$item->hasHealth()) {
-//				$item = $this->getCurrentHealth($instance, $item, $output);
-//				if ($item !== null && $item->hasHealth()) {
-//					$output->write('  * Refreshed health status:' . $this->displayHealth($item));
-//				} else {
-//					continue;
-//				}
-//			}
-//
-//			$health = $item->getHealth();
-//			$this->uploadMissingFiles($instance, $point, $health, $output);
-//			if ($health->getStatus() === RestoringHealth::STATUS_OK) {
-//				$output->writeln('  > RestoringPoint is fully uploaded to ' . $instance);
-//			}
-//
-//		}
+		//		$checks = $this->remoteService->verifyPoint($point);
+		//
+		//		foreach ($checks as $instance => $item) {
+		//			$output->writeln('');
+		//			$output->writeln('- <info>' . $instance . '</info>: ' . $this->displayHealth($item));
+		//
+		//			if (is_null($item)) {
+		//				$item = $this->createRemotePoint($instance, $point, $output);
+		//			}
+		//
+		//			if (is_null($item)) {
+		//				continue;
+		//			}
+		//
+		//			if (!$item->hasHealth()) {
+		//				$item = $this->getCurrentHealth($instance, $item, $output);
+		//				if ($item !== null && $item->hasHealth()) {
+		//					$output->write('  * Refreshed health status:' . $this->displayHealth($item));
+		//				} else {
+		//					continue;
+		//				}
+		//			}
+		//
+		//			$health = $item->getHealth();
+		//			$this->uploadMissingFiles($instance, $point, $health, $output);
+		//			if ($health->getStatus() === RestoringHealth::STATUS_OK) {
+		//				$output->writeln('  > RestoringPoint is fully uploaded to ' . $instance);
+		//			}
+		//
+		//		}
 	}
 
 
@@ -340,7 +340,7 @@ class PointDownload extends Base {
 				throw new InvalidOptionException($msg);
 			}
 
-//			$chunk = $this->remoteService->downloadChunk($instance, $point, $restoringChunk);
+			//			$chunk = $this->remoteService->downloadChunk($instance, $point, $restoringChunk);
 			$this->packService->saveChunkPartContent($point, $chunk, $part);
 			$output->writeln('<info>ok</info>');
 		}

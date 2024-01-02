@@ -46,7 +46,7 @@ class RestoringDataRequest extends RestoringDataRequestBuilder {
 		   ->setValue('type', $qb->createNamedParameter($data->getType()))
 		   ->setValue('root', $qb->createNamedParameter($data->getRoot()))
 		   ->setValue('path', $qb->createNamedParameter($data->getPath()));
-//		   ->setValue('static', $qb->createNamedParameter(($data->isStatic() ? '1' : '0')));
+		//		   ->setValue('static', $qb->createNamedParameter(($data->isStatic() ? '1' : '0')));
 		$qb->execute();
 	}
 
