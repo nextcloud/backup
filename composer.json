@@ -8,7 +8,7 @@
     "classmap-authoritative": true,
     "autoloader-suffix": "Backup",
     "platform": {
-      "php": "8.1"
+      "php": "8.0"
     }
   },
   "authors": [
@@ -42,6 +42,7 @@
   },
   "require-dev": {
     "nextcloud/coding-standard": "^1.0.0",
+    "vimeo/psalm": "^5.18",
     "phpunit/phpunit": "^9.5"
   }
 }
