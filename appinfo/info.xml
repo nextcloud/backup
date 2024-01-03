@@ -28,7 +28,7 @@
 	<repository type="git">https://github.com/nextcloud/backup.git</repository>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/backup/master/screenshots/app.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="26" max-version="28"/>
+		<nextcloud min-version="26" max-version="27"/>
 	</dependencies>
 
 	<background-jobs>
