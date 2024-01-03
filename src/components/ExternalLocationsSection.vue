@@ -21,7 +21,7 @@
   -->
 
 <template>
-	<SettingsSection :title="t('backup', 'Restoring points locations')"
+	<NcSettingsSection :name="t('backup', 'Restoring points locations')"
 		:description="t('backup', 'Manage available storage locations for storing restoring points')">
 		<form ref="external-location-form" class="external-location__form">
 			<select class="external-location__form__select" name="storageId" :disabled="loadingData || availableExternalLocations.length === 0">
@@ -36,7 +36,7 @@
 				:placeholder="t('backup', 'Path in which to store the restoring points. (ex: backups)')"
 				:disabled="loadingData || loadingAddExternalLocation || availableExternalLocations.length === 0"
 				name="root">
-			<Button type="primary"
+			<NcButton type="primary"
 				:disabled="loadingData || availableExternalLocations.length === 0"
 				:class="{loading: loadingAddExternalLocation }"
 				@click.prevent="addExternalLocation">
@@ -45,7 +45,7 @@
 				</template>
 
 				{{ t('backup', 'Add new external location') }}
-			</Button>
+			</NcButton>
 		</form>
 
 		<div v-if="loadingData" class="icon-loading" />
@@ -70,7 +70,7 @@
 					<td>{{ external.storage }}</td>
 					<td>{{ external.root }}</td>
 					<td>
-						<Button type="error"
+						<NcButton type="error"
 							class="external-locations__location__delete"
 							:disabled="loadingDeleteExternalLocation !== '' && loadingDeleteExternalLocation !== external.storageId"
 							:class="{loading: loadingDeleteExternalLocation === external.storageId }"
@@ -80,35 +80,32 @@
 							</template>
 
 							{{ t('backup', 'Delete') }}
-						</Button>
+						</NcButton>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 
-		<EmptyContent v-show="externalLocations.length === 0 && !loadingData" icon="icon-external">
+		<NcEmptyContent v-show="externalLocations.length === 0 && !loadingData" icon="icon-external">
 			{{ t('backup', 'No external storage available') }}
 			<template #desc>
 				{{ t('backup', 'If you want to store your restoring points on an external location, configure an external storage in the "External storage" app.') }}
 			</template>
-		</EmptyContent>
-		<EmptyContent v-show="externalLocations.length !== 0 && setExternalLocations.length === 0" icon="icon-external">
+		</NcEmptyContent>
+		<NcEmptyContent v-show="externalLocations.length !== 0 && setExternalLocations.length === 0" icon="icon-external">
 			{{ t('backup', 'No external locations set') }}
 			<template #desc>
 				{{ t('backup', 'You can add a new location with the above form.') }}
 			</template>
-		</EmptyContent>
-	</SettingsSection>
+		</NcEmptyContent>
+	</NcSettingsSection>
 </template>
 
 <script>
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-
-import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import { NcSettingsSection, NcEmptyContent, NcButton } from '@nextcloud/vue'
 
 import logger from '../logger'
 
@@ -122,9 +119,9 @@ import logger from '../logger'
 export default {
 	name: 'ExternalLocationsSection',
 	components: {
-		SettingsSection,
-		EmptyContent,
-		Button,
+		NcSettingsSection,
+		NcEmptyContent,
+		NcButton,
 	},
 
 	data() {
