@@ -181,7 +181,7 @@ import RestoringPointHealthIcon from './RestoringPointHealthIcon.vue'
 import RestoringPointStatusIcon from './RestoringPointStatusIcon.vue'
 import SettingsModel from '../models/SettingsModel.js'
 import RestoringPoint from '../models/RestoringPointModel.js'
-import logger from '../logger'
+import logger from '../logger.js'
 
 /**
  * @typedef {object} ExternalLocation
@@ -303,11 +303,11 @@ export default {
 		 */
 
 		/**
-		 * @typedef {object<string, PointLocation>} RestoringPoints
+		 * @typedef {{[key: string]: PointLocation}} RestoringPoints
 		 */
 
 		/**
-		 * @param {object<string, RestoringPoints>} restoringPoints - The list of restoring points
+		 * @param {RestoringPoints} restoringPoints - The list of restoring points
 		 */
 		handleRestoringPoints(restoringPoints) {
 			return Object.keys(restoringPoints)
@@ -332,7 +332,7 @@ export default {
 			}
 
 			// The variable assignment is useful to have type completion.
-			/** @type {Array<ExternalLocation>} */
+			/** @type {ExternalLocation[]} */
 			const externalStorages = this.externalStorages
 			return externalStorages.find(storage => storage.storageId === parseInt(storageId.split(':')[1])).storage
 		},

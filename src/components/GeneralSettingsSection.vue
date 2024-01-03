@@ -252,7 +252,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { NcSettingsSection, NcCheckboxRadioSwitch, NcButton, NcModal } from '@nextcloud/vue'
 
-import logger from '../logger'
+import logger from '../logger.js'
 import SettingsModel from '../models/SettingsModel.js'
 
 export default {
