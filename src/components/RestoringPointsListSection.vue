@@ -21,7 +21,7 @@
   -->
 
 <template>
-	<SettingsSection :title="t('backup', 'Restoring points history')"
+	<NcSettingsSection :name="t('backup', 'Restoring points history')"
 		:description="t('backup', 'List of the past and future restoring points')">
 		<table class="grid groups">
 			<thead>
@@ -52,7 +52,7 @@
 					class="restoring-points__point"
 					:class="{'restoring-points__point--pending': point.health === -2}">
 					<td class="restoring-points__point__icons">
-						<Popover v-if="point.health !== -2">
+						<NcPopover v-if="point.health !== -2">
 							<template #trigger>
 								<Check v-if="point.issue === ''"
 									slot="icon"
@@ -99,11 +99,11 @@
 									</template>
 								</div>
 							</div>
-						</Popover>
+						</NcPopover>
 					</td>
 
 					<td class="restoring-points__point__icons">
-						<Popover :disabled="point.health < 0">
+						<NcPopover :disabled="point.health < 0">
 							<template #trigger>
 								<div class="restoring-points__point__icons__health">
 									<RestoringPointHealthIcon :health="point.health" />
@@ -140,7 +140,7 @@
 									)
 								</div>
 							</div>
-						</Popover>
+						</NcPopover>
 					</td>
 
 					<td class="restoring-points__point__icons">
@@ -148,7 +148,7 @@
 					</td>
 
 					<td>
-						<span v-tooltip.bottom="point.dateFormatted" class="activity-entry__date">{{ point.dateFromNow }}</span>
+						<span title="point.dateFormatted" class="activity-entry__date">{{ point.dateFromNow }}</span>
 					</td>
 
 					<td>
@@ -165,20 +165,17 @@
 				</tr>
 			</tbody>
 		</table>
-	</SettingsSection>
+	</NcSettingsSection>
 </template>
 
 <script>
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
+import { NcSettingsSection, NcPopover } from '@nextcloud/vue'
 
 import Check from 'vue-material-design-icons/Check.vue'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-
-import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
-import Popover from '@nextcloud/vue/dist/Components/Popover'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 
 import RestoringPointHealthIcon from './RestoringPointHealthIcon.vue'
 import RestoringPointStatusIcon from './RestoringPointStatusIcon.vue'
@@ -198,13 +195,10 @@ export default {
 	components: {
 		RestoringPointHealthIcon,
 		RestoringPointStatusIcon,
-		SettingsSection,
-		Popover,
+		NcSettingsSection,
+		NcPopover,
 		Check,
 		AlertCircle,
-	},
-	directives: {
-		tooltip: Tooltip,
 	},
 
 	props: {

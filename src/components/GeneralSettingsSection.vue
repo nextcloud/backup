@@ -21,8 +21,8 @@
   -->
 
 <template>
-	<SettingsSection class="backup-settings"
-		:title="t('backup', 'Backups configuration')"
+	<NcSettingsSection class="backup-settings"
+		:name="t('backup', 'Backups configuration')"
 		:description="t('backup', 'General configuration on how and when your restoring points are created.')">
 		<form ref="settings-form">
 			<div class="backup-settings__cron-enabled">
@@ -47,12 +47,12 @@
 					</ul>
 				</div>
 
-				<CheckboxRadioSwitch :loading="loadingFetchSettings"
+				<NcCheckboxRadioSwitch :loading="loadingFetchSettings"
 					:disabled="loadingFetchSettings"
 					:checked.sync="settings.cronEnabled"
 					@update:checked="setSettings">
 					{{ t('backup', 'Enable background tasks to automatically manage creation, maintenance and purge.') }}
-				</CheckboxRadioSwitch>
+				</NcCheckboxRadioSwitch>
 			</div>
 
 			<div class="backup-settings__backup-schedule">
@@ -93,12 +93,12 @@
 					</select>
 				</label>
 
-				<CheckboxRadioSwitch :loading="loadingFetchSettings"
+				<NcCheckboxRadioSwitch :loading="loadingFetchSettings"
 					:disabled="loadingFetchSettings || !settings.cronEnabled"
 					:checked.sync="settings.allowWeekdays"
 					@update:checked="setSettings">
 					{{ t('backup', 'Allow the creation of full restoring points during week day') }}
-				</CheckboxRadioSwitch>
+				</NcCheckboxRadioSwitch>
 
 				<ul class="backup-settings__delays">
 					<li>
@@ -132,18 +132,18 @@
 					{{ t('backup', 'Processing that will be done on the restoring points during the packing step.') }}
 				</div>
 
-				<CheckboxRadioSwitch :loading="loadingFetchSettings"
+				<NcCheckboxRadioSwitch :loading="loadingFetchSettings"
 					:checked.sync="settings.packEncrypt"
 					:disabled="loadingFetchSettings"
 					@update:checked="setSettings">
 					{{ t('backup', 'Encrypt restoring points') }}
-				</CheckboxRadioSwitch>
-				<CheckboxRadioSwitch :loading="loadingFetchSettings"
+				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch :loading="loadingFetchSettings"
 					:checked.sync="settings.packCompress"
 					:disabled="loadingFetchSettings"
 					@update:checked="setSettings">
 					{{ t('backup', 'Compress restoring points') }}
-				</CheckboxRadioSwitch>
+				</NcCheckboxRadioSwitch>
 			</div>
 
 			<div class="backup-settings__retention">
@@ -182,7 +182,7 @@
 						{{ t('backup', 'Export backup configuration') }}
 					</h3>
 					{{ t('backup', 'You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!') }}
-					<Button :disabled="loadingExportSettings"
+					<NcButton :disabled="loadingExportSettings"
 						class="backup-settings__actions__action__export"
 						:class="{loading: loadingExportSettings}"
 						@click.prevent="downloadSettings">
@@ -191,7 +191,7 @@
 						</template>
 
 						{{ t('backup', 'Export configuration') }}
-					</Button>
+					</NcButton>
 					<div v-if="exportedPrivateKey !== undefined" class="backup-settings__export__info">
 						{{ t('backup', 'Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:') }}
 						<br>
@@ -207,13 +207,13 @@
 					<div v-if="settings.restoringPointRequested" class="backup-settings__actions__action__info">
 						{{ t('backup', 'The creation of a restoring point as been requested and will be initiated soon.') }}
 					</div>
-					<Button type="primary"
+					<NcButton type="primary"
 						:disabled="loadingFetchSettings || settings.restoringPointRequested || !settings.cronEnabled"
 						@click.prevent="requestRestoringPointType = 'full'">
 						{{ t('backup', 'Create full restoring point') }}
-					</Button>
+					</NcButton>
 
-					<Modal v-if="requestRestoringPointType !== ''"
+					<NcModal v-if="requestRestoringPointType !== ''"
 						size="large"
 						@close="requestRestoringPointType = ''">
 						<div class="backup-settings__request-modal">
@@ -223,38 +223,34 @@
 							<div class="backup-settings__request-modal__content">
 								{{ t('backup', 'Requesting a backup will put the server in maintenance mode.') }}
 
-								<CheckboxRadioSwitch :loading="loadingRequestRestoringPoint" :checked.sync="validationCheckboxForRestoringPointRequest">
+								<NcCheckboxRadioSwitch :loading="loadingRequestRestoringPoint" :checked.sync="validationCheckboxForRestoringPointRequest">
 									{{ t('backup', 'I understand that the server will be put in maintenance mode.') }}
-								</CheckboxRadioSwitch>
+								</NcCheckboxRadioSwitch>
 							</div>
 							<div class="backup-settings__request-modal__actions">
-								<Button @click.prevent="requestRestoringPointType = ''">
+								<NcButton @click.prevent="requestRestoringPointType = ''">
 									{{ t('backup', 'Cancel') }}
-								</Button>
-								<Button type="primary"
+								</NcButton>
+								<NcButton type="primary"
 									:class="{loading: loadingRequestRestoringPoint}"
 									:disabled="!validationCheckboxForRestoringPointRequest || loadingRequestRestoringPoint"
 									@click.prevent="requestRestoringPoint">
 									{{ t('backup', 'Request {mode} restoring point', { mode: requestRestoringPointType}) }}
-								</Button>
+								</NcButton>
 							</div>
 						</div>
-					</Modal>
+					</NcModal>
 				</div>
 			</div>
 		</form>
-	</SettingsSection>
+	</NcSettingsSection>
 </template>
 
 <script>
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-
-import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import { NcSettingsSection, NcCheckboxRadioSwitch, NcButton, NcModal } from '@nextcloud/vue'
 
 import logger from '../logger'
 import SettingsModel from '../models/SettingsModel.js'
@@ -262,10 +258,10 @@ import SettingsModel from '../models/SettingsModel.js'
 export default {
 	name: 'GeneralSettingsSection',
 	components: {
-		SettingsSection,
-		CheckboxRadioSwitch,
-		Modal,
-		Button,
+		NcSettingsSection,
+		NcCheckboxRadioSwitch,
+		NcModal,
+		NcButton,
 	},
 
 	filters: {

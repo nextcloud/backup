@@ -21,7 +21,7 @@
   -->
 
 <template>
-	<SettingsSection :title="t('backup', 'App Data')"
+	<NcSettingsSection :name="t('backup', 'App Data')"
 		:description="t('backup', 'Choose where the backup app will initially store the restoring points.')">
 		<form ref="app-data-form" class="app-data__form">
 			<select v-model="appDataForm.storageId"
@@ -43,11 +43,11 @@
 				:placeholder="t('backup', 'Path in which to store the data. (ex: app_data)')"
 				:disabled="loadingAppData || appDataForm.storageId === 0"
 				name="root">
-			<Button type="primary"
+			<NcButton type="primary"
 				:disabled="loadingAppData || !formIsTouched()"
 				@click.prevent="showSetAppDataPopup = true">
 				{{ t('backup', 'Set as App Data') }}
-			</Button>
+			</NcButton>
 
 			<span v-if="loadingAppData" class="icon-loading" />
 			<WindowClose v-else-if="error"
@@ -56,7 +56,7 @@
 				:title="t('backup', 'Error')" />
 		</form>
 
-		<Modal v-if="showSetAppDataPopup"
+		<NcModal v-if="showSetAppDataPopup"
 			size="large"
 			@close="!showSetAppDataPopup">
 			<div class="app-data__set-popup">
@@ -66,24 +66,24 @@
 				<div class="app-data__set-popup__content">
 					{{ t('backup', 'Changing the App Data will delete the data stored in the previous one including restoring points.') }}
 
-					<CheckboxRadioSwitch :loading="loadingSetAppData" :checked.sync="validationCheckboxGorSetAppData">
+					<NcCheckboxRadioSwitch :loading="loadingSetAppData" :checked.sync="validationCheckboxGorSetAppData">
 						{{ t('backup', 'I understand some data will be deleted.') }}
-					</CheckboxRadioSwitch>
+					</NcCheckboxRadioSwitch>
 				</div>
 				<div class="app-data__set-popup__actions">
-					<Button @click="showSetAppDataPopup = false">
+					<NcButton @click="showSetAppDataPopup = false">
 						Cancel
-					</Button>
-					<Button type="primary"
+					</NcButton>
+					<NcButton type="primary"
 						:class="{loading: loadingSetAppData}"
 						:disabled="!validationCheckboxGorSetAppData || loadingSetAppData"
 						@click="setAppData">
 						{{ t('backup', 'Change the App Data') }}
-					</Button>
+					</NcButton>
 				</div>
 			</div>
-		</Modal>
-	</SettingsSection>
+		</NcModal>
+	</NcSettingsSection>
 </template>
 
 <script>
@@ -92,11 +92,7 @@ import WindowClose from 'vue-material-design-icons/WindowClose.vue'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
-import Button from '@nextcloud/vue/dist/Components/Button'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-
-import SettingsSection from '@nextcloud/vue/dist/Components/SettingsSection'
+import { NcModal, NcButton, NcCheckboxRadioSwitch, NcSettingsSection } from '@nextcloud/vue'
 
 import logger from '../logger'
 
@@ -110,11 +106,11 @@ import logger from '../logger'
 export default {
 	name: 'AppDataSection',
 	components: {
-		SettingsSection,
+		NcSettingsSection,
 		WindowClose,
-		Modal,
-		Button,
-		CheckboxRadioSwitch,
+		NcModal,
+		NcButton,
+		NcCheckboxRadioSwitch,
 	},
 
 	props: {
