@@ -94,7 +94,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { NcModal, NcButton, NcCheckboxRadioSwitch, NcSettingsSection } from '@nextcloud/vue'
 
-import logger from '../logger'
+import logger from '../logger.js'
 
 /**
  * @typedef {object} ExternalLocation

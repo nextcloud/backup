@@ -107,7 +107,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { NcSettingsSection, NcEmptyContent, NcButton } from '@nextcloud/vue'
 
-import logger from '../logger'
+import logger from '../logger.js'
 
 /**
  * @typedef {object} ExternalLocation

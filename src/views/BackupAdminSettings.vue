@@ -30,10 +30,10 @@
 </template>
 
 <script>
-import GeneralSettingsSection from '../components/GeneralSettingsSection'
-import ExternalLocationsSection from '../components/ExternalLocationsSection'
-import RestoringPointsListSection from '../components/RestoringPointsListSection'
-import AppDataSection from '../components/AppDataSection'
+import GeneralSettingsSection from '../components/GeneralSettingsSection.vue'
+import ExternalLocationsSection from '../components/ExternalLocationsSection.vue'
+import RestoringPointsListSection from '../components/RestoringPointsListSection.vue'
+import AppDataSection from '../components/AppDataSection.vue'
 
 import SettingsModel from '../models/SettingsModel.js'
 
