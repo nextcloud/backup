@@ -18,7 +18,7 @@
 - Restore single file or the entire instance.
 ]]>
 	</description>
-	<version>1.2.0-alpha0</version>
+	<version>1.5.0-alpha0</version>
 	<licence>agpl</licence>
 	<author mail="maxence@artificial-owl.com">Maxence Lange</author>
 	<namespace>Backup</namespace>
