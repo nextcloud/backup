@@ -14,6 +14,7 @@ OC.L10N.register(
     "Settings saved" : "Iestatījumi saglabāti",
     "Pending" : "Gaida",
     "Completed" : "Pabeigts",
+    "Health" : "Veselība",
     "Status" : "Status",
     "Date" : "Datums",
     "Local" : "Lokāls"
