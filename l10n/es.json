@@ -13,7 +13,7 @@
     "Backup now. Restore later." : "Respaldar ahora. Restaurar más tarde.",
     "The Backup App creates and stores backup images of your Nextcloud:\n\n- Backup the instance, its apps, your data and your database,\n- Administrator can configure the time slots for automated backup,\n- Full and Partial backup, with different frequencies,\n- 2-pass to limit downtime (maintenance mode) of your instance,\n- Compression and encryption,\n- Upload your encrypted backup on an external filesystem,\n- Download and search for your data,\n- Restore single file or the entire instance." : "La app de Copia de seguridad crea y almacena imágenes de respaldo de tu Nextcloud:\n\n- Respalda la instancia, sus apps, tus archivos y tu base de datos\n- Un administrador puede configurar el momento de respaldo automático\n- Copia de seguridad total y parcial, con frecuencias diferentes\n- 2-pass para limitar el tiempo de caída (modo de mantenimiento) de tu instancia\n- Compresión y cifrado\n- Sube tu respaldo cifrado a un sistema de archivos externos\n- Descarga y busca tus archivos\n- Restaura un solo archivo o la instancia completa",
     "App Data" : "Datos de la Aplicación",
-    "Choose where the backup app will initially store the restoring points." : "Elige dónde debe guardar inicialmente los puntos de restauración la aplicación respaldo.",
+    "Choose where the backup app will initially store the restoring points." : "Elija dónde la aplicación de respaldo almacenará inicialmente los puntos de restauración.",
     "Path in which to store the data. (ex: app_data)" : "Ruta donde se guardarán los datos. (ejemplo: app_data)",
     "Set as App Data" : "Establecer como Datos de la Aplicación",
     "Error" : "Error",
