@@ -10,6 +10,7 @@ OC.L10N.register(
     "Actions" : "Aiciones",
     "Delete" : "Desaniciar",
     "Cancel" : "Encaboxar",
+    "Settings saved" : "Guardóse la configuración",
     "Unable to save the settings" : "Nun ye posible guardar la configuración",
     "_day_::_days_" : ["día","díes"],
     "Status" : "Estáu",
