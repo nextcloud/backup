@@ -88,6 +88,7 @@ OC.L10N.register(
     "Scheduled" : "예정됨",
     "Pending" : "보류 중",
     "Not completed" : "완성되지 않았다",
+    "Orphan" : "고아",
     "Completed" : "완료됨",
     "Encrypted" : "암호화",
     "Compressed" : "압축됨",
