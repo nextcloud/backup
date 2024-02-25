@@ -13,7 +13,7 @@ OC.L10N.register(
     "Delete" : "Cantzella",
     "and" : "e",
     "Cancel" : "Annulla",
-    "Settings saved" : "Impostatziones sarvadas",
+    "Settings saved" : "Cunfiguratzione sarvada",
     "Pending" : "In suspesu",
     "Completed" : "Cumpletadu",
     "Encrypted" : "Tzifradu",
