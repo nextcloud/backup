@@ -16,6 +16,7 @@ OC.L10N.register(
     "Pending" : "Pendiente",
     "Status" : "Estáu",
     "Date" : "Data",
-    "ID" : "ID"
+    "ID" : "ID",
+    "Local" : "Llocal"
 },
 "nplurals=2; plural=(n != 1);");
