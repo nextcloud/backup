@@ -1,6 +1,7 @@
 OC.L10N.register(
     "backup",
     {
+    "Backup" : "Cadangan",
     "seconds" : "detik",
     "minutes" : "menit",
     "hours" : "jam",
