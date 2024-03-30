@@ -53,6 +53,7 @@ OC.L10N.register(
     "Completed" : "Completóse",
     "Not packed yet" : "Entá nun s'empaquetó",
     "Packed" : "Empaquetóse",
+    "Encrypted" : "Cifróse",
     "Compressed" : "Comprimióse",
     "Status" : "Estáu",
     "Date" : "Data",
