@@ -74,7 +74,7 @@
     "I understand that the server will be put in maintenance mode." : "Jeg forstår, at serveren vil blive sat i vedligeholdelsestilstand.",
     "Cancel" : "Annuller",
     "Request {mode} restoring point" : "Anmod om {mode} gendannelsespunkt",
-    "Unable to fetch the settings" : "Indstillingerne kunne ikke hentes",
+    "Unable to fetch the settings" : "Kunne ikke hente indstillingerne",
     "Settings saved" : "Indstillinger gemt",
     "Unable to save the settings" : "Kan ikke gemme indstillingerne",
     "Unable to request restoring point" : "Kan ikke anmode om gendannelsespunkt",

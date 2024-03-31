@@ -30,6 +30,7 @@ OC.L10N.register(
     "Settings saved" : "Οι ρυθμίσεις αποθηκεύτηκαν",
     "Unable to save the settings" : "Αδυναμία αποθήκευσης των ρυθμίσεων",
     "Pending" : "Εκκρεμεί",
+    "Not completed" : "Μη ολοκληρωμένο",
     "Completed" : "Ολοκληρωμένες",
     "Encrypted" : "Κρυπτογραφημένο",
     "Health" : "Υγεία",
