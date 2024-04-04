@@ -15,6 +15,7 @@ OC.L10N.register(
     "Cancel" : "Avbryt",
     "Settings saved" : "Inställningar sparade",
     "Unable to save the settings" : "Kunde inte spara inställningarna",
+    "Scheduled" : "Schemalagd",
     "Pending" : "Väntande",
     "Not completed" : "Ej slutförd",
     "Completed" : "Slutförd",
