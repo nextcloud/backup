@@ -55,6 +55,7 @@ OC.L10N.register(
     "Packed" : "Empaquetóse",
     "Encrypted" : "Cifróse",
     "Compressed" : "Comprimióse",
+    "Restoring points history" : "Historial de puntos de restauración",
     "Status" : "Estáu",
     "Date" : "Data",
     "ID" : "ID",
