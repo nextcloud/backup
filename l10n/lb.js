@@ -11,6 +11,7 @@ OC.L10N.register(
     "Actions" : "Aktiounen",
     "Delete" : "Läschen",
     "Cancel" : "Ofbriechen",
+    "Scheduled" : "Geplangt",
     "Pending" : "Ausstoend",
     "Completed" : "Erfëllt",
     "Date" : "Date"
