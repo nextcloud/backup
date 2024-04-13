@@ -168,16 +168,16 @@
         },
         {
             "name": "spatie/db-dumper",
-            "version": "3.4.2",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/db-dumper.git",
-                "reference": "59beef7ad612ca7463dfddb64de6e038eb59e0d7"
+                "reference": "d6519cd43cb8dacec448e97fb713240f9467d147"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/59beef7ad612ca7463dfddb64de6e038eb59e0d7",
-                "reference": "59beef7ad612ca7463dfddb64de6e038eb59e0d7",
+                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/d6519cd43cb8dacec448e97fb713240f9467d147",
+                "reference": "d6519cd43cb8dacec448e97fb713240f9467d147",
                 "shasum": ""
             },
             "require": {
@@ -215,7 +215,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/db-dumper/tree/3.4.2"
+                "source": "https://github.com/spatie/db-dumper/tree/3.5.0"
             },
             "funding": [
                 {
@@ -227,7 +227,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-25T11:42:15+00:00"
+            "time": "2024-04-08T07:24:04+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
@@ -311,16 +311,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v5.4.34",
+            "version": "v5.4.36",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "8fa22178dfc368911dbd513b431cd9b06f9afe7a"
+                "reference": "4fdf34004f149cc20b2f51d7d119aa500caad975"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/8fa22178dfc368911dbd513b431cd9b06f9afe7a",
-                "reference": "8fa22178dfc368911dbd513b431cd9b06f9afe7a",
+                "url": "https://api.github.com/repos/symfony/process/zipball/4fdf34004f149cc20b2f51d7d119aa500caad975",
+                "reference": "4fdf34004f149cc20b2f51d7d119aa500caad975",
                 "shasum": ""
             },
             "require": {
@@ -353,7 +353,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v5.4.34"
+                "source": "https://github.com/symfony/process/tree/v5.4.36"
             },
             "funding": [
                 {
@@ -369,7 +369,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-02T08:41:43+00:00"
+            "time": "2024-02-12T15:49:53+00:00"
         }
     ],
     "packages-dev": [
