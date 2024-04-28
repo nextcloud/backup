@@ -15,6 +15,7 @@ OC.L10N.register(
     "Cancel" : "Membatalkan",
     "Settings saved" : "Setelan tersimpan",
     "Unable to save the settings" : "Tidak dapat menyimpan pengaturan",
+    "Scheduled" : "Dijadwalkan",
     "Pending" : "Tunggu",
     "Completed" : "Selesai",
     "Status" : "Status",
