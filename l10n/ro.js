@@ -17,6 +17,7 @@ OC.L10N.register(
     "Cancel" : "Anulare",
     "Settings saved" : "Setările au fost salvate",
     "Unable to save the settings" : "Nu se pot salva setările",
+    "Scheduled" : "Programat",
     "Pending" : "În așteptare",
     "Not completed" : "Necompletat",
     "Completed" : "Terminat",
