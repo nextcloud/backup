@@ -25,6 +25,7 @@ OC.L10N.register(
     "Settings saved" : "設定を保存しました",
     "Unable to save the settings" : "設定をほぞんできません",
     "_day_::_days_" : ["日"],
+    "Scheduled" : "スケジュール済",
     "Pending" : "保留中",
     "Completed" : "完了",
     "Encrypted" : "暗号化済み",
