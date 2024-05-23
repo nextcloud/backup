@@ -2,6 +2,7 @@ OC.L10N.register(
     "backup",
     {
     "Error" : "Earráid",
+    "Actions" : "Gníomhartha",
     "Delete" : "Scrios",
     "Cancel" : "Cealaigh",
     "Settings saved" : "Socruithe sábháilte",
