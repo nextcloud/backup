@@ -7,6 +7,7 @@ OC.L10N.register(
     "Cancel" : "Cealaigh",
     "Settings saved" : "Socruithe sábháilte",
     "Unable to save the settings" : "Ní féidir na socruithe a shábháil",
+    "Scheduled" : "Sceidealta",
     "Pending" : "Ar feitheamh",
     "Completed" : "Críochnaithe",
     "Date" : "Dáta",
