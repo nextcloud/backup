@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Backup" : "Cúltaca",
     "Error" : "Earráid",
+    "External storage" : "Stóráil sheachtrach",
     "Actions" : "Gníomhartha",
     "Delete" : "Scrios",
     "Cancel" : "Cealaigh",
