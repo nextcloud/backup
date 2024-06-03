@@ -2,6 +2,10 @@ OC.L10N.register(
     "backup",
     {
     "Backup" : "Cúltaca",
+    "seconds" : "soicind",
+    "minutes" : "nóiméad",
+    "hours" : "uair an chloig",
+    "days" : "laethanta",
     "Error" : "Earráid",
     "External storage" : "Stóráil sheachtrach",
     "Actions" : "Gníomhartha",
@@ -9,6 +13,7 @@ OC.L10N.register(
     "Cancel" : "Cealaigh",
     "Settings saved" : "Socruithe sábháilte",
     "Unable to save the settings" : "Ní féidir na socruithe a shábháil",
+    "_day_::_days_" : ["lá","laethanta","laethanta","laethanta","laethanta"],
     "Scheduled" : "Sceidealta",
     "Pending" : "Ar feitheamh",
     "Completed" : "Críochnaithe",
