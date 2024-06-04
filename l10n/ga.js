@@ -16,6 +16,7 @@ OC.L10N.register(
     "_day_::_days_" : ["lá","laethanta","laethanta","laethanta","laethanta"],
     "Scheduled" : "Sceidealta",
     "Pending" : "Ar feitheamh",
+    "Not completed" : "Gan chríochnú",
     "Completed" : "Críochnaithe",
     "Status" : "Stádas",
     "Date" : "Dáta",
