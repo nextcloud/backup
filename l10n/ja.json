@@ -25,6 +25,7 @@
     "_day_::_days_" : ["日"],
     "Scheduled" : "スケジュール済",
     "Pending" : "保留中",
+    "Not completed" : "完成してないです",
     "Completed" : "完了",
     "Encrypted" : "暗号化済み",
     "Compressed" : "圧縮",
