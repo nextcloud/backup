@@ -70,7 +70,7 @@ OC.L10N.register(
     "Export configuration" : "إعدادات التصدير",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "يتم تصدير إعداداتك كما تمّ تنزيلها بشكل مُشفّر. لتتمكن من فك تشفيرها لاحقًا، يرجى الاحتفاظ بالمفتاح الخاص التالي في مكان آمن:",
     "Request the creation of a new restoring point now" : "أطلُب إنشاء نقطة استعادة جديدة الآن",
-    "The creation of a restoring point as been requested and will be initiated soon." : "إنشاء نقطة استعادة كما هو مطلوب وسيتم البدء قريبًا.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "إنشاء نقطة استعادة كما هو مطلوب وسيتم البدء قريبًا.",
     "Create full restoring point" : "أنشِيء نقطة استعادة كاملة",
     "Requesting a backup will put the server in maintenance mode." : "سيؤدي طلب نسخة احتياطية إلى وضع الخادم في وضع الصيانة.",
     "I understand that the server will be put in maintenance mode." : "أفهم أنه سيتم وضع الخادوم في وضع الصيانة.",

@@ -70,7 +70,7 @@ OC.L10N.register(
     "Export configuration" : "구성을 내보냅니다.",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "당신의 설정은 암호화되어 다운로드 되도록 내보내집니다. 이것을 나중에 해독하기 위해서, 이하의 프라이빗 키를 안전한 장소에 보관해주십시오:   ",
     "Request the creation of a new restoring point now" : "지금 새로운 복원 포인트의 생성을 요청합니다.",
-    "The creation of a restoring point as been requested and will be initiated soon." : "복원 포인트의 생성은 요청됐고 곧 시작할 것입니다.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "복원 포인트의 생성은 요청됐고 곧 시작할 것입니다.",
     "Create full restoring point" : "완전한 복원 포인트 생성",
     "Requesting a backup will put the server in maintenance mode." : "백업을 요청하면 서버가 유지 보수 모드가 됩니다.",
     "I understand that the server will be put in maintenance mode." : "나는 서버가 유지 보수 모드로 전환함을 이해합니다.",

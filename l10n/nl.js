@@ -70,7 +70,7 @@ OC.L10N.register(
     "Export configuration" : "Exporteer instellingen",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Je instellingen export is versleuteld gedownload. Om het later te ontsleutelen, sla de volgende sleutel op een veilige plek op:",
     "Request the creation of a new restoring point now" : "Vraag de creatie van een nieuw herstelpunt aan",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Het creëren van een herstelpunt is aangevraagd en zal spoedig geïnitieerd worden.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Het creëren van een herstelpunt is aangevraagd en zal spoedig geïnitieerd worden.",
     "Create full restoring point" : "Creëer volledig herstelpunt",
     "Requesting a backup will put the server in maintenance mode." : "Het aanvragen van een backup zal de server in onderhoudsmodus zetten.",
     "I understand that the server will be put in maintenance mode." : "Ik begrijp dat de server in onderhoudsmodes gezet zal worden.",

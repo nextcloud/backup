@@ -68,7 +68,7 @@
     "Export configuration" : "Exporter la configuration",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Vos paramètres ont été téléchargés chiffrés. Pour pouvoir les déchiffrer plus tard, merci de garder la clé privé suivante en lieu sûr :",
     "Request the creation of a new restoring point now" : "Demander la création d'un nouveau point de restauration tout de suite",
-    "The creation of a restoring point as been requested and will be initiated soon." : "La création d'un point de restauration a été demandée et débutera bientôt.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "La création d'un point de restauration a été demandée et débutera bientôt.",
     "Create full restoring point" : "Créer un point de restauration complet",
     "Requesting a backup will put the server in maintenance mode." : "Demander une sauvegarde mettra le serveur en mode maintenance.",
     "I understand that the server will be put in maintenance mode." : "Je comprends que le serveur sera mis en mode maintenance.",

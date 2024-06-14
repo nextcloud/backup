@@ -68,7 +68,7 @@
     "Export configuration" : "Xuất cấu hình",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Xuất cài đặt của bạn dưới dạng được tải xuống được mã hóa. Để có thể giải mã nó sau này, vui lòng giữ khóa riêng sau đây ở nơi an toàn:",
     "Request the creation of a new restoring point now" : "Yêu cầu tạo điểm khôi phục mới ngay bây giờ",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Việc tạo điểm khôi phục theo yêu cầu và sẽ sớm được bắt đầu.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Việc tạo điểm khôi phục theo yêu cầu và sẽ sớm được bắt đầu.",
     "Create full restoring point" : "Tạo điểm khôi phục đầy đủ",
     "Requesting a backup will put the server in maintenance mode." : "Yêu cầu sao lưu sẽ đưa máy chủ vào chế độ bảo trì.",
     "I understand that the server will be put in maintenance mode." : "Tôi hiểu rằng máy chủ sẽ được đặt ở chế độ bảo trì.",

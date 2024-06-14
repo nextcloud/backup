@@ -70,7 +70,7 @@ OC.L10N.register(
     "Export configuration" : "匯出設定",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "您的設定匯出已下載並加密。要在之後可以解密，請將以下私鑰放在安全的地方：",
     "Request the creation of a new restoring point now" : "立刻請求建立一個新的還原點",
-    "The creation of a restoring point as been requested and will be initiated soon." : "已請求建立還原點，並將很快就會啟動。",
+    "The creation of a restoring point has been requested and will be initiated soon." : "已請求建立還原點，並將很快就會啟動。",
     "Create full restoring point" : "建立完整還原點",
     "Requesting a backup will put the server in maintenance mode." : "請求備份將會讓伺服器進入維護模式。",
     "I understand that the server will be put in maintenance mode." : "我了解伺服器將會進入維護模式。",

@@ -70,7 +70,7 @@ OC.L10N.register(
     "Export configuration" : "Експортиране на конфигурация",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Експортираните ви настройки бяха изтеглени шифровани. За да можете да ги дешифрирате по-късно, моля, съхранявайте следния частен ключ на сигурно място:",
     "Request the creation of a new restoring point now" : "Заявете създаването на нова точка за възстановяване сега",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Беше поискано създаването на точка за възстановяване и това ще започне скоро.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Беше поискано създаването на точка за възстановяване и това ще започне скоро.",
     "Create full restoring point" : "Създаване на пълна точка за възстановяване",
     "Requesting a backup will put the server in maintenance mode." : "Заявката за архивиране ще постави сървъра в режим на поддръжка.",
     "I understand that the server will be put in maintenance mode." : "Разбирам, че сървърът ще бъде поставен в режим на поддръжка.",

@@ -70,7 +70,7 @@ OC.L10N.register(
     "Export configuration" : "Exportovat nastavení",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Export nastavení byl stažen šifrovaný. Aby ho bylo možné později rozšifrovat, uchovávejte následujíc soukromý klíč na bezpečném místě:",
     "Request the creation of a new restoring point now" : "Vyžádat vytvoření nového bodu obnovení nyní",
-    "The creation of a restoring point as been requested and will be initiated soon." : "O vytvoření bodu obnovení bylo zažádáno a bude brzy zahájeno.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "O vytvoření bodu obnovení bylo zažádáno a bude brzy zahájeno.",
     "Create full restoring point" : "Vytvořit úplný bod obnovení",
     "Requesting a backup will put the server in maintenance mode." : "Vyžádání si pořízení zálohy přepne server do režimu údržby.",
     "I understand that the server will be put in maintenance mode." : "Rozumím tomu, že server bude přepnut do režimu údržby.",
