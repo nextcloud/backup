@@ -70,7 +70,7 @@ OC.L10N.register(
     "Export configuration" : "Cumraíocht easpórtála",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Easpórtáil do shocruithe mar a íoslódáladh iad. Le bheith in ann é a dhíchriptiú níos déanaí, coinnigh an eochair phríobháideach seo a leanas in áit shábháilte le do thoil:",
     "Request the creation of a new restoring point now" : "Iarr go gcruthófar pointe athchóirithe nua anois",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Cruthú pointe athchóirithe mar a iarradh agus cuirfear tús leis go luath.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Cruthú pointe athchóirithe mar a iarradh agus cuirfear tús leis go luath.",
     "Create full restoring point" : "Cruthaigh pointe athshlánaithe iomlán",
     "Requesting a backup will put the server in maintenance mode." : "Má iarrtar cúltaca cuirfear an freastalaí i mód cothabhála.",
     "I understand that the server will be put in maintenance mode." : "Tuigim go gcuirfear an freastalaí i mód cothabhála.",

@@ -70,7 +70,7 @@ OC.L10N.register(
     "Export configuration" : "Exportar configuración",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Tu configuración exportada se ha descargado encriptada. Para poder descifrarla más tarde, guarda la siguiente clave privada en un lugar seguro:",
     "Request the creation of a new restoring point now" : "Solicitar la creación de un nuevo punto de restauración ahora",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Se ha solicitado la creación de un punto de restauración y se iniciará pronto.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Se ha solicitado la creación de un punto de restauración y se iniciará pronto.",
     "Create full restoring point" : "Crear punto de restauración completo",
     "Requesting a backup will put the server in maintenance mode." : "Solicitar una copia de seguridad pondrá el servidor en modo de mantenimiento.",
     "I understand that the server will be put in maintenance mode." : "Entiendo que el servidor se pondrá en modo de mantenimiento.",
