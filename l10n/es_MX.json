@@ -12,6 +12,7 @@
     "Cancel" : "Cancelar",
     "Settings saved" : "Se han guardado las configuraciones ",
     "Unable to save the settings" : "No se puede guarder la configuración",
+    "_day_::_days_" : ["día","días","días"],
     "Scheduled" : "Programado",
     "Pending" : "Pendiente",
     "Completed" : "Completado",
