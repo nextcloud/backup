@@ -10,6 +10,7 @@ OC.L10N.register(
     "Delete" : "Lemel",
     "Cancel" : "Arrest",
     "Settings saved" : "Stummoù enrollet",
+    "Scheduled" : "Raktreset",
     "Pending" : "O c'hortoz",
     "Completed" : "Achuet",
     "Health" : "Yec'hed",
