@@ -9,6 +9,7 @@ OC.L10N.register(
     "minutes" : "分",
     "hours" : "時間",
     "days" : "日",
+    "A new restoring point ({type}) has been generated, requiring maintenance mode for {downtime}." : "新規の復元ポイント({type})が作成され、{downtime}のメンテナンスモードを要します。",
     "App Data" : "アプリデータ",
     "Set as App Data" : "アプリデータとして設定",
     "Error" : "エラー",
