@@ -11,6 +11,7 @@ OC.L10N.register(
     "External storage" : "Almacenamiento externo",
     "Actions" : "Acciones",
     "Delete" : "Eliminar",
+    "and" : "y",
     "Cancel" : "Cancelar",
     "Settings saved" : "Se han guardado las configuraciones ",
     "Unable to save the settings" : "No se puede guarder la configuración",
