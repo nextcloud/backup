@@ -29,6 +29,7 @@ OC.L10N.register(
     "Scheduled" : "スケジュール済",
     "Pending" : "保留中",
     "Not completed" : "完成してないです",
+    "Orphan" : "親のない子",
     "Completed" : "完了",
     "Encrypted" : "暗号化済み",
     "Compressed" : "圧縮",
