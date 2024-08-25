@@ -15,6 +15,7 @@ OC.L10N.register(
     "Settings saved" : "Definições guardadas",
     "Unable to save the settings" : "Não foi possível salvar as configurações",
     "Pending" : "Pendente",
+    "Orphan" : "Órfão",
     "Completed" : "Concluída",
     "Encrypted" : "Encriptado",
     "Health" : "Saúde",
