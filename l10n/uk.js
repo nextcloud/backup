@@ -48,6 +48,7 @@ OC.L10N.register(
     "Scheduled" : "Заплановано",
     "Pending" : "Очікування",
     "Not completed" : "Не завершено",
+    "Orphan" : "Покинутий",
     "Completed" : "Завершені",
     "Encrypted" : "Зашифровано",
     "Compressed" : "Заархівовано",
