@@ -16,6 +16,7 @@ OC.L10N.register(
     "Unable to save the settings" : "Ne eblis konservi la agordojn",
     "_day_::_days_" : ["tago","tagoj"],
     "Pending" : "Pritraktota",
+    "Orphan" : "Orfo",
     "Completed" : "Plenumita",
     "Status" : "Stato",
     "Date" : "Date",
