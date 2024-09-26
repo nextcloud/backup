@@ -45,6 +45,7 @@ OC.L10N.register(
     "Unable to save the settings" : "Неможливо зберегти налаштування",
     "Unable to request restoring point" : "Неможливо створити точку відновлення",
     "Unable to export settings" : "Неможливо експортувати налаштування",
+    "_day_::_days_" : ["день","дні","дні","дні"],
     "Scheduled" : "Заплановано",
     "Pending" : "Очікування",
     "Not completed" : "Не завершено",
