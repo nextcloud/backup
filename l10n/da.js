@@ -70,7 +70,7 @@ OC.L10N.register(
     "Export configuration" : "Eksporter konfiguration",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Dine indstillinger eksporteres som blevet downloadet krypteret. For at kunne dekryptere den senere skal du opbevare følgende private nøgle på et sikkert sted:",
     "Request the creation of a new restoring point now" : "Anmod om oprettelse af et nyt gendannelsespunkt nu",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Oprettelse af et gendannelsespunkt som blevet anmodet om og vil snart blive påbegyndt.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Oprettelse af et gendannelsespunkt som blevet anmodet om og vil snart blive påbegyndt.",
     "Create full restoring point" : "Opret fuldt gendannelsespunkt",
     "Requesting a backup will put the server in maintenance mode." : "Anmodning om en sikkerhedskopi vil sætte serveren i vedligeholdelsestilstand.",
     "I understand that the server will be put in maintenance mode." : "Jeg forstår, at serveren vil blive sat i vedligeholdelsestilstand.",

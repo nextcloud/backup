@@ -68,7 +68,7 @@
     "Export configuration" : "Конфигурация экспорта",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Ваши настройки экспортированы в зашифрованном виде. Чтобы иметь возможность расшифровать его, пожалуйста, храните этот закрытый ключ в безопасном месте:",
     "Request the creation of a new restoring point now" : "Запросите создание новой точки восстановления сейчас",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Создание точки восстановления по запросу будет начато в ближайшее время.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Создание точки восстановления по запросу будет начато в ближайшее время.",
     "Create full restoring point" : "Создать полную точку восстановления",
     "Requesting a backup will put the server in maintenance mode." : "Запрос резервной копии переведет сервер в режим обслуживания.",
     "I understand that the server will be put in maintenance mode." : "Я понимаю, что сервер будет переведен в режим обслуживания.",

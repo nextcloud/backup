@@ -68,7 +68,7 @@
     "Export configuration" : "Exportovať konfiguráciu",
     "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Export vašich nastavení bol stiahnutý zašifrovaný. Aby ste ho mohli neskôr dešifrovať, uschovajte si nasledujúci súkromný kľúč na bezpečnom mieste:",
     "Request the creation of a new restoring point now" : "Požiadajte o vytvorenie nového bodu obnovenia už teraz",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Vytvorenie bodu obnovenia bolo vyžiadané a čoskoro sa spustí.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Vytvorenie bodu obnovenia bolo vyžiadané a čoskoro sa spustí.",
     "Create full restoring point" : "Vytvoriť kompletný bod obnovy",
     "Requesting a backup will put the server in maintenance mode." : "Požiadaním o zálohu sa server prepne do režimu údržby.",
     "I understand that the server will be put in maintenance mode." : "Chápem, že server bude uvedený do režimu údržby.",
