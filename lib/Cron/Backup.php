@@ -31,7 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Cron;
 
-use OC\BackgroundJob\TimedJob;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\TimedJob;
 use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
@@ -48,39 +49,24 @@ use Throwable;
 class Backup extends TimedJob {
 	use TNCLogger;
 
-
-	/** @var PointService */
-	private $pointService;
-
-	/** @var CronService */
-	private $cronService;
-
-	/** @var ConfigService */
-	private $configService;
-
-	/** @var LoggerInterface */
-	private $loggerInterface;
-
 	/**
 	 * Backup constructor.
 	 *
+	 * @param ITimeFactory $time
 	 * @param PointService $pointService
 	 * @param CronService $cronService
 	 * @param ConfigService $configService
 	 * @param LoggerInterface $loggerInterface
 	 */
 	public function __construct(
-		PointService $pointService,
-		CronService $cronService,
-		ConfigService $configService,
-		LoggerInterface $loggerInterface
+		ITimeFactory $time,
+		private PointService $pointService,
+		private CronService $cronService,
+		private ConfigService $configService,
+		private LoggerInterface $loggerInterface
 	) {
+		parent::__construct($time);
 		$this->setInterval(900);
-
-		$this->pointService = $pointService;
-		$this->cronService = $cronService;
-		$this->configService = $configService;
-		$this->loggerInterface = $loggerInterface;
 	}
 
 

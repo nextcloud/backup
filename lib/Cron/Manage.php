@@ -31,7 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Cron;
 
-use OC\BackgroundJob\TimedJob;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\TimedJob;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Model\RestoringPoint;
@@ -52,31 +53,10 @@ use Throwable;
 class Manage extends TimedJob {
 	public const DELAY_CHECK_HEALTH = 86400 * 7; // 7d
 
-	/** @var CronService */
-	private $cronService;
-
-	/** @var PointService */
-	private $pointService;
-
-	/** @var PackService */
-	private $packService;
-
-	/** @var UploadService */
-	private $uploadService;
-
-	/** @var ExternalFolderService */
-	private $externalFolderService;
-
-	/** @var OutputService */
-	private $outputService;
-
-	/** @var ConfigService */
-	private $configService;
-
-
 	/**
 	 * Manage constructor.
 	 *
+	 * @param ITimeFactory $time
 	 * @param CronService $cronService
 	 * @param PointService $pointService
 	 * @param PackService $packService
@@ -86,23 +66,17 @@ class Manage extends TimedJob {
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
-		CronService $cronService,
-		PointService $pointService,
-		PackService $packService,
-		UploadService $uploadService,
-		ExternalFolderService $externalFolderService,
-		OutputService $outputService,
-		ConfigService $configService
+		ITimeFactory $time,
+		private CronService $cronService,
+		private PointService $pointService,
+		private PackService $packService,
+		private UploadService $uploadService,
+		private ExternalFolderService $externalFolderService,
+		private OutputService $outputService,
+		private ConfigService $configService
 	) {
+		parent::__construct($time);
 		$this->setInterval(3600);
-
-		$this->cronService = $cronService;
-		$this->pointService = $pointService;
-		$this->packService = $packService;
-		$this->uploadService = $uploadService;
-		$this->externalFolderService = $externalFolderService;
-		$this->outputService = $outputService;
-		$this->configService = $configService;
 	}
 
 
