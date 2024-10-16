@@ -71,7 +71,7 @@
     "The creation of a restoring point as been requested and will be initiated soon." : "إنشاء نقطة استعادة كما هو مطلوب وسيتم البدء قريبًا.",
     "Create full restoring point" : "إنشاء نقطة استعادة كاملة",
     "Requesting a backup will put the server in maintenance mode." : "سيؤدي طلب نسخة احتياطية إلى وضع الخادم في وضع الصيانة.",
-    "I understand that the server will be put in maintenance mode." : "أفهم أنه سيتم وضع الخادوم في وضع الصيانة.",
+    "I understand that the server will be put in maintenance mode." : "أفهم أنه سيتم وضع الخادم في وضع الصيانة.",
     "Cancel" : "إلغاء",
     "Request {mode} restoring point" : "طلب {mode} نقطة استعادة",
     "Unable to fetch the settings" : "تعذّر جلب الإعدادات",
