@@ -30,7 +30,7 @@ OC.L10N.register(
     "Manage available storage locations for storing restoring points" : "إدارة مواضع التخزين المتاحة لتخزين نقاط الاستعادة",
     "Path in which to store the restoring points. (ex: backups)" : "المسار الذي سيتم فيه تخزين النقاط المُستعادَة (مثلاً: النُّسَخ الاحتياطية backups)",
     "Add new external location" : "أضِف موضعاً خارجيّاً جديداً",
-    "External storage" : "تخزين خارجي",
+    "External storage" : "التخزين الخارجي",
     "Restoring point location" : "إستعادة موضع النقاط",
     "Actions" : "الإجراءات",
     "Delete" : "حذف",
