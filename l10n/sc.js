@@ -11,6 +11,7 @@ OC.L10N.register(
     "External storage" : "Archiviatzione de foras",
     "Actions" : "Atziones",
     "Delete" : "Cantzella",
+    "Enable background tasks" : "Permite is fainas in segundu pranu",
     "and" : "e",
     "Cancel" : "Annulla",
     "Settings saved" : "Cunfiguratzione sarvada",
