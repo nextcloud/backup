@@ -18,6 +18,7 @@ OC.L10N.register(
     "Scheduled" : "Schemalagd",
     "Pending" : "Väntande",
     "Not completed" : "Ej slutförd",
+    "Orphan" : "Övergiven",
     "Completed" : "Slutförd",
     "Encrypted" : "Krypterad",
     "Health" : "Hälsa",
