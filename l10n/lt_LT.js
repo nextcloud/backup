@@ -11,7 +11,7 @@ OC.L10N.register(
     "Actions" : "Veiksmai",
     "Delete" : "Ištrinti",
     "and" : "ir",
-    "Cancel" : "Atšaukti",
+    "Cancel" : "Atsisakyti",
     "Settings saved" : "Nustatymai įrašyti",
     "Unable to save the settings" : "Nepavyko įrašyti nustatymų",
     "Pending" : "Laukiantis",
