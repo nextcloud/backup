@@ -6,6 +6,7 @@ OC.L10N.register(
     "External storage" : "External storage",
     "Delete" : "Obriši",
     "Cancel" : "Otkaži",
+    "Scheduled" : "Zakazana",
     "Pending" : "Na čekanju",
     "Completed" : "Završeno",
     "Date" : "Date"
