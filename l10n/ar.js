@@ -90,7 +90,7 @@ OC.L10N.register(
     "Not completed" : "غير مكتمل",
     "Orphan" : "يتيم",
     "Completed" : "مُكتمل",
-    "Not packed yet" : "غير مُوضّب بعدُ",
+    "Not packed yet" : "غير مغلف حتى الآن",
     "Packed" : "مُوضّبٌ",
     "Encrypted" : "مُشفّرٌ",
     "Compressed" : "مضغوطٌ",
