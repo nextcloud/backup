@@ -12,6 +12,7 @@ OC.L10N.register(
     "Delete" : "Dzēst",
     "Cancel" : "Atcelt",
     "Settings saved" : "Iestatījumi saglabāti",
+    "Unable to save the settings" : "Nevarēja saglabāt iestatījumus",
     "Pending" : "Gaida",
     "Completed" : "Pabeigts",
     "Health" : "Veselība",
