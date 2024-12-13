@@ -68,9 +68,7 @@ OC.L10N.register(
     "Export backup configuration" : "Извоз конфигурациј резервне копије",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Дугметом испод можете да извезете своја подешавања. Извезени фајл је битан јер вам омогућава да вратите своју резервну копију у случају потпуног губитка података. Чувајте га на сигурном месту!",
     "Export configuration" : "Извези конфигурацију",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Ваш извоз подешавања је преузет у шифрираном облику. Да бисте касније могли да га дешифрујете, молимо вас да следећи приватни кључ чувате на сигурном месту:",
     "Request the creation of a new restoring point now" : "Захтевај креирање нове тачке враћања одмах",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Захтевано је креирање тачке враћања и ускоро ће да почне.",
     "Create full restoring point" : "Креирај потпуну тачку враћања",
     "Requesting a backup will put the server in maintenance mode." : "Захтев за резервном копијом ће поставити сервер у режим одржавања.",
     "I understand that the server will be put in maintenance mode." : "Разумем да ће се сервер поставити у режим одржавања.",
@@ -106,6 +104,8 @@ OC.L10N.register(
     "Next full restoring point" : "Наредна потпуна тачка враћања",
     "Next partial restoring point" : "Наредна делимична тачка враћања",
     "Unable to fetch restoring points" : "Не могу да се преузму тачке враћања",
-    "Scan Backup Folder" : "Скенирај фолдер са резервним копијама"
+    "Scan Backup Folder" : "Скенирај фолдер са резервним копијама",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Ваш извоз подешавања је преузет у шифрираном облику. Да бисте касније могли да га дешифрујете, молимо вас да следећи приватни кључ чувате на сигурном месту:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Захтевано је креирање тачке враћања и ускоро ће да почне."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

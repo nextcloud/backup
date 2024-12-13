@@ -68,9 +68,7 @@ OC.L10N.register(
     "Export backup configuration" : "Экспорт конфигурации резервного копирования",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Вы можете экспортировать свои настройки с помощью кнопки снизу. Экспортированный файл имеет важное значение, так как он позволяет восстановить резервную копию в случае полной потери данных. Храните его в безопасном месте!",
     "Export configuration" : "Конфигурация экспорта",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Ваши настройки экспортированы в зашифрованном виде. Чтобы иметь возможность расшифровать его, пожалуйста, храните этот закрытый ключ в безопасном месте:",
     "Request the creation of a new restoring point now" : "Запросите создание новой точки восстановления сейчас",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Создание точки восстановления по запросу будет начато в ближайшее время.",
     "Create full restoring point" : "Создать полную точку восстановления",
     "Requesting a backup will put the server in maintenance mode." : "Запрос резервной копии переведет сервер в режим обслуживания.",
     "I understand that the server will be put in maintenance mode." : "Я понимаю, что сервер будет переведен в режим обслуживания.",
@@ -106,6 +104,8 @@ OC.L10N.register(
     "Next full restoring point" : "Следующая точка полного восстановления",
     "Next partial restoring point" : "Следующая точка частичного восстановления",
     "Unable to fetch restoring points" : "Невозможно получить точки восстановления",
-    "Scan Backup Folder" : "Сканировать резервную папку"
+    "Scan Backup Folder" : "Сканировать резервную папку",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Ваши настройки экспортированы в зашифрованном виде. Чтобы иметь возможность расшифровать его, пожалуйста, храните этот закрытый ключ в безопасном месте:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Создание точки восстановления по запросу будет начато в ближайшее время."
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

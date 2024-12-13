@@ -66,9 +66,9 @@
     "Export backup configuration" : "导出备份配置",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "你可以用下面的按钮导出你的设置。导出的文件很重要，因为它允许您在数据完全丢失的情况下恢复备份。把它放在安全的地方！",
     "Export configuration" : "导出配置",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "您的设置导出已下载并加密。为了以后能够解密，请将以下私钥保存在一个安全的地方：",
+    "Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "您的设置导出已下载并加密。为了以后能够解密，请将以下私钥保存在一个安全的地方:",
     "Request the creation of a new restoring point now" : "立即请求创建一个新的还原点",
-    "The creation of a restoring point as been requested and will be initiated soon." : "已请求创建还原点，并将很快初始化。",
+    "The creation of a restoring point has been requested and will be initiated soon." : "已请求创建还原点，并将很快初始化。",
     "Create full restoring point" : "创建完整还原点",
     "Requesting a backup will put the server in maintenance mode." : "请求备份将使服务器处于维护模式。",
     "I understand that the server will be put in maintenance mode." : "我了解服务器将进入维护模式。",
@@ -104,6 +104,8 @@
     "Next full restoring point" : "下个完整还原点",
     "Next partial restoring point" : "下个部分还原点",
     "Unable to fetch restoring points" : "无法获取还原点",
-    "Scan Backup Folder" : "扫描备份文件夹"
+    "Scan Backup Folder" : "扫描备份文件夹",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "您的设置导出已下载并加密。为了以后能够解密，请将以下私钥保存在一个安全的地方：",
+    "The creation of a restoring point as been requested and will be initiated soon." : "已请求创建还原点，并将很快初始化。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

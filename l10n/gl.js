@@ -68,9 +68,7 @@ OC.L10N.register(
     "Export backup configuration" : "Exportar a configuración de copia de seguranza",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Pode exportar a súa configuración co botón seguinte. O ficheiro exportado é importante xa que lle permite restaurar a súa copia de seguranza en caso de perder os datos completos. Gárdeo nun lugar seguro!",
     "Export configuration" : "Exportar a configuración",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "A exportación dos seus axustes descargouse cifrada. Para poder descifrala máis tarde, garde a seguinte chave privada nun lugar seguro:",
     "Request the creation of a new restoring point now" : "Solicite agora a creación dun novo punto de restauración",
-    "The creation of a restoring point as been requested and will be initiated soon." : "A creación dun punto de restauración tal e como se solicitou e iniciarase en breve.",
     "Create full restoring point" : "Crea un punto de restauración completa",
     "Requesting a backup will put the server in maintenance mode." : "Solicitar unha copia de seguranza porá o servidor en modo de mantemento.",
     "I understand that the server will be put in maintenance mode." : "Entendo que o servidor porase en modo de mantemento.",
@@ -106,6 +104,8 @@ OC.L10N.register(
     "Next full restoring point" : "Próximo punto de restauración completa",
     "Next partial restoring point" : "Próximo punto de restauración parcial",
     "Unable to fetch restoring points" : "Non é posíbel recuperar os puntos de restauración",
-    "Scan Backup Folder" : "Analizar o cartafol de copia de seguranza"
+    "Scan Backup Folder" : "Analizar o cartafol de copia de seguranza",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "A exportación dos seus axustes descargouse cifrada. Para poder descifrala máis tarde, garde a seguinte chave privada nun lugar seguro:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "A creación dun punto de restauración tal e como se solicitou e iniciarase en breve."
 },
 "nplurals=2; plural=(n != 1);");

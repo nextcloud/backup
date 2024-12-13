@@ -66,9 +66,7 @@
     "Export backup configuration" : "Exportar configuración de copias de seguridad",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Puedes exportar tu configuración con el botón de abajo. El archivo exportado es importante, ya que te permite restaurar tu copia de seguridad en caso de pérdida total de datos. ¡Guárdalo en un lugar seguro!",
     "Export configuration" : "Exportar configuración",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Tu configuración exportada se ha descargado encriptada. Para poder descifrarla más tarde, guarda la siguiente clave privada en un lugar seguro:",
     "Request the creation of a new restoring point now" : "Solicitar la creación de un nuevo punto de restauración ahora",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Se ha solicitado la creación de un punto de restauración y se iniciará pronto.",
     "Create full restoring point" : "Crear punto de restauración completo",
     "Requesting a backup will put the server in maintenance mode." : "Solicitar una copia de seguridad pondrá el servidor en modo de mantenimiento.",
     "I understand that the server will be put in maintenance mode." : "Entiendo que el servidor se pondrá en modo de mantenimiento.",
@@ -104,6 +102,8 @@
     "Next full restoring point" : "Próximo punto de restauración completo",
     "Next partial restoring point" : "Próximo punto de restauración parcial",
     "Unable to fetch restoring points" : "No se pudieron obtener los puntos de restauración",
-    "Scan Backup Folder" : "Escanear carpeta de respaldo"
+    "Scan Backup Folder" : "Escanear carpeta de respaldo",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Tu configuración exportada se ha descargado encriptada. Para poder descifrarla más tarde, guarda la siguiente clave privada en un lugar seguro:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Se ha solicitado la creación de un punto de restauración y se iniciará pronto."
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

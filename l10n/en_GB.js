@@ -68,9 +68,7 @@ OC.L10N.register(
     "Export backup configuration" : "Export backup configuration",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!",
     "Export configuration" : "Export configuration",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:",
     "Request the creation of a new restoring point now" : "Request the creation of a new restoring point now",
-    "The creation of a restoring point as been requested and will be initiated soon." : "The creation of a restoring point as been requested and will be initiated soon.",
     "Create full restoring point" : "Create full restoring point",
     "Requesting a backup will put the server in maintenance mode." : "Requesting a backup will put the server in maintenance mode.",
     "I understand that the server will be put in maintenance mode." : "I understand that the server will be put in maintenance mode.",
@@ -106,6 +104,8 @@ OC.L10N.register(
     "Next full restoring point" : "Next full restoring point",
     "Next partial restoring point" : "Next partial restoring point",
     "Unable to fetch restoring points" : "Unable to fetch restoring points",
-    "Scan Backup Folder" : "Scan Backup Folder"
+    "Scan Backup Folder" : "Scan Backup Folder",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "The creation of a restoring point as been requested and will be initiated soon."
 },
 "nplurals=2; plural=(n != 1);");

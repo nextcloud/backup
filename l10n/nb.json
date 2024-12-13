@@ -66,9 +66,7 @@
     "Export backup configuration" : "Eksporter sikkerhetskopieringskonfigurasjon",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Du kan eksportere innstillingene dine med knappen nedenfor. Den eksporterte filen er viktig siden den lar deg gjenopprette sikkerhetskopien i tilfelle fullstendige data går tapt. Oppbevar den på et trygt sted!",
     "Export configuration" : "Eksporter konfigurasjon",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Innstillingene dine eksporteres som de er lastet ned kryptert. For å kunne dekryptere den senere, vennligst oppbevar følgende private nøkkel på et trygt sted:",
     "Request the creation of a new restoring point now" : "Be om opprettelse av et nytt gjenopprettingspunkt nå",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Opprettelsen av et gjenopprettingspunkt som ble forespurt og vil bli igangsatt snart.",
     "Create full restoring point" : "Opprett et fullstendig gjenopprettingspunkt",
     "Requesting a backup will put the server in maintenance mode." : "Å be om en sikkerhetskopi vil sette serveren i vedlikeholdsmodus.",
     "I understand that the server will be put in maintenance mode." : "Jeg forstår at serveren vil settes i vedlikeholdsmodus.",
@@ -104,6 +102,8 @@
     "Next full restoring point" : "Neste fullstendig gjenopprettingspunkt",
     "Next partial restoring point" : "Neste delvis gjenopprettingspunkt",
     "Unable to fetch restoring points" : "Kan ikke hente gjenopprettingspunkter",
-    "Scan Backup Folder" : "Skann katalog for sikkerhetskopi"
+    "Scan Backup Folder" : "Skann katalog for sikkerhetskopi",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Innstillingene dine eksporteres som de er lastet ned kryptert. For å kunne dekryptere den senere, vennligst oppbevar følgende private nøkkel på et trygt sted:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Opprettelsen av et gjenopprettingspunkt som ble forespurt og vil bli igangsatt snart."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
