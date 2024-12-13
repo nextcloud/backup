@@ -66,9 +66,7 @@
     "Export backup configuration" : "زاپاسلاش سەپلىمىسىنى چىقىرىش",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "تۆۋەندىكى كۇنۇپكا ئارقىلىق تەڭشەكلىرىڭىزنى ئېكسپورت قىلالايسىز. ئېكسپورت قىلىنغان ھۆججەت ناھايىتى مۇھىم ، چۈنكى ئۇ تولۇق سانلىق مەلۇمات يوقاپ كەتكەن ئەھۋالدا زاپاسلاشنى ئەسلىگە كەلتۈرەلەيدۇ. ئۇنى بىخەتەر جايدا ساقلاڭ!",
     "Export configuration" : "سەپلىمە ئېكسپورتى",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "شىفىرلانغان چۈشۈرۈلگەن تەڭشەكلىرىڭىز ئېكسپورت قىلىنىدۇ. كېيىن شىفىر يېشىش ئۈچۈن تۆۋەندىكى شەخسىي ئاچقۇچنى بىخەتەر جايدا ساقلاڭ:",
     "Request the creation of a new restoring point now" : "ھازىر يېڭى ئەسلىگە كەلتۈرۈش نۇقتىسى قۇرۇشنى تەلەپ قىلىڭ",
-    "The creation of a restoring point as been requested and will be initiated soon." : "تەلەپ بويىچە ئەسلىگە كەلتۈرۈش نۇقتىسى قۇرۇش ۋە پات يېقىندا باشلىنىدۇ.",
     "Create full restoring point" : "تولۇق ئەسلىگە كەلتۈرۈش نۇقتىسى قۇر",
     "Requesting a backup will put the server in maintenance mode." : "زاپاسلاشنى تەلەپ قىلىش مۇلازىمېتىرنى ئاسراش ھالىتىگە قويىدۇ.",
     "I understand that the server will be put in maintenance mode." : "مۇلازىمېتىرنىڭ ئاسراش ھالىتىگە كىرىدىغانلىقىنى چۈشىنىمەن.",
@@ -100,6 +98,8 @@
     "Next full restoring point" : "كېيىنكى تولۇق ئەسلىگە كەلتۈرۈش نۇقتىسى",
     "Next partial restoring point" : "كېيىنكى قىسمەن ئەسلىگە كەلتۈرۈش نۇقتىسى",
     "Unable to fetch restoring points" : "ئەسلىگە كەلتۈرۈش نۇقتىلىرىنى ئالالمىدى",
-    "Scan Backup Folder" : "زاپاس ھۆججەت قىسقۇچنى سايىلەڭ"
+    "Scan Backup Folder" : "زاپاس ھۆججەت قىسقۇچنى سايىلەڭ",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "شىفىرلانغان چۈشۈرۈلگەن تەڭشەكلىرىڭىز ئېكسپورت قىلىنىدۇ. كېيىن شىفىر يېشىش ئۈچۈن تۆۋەندىكى شەخسىي ئاچقۇچنى بىخەتەر جايدا ساقلاڭ:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "تەلەپ بويىچە ئەسلىگە كەلتۈرۈش نۇقتىسى قۇرۇش ۋە پات يېقىندا باشلىنىدۇ."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

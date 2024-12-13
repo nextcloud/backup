@@ -68,9 +68,7 @@ OC.L10N.register(
     "Export backup configuration" : "Esporta la configurazione del backup",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Puoi esportare le tue impostazioni con il pulsante in basso. Il file esportato è importante in quanto consente di ripristinare il backup in caso di perdita completa dei dati. Conservalo in un luogo sicuro!",
     "Export configuration" : "Esporta la configurazione",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Le tue impostazioni esportate vengono scaricate crittografate. Per poterlo decifrare in un secondo momento, conserva la seguente chiave privata in un luogo sicuro:",
     "Request the creation of a new restoring point now" : "Richiedi ora la creazione di un nuovo punto di ripristino",
-    "The creation of a restoring point as been requested and will be initiated soon." : "La creazione di un punto di ripristino, come richiesto, sarà avviata a breve.",
     "Create full restoring point" : "Crea un punto di ripristino completo",
     "Requesting a backup will put the server in maintenance mode." : "La richiesta di un backup metterà il server in modalità di manutenzione.",
     "I understand that the server will be put in maintenance mode." : "Comprendo che il server verrà messo in modalità di manutenzione.",
@@ -106,6 +104,8 @@ OC.L10N.register(
     "Next full restoring point" : "Prossimo punto di ripristino completo",
     "Next partial restoring point" : "Prossimo punto di ripristino parziale",
     "Unable to fetch restoring points" : "Impossibile recuperare i punti di ripristino",
-    "Scan Backup Folder" : "Scansiona la cartella di backup"
+    "Scan Backup Folder" : "Scansiona la cartella di backup",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Le tue impostazioni esportate vengono scaricate crittografate. Per poterlo decifrare in un secondo momento, conserva la seguente chiave privata in un luogo sicuro:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "La creazione di un punto di ripristino, come richiesto, sarà avviata a breve."
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

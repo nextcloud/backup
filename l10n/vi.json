@@ -66,9 +66,7 @@
     "Export backup configuration" : "Xuất cấu hình sao lưu",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Bạn có thể xuất cài đặt của mình bằng nút bên dưới. Tệp đã xuất rất quan trọng vì nó cho phép bạn khôi phục bản sao lưu của mình trong trường hợp mất toàn bộ dữ liệu. Giữ nó ở một nơi an toàn!",
     "Export configuration" : "Xuất cấu hình",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Xuất cài đặt của bạn dưới dạng được tải xuống được mã hóa. Để có thể giải mã nó sau này, vui lòng giữ khóa riêng sau đây ở nơi an toàn:",
     "Request the creation of a new restoring point now" : "Yêu cầu tạo điểm khôi phục mới ngay bây giờ",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Việc tạo điểm khôi phục theo yêu cầu và sẽ sớm được bắt đầu.",
     "Create full restoring point" : "Tạo điểm khôi phục đầy đủ",
     "Requesting a backup will put the server in maintenance mode." : "Yêu cầu sao lưu sẽ đưa máy chủ vào chế độ bảo trì.",
     "I understand that the server will be put in maintenance mode." : "Tôi hiểu rằng máy chủ sẽ được đặt ở chế độ bảo trì.",
@@ -103,6 +101,8 @@
     "Next full restoring point" : "Điểm khôi phục đầy đủ tiếp theo",
     "Next partial restoring point" : "Điểm khôi phục một phần tiếp theo",
     "Unable to fetch restoring points" : "Không thể lấy điểm khôi phục",
-    "Scan Backup Folder" : "Quét thư mục sao lưu"
+    "Scan Backup Folder" : "Quét thư mục sao lưu",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Xuất cài đặt của bạn dưới dạng được tải xuống được mã hóa. Để có thể giải mã nó sau này, vui lòng giữ khóa riêng sau đây ở nơi an toàn:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Việc tạo điểm khôi phục theo yêu cầu và sẽ sớm được bắt đầu."
 },"pluralForm" :"nplurals=1; plural=0;"
 }

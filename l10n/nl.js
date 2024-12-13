@@ -68,9 +68,9 @@ OC.L10N.register(
     "Export backup configuration" : "Exporteer backup instellingen",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Je kunt de instellingen exporteren met de onderstaande knop. Het geëxporteerde bestand is belangrijk omdat het je in staat stelt je backup te herstellen bij een volledig gegevensverlies. Bewaar het op een veilige plek!",
     "Export configuration" : "Exporteer instellingen",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Je instellingen export is versleuteld gedownload. Om het later te ontsleutelen, sla de volgende sleutel op een veilige plek op:",
+    "Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Je instellingen export is geëncrypteerd gedownload. Om het later te decrypteren, sla de volgende sleutel op een veilige plek op:",
     "Request the creation of a new restoring point now" : "Vraag de creatie van een nieuw herstelpunt aan",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Het creëren van een herstelpunt is aangevraagd en zal spoedig geïnitieerd worden.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Het creëren van een herstelpunt is aangevraagd en zal spoedig geïnitieerd worden.",
     "Create full restoring point" : "Creëer volledig herstelpunt",
     "Requesting a backup will put the server in maintenance mode." : "Het aanvragen van een backup zal de server in onderhoudsmodus zetten.",
     "I understand that the server will be put in maintenance mode." : "Ik begrijp dat de server in onderhoudsmodes gezet zal worden.",
@@ -106,6 +106,8 @@ OC.L10N.register(
     "Next full restoring point" : "Volgende herstelpunt",
     "Next partial restoring point" : "Volgend gedeeltelijk herstelpunt",
     "Unable to fetch restoring points" : "Kan herstelpunten niet ophalen",
-    "Scan Backup Folder" : "Scan Backup Map"
+    "Scan Backup Folder" : "Scan Backup Map",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Je instellingen export is versleuteld gedownload. Om het later te ontsleutelen, sla de volgende sleutel op een veilige plek op:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Het creëren van een herstelpunt is aangevraagd en zal spoedig geïnitieerd worden."
 },
 "nplurals=2; plural=(n != 1);");

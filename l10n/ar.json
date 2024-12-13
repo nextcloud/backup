@@ -66,9 +66,7 @@
     "Export backup configuration" : "تصدير إعدادات النسخ الاحتياطي",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "يمكنك تصدير الإعدادات الخاصة بك باستخدام الزر أدناه. يُعدُّ الملف الذي يتم تصديره مهمًا لأنه يسمح لك باستعادة نسختك الاحتياطية في حالة فقد البيانات الكاملة. احتفظ به في مكان آمن!",
     "Export configuration" : "إعدادات التصدير",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "يتم تصدير إعداداتك كما تمّ تنزيلها بشكل مُشفّر. لتتمكن من فك تشفيرها لاحقًا، يرجى الاحتفاظ بالمفتاح الخاص التالي في مكان آمن:",
     "Request the creation of a new restoring point now" : "أطلُب إنشاء نقطة استعادة جديدة الآن",
-    "The creation of a restoring point as been requested and will be initiated soon." : "إنشاء نقطة استعادة كما هو مطلوب وسيتم البدء قريبًا.",
     "Create full restoring point" : "إنشاء نقطة استعادة كاملة",
     "Requesting a backup will put the server in maintenance mode." : "سيؤدي طلب نسخة احتياطية إلى وضع الخادم في وضع الصيانة.",
     "I understand that the server will be put in maintenance mode." : "أفهم أنه سيتم وضع الخادم في وضع الصيانة.",
@@ -104,6 +102,8 @@
     "Next full restoring point" : "نقطة الاستعادة الكاملة القادمة",
     "Next partial restoring point" : "نقطة الاستعادة الجزئية القادمة",
     "Unable to fetch restoring points" : "تعذّر جلب نقاط الاستعادة",
-    "Scan Backup Folder" : "فحص مجلد النسخ الاحتياطي"
+    "Scan Backup Folder" : "فحص مجلد النسخ الاحتياطي",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "يتم تصدير إعداداتك كما تمّ تنزيلها بشكل مُشفّر. لتتمكن من فك تشفيرها لاحقًا، يرجى الاحتفاظ بالمفتاح الخاص التالي في مكان آمن:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "إنشاء نقطة استعادة كما هو مطلوب وسيتم البدء قريبًا."
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

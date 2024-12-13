@@ -68,9 +68,7 @@ OC.L10N.register(
     "Export backup configuration" : "Exporta la configuració de còpia de seguretat",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Podeu exportar els vostres paràmetres amb el botó següent. El fitxer exportat és important, ja que us permet restaurar la vostra còpia de seguretat en cas de pèrdua de dades completes. Guardeu-lo en un lloc segur!",
     "Export configuration" : "Exporta la configuració",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Els teus paràmetres s'exporten tal com s'ha baixat xifrats. Per poder desxifrar-lo més tard, manteniu la clau privada següent en un lloc segur:",
     "Request the creation of a new restoring point now" : "Sol·liciteu ara la creació d'un nou punt de restauració",
-    "The creation of a restoring point as been requested and will be initiated soon." : "La creació d'un punt de restauració tal com s'ha sol·licitat i s'iniciarà properament.",
     "Create full restoring point" : "Creeu un punt de restauració complet",
     "Requesting a backup will put the server in maintenance mode." : "Sol·licitar una còpia de seguretat posarà el servidor en mode de manteniment.",
     "I understand that the server will be put in maintenance mode." : "Entenc que el servidor es posarà en mode de manteniment.",
@@ -106,6 +104,8 @@ OC.L10N.register(
     "Next full restoring point" : "Següent punt de restauració complerta",
     "Next partial restoring point" : "Següent punt de restauració parcial",
     "Unable to fetch restoring points" : "No s'han pogut recuperar els punts de restauració",
-    "Scan Backup Folder" : "Escaneja la carpeta de còpia de seguretat"
+    "Scan Backup Folder" : "Escaneja la carpeta de còpia de seguretat",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Els teus paràmetres s'exporten tal com s'ha baixat xifrats. Per poder desxifrar-lo més tard, manteniu la clau privada següent en un lloc segur:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "La creació d'un punt de restauració tal com s'ha sol·licitat i s'iniciarà properament."
 },
 "nplurals=2; plural=(n != 1);");

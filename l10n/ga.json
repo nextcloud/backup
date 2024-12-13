@@ -66,9 +66,7 @@
     "Export backup configuration" : "Cumraíocht chúltaca easpórtála",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Is féidir leat do shocruithe a onnmhairiú leis an gcnaipe thíos. Tá an comhad a onnmhairiú tábhachtach mar is féidir leat a chur ar ais do cúltaca i gcás sonraí iomlána caillte. Coinnigh in áit shábháilte é!",
     "Export configuration" : "Cumraíocht easpórtála",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Easpórtáil do shocruithe mar a íoslódáladh iad. Le bheith in ann é a dhíchriptiú níos déanaí, coinnigh an eochair phríobháideach seo a leanas in áit shábháilte le do thoil:",
     "Request the creation of a new restoring point now" : "Iarr go gcruthófar pointe athchóirithe nua anois",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Cruthú pointe athchóirithe mar a iarradh agus cuirfear tús leis go luath.",
     "Create full restoring point" : "Cruthaigh pointe athshlánaithe iomlán",
     "Requesting a backup will put the server in maintenance mode." : "Má iarrtar cúltaca cuirfear an freastalaí i mód cothabhála.",
     "I understand that the server will be put in maintenance mode." : "Tuigim go gcuirfear an freastalaí i mód cothabhála.",
@@ -104,6 +102,8 @@
     "Next full restoring point" : "An chéad phointe athchóirithe iomlán eile",
     "Next partial restoring point" : "An chéad phointe athchóirithe páirteach eile",
     "Unable to fetch restoring points" : "Ní féidir pointí athshlánaithe a fháil",
-    "Scan Backup Folder" : "Scan Fillteán Cúltaca"
+    "Scan Backup Folder" : "Scan Fillteán Cúltaca",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Easpórtáil do shocruithe mar a íoslódáladh iad. Le bheith in ann é a dhíchriptiú níos déanaí, coinnigh an eochair phríobháideach seo a leanas in áit shábháilte le do thoil:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Cruthú pointe athchóirithe mar a iarradh agus cuirfear tús leis go luath."
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }
