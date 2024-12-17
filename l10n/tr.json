@@ -66,7 +66,7 @@
     "Export backup configuration" : "Yedekleme yapılandırmasını dışa aktar",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Aşağıdaki düğmeye basarak yapılandırma ayarlarınızı dışa aktarabilirsiniz. Dışa aktarılan dosya, tam bir veri kaybı yaşamanız durumunda verilerinizi geri yüklemenizi sağlayacağından oldukça önemlidir ve güvenli bir yerde tutmanız önerilir!",
     "Export configuration" : "Yapılandırmayı dışa aktar",
-    "Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "İndirdiğiniz yapılandırma dışa aktarma dosyası şifrelidir. Daha sonra bu dosyanın şifresini çözebilmek için kullanmanız gerekecek kişisel anahtarı güvenli bir yerde saklayın:",
+    "Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "İndirdiğiniz yapılandırma dışa aktarma dosyası şifrelenmiş. Daha sonra bu dosyanın şifresini çözebilmek için kullanmanız gerekecek kişisel anahtarı güvenli bir yerde saklayın:",
     "Request the creation of a new restoring point now" : "Yeni bir geri yükleme noktası oluşturma isteğinde bulunun",
     "The creation of a restoring point has been requested and will be initiated soon." : "Geri yükleme noktası oluşturma isteğinde bulunuldu. İstek kısa süre içinde yerine getirilecek.",
     "Create full restoring point" : "Tam geri yükleme noktası oluştur",
