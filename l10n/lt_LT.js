@@ -7,7 +7,7 @@ OC.L10N.register(
     "days" : "diena",
     "Error" : "Klaida",
     "Local storage" : "Vietinė saugykla",
-    "External storage" : "External storage",
+    "External storage" : "Išorinė saugykla",
     "Actions" : "Veiksmai",
     "Delete" : "Ištrinti",
     "and" : "ir",
