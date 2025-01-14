@@ -66,9 +66,9 @@
     "Export backup configuration" : "Sicherungseinrichtung exportieren",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Du kannst deine Einstellungen über die unten stehende Schaltfläche exportieren. Die exportierte Datei ist wichtig, da sie es dir ermöglicht, Dein Backup im Falle eines vollständigen Datenverlustes wiederherzustellen. Bewahre sie an einem sicheren Ort auf!",
     "Export configuration" : "Konfiguration exportieren",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Dein Export der Einstellungen wurde verschlüsselt heruntergeladen. Um ihn später entschlüsseln zu können, bewahre bitte den folgenden privaten Schlüssel an einem sicheren Ort auf:",
+    "Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Deine Einstellungen wurde exportiert und verschlüsselt heruntergeladen. Um sie  später entschlüsseln zu können, bewahre bitte den folgenden privaten Schlüssel an einem sicheren Ort auf:",
     "Request the creation of a new restoring point now" : "Jetzt die Erstellung eines neuen Wiederherstellungspunktes anfordern",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Die Erstellung eines Wiederherstellungspunktes wurde angefordert und wird bald gestartet.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Die Erstellung eines Wiederherstellungspunktes wurde angefragt und wird demnächst initiiert.",
     "Create full restoring point" : "Vollständigen Wiederherstellungspunkt erstellen",
     "Requesting a backup will put the server in maintenance mode." : "Durch die Anforderung einer Sicherung wird der Server in den Wartungsmodus gesetzt.",
     "I understand that the server will be put in maintenance mode." : "Ich verstehe, dass der Server in den Wartungsmodus gesetzt wird.",
@@ -104,6 +104,8 @@
     "Next full restoring point" : "Nächster vollständiger Wiederherstellungspunkt",
     "Next partial restoring point" : "Nächster teilweiser Wiederherstellungspunkt",
     "Unable to fetch restoring points" : "Wiederherstellungspunkte können nicht geladen werden",
-    "Scan Backup Folder" : "Sicherungsordner durchsuchen"
+    "Scan Backup Folder" : "Sicherungsordner durchsuchen",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Dein Export der Einstellungen wurde verschlüsselt heruntergeladen. Um ihn später entschlüsseln zu können, bewahre bitte den folgenden privaten Schlüssel an einem sicheren Ort auf:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Die Erstellung eines Wiederherstellungspunktes wurde angefordert und wird bald gestartet."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

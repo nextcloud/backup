@@ -66,9 +66,7 @@
     "Export backup configuration" : "Exporter la configuration de sauvegarde",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Vous pouvez exporter vos paramètres en utilisant le bouton ci-dessous. Le fichier exporté est important car il vous permet de restaurer vos sauvegardes en cas de perte totale de données. Gardez-les en toute sécurité !",
     "Export configuration" : "Exporter la configuration",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Vos paramètres ont été téléchargés chiffrés. Pour pouvoir les déchiffrer plus tard, merci de garder la clé privé suivante en lieu sûr :",
     "Request the creation of a new restoring point now" : "Demander la création d'un nouveau point de restauration tout de suite",
-    "The creation of a restoring point as been requested and will be initiated soon." : "La création d'un point de restauration a été demandée et débutera bientôt.",
     "Create full restoring point" : "Créer un point de restauration complet",
     "Requesting a backup will put the server in maintenance mode." : "Demander une sauvegarde mettra le serveur en mode maintenance.",
     "I understand that the server will be put in maintenance mode." : "Je comprends que le serveur sera mis en mode maintenance.",
@@ -104,6 +102,8 @@
     "Next full restoring point" : "Prochain point de restauration complet",
     "Next partial restoring point" : "Prochain point de restauration partiel",
     "Unable to fetch restoring points" : "Incapable de récupérer les points de sauvegarde",
-    "Scan Backup Folder" : "Scanner le dossier de sauvegarde"
+    "Scan Backup Folder" : "Scanner le dossier de sauvegarde",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Vos paramètres ont été téléchargés chiffrés. Pour pouvoir les déchiffrer plus tard, merci de garder la clé privé suivante en lieu sûr :",
+    "The creation of a restoring point as been requested and will be initiated soon." : "La création d'un point de restauration a été demandée et débutera bientôt."
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

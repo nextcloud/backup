@@ -68,9 +68,9 @@ OC.L10N.register(
     "Export backup configuration" : "Eksportuj konfigurację kopii zapasowej",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Możesz wyeksportować swoje ustawienia za pomocą poniższego przycisku. Wyeksportowany plik jest ważny, ponieważ umożliwia przywrócenie kopii zapasowej w przypadku utraty pełnych danych. Przechowuj go w bezpiecznym miejscu!",
     "Export configuration" : "Konfiguracja eksportu",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Twoje ustawienia są eksportowane jako pobrane w postaci zaszyfrowanej. Aby móc go później odszyfrować, przechowuj następujący klucz prywatny w bezpiecznym miejscu:",
+    "Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Twój eksport ustawień został pobrany w postaci zaszyfrowanej. Aby móc go później odszyfrować, przechowuj następujący klucz prywatny w bezpiecznym miejscu:",
     "Request the creation of a new restoring point now" : "Zażądaj teraz o utworzenie nowego punktu przywracania",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Utworzenie punktu przywracania zgodnie z żądaniem zostanie wkrótce rozpoczęte.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Utworzenie punktu przywracania zgodnie z żądaniem zostanie wkrótce rozpoczęte.",
     "Create full restoring point" : "Utwórz pełny punkt przywracania",
     "Requesting a backup will put the server in maintenance mode." : "Żądanie kopii zapasowej spowoduje przejście serwera w tryb konserwacji.",
     "I understand that the server will be put in maintenance mode." : "Rozumiem, że serwer zostanie przełączony w tryb konserwacji.",
@@ -106,6 +106,8 @@ OC.L10N.register(
     "Next full restoring point" : "Następny pełny punkt przywracania",
     "Next partial restoring point" : "Następny punkt przywracania częściowego",
     "Unable to fetch restoring points" : "Nie można pobrać punktów przywracania",
-    "Scan Backup Folder" : "Skanuj katalog kopii zapasowej"
+    "Scan Backup Folder" : "Skanuj katalog kopii zapasowej",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Twoje ustawienia są eksportowane jako pobrane w postaci zaszyfrowanej. Aby móc go później odszyfrować, przechowuj następujący klucz prywatny w bezpiecznym miejscu:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Utworzenie punktu przywracania zgodnie z żądaniem zostanie wkrótce rozpoczęte."
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

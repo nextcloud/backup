@@ -66,9 +66,9 @@
     "Export backup configuration" : "Exportovať nastavenie zálohy",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Svoje nastavenia môžete exportovať pomocou tlačidla nižšie. Exportovaný súbor je dôležitý, pretože vám umožňuje obnoviť zálohu v prípade straty všetkých údajov. Uschovajte ho na bezpečnom mieste!",
     "Export configuration" : "Exportovať konfiguráciu",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Export vašich nastavení bol stiahnutý zašifrovaný. Aby ste ho mohli neskôr dešifrovať, uschovajte si nasledujúci súkromný kľúč na bezpečnom mieste:",
+    "Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Export vašich nastavení bol stiahnutý zašifrovaný. Aby ste ho mohli neskôr dešifrovať, uschovajte si nasledujúci súkromný kľúč na bezpečnom mieste:",
     "Request the creation of a new restoring point now" : "Požiadajte o vytvorenie nového bodu obnovenia už teraz",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Vytvorenie bodu obnovenia bolo vyžiadané a čoskoro sa spustí.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Vytvorenie bodu obnovenia bolo vyžiadané a čoskoro sa spustí.",
     "Create full restoring point" : "Vytvoriť kompletný bod obnovy",
     "Requesting a backup will put the server in maintenance mode." : "Požiadaním o zálohu sa server prepne do režimu údržby.",
     "I understand that the server will be put in maintenance mode." : "Chápem, že server bude uvedený do režimu údržby.",
@@ -104,6 +104,8 @@
     "Next full restoring point" : "Ďalší kompletný bod obnovenia",
     "Next partial restoring point" : "Ďalší čiastočný bod obnovenia",
     "Unable to fetch restoring points" : "Nemôžem získať body obnovenia",
-    "Scan Backup Folder" : "Skenovať priečinok so zálohami"
+    "Scan Backup Folder" : "Skenovať priečinok so zálohami",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Export vašich nastavení bol stiahnutý zašifrovaný. Aby ste ho mohli neskôr dešifrovať, uschovajte si nasledujúci súkromný kľúč na bezpečnom mieste:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Vytvorenie bodu obnovenia bolo vyžiadané a čoskoro sa spustí."
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }

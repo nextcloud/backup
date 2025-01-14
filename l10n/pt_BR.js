@@ -68,9 +68,7 @@ OC.L10N.register(
     "Export backup configuration" : "Exportar configuração de backup",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Você pode exportar suas configurações com o botão abaixo. O arquivo exportado é importante porque permite que você restaure seu backup em caso de perda total dos dados. Mantenha isso em um local seguro!",
     "Export configuration" : "Exportar configurações",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Suas configurações exportadas foram baixadas criptografadas. Para poder descriptografá-lo mais tarde, mantenha a seguinte chave privada em um lugar seguro:",
     "Request the creation of a new restoring point now" : "Solicite a criação de um novo ponto de restauração agora",
-    "The creation of a restoring point as been requested and will be initiated soon." : "A criação de um ponto de restauração conforme solicitado e será iniciada em breve.",
     "Create full restoring point" : "Criar ponto de restauração completo",
     "Requesting a backup will put the server in maintenance mode." : "Solicitando um backup colocará o servidor em modo de manutenção.",
     "I understand that the server will be put in maintenance mode." : "Eu entendo que o servidor será colocado em modo de manutenção.",
@@ -106,6 +104,8 @@ OC.L10N.register(
     "Next full restoring point" : "Próximo ponto de restauração total",
     "Next partial restoring point" : "Próximo ponto de restauração parcial",
     "Unable to fetch restoring points" : "Incapaz de buscar pontos de restauração",
-    "Scan Backup Folder" : "Verificar Pasta de Backup"
+    "Scan Backup Folder" : "Verificar Pasta de Backup",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Suas configurações exportadas foram baixadas criptografadas. Para poder descriptografá-lo mais tarde, mantenha a seguinte chave privada em um lugar seguro:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "A criação de um ponto de restauração conforme solicitado e será iniciada em breve."
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -68,9 +68,9 @@ OC.L10N.register(
     "Export backup configuration" : "Yedekleme yapılandırmasını dışa aktar",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Aşağıdaki düğmeye basarak yapılandırma ayarlarınızı dışa aktarabilirsiniz. Dışa aktarılan dosya, tam bir veri kaybı yaşamanız durumunda verilerinizi geri yüklemenizi sağlayacağından oldukça önemlidir ve güvenli bir yerde tutmanız önerilir!",
     "Export configuration" : "Yapılandırmayı dışa aktar",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "İndirdiğiniz dışa aktarılmış yapılandırma dosyası şifrelenmiş. İleride bu dosyanın şifresini çözebilmek için kullanmanız gerekecek kişisel anahtarı güvenli bir yerde saklayın:",
+    "Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "İndirdiğiniz yapılandırma dışa aktarma dosyası şifrelenmiş. Daha sonra bu dosyanın şifresini çözebilmek için kullanmanız gerekecek kişisel anahtarı güvenli bir yerde saklayın:",
     "Request the creation of a new restoring point now" : "Yeni bir geri yükleme noktası oluşturma isteğinde bulunun",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Geri yükleme noktası oluşturma isteğinde bulunuldu. İstek kısa süre içinde yerine getirilecek.",
+    "The creation of a restoring point has been requested and will be initiated soon." : "Geri yükleme noktası oluşturma isteğinde bulunuldu. İstek kısa süre içinde yerine getirilecek.",
     "Create full restoring point" : "Tam geri yükleme noktası oluştur",
     "Requesting a backup will put the server in maintenance mode." : "Yedekleme isteğinde bulunmak sunucuyu bakım kipine geçirir.",
     "I understand that the server will be put in maintenance mode." : "Sunucunun bakım kipine geçirileceğini anladım.",
@@ -106,6 +106,8 @@ OC.L10N.register(
     "Next full restoring point" : "Sonraki tam geri yükleme noktası",
     "Next partial restoring point" : "Sonraki parçalı geri yükleme noktası",
     "Unable to fetch restoring points" : "Geri yükleme noktaları alınamadı",
-    "Scan Backup Folder" : "Yedek klasörünü tara"
+    "Scan Backup Folder" : "Yedek klasörünü tara",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "İndirdiğiniz dışa aktarılmış yapılandırma dosyası şifrelenmiş. İleride bu dosyanın şifresini çözebilmek için kullanmanız gerekecek kişisel anahtarı güvenli bir yerde saklayın:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "Geri yükleme noktası oluşturma isteğinde bulunuldu. İstek kısa süre içinde yerine getirilecek."
 },
 "nplurals=2; plural=(n > 1);");

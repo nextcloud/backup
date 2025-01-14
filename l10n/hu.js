@@ -68,9 +68,7 @@ OC.L10N.register(
     "Export backup configuration" : "Biztonsági mentési beállítások exportálása",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "A lenti gombbal exportálhatja a beállításait. Az exportált fájl fontos, mert lehetővé teszi a biztonsági mentés helyreállítását teljes adatvesztéskor. Tartsa biztonságban.",
     "Export configuration" : "Konfiguráció exportálása",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "A beállítások exportja titkosítva lett letöltve. Hogy később is fel tudja oldani, tartsa biztonságban a privát kulcsot:",
     "Request the creation of a new restoring point now" : "Új helyreállítási pont létrehozásának kérése most",
-    "The creation of a restoring point as been requested and will be initiated soon." : "A helyreállítási pont létrehozását kérték, és hamarosan elindul.",
     "Create full restoring point" : "Teljes helyreállítási pont létrehozása",
     "Requesting a backup will put the server in maintenance mode." : "A biztonsági mentés kérése karbantartási módba állítja a kiszolgálót.",
     "I understand that the server will be put in maintenance mode." : "Értem, hogy a kiszolgáló karbantartási módba fog kerülni.",
@@ -106,6 +104,8 @@ OC.L10N.register(
     "Next full restoring point" : "Következő teljes helyreállítási pont",
     "Next partial restoring point" : "Következő részleges helyreállítási pont",
     "Unable to fetch restoring points" : "Nem sikerült a helyreállítási pontok lekérése",
-    "Scan Backup Folder" : "Biztonsági mentés mappájának átvizsgálása"
+    "Scan Backup Folder" : "Biztonsági mentés mappájának átvizsgálása",
+    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "A beállítások exportja titkosítva lett letöltve. Hogy később is fel tudja oldani, tartsa biztonságban a privát kulcsot:",
+    "The creation of a restoring point as been requested and will be initiated soon." : "A helyreállítási pont létrehozását kérték, és hamarosan elindul."
 },
 "nplurals=2; plural=(n != 1);");
