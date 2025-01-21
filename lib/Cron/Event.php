@@ -31,7 +31,8 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Cron;
 
-use OC\BackgroundJob\TimedJob;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\TimedJob;
 use OCA\Backup\Db\EventRequest;
 use OCA\Backup\Model\BackupEvent;
 use OCA\Backup\Service\ConfigService;
@@ -48,26 +49,10 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class Event extends TimedJob {
 	use TArrayTools;
 
-
-	/** @var EventRequest */
-	private $eventRequest;
-
-	/** @var PointService */
-	private $pointService;
-
-	/** @var FilesService */
-	private $filesService;
-
-	/** @var CronService */
-	private $cronService;
-
-	/** @var ConfigService */
-	private $configService;
-
-
 	/**
 	 * Event constructor.
 	 *
+	 * @param ITimeFactory $time
 	 * @param EventRequest $eventRequest
 	 * @param PointService $pointService
 	 * @param FilesService $filesService
@@ -75,19 +60,15 @@ class Event extends TimedJob {
 	 * @param ConfigService $configService
 	 */
 	public function __construct(
-		EventRequest $eventRequest,
-		PointService $pointService,
-		FilesService $filesService,
-		CronService $cronService,
-		ConfigService $configService
+		ITimeFactory $time,
+		private EventRequest $eventRequest,
+		private PointService $pointService,
+		private FilesService $filesService,
+		private CronService $cronService,
+		private ConfigService $configService
 	) {
+		parent::__construct($time);
 		$this->setInterval(1);
-
-		$this->eventRequest = $eventRequest;
-		$this->pointService = $pointService;
-		$this->filesService = $filesService;
-		$this->cronService = $cronService;
-		$this->configService = $configService;
 	}
 
 
