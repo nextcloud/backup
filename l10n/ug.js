@@ -100,8 +100,6 @@ OC.L10N.register(
     "Next full restoring point" : "كېيىنكى تولۇق ئەسلىگە كەلتۈرۈش نۇقتىسى",
     "Next partial restoring point" : "كېيىنكى قىسمەن ئەسلىگە كەلتۈرۈش نۇقتىسى",
     "Unable to fetch restoring points" : "ئەسلىگە كەلتۈرۈش نۇقتىلىرىنى ئالالمىدى",
-    "Scan Backup Folder" : "زاپاس ھۆججەت قىسقۇچنى سايىلەڭ",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "شىفىرلانغان چۈشۈرۈلگەن تەڭشەكلىرىڭىز ئېكسپورت قىلىنىدۇ. كېيىن شىفىر يېشىش ئۈچۈن تۆۋەندىكى شەخسىي ئاچقۇچنى بىخەتەر جايدا ساقلاڭ:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "تەلەپ بويىچە ئەسلىگە كەلتۈرۈش نۇقتىسى قۇرۇش ۋە پات يېقىندا باشلىنىدۇ."
+    "Scan Backup Folder" : "زاپاس ھۆججەت قىسقۇچنى سايىلەڭ"
 },
 "nplurals=2; plural=(n != 1);");

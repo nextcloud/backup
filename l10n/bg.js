@@ -106,8 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Следваща точка за пълно възстановяване",
     "Next partial restoring point" : "Следваща частична точка за възстановяване",
     "Unable to fetch restoring points" : "Не може да се извлекат точки за възстановяване",
-    "Scan Backup Folder" : "Сканиране на папка за архивиране",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Експортираните ви настройки бяха изтеглени шифровани. За да можете да ги дешифрирате по-късно, моля, съхранявайте следния частен ключ на сигурно място:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Беше поискано създаването на точка за възстановяване и това ще започне скоро."
+    "Scan Backup Folder" : "Сканиране на папка за архивиране"
 },
 "nplurals=2; plural=(n != 1);");

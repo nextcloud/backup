@@ -102,8 +102,6 @@
     "Next full restoring point" : "Neste fullstendig gjenopprettingspunkt",
     "Next partial restoring point" : "Neste delvis gjenopprettingspunkt",
     "Unable to fetch restoring points" : "Kan ikke hente gjenopprettingspunkter",
-    "Scan Backup Folder" : "Skann katalog for sikkerhetskopi",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Innstillingene dine eksporteres som de er lastet ned kryptert. For å kunne dekryptere den senere, vennligst oppbevar følgende private nøkkel på et trygt sted:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Opprettelsen av et gjenopprettingspunkt som ble forespurt og vil bli igangsatt snart."
+    "Scan Backup Folder" : "Skann katalog for sikkerhetskopi"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

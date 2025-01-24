@@ -104,8 +104,6 @@
     "Next full restoring point" : "Hurrengo leheneratze-puntu osoa",
     "Next partial restoring point" : "Hurrengo leheneratze-puntu partziala",
     "Unable to fetch restoring points" : "Ezin izan dira leheneratze-puntuak lortu",
-    "Scan Backup Folder" : "Eskaneatu babeskopien karpeta",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Zure ezarpenen esportazioa enkriptaturik deskargatu da. Gero desenkriptatzeko, gorde leku seguruan honako gako pribatua:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Leheneratze-puntu bat sortzeko eskatu da eta laster abiaraziko da."
+    "Scan Backup Folder" : "Eskaneatu babeskopien karpeta"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

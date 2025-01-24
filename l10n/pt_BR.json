@@ -102,8 +102,6 @@
     "Next full restoring point" : "Próximo ponto de restauração total",
     "Next partial restoring point" : "Próximo ponto de restauração parcial",
     "Unable to fetch restoring points" : "Incapaz de buscar pontos de restauração",
-    "Scan Backup Folder" : "Verificar Pasta de Backup",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Suas configurações exportadas foram baixadas criptografadas. Para poder descriptografá-lo mais tarde, mantenha a seguinte chave privada em um lugar seguro:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "A criação de um ponto de restauração conforme solicitado e será iniciada em breve."
+    "Scan Backup Folder" : "Verificar Pasta de Backup"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

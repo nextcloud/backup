@@ -106,8 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "下个完整还原点",
     "Next partial restoring point" : "下个部分还原点",
     "Unable to fetch restoring points" : "无法获取还原点",
-    "Scan Backup Folder" : "扫描备份文件夹",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "您的设置导出已下载并加密。为了以后能够解密，请将以下私钥保存在一个安全的地方：",
-    "The creation of a restoring point as been requested and will be initiated soon." : "已请求创建还原点，并将很快初始化。"
+    "Scan Backup Folder" : "扫描备份文件夹"
 },
 "nplurals=1; plural=0;");

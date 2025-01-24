@@ -104,8 +104,6 @@
     "Next full restoring point" : "Volgende herstelpunt",
     "Next partial restoring point" : "Volgend gedeeltelijk herstelpunt",
     "Unable to fetch restoring points" : "Kan herstelpunten niet ophalen",
-    "Scan Backup Folder" : "Scan Backup Map",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Je instellingen export is versleuteld gedownload. Om het later te ontsleutelen, sla de volgende sleutel op een veilige plek op:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Het creëren van een herstelpunt is aangevraagd en zal spoedig geïnitieerd worden."
+    "Scan Backup Folder" : "Scan Backup Map"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

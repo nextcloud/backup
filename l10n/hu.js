@@ -104,8 +104,6 @@ OC.L10N.register(
     "Next full restoring point" : "Következő teljes helyreállítási pont",
     "Next partial restoring point" : "Következő részleges helyreállítási pont",
     "Unable to fetch restoring points" : "Nem sikerült a helyreállítási pontok lekérése",
-    "Scan Backup Folder" : "Biztonsági mentés mappájának átvizsgálása",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "A beállítások exportja titkosítva lett letöltve. Hogy később is fel tudja oldani, tartsa biztonságban a privát kulcsot:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "A helyreállítási pont létrehozását kérték, és hamarosan elindul."
+    "Scan Backup Folder" : "Biztonsági mentés mappájának átvizsgálása"
 },
 "nplurals=2; plural=(n != 1);");

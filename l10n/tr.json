@@ -104,8 +104,6 @@
     "Next full restoring point" : "Sonraki tam geri yükleme noktası",
     "Next partial restoring point" : "Sonraki parçalı geri yükleme noktası",
     "Unable to fetch restoring points" : "Geri yükleme noktaları alınamadı",
-    "Scan Backup Folder" : "Yedek klasörünü tara",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "İndirdiğiniz dışa aktarılmış yapılandırma dosyası şifrelenmiş. İleride bu dosyanın şifresini çözebilmek için kullanmanız gerekecek kişisel anahtarı güvenli bir yerde saklayın:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Geri yükleme noktası oluşturma isteğinde bulunuldu. İstek kısa süre içinde yerine getirilecek."
+    "Scan Backup Folder" : "Yedek klasörünü tara"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

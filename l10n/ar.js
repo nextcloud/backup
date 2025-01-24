@@ -106,8 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "نقطة الاستعادة الكاملة القادمة",
     "Next partial restoring point" : "نقطة الاستعادة الجزئية القادمة",
     "Unable to fetch restoring points" : "تعذّر جلب نقاط الاستعادة",
-    "Scan Backup Folder" : "فحص مجلد النسخ الاحتياطي",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "يتم تصدير إعداداتك كما تمّ تنزيلها بشكل مُشفّر. لتتمكن من فك تشفيرها لاحقًا، يرجى الاحتفاظ بالمفتاح الخاص التالي في مكان آمن:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "إنشاء نقطة استعادة كما هو مطلوب وسيتم البدء قريبًا."
+    "Scan Backup Folder" : "فحص مجلد النسخ الاحتياطي"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

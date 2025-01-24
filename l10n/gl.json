@@ -104,8 +104,6 @@
     "Next full restoring point" : "Próximo punto de restauración completa",
     "Next partial restoring point" : "Próximo punto de restauración parcial",
     "Unable to fetch restoring points" : "Non é posíbel recuperar os puntos de restauración",
-    "Scan Backup Folder" : "Analizar o cartafol de copia de seguranza",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "A exportación dos seus axustes descargouse cifrada. Para poder descifrala máis tarde, garde a seguinte chave privada nun lugar seguro:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "A creación dun punto de restauración tal e como se solicitou e iniciarase en breve."
+    "Scan Backup Folder" : "Analizar o cartafol de copia de seguranza"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

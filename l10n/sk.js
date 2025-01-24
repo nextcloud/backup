@@ -106,8 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Ďalší kompletný bod obnovenia",
     "Next partial restoring point" : "Ďalší čiastočný bod obnovenia",
     "Unable to fetch restoring points" : "Nemôžem získať body obnovenia",
-    "Scan Backup Folder" : "Skenovať priečinok so zálohami",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Export vašich nastavení bol stiahnutý zašifrovaný. Aby ste ho mohli neskôr dešifrovať, uschovajte si nasledujúci súkromný kľúč na bezpečnom mieste:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Vytvorenie bodu obnovenia bolo vyžiadané a čoskoro sa spustí."
+    "Scan Backup Folder" : "Skenovať priečinok so zálohami"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

@@ -104,8 +104,6 @@ OC.L10N.register(
     "Next full restoring point" : "Next full restoring point",
     "Next partial restoring point" : "Next partial restoring point",
     "Unable to fetch restoring points" : "Unable to fetch restoring points",
-    "Scan Backup Folder" : "اسکن پوشه بک‌‌آپ",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "The creation of a restoring point as been requested and will be initiated soon."
+    "Scan Backup Folder" : "اسکن پوشه بک‌‌آپ"
 },
 "nplurals=2; plural=(n > 1);");

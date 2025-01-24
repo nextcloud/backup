@@ -106,8 +106,6 @@ OC.L10N.register(
     "Next full restoring point" : "Nächster vollständiger Wiederherstellungspunkt",
     "Next partial restoring point" : "Nächster teilweiser Wiederherstellungspunkt",
     "Unable to fetch restoring points" : "Wiederherstellungspunkte können nicht geladen werden",
-    "Scan Backup Folder" : "Sicherungsordner durchsuchen",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Dein Export der Einstellungen wurde verschlüsselt heruntergeladen. Um ihn später entschlüsseln zu können, bewahre bitte den folgenden privaten Schlüssel an einem sicheren Ort auf:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Die Erstellung eines Wiederherstellungspunktes wurde angefordert und wird bald gestartet."
+    "Scan Backup Folder" : "Sicherungsordner durchsuchen"
 },
 "nplurals=2; plural=(n != 1);");

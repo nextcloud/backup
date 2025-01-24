@@ -104,8 +104,6 @@
     "Next full restoring point" : "Næste fulde gendannelsespunkt",
     "Next partial restoring point" : "Næste delvis gendannelsespunkt",
     "Unable to fetch restoring points" : "Kan ikke hente gendannelsespunkter",
-    "Scan Backup Folder" : "Scan backup-mappe",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Dine indstillinger eksporteres som blevet downloadet krypteret. For at kunne dekryptere den senere skal du opbevare følgende private nøgle på et sikkert sted:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Oprettelse af et gendannelsespunkt som blevet anmodet om og vil snart blive påbegyndt."
+    "Scan Backup Folder" : "Scan backup-mappe"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

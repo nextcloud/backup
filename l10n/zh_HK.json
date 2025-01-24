@@ -104,8 +104,6 @@
     "Next full restoring point" : "下個完整還原點",
     "Next partial restoring point" : "下個部分還原點",
     "Unable to fetch restoring points" : "無法擷取還原點",
-    "Scan Backup Folder" : "掃描備份資料夾",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "您的設置導出已下載並加密。為了以後能夠解密，請將以下私鑰保存在安全的地方：",
-    "The creation of a restoring point as been requested and will be initiated soon." : "已請求創建還原點，並將很快啟動。"
+    "Scan Backup Folder" : "掃描備份資料夾"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

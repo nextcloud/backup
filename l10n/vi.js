@@ -103,8 +103,6 @@ OC.L10N.register(
     "Next full restoring point" : "Điểm khôi phục đầy đủ tiếp theo",
     "Next partial restoring point" : "Điểm khôi phục một phần tiếp theo",
     "Unable to fetch restoring points" : "Không thể lấy điểm khôi phục",
-    "Scan Backup Folder" : "Quét thư mục sao lưu",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Xuất cài đặt của bạn dưới dạng được tải xuống được mã hóa. Để có thể giải mã nó sau này, vui lòng giữ khóa riêng sau đây ở nơi an toàn:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "Việc tạo điểm khôi phục theo yêu cầu và sẽ sớm được bắt đầu."
+    "Scan Backup Folder" : "Quét thư mục sao lưu"
 },
 "nplurals=1; plural=0;");

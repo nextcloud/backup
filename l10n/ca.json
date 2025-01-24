@@ -102,8 +102,6 @@
     "Next full restoring point" : "Següent punt de restauració complerta",
     "Next partial restoring point" : "Següent punt de restauració parcial",
     "Unable to fetch restoring points" : "No s'han pogut recuperar els punts de restauració",
-    "Scan Backup Folder" : "Escaneja la carpeta de còpia de seguretat",
-    "Your settings export as been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Els teus paràmetres s'exporten tal com s'ha baixat xifrats. Per poder desxifrar-lo més tard, manteniu la clau privada següent en un lloc segur:",
-    "The creation of a restoring point as been requested and will be initiated soon." : "La creació d'un punt de restauració tal com s'ha sol·licitat i s'iniciarà properament."
+    "Scan Backup Folder" : "Escaneja la carpeta de còpia de seguretat"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
