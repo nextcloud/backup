@@ -9,7 +9,7 @@ OC.L10N.register(
     "Error" : "Erro",
     "Local storage" : "Local storage",
     "External storage" : "External storage",
-    "Actions" : "Acções",
+    "Actions" : "Ações",
     "Delete" : "Apagar",
     "Cancel" : "Cancelar",
     "Settings saved" : "Definições guardadas",
