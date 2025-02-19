@@ -3,10 +3,10 @@ OC.L10N.register(
     {
     "days" : "Dias",
     "Error" : "Error",
-    "Actions" : "Azions",
+    "Actions" : "Acions",
     "Delete" : "Borrar",
-    "Cancel" : "Canzelar",
-    "Unable to save the settings" : "No se puede alzar a configurazión",
+    "Cancel" : "Cancelar",
+    "Unable to save the settings" : "No se puede alzar a configuración",
     "Pending" : "Pendién"
 },
 "nplurals=2; plural=(n != 1);");
