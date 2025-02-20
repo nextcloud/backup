@@ -7,6 +7,6 @@ OC.L10N.register(
     "Delete" : "Borrar",
     "Cancel" : "Cancelar",
     "Unable to save the settings" : "No se puede alzar a configuración",
-    "Pending" : "Pendién"
+    "Pending" : "Pendient"
 },
 "nplurals=2; plural=(n != 1);");
