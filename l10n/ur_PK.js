@@ -1,8 +1,8 @@
 OC.L10N.register(
     "backup",
     {
-    "Error" : "ایرر",
     "Local storage" : "Local storage",
+    "Error" : "ایرر",
     "External storage" : "External storage",
     "Delete" : "حذف کریں",
     "Cancel" : "منسوخ کریں",

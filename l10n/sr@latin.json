@@ -1,6 +1,6 @@
 { "translations": {
-    "Error" : "Error",
     "Local storage" : "Local storage",
+    "Error" : "Error",
     "External storage" : "External storage",
     "Delete" : "Obriši",
     "Cancel" : "Otkaži",

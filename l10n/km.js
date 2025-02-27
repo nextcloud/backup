@@ -1,8 +1,8 @@
 OC.L10N.register(
     "backup",
     {
-    "Error" : "កំហុស",
     "Local storage" : "Local storage",
+    "Error" : "កំហុស",
     "External storage" : "External storage",
     "Delete" : "លុប",
     "Cancel" : "បោះបង់",

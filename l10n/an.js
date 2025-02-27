@@ -5,8 +5,8 @@ OC.L10N.register(
     "Error" : "Error",
     "Actions" : "Acions",
     "Delete" : "Borrar",
-    "Cancel" : "Cancelar",
     "Unable to save the settings" : "No se puede alzar a configuración",
+    "Cancel" : "Cancelar",
     "Pending" : "Pendient"
 },
 "nplurals=2; plural=(n != 1);");

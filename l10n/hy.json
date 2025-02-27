@@ -3,12 +3,12 @@
     "minutes" : "րոպե",
     "hours" : "ժամ",
     "days" : "օր",
-    "Error" : "Սխալ",
     "Local storage" : "Local storage",
+    "Error" : "Սխալ",
     "External storage" : "External storage",
     "Delete" : "հեռացնել",
-    "Cancel" : "ընդհատել",
     "Unable to save the settings" : "Չի ստացվում պահել կարգավորումները",
+    "Cancel" : "ընդհատել",
     "Completed" : "Ավարտվեց",
     "Date" : "Date"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

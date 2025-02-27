@@ -2,8 +2,8 @@ OC.L10N.register(
     "backup",
     {
     "days" : "﻿ದಿನಗಳು",
-    "Error" : "﻿ತಪ್ಪಾಗಿದೆ",
     "Local storage" : "Local storage",
+    "Error" : "﻿ತಪ್ಪಾಗಿದೆ",
     "External storage" : "External storage",
     "Delete" : "﻿ಅಳಿಸಿ",
     "Cancel" : "﻿ರದ್ದು",

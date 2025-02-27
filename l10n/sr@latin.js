@@ -1,8 +1,8 @@
 OC.L10N.register(
     "backup",
     {
-    "Error" : "Error",
     "Local storage" : "Local storage",
+    "Error" : "Error",
     "External storage" : "External storage",
     "Delete" : "Obriši",
     "Cancel" : "Otkaži",

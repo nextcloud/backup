@@ -6,8 +6,8 @@ OC.L10N.register(
     "Error" : "Error",
     "Actions" : "Actions",
     "Delete" : "Delete",
-    "Cancel" : "Cancel",
     "Settings saved" : "Settings saved",
+    "Cancel" : "Cancel",
     "Pending" : "Pending",
     "Status" : "Status",
     "Local" : "Local"
