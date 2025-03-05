@@ -29,6 +29,7 @@ OC.L10N.register(
     "Unable to save the settings" : "Αδυναμία αποθήκευσης των ρυθμίσεων",
     "and" : "και",
     "Cancel" : "Ακύρωση",
+    "Scheduled" : "Προγραμματισμένο",
     "Pending" : "Εκκρεμεί",
     "Not completed" : "Μη ολοκληρωμένο",
     "Completed" : "Ολοκληρωμένες",
