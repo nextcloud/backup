@@ -1,13 +1,17 @@
 OC.L10N.register(
     "backup",
     {
+    "seconds" : "sekund",
     "minutes" : "minutes",
+    "hours" : "soat",
     "days" : "days",
     "Error" : "Error",
     "Actions" : "Actions",
     "Delete" : "Delete",
     "Settings saved" : "Settings saved",
+    "Unable to save the settings" : "Sozlamalarni saqlab bo‘lmadi",
     "Cancel" : "Cancel",
+    "_day_::_days_" : ["kun"],
     "Pending" : "Pending",
     "Status" : "Status",
     "Local" : "Local"
