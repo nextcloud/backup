@@ -46,7 +46,7 @@
     "Unable to save the settings" : "Чување поставки није успело.",
     "Unable to request restoring point" : "Није успео захтев за тачком враћања",
     "Unable to export settings" : "Није успео извоз подешавања",
-    "Backups configuration" : "Конфигурација резерних копија",
+    "Backups configuration" : "Конфигурација резервних копија",
     "General configuration on how and when your restoring points are created." : "Општа конфигурација начина и тренутка креирања ваших тачака враћања.",
     "Enable background tasks" : "Укључи послове у позадини",
     "You can enable background task for backups. This means that the creation, maintenance and purges of backups will be done automatically." : "Можете да укључите позадински посао за резервне копије. То значи да ће се креирање, одржавање и брисање резервних копија вршити аутоматски.",

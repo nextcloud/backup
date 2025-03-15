@@ -14,6 +14,7 @@ OC.L10N.register(
     "_day_::_days_" : ["kun"],
     "Pending" : "Pending",
     "Status" : "Status",
+    "Date" : "Sana",
     "Local" : "Local"
 },
 "nplurals=1; plural=0;");
