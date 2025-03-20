@@ -16,6 +16,7 @@ OC.L10N.register(
     "_day_::_days_" : ["päev","päeva"],
     "Pending" : "Ootel",
     "Completed" : "Lõpetatud",
+    "Encrypted" : "Krüptitud",
     "Health" : "Tervis",
     "Status" : "Staatus",
     "Date" : "Kuupäev",
