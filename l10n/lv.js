@@ -9,7 +9,7 @@ OC.L10N.register(
     "Error" : "Kļūda",
     "External storage" : "External storage",
     "Actions" : "Darbības",
-    "Delete" : "Dzēst",
+    "Delete" : "Izdzēst",
     "Settings saved" : "Iestatījumi saglabāti",
     "Unable to save the settings" : "Nevarēja saglabāt iestatījumus",
     "Cancel" : "Atcelt",
