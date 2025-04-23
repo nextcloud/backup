@@ -13,6 +13,7 @@ OC.L10N.register(
     "Delete" : "Kustuta",
     "Settings saved" : "Seaded salvestatud",
     "Unable to save the settings" : "Seadeid ei saa salvestada",
+    "and" : "ja",
     "Cancel" : "Loobu",
     "_day_::_days_" : ["päev","päeva"],
     "Pending" : "Ootel",
