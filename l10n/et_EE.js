@@ -17,6 +17,7 @@ OC.L10N.register(
     "Cancel" : "Loobu",
     "_day_::_days_" : ["päev","päeva"],
     "Pending" : "Ootel",
+    "Orphan" : "Hülga",
     "Completed" : "Lõpetatud",
     "Encrypted" : "Krüptitud",
     "Health" : "Tervis",
