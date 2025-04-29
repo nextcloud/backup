@@ -1,6 +1,7 @@
 OC.L10N.register(
     "backup",
     {
+    "Backup" : "Zaxira",
     "seconds" : "sekund",
     "minutes" : "minutes",
     "hours" : "soat",
