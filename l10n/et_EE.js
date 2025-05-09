@@ -16,6 +16,7 @@ OC.L10N.register(
     "and" : "ja",
     "Cancel" : "Loobu",
     "_day_::_days_" : ["päev","päeva"],
+    "Scheduled" : "Ajastatud",
     "Pending" : "Ootel",
     "Orphan" : "Hülga",
     "Completed" : "Lõpetatud",
