@@ -2,6 +2,8 @@ OC.L10N.register(
     "backup",
     {
     "Backup" : "Varundus",
+    "complete" : "valmis",
+    "partial" : "osaline",
     "seconds" : "sekundit",
     "minutes" : "minutit",
     "hours" : "tundi",

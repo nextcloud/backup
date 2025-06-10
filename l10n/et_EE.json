@@ -1,5 +1,7 @@
 { "translations": {
     "Backup" : "Varundus",
+    "complete" : "valmis",
+    "partial" : "osaline",
     "seconds" : "sekundit",
     "minutes" : "minutit",
     "hours" : "tundi",
