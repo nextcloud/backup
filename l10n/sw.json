@@ -5,6 +5,7 @@
     "days" : "siku",
     "Actions" : "Utendekaji",
     "Delete" : "Futa",
-    "Cancel" : "Cancel"
+    "Cancel" : "Cancel",
+    "Completed" : "Kamilika"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

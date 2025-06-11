@@ -7,6 +7,7 @@ OC.L10N.register(
     "days" : "siku",
     "Actions" : "Utendekaji",
     "Delete" : "Futa",
-    "Cancel" : "Cancel"
+    "Cancel" : "Cancel",
+    "Completed" : "Kamilika"
 },
 "nplurals=2; plural=(n != 1);");
