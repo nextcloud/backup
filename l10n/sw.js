@@ -8,6 +8,7 @@ OC.L10N.register(
     "Actions" : "Utendekaji",
     "Delete" : "Futa",
     "Cancel" : "Cancel",
-    "Completed" : "Kamilika"
+    "Completed" : "Kamilika",
+    "Date" : "Tarehe"
 },
 "nplurals=2; plural=(n != 1);");
