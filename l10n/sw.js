@@ -8,6 +8,7 @@ OC.L10N.register(
     "Actions" : "Utendekaji",
     "Delete" : "Futa",
     "Cancel" : "Cancel",
+    "Pending" : "Inasubiri",
     "Completed" : "Kamilika",
     "Date" : "Tarehe"
 },
