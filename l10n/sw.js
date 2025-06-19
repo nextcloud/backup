@@ -8,8 +8,10 @@ OC.L10N.register(
     "Actions" : "Utendekaji",
     "Delete" : "Futa",
     "Cancel" : "Cancel",
+    "_day_::_days_" : ["day","days"],
     "Pending" : "Inasubiri",
     "Completed" : "Kamilika",
+    "Status" : "Wadhifa",
     "Date" : "Tarehe"
 },
 "nplurals=2; plural=(n != 1);");
