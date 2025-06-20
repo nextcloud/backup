@@ -5,6 +5,7 @@ OC.L10N.register(
     "minutes" : "dakika",
     "hours" : "masaa",
     "days" : "siku",
+    "Error" : "Hitilafu",
     "Actions" : "Utendekaji",
     "Delete" : "Futa",
     "Cancel" : "Cancel",
