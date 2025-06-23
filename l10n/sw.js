@@ -13,6 +13,7 @@ OC.L10N.register(
     "Pending" : "Inasubiri",
     "Completed" : "Kamilika",
     "Status" : "Wadhifa",
-    "Date" : "Tarehe"
+    "Date" : "Tarehe",
+    "ID" : "Kitambulisho"
 },
 "nplurals=2; plural=(n != 1);");
