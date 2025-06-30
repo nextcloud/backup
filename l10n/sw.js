@@ -8,10 +8,12 @@ OC.L10N.register(
     "Error" : "Hitilafu",
     "Actions" : "Utendekaji",
     "Delete" : "Futa",
+    "and" : "na",
     "Cancel" : "Cancel",
     "_day_::_days_" : ["day","days"],
     "Pending" : "Inasubiri",
     "Completed" : "Kamilika",
+    "Encrypted" : "Imesimbwa kwa njia fiche",
     "Status" : "Wadhifa",
     "Date" : "Tarehe",
     "ID" : "Kitambulisho"
