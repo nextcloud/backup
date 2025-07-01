@@ -16,6 +16,7 @@ OC.L10N.register(
     "Encrypted" : "Imesimbwa kwa njia fiche",
     "Status" : "Wadhifa",
     "Date" : "Tarehe",
-    "ID" : "Kitambulisho"
+    "ID" : "Kitambulisho",
+    "Local" : "Kawaida"
 },
 "nplurals=2; plural=(n != 1);");
