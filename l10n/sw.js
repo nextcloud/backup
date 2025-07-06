@@ -8,6 +8,7 @@ OC.L10N.register(
     "Error" : "Hitilafu",
     "Actions" : "Utendekaji",
     "Delete" : "Futa",
+    "Unable to save the settings" : "Unable to save the settings",
     "and" : "na",
     "Cancel" : "Cancel",
     "_day_::_days_" : ["day","days"],
