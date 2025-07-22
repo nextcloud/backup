@@ -4,6 +4,7 @@ OC.L10N.register(
     "Local storage" : "Лакальнае сховішча",
     "Error" : "Памылка",
     "External storage" : "Знешняе сховішча",
+    "Actions" : "Дзеянні",
     "Delete" : "Выдаліць",
     "Unable to save the settings" : "Не ўдалося захаваць налады",
     "Cancel" : "Скасаваць",
