@@ -11,6 +11,7 @@ OC.L10N.register(
     "Actions" : "Acciones",
     "Delete" : "Borrar",
     "Settings saved" : "Se han guardado las configuraciones ",
+    "Unable to save the settings" : "No se pueden guardar los ajustes",
     "Cancel" : "Cancelar",
     "Scheduled" : "Programado",
     "Pending" : "Pendiente",
