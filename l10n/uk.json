@@ -68,7 +68,7 @@
     "You can specify the number of restoring points to keep during a purge." : "Ви можете вказати кількість точок відновлення, які потрібно зберегти під час очищення.",
     "Policy for the local app data" : "Політика для даних локальної програми",
     "Policy for external storages" : "Політика щодо зовнішніх сховищ",
-    "Export backup configuration" : "Завантажити резервні налаштування",
+    "Export backup configuration" : "Отримати резервні налаштування",
     "You can export your settings with the below button. The exported file is important as it allows you to restore your backup in case of full data lost. Keep it in a safe place!" : "Ви можете експортувати свої налаштування за допомогою кнопки нижче. Експортований файл є важливим, оскільки він дозволяє відновити резервну копію у разі повної втрати даних. Зберігайте його в безпечному місці!",
     "Export configuration" : "Експортувати конфігурацію",
     "Your settings export has been downloaded encrypted. To be able to decrypt it later, please keep the following private key in a safe place:" : "Ваші налаштування були завантажені у зашифрованому вигляді. Щоб мати можливість розшифрувати їх пізніше, зберігайте наступний приватний ключ у безпечному місці:",
