@@ -6,6 +6,7 @@ OC.L10N.register(
     "External storage" : "Знешняе сховішча",
     "Actions" : "Дзеянні",
     "Delete" : "Выдаліць",
+    "Settings saved" : "Налады захаваны",
     "Unable to save the settings" : "Немагчыма захаваць налады",
     "Cancel" : "Скасаваць",
     "Pending" : "У чаканні",
