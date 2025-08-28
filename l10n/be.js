@@ -1,6 +1,7 @@
 OC.L10N.register(
     "backup",
     {
+    "seconds" : "с",
     "Local storage" : "Лакальнае сховішча",
     "Error" : "Памылка",
     "External storage" : "Знешняе сховішча",
