@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "days" : "ussan",
     "Error" : "Erreur",
+    "Actions" : "Tigawin",
     "Delete" : "Kkes",
     "Unable to save the settings" : "D awezɣi ad ttwaskelsen yiɣewwaren",
     "Cancel" : "Sefsex",
@@ -10,6 +11,7 @@ OC.L10N.register(
     "Completed" : "Yemmed",
     "Encrypted" : "Yettwawgelhen",
     "Status" : "État",
+    "Date" : "Azemz",
     "Local" : "Adigan"
 },
 "nplurals=2; plural=(n != 1);");

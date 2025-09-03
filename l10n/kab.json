@@ -1,6 +1,7 @@
 { "translations": {
     "days" : "ussan",
     "Error" : "Erreur",
+    "Actions" : "Tigawin",
     "Delete" : "Kkes",
     "Unable to save the settings" : "D awezɣi ad ttwaskelsen yiɣewwaren",
     "Cancel" : "Sefsex",
@@ -8,6 +9,7 @@
     "Completed" : "Yemmed",
     "Encrypted" : "Yettwawgelhen",
     "Status" : "État",
+    "Date" : "Azemz",
     "Local" : "Adigan"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
