@@ -13,6 +13,7 @@ OC.L10N.register(
     "I understand that the server will be put in maintenance mode." : "Я разумею, што сервер будзе пераведзены ў рэжым тэхнічнага абслугоўвання.",
     "Cancel" : "Скасаваць",
     "Pending" : "У чаканні",
+    "Encrypted" : "Зашыфравана",
     "Status" : "Статус",
     "Date" : "Дата"
 },
