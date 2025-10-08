@@ -9,6 +9,7 @@ OC.L10N.register(
     "Delete" : "Выдаліць",
     "Settings saved" : "Налады захаваны",
     "Unable to save the settings" : "Немагчыма захаваць налады",
+    "Enable background tasks" : "Уключыць фонавыя заданні",
     "and" : "і",
     "I understand that the server will be put in maintenance mode." : "Я разумею, што сервер будзе пераведзены ў рэжым тэхнічнага абслугоўвання.",
     "Cancel" : "Скасаваць",
