@@ -12,6 +12,7 @@ OC.L10N.register(
     "Actions" : "Veprimet",
     "Delete" : "Fshij",
     "Settings saved" : "Opsjonet u Ruajtën.",
+    "Unable to save the settings" : "E pamaundur te ruhen konfigurimet",
     "Cancel" : "Anullo",
     "Pending" : "Në Pritje të Konfirmimit",
     "Completed" : "Të plotësuara",
