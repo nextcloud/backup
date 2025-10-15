@@ -957,15 +957,27 @@ class PointService {
 	public function purgeRestoringPoints(): void {
 		$c = $this->configService->getAppValue(ConfigService::STORE_ITEMS);
 		$i = 0;
+		$parentIds = [];
 		foreach ($this->getLocalRestoringPoints(0, 0, false) as $point) {
 			if ($point->isArchive()) {
 				continue;
 			}
 			$i++;
 			if ($i > $c) {
+				foreach ($parentIds as $parent) {
+					if ($point->getId() === $parent ) {
+						continue 2; // continue with outer loop
+					}
+				}
 				try {
 					$this->delete($point);
 				} catch (Throwable $e) {
+				}
+			} else {
+				if (($parent = $point->getParent()) !== '') {
+					if (!\in_array($parent, $parentIds)) {
+						$parentIds[] = $parent;
+					}
 				}
 			}
 		}
