@@ -70,6 +70,7 @@ use OCP\Files\NotPermittedException;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\StorageNotAvailableException;
 use OCP\Lock\LockedException;
+use Throwable;
 
 /**
  * Class ExternalFolderService
@@ -509,7 +510,6 @@ class ExternalFolderService {
 	 * @throws NotPermittedException
 	 * @throws RestoringPointException
 	 * @throws RestoringPointNotFoundException
-	 * @throws NotFoundException
 	 */
 	public function updateMetadataFile(
 		ExternalFolder $external,
@@ -575,7 +575,6 @@ class ExternalFolderService {
 	 *
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
-	 * @param RestoringChunkPart|null $part
 	 *
 	 * @return RestoringHealth
 	 * @throws ExternalFolderNotFoundException
@@ -946,5 +945,39 @@ class ExternalFolderService {
 	 */
 	public function remove(int $storageId) {
 		$this->externalFolderRequest->remove($storageId);
+	}
+
+
+	/**
+	 *
+	 */
+	public function purgeRestoringPoints() {
+		foreach ($this->getAll() as $external) {
+			try {
+				$this->purgeExternalRestoringPoints($external);
+			} catch (ExternalFolderNotFoundException $e) {
+				$this->e($e, ['external' => $external]);
+			}
+		}
+	}
+
+	/**
+	 * @throws ExternalFolderNotFoundException
+	 */
+	public function purgeExternalRestoringPoints(ExternalFolder $external) {
+		$c = $this->configService->getAppValue(ConfigService::STORE_ITEMS_EXTERNAL);
+		$i = 0;
+		foreach ($this->getRestoringPoints($external) as $point) {
+			if ($point->isArchive()) {
+				continue;
+			}
+			$i++;
+			if ($i > $c) {
+				try {
+					$this->deletePointExternal($external, $point->getId());
+				} catch (Throwable $e) {
+				}
+			}
+		}
 	}
 }

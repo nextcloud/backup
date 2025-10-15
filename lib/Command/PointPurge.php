@@ -32,6 +32,7 @@ declare(strict_types=1);
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
+use OCA\Backup\Service\ExternalFolderService;
 use OCA\Backup\Service\PointService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -47,16 +48,21 @@ class PointPurge extends Base {
 	/** @var PointService */
 	private $pointService;
 
+	/** @var ExternalFolderService */
+	private $externalFolderService;
+
 
 	/**
 	 * PointPurge constructor.
 	 *
 	 * @param PointService $pointService
+	 * @param ExternalFolderService $externalFolderService
 	 */
-	public function __construct(PointService $pointService) {
+	public function __construct(PointService $pointService, ExternalFolderService $externalFolderService) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
+		$this->externalFolderService = $externalFolderService;
 	}
 
 
@@ -79,7 +85,7 @@ class PointPurge extends Base {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->pointService->purgeRestoringPoints();
-		$this->pointService->purgeRemoteRestoringPoints();
+		$this->externalFolderService->purgeRestoringPoints();
 
 		return 0;
 	}
