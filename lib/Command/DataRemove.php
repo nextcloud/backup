@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -44,7 +42,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DataRemove extends Base {
 
-
 	/**
 	 * DataRemove constructor.
 	 */
@@ -52,16 +49,14 @@ class DataRemove extends Base {
 		parent::__construct();
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:data:remove')
-			 ->setDescription('Removing data pack')
-			 ->addArgument('storage_id', InputArgument::REQUIRED, 'storageId');
+			->setDescription('Removing data pack')
+			->addArgument('storage_id', InputArgument::REQUIRED, 'storageId');
 	}
-
 
 	/**
 	 * @param InputInterface $input

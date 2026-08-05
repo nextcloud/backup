@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Model\BackupEvent;
@@ -42,14 +40,13 @@ class EventRequest extends EventRequestBuilder {
 	public function save(BackupEvent $event): void {
 		$qb = $this->getEventInsertSql();
 		$qb->setValue('type', $qb->createNamedParameter($event->getType()))
-		   ->setValue('author', $qb->createNamedParameter($event->getAuthor()))
-		   ->setValue('status', $qb->createNamedParameter($event->getStatus()))
-		   ->setValue('data', $qb->createNamedParameter(json_encode($event->getData())))
-		   ->setValue('result', $qb->createNamedParameter(json_encode($event->getResult())));
+			->setValue('author', $qb->createNamedParameter($event->getAuthor()))
+			->setValue('status', $qb->createNamedParameter($event->getStatus()))
+			->setValue('data', $qb->createNamedParameter(json_encode($event->getData())))
+			->setValue('result', $qb->createNamedParameter(json_encode($event->getResult())));
 
 		$qb->execute();
 	}
-
 
 	/**
 	 * @param BackupEvent $event
@@ -57,11 +54,10 @@ class EventRequest extends EventRequestBuilder {
 	public function update(BackupEvent $event): void {
 		$qb = $this->getEventUpdateSql();
 		$qb->set('status', $qb->createNamedParameter($event->getStatus()))
-		   ->set('result', $qb->createNamedParameter(json_encode($event->getResult())));
+			->set('result', $qb->createNamedParameter(json_encode($event->getResult())));
 
 		$qb->execute();
 	}
-
 
 	/**
 	 * @return BackupEvent[]

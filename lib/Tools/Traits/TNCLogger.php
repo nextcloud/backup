@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use Exception;
@@ -40,7 +38,6 @@ use Throwable;
 trait TNCLogger {
 	use TNCSetup;
 
-
 	public static $EMERGENCY = 4;
 	public static $ALERT = 3;
 	public static $CRITICAL = 3;
@@ -49,7 +46,6 @@ trait TNCLogger {
 	public static $NOTICE = 1;
 	public static $INFO = 1;
 	public static $DEBUG = 0;
-
 
 	/**
 	 * @param Throwable $t
@@ -71,16 +67,15 @@ trait TNCLogger {
 		}
 
 		$this->logger()
-			 ->log(
-			 	$level,
-			 	$message,
-			 	[
-			 		'app' => $this->setup('app'),
-			 		'exception' => $t
-			 	]
-			 );
+			->log(
+				$level,
+				$message,
+				[
+					'app' => $this->setup('app'),
+					'exception' => $t
+				]
+			);
 	}
-
 
 	/**
 	 * @param Exception $e
@@ -111,16 +106,15 @@ trait TNCLogger {
 		}
 
 		$this->logger()
-			 ->log(
-			 	$level,
-			 	$message,
-			 	[
-			 		'app' => $this->setup('app'),
-			 		'exception' => $e
-			 	]
-			 );
+			->log(
+				$level,
+				$message,
+				[
+					'app' => $this->setup('app'),
+					'exception' => $e
+				]
+			);
 	}
-
 
 	/**
 	 * @param string $message
@@ -168,7 +162,6 @@ trait TNCLogger {
 		$this->log($debugLevel, $message, ($this->appConfig('debug_trace') === '1'), $serializable);
 	}
 
-
 	/**
 	 * @param int $level
 	 * @param string $message
@@ -184,9 +177,8 @@ trait TNCLogger {
 		}
 
 		$this->logger()
-			 ->log($level, $message, $opts);
+			->log($level, $message, $opts);
 	}
-
 
 	/**
 	 * @return LoggerInterface

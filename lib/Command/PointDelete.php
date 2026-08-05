@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -57,7 +55,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PointDelete extends Base {
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -66,7 +63,6 @@ class PointDelete extends Base {
 
 	/** @var ExternalFolderService */
 	private $externalFolderService;
-
 
 	/**
 	 * PointCreate constructor.
@@ -78,7 +74,7 @@ class PointDelete extends Base {
 	public function __construct(
 		PointService $pointService,
 		RemoteService $remoteService,
-		ExternalFolderService $externalFolderService
+		ExternalFolderService $externalFolderService,
 	) {
 		parent::__construct();
 
@@ -87,7 +83,6 @@ class PointDelete extends Base {
 		$this->externalFolderService = $externalFolderService;
 	}
 
-
 	/**
 	 *
 	 */
@@ -95,21 +90,20 @@ class PointDelete extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:delete')
-			 ->setDescription('Locally delete a restoring point')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to delete')
-			 ->addOption(
-			 	'all-storages', '', InputOption::VALUE_NONE, 'remove restoring point from all storage'
-			 )
-			 ->addOption(
-			 	'remote', '', InputOption::VALUE_REQUIRED,
-			 	'remove a restoring point from a remote instance (or local)', ''
-			 )
-			 ->addOption(
-			 	'external', '', InputOption::VALUE_REQUIRED,
-			 	'remove a restoring point from an external folder', ''
-			 );
+			->setDescription('Locally delete a restoring point')
+			->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to delete')
+			->addOption(
+				'all-storages', '', InputOption::VALUE_NONE, 'remove restoring point from all storage'
+			)
+			->addOption(
+				'remote', '', InputOption::VALUE_REQUIRED,
+				'remove a restoring point from a remote instance (or local)', ''
+			)
+			->addOption(
+				'external', '', InputOption::VALUE_REQUIRED,
+				'remove a restoring point from an external folder', ''
+			);
 	}
-
 
 	/**
 	 * @param InputInterface $input

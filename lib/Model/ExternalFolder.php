@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -48,7 +46,6 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 	use TArrayTools;
 	use TStringTools;
 
-
 	/** @var int */
 	private $storageId = 0;
 
@@ -61,7 +58,6 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 	/** @var Folder */
 	private $rootFolder;
 
-
 	/**
 	 * ExternalFolder constructor.
 	 */
@@ -69,7 +65,6 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 		$this->storageId = $storageId;
 		$this->storage = $storage;
 	}
-
 
 	/**
 	 * @param int $storageId
@@ -89,7 +84,6 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 		return $this->storageId;
 	}
 
-
 	/**
 	 * @param string $storage
 	 *
@@ -108,7 +102,6 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 		return $this->storage;
 	}
 
-
 	/**
 	 * @param string $root
 	 *
@@ -126,7 +119,6 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 	public function getRoot(): string {
 		return $this->root;
 	}
-
 
 	/**
 	 * @param Folder $rootFolder
@@ -153,7 +145,6 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 		return !is_null($this->rootFolder);
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -161,11 +152,10 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 	 */
 	public function importFromDatabase(array $data): IQueryRow {
 		$this->setStorageId($this->getInt('storage_id', $data))
-			 ->setRoot($this->get('root', $data));
+			->setRoot($this->get('root', $data));
 
 		return $this;
 	}
-
 
 	/**
 	 * @param array $data
@@ -175,8 +165,8 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setStorageId($this->getInt('storageId', $data))
-			 ->setStorage($this->get('storage', $data))
-			 ->setRoot($this->get('root', $data));
+			->setStorage($this->get('storage', $data))
+			->setRoot($this->get('root', $data));
 
 		if ($this->getStorageId() === 0) {
 			throw new InvalidItemException();
@@ -184,7 +174,6 @@ class ExternalFolder implements JsonSerializable, IQueryRow, IDeserializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return array

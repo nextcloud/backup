@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -42,7 +40,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DataAdd extends Base {
 
-
 	/**
 	 * DataAdd constructor.
 	 */
@@ -50,15 +47,13 @@ class DataAdd extends Base {
 		parent::__construct();
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:data:add')
-			 ->setDescription('Add a new data pack to your backups');
+			->setDescription('Add a new data pack to your backups');
 	}
-
 
 	/**
 	 * @param InputInterface $input

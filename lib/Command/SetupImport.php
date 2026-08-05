@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -57,7 +55,6 @@ class SetupImport extends Base {
 	use TArrayTools;
 	use TDeserialize;
 
-
 	/** @var RemoteRequest */
 	private $remoteRequest;
 
@@ -70,7 +67,6 @@ class SetupImport extends Base {
 	/** @var ConfigService */
 	private $configService;
 
-
 	/**
 	 * SetupImport constructor.
 	 *
@@ -82,7 +78,7 @@ class SetupImport extends Base {
 		RemoteRequest $remoteRequest,
 		EncryptService $encryptService,
 		RemoteStreamService $remoteStreamService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		parent::__construct();
 
@@ -92,16 +88,14 @@ class SetupImport extends Base {
 		$this->configService = $configService;
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:setup:import')
-			 ->setDescription('Import your setup for easier restoration')
-			 ->addOption('key', '', InputOption::VALUE_REQUIRED, 'key used when exporting the setup', '');
+			->setDescription('Import your setup for easier restoration')
+			->addOption('key', '', InputOption::VALUE_REQUIRED, 'key used when exporting the setup', '');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -134,7 +128,6 @@ class SetupImport extends Base {
 				. 'Is it encrypted ? if so use --key <KEY>'
 			);
 		}
-
 
 		$storedPairs = $this->getArray('signatory', $setup);
 		if (sizeof($storedPairs) === 1) {

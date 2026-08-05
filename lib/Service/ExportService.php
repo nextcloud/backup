@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Service;
 
 use OCA\Backup\Tools\Exceptions\SignatoryException;
@@ -40,7 +38,6 @@ use SodiumException;
  * @package OCA\Backup\Service
  */
 class ExportService {
-
 
 	/** @var RemoteService */
 	private $remoteService;
@@ -54,7 +51,6 @@ class ExportService {
 	/** @var ConfigService */
 	private $configService;
 
-
 	/**
 	 * ExportService constructor.
 	 *
@@ -67,14 +63,13 @@ class ExportService {
 		RemoteService $remoteService,
 		RemoteStreamService $remoteStreamService,
 		EncryptService $encryptService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->remoteService = $remoteService;
 		$this->remoteStreamService = $remoteStreamService;
 		$this->encryptService = $encryptService;
 		$this->configService = $configService;
 	}
-
 
 	/**
 	 * @param bool $encrypted

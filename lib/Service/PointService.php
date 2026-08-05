@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -88,11 +86,9 @@ class PointService {
 	use TStringTools;
 	use TDeserialize;
 
-
 	public const NOBACKUP_FILE = '.nobackup';
 	public const NOINDEX_FILE = '.noindex'; // so that fulltextsearch does not index backup
 	public const SQL_DUMP_FILE = 'backup.sql';
-
 
 	/** @var PointRequest */
 	private $pointRequest;
@@ -136,7 +132,6 @@ class PointService {
 	/** @var bool */
 	private $backupFSInitiated = false;
 
-
 	/**
 	 * PointService constructor.
 	 *
@@ -165,7 +160,7 @@ class PointService {
 		FilesService $filesService,
 		OutputService $outputService,
 		ActivityService $activityService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->pointRequest = $pointRequest;
 		$this->changesRequest = $changesRequest;
@@ -183,7 +178,6 @@ class PointService {
 		$this->setup('app', 'backup');
 	}
 
-
 	/**
 	 * If $instance is empty, will returns RestoringPoint without checking the origin.
 	 * Use getLocalRestoringPoint() to limit the search to local RestoringPoint
@@ -198,7 +192,6 @@ class PointService {
 		return $this->pointRequest->getById($pointId, $instance);
 	}
 
-
 	/**
 	 * @param string $pointId
 	 *
@@ -208,7 +201,6 @@ class PointService {
 	public function getLocalRestoringPoint(string $pointId): RestoringPoint {
 		return $this->pointRequest->getLocalById($pointId);
 	}
-
 
 	/**
 	 * @param int $since
@@ -220,7 +212,6 @@ class PointService {
 	public function getLocalRestoringPoints(int $since = 0, int $until = 0, bool $asc = true): array {
 		return $this->pointRequest->getLocal($since, $until, $asc);
 	}
-
 
 	/**
 	 * @param bool $complete
@@ -301,7 +292,6 @@ class PointService {
 		return $point;
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param bool $updateMetadata
@@ -322,7 +312,6 @@ class PointService {
 			$this->metadataService->saveMetadata($point);
 		}
 	}
-
 
 	/**
 	 * update small complementary infos like Commend and Archive flag
@@ -345,13 +334,12 @@ class PointService {
 
 		$this->initBaseFolder($stored);
 		$stored->setComment($point->getComment())
-			   ->setArchive($point->isArchive())
-			   ->setSubSignature($point->getSubSignature());
+			->setArchive($point->isArchive())
+			->setSubSignature($point->getSubSignature());
 
 		$this->pointRequest->update($stored, true);
 		$this->metadataService->saveMetadata($stored);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -367,7 +355,6 @@ class PointService {
 		$point->getBaseFolder()->delete();
 		$this->pointRequest->deletePoint($point->getId());
 	}
-
 
 	/**
 	 * @param bool $complete
@@ -407,7 +394,6 @@ class PointService {
 		return $point;
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param bool $complete
@@ -443,7 +429,6 @@ class PointService {
 		$this->addCustomApps($point);
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 *
@@ -460,7 +445,6 @@ class PointService {
 
 		$point->setParent($parentId);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -487,7 +471,6 @@ class PointService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 */
@@ -502,7 +485,6 @@ class PointService {
 		$data->setLocked(true);
 		$point->addRestoringData($data);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -543,7 +525,6 @@ class PointService {
 
 		$point->addRestoringData($data);
 	}
-
 
 	/** // TODO: add a way to get sql params from current config/config.php directly
 	 *
@@ -596,12 +577,10 @@ class PointService {
 		return $sqlDump;
 	}
 
-
 	public function loadSqlDump() {
 		new SqlDumpMySQL();
 		new SqlDumpPgSQL();
 	}
-
 
 	public function generatePointFromFolder(int $fileId, string $owner): RestoringPoint {
 		$point = $this->filesService->getPointFromFileId($fileId, $owner, $folder);
@@ -631,7 +610,6 @@ class PointService {
 		return $point;
 	}
 
-
 	/**
 	 * @return RestoringPoint[]
 	 * @throws ExternalFolderNotFoundException
@@ -650,7 +628,6 @@ class PointService {
 
 		return [];
 	}
-
 
 	/**
 	 * @param string $pointId
@@ -691,7 +668,6 @@ class PointService {
 		return $point;
 	}
 
-
 	/**
 	 * @return ExternalFolder
 	 * @throws ExternalAppdataException
@@ -716,7 +692,6 @@ class PointService {
 		return $external;
 	}
 
-
 	/**
 	 * @param int $storageId
 	 * @param string $root
@@ -729,7 +704,7 @@ class PointService {
 		if ($storageId === 0) {
 			try {
 				$this->destroyBackupFS();
-			} catch (ExternalFolderNotFoundException | NotFoundException | NotPermittedException $e) {
+			} catch (ExternalFolderNotFoundException|NotFoundException|NotPermittedException $e) {
 				$this->deleteAllPoints();
 			}
 
@@ -747,13 +722,12 @@ class PointService {
 
 		try {
 			$this->destroyBackupFS();
-		} catch (ExternalFolderNotFoundException | NotFoundException | NotPermittedException $e) {
+		} catch (ExternalFolderNotFoundException|NotFoundException|NotPermittedException $e) {
 			$this->deleteAllPoints();
 		}
 
 		$this->configService->setAppValueArray(ConfigService::EXTERNAL_APPDATA, $this->serialize($external));
 	}
-
 
 	/**
 	 * @throws NotPermittedException
@@ -799,7 +773,6 @@ class PointService {
 		$this->backupFSInitiated = true;
 	}
 
-
 	/**
 	 * This will destroy all backup stored locally
 	 * (from this instance and from remote instance using this instance as storage)
@@ -820,10 +793,8 @@ class PointService {
 		}
 	}
 
-
 	public function deleteAllPoints(): void {
 	}
-
 
 	/**
 	 * @param string $instance
@@ -833,7 +804,6 @@ class PointService {
 	public function getRPByInstance(string $instance): array {
 		return $this->pointRequest->getByInstance($instance);
 	}
-
 
 	/**
 	 * TODO: explode the method as some part of the process is external folder related...
@@ -848,7 +818,7 @@ class PointService {
 	public function getRPFromInstances(
 		bool $local = false,
 		string $remote = '',
-		string $external = ''
+		string $external = '',
 	): array {
 		if ($local) {
 			$instances = [RemoteInstance::LOCAL];
@@ -893,8 +863,8 @@ class PointService {
 					}
 				}
 			} catch (RemoteInstanceException
-			| RemoteInstanceNotFoundException
-			| RemoteResourceNotFoundException $e) {
+			|RemoteInstanceNotFoundException
+			|RemoteResourceNotFoundException $e) {
 				continue;
 			}
 
@@ -914,7 +884,7 @@ class PointService {
 
 					try {
 						$this->remoteStreamService->verifyPoint($item);
-					} catch (SignatoryException | SignatureException $e) {
+					} catch (SignatoryException|SignatureException $e) {
 						$this->e($e);
 						$this->o('  <error>! cannot confirm integrity</error>');
 						$issue = 'cannot confirm integrity';
@@ -932,7 +902,6 @@ class PointService {
 
 		return $this->orderByDate($points, $dates);
 	}
-
 
 	/**
 	 * @param array $points
@@ -977,7 +946,6 @@ class PointService {
 	public function purgeRemoteRestoringPoints(): void {
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 *
@@ -1003,7 +971,6 @@ class PointService {
 		$point->setAppDataRootWrapper($this->appDataRoot);
 		$point->setBaseFolder($folder);
 	}
-
 
 	/**
 	 * Update $point with it, but also returns the generated RestoringHealth
@@ -1037,8 +1004,8 @@ class PointService {
 				}
 
 				$chunkHealth->setDataName($data->getName())
-							->setChunkName($chunk->getName())
-							->setStatus($status);
+					->setChunkName($chunk->getName())
+					->setStatus($status);
 				$health->addPart($chunkHealth);
 			}
 		}
@@ -1052,7 +1019,7 @@ class PointService {
 		}
 
 		$health->setStatus($globalStatus)
-			   ->setChecked(time());
+			->setChecked(time());
 		$point->setHealth($health);
 
 		if ($updateDb) {
@@ -1062,13 +1029,12 @@ class PointService {
 		return $health;
 	}
 
-
 	private function generateHealthPacked(
 		RestoringHealth $health,
 		RestoringPoint $point,
 		RestoringData $data,
 		RestoringChunk $chunk,
-		int &$globalStatus
+		int &$globalStatus,
 	): void {
 		foreach ($chunk->getParts() as $part) {
 			$partHealth = new ChunkPartHealth(true);
@@ -1078,13 +1044,12 @@ class PointService {
 			}
 
 			$partHealth->setDataName($data->getName())
-					   ->setChunkName($chunk->getName())
-					   ->setPartName($part->getName())
-					   ->setStatus($status);
+				->setChunkName($chunk->getName())
+				->setPartName($part->getName())
+				->setStatus($status);
 			$health->addPart($partHealth);
 		}
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -1105,7 +1070,6 @@ class PointService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -1116,7 +1080,7 @@ class PointService {
 	private function generatePartHealthStatus(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): int {
 		try {
 			$checksum = $this->packService->getChecksum($point, $chunk, $part);
@@ -1130,7 +1094,6 @@ class PointService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param string $data
@@ -1142,7 +1105,7 @@ class PointService {
 	 * @throws RestoringChunkNotFoundException
 	 */
 	public function getChunkContent(
-		RestoringPoint $point, string $data, string $chunk
+		RestoringPoint $point, string $data, string $chunk,
 	): RestoringChunk {
 		$this->initBaseFolder($point);
 
@@ -1151,7 +1114,6 @@ class PointService {
 
 		return $restoringChunk;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -1163,7 +1125,6 @@ class PointService {
 		$this->initBaseFolder($point);
 		$this->metadataService->saveMetadata($point);
 	}
-
 
 	/**
 	 * @param string $line

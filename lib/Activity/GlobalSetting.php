@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Activity;
 
 use OCA\Backup\AppInfo\Application;
@@ -44,7 +42,6 @@ use OCP\IUserSession;
  */
 class GlobalSetting extends ActivitySettings {
 
-
 	/** @var IL10N */
 	private $l10n;
 
@@ -53,7 +50,6 @@ class GlobalSetting extends ActivitySettings {
 
 	/** @var IUserSession */
 	private $userSession;
-
 
 	/**
 	 * @param IL10N $l10n
@@ -66,7 +62,6 @@ class GlobalSetting extends ActivitySettings {
 		$this->userSession = $userSession;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -74,14 +69,12 @@ class GlobalSetting extends ActivitySettings {
 		return Application::APP_ID;
 	}
 
-
 	/**
 	 * @return string
 	 */
 	public function getName(): string {
 		return $this->l10n->t('Update on all Backup\'s event');
 	}
-
 
 	/**
 	 * @return int
@@ -111,7 +104,6 @@ class GlobalSetting extends ActivitySettings {
 		return $this->isAdmin();
 	}
 
-
 	/**
 	 * @return bool
 	 */
@@ -119,14 +111,12 @@ class GlobalSetting extends ActivitySettings {
 		return $this->isAdmin();
 	}
 
-
 	/**
 	 * @return bool
 	 */
 	public function isDefaultEnabledMail(): bool {
 		return false;
 	}
-
 
 	/**
 	 * @return bool

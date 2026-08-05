@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -47,14 +45,11 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, JsonSerializable {
 	use TArrayTools;
 
-
 	public const LOCAL = 'local';
 	public const ALL = 'all';
 
-
 	public const EXCHANGE_IN = 1;
 	public const EXCHANGE_OUT = 2;
-
 
 	public const UID = 'uid';
 	public const ROOT = 'root';
@@ -67,7 +62,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 	public const RP_HEALTH = 'restoringPoint.health';
 	public const RP_UPLOAD = 'restoringPoint.upload';
 	public const RP_DOWNLOAD = 'restoringPoint.download';
-
 
 	/** @var int */
 	private $dbId = 0;
@@ -114,7 +108,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 	/** @var bool */
 	private $includeExtraDataOnSerialize = false;
 
-
 	/**
 	 * @param int $dbId
 	 *
@@ -133,7 +126,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		return $this->dbId;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -151,7 +143,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 
 		return $this;
 	}
-
 
 	/**
 	 * @param int $exchange
@@ -192,7 +183,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		return (($this->getExchange() & self::EXCHANGE_IN) !== 0);
 	}
 
-
 	/**
 	 * @param bool $outgoing
 	 *
@@ -214,7 +204,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		return (($this->getExchange() & self::EXCHANGE_OUT) !== 0);
 	}
 
-
 	/**
 	 * @param string $RPList
 	 *
@@ -232,7 +221,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 	public function getRPList(): string {
 		return $this->RPList;
 	}
-
 
 	/**
 	 * @param string $RPHealth
@@ -252,7 +240,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		return $this->RPHealth;
 	}
 
-
 	/**
 	 * @param string $RPGet
 	 *
@@ -270,7 +257,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 	public function getRPGet(): string {
 		return $this->RPGet;
 	}
-
 
 	/**
 	 * @param string $RPDownload
@@ -290,7 +276,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		return $this->RPDownload;
 	}
 
-
 	/**
 	 * @param string $RPCreate
 	 *
@@ -308,7 +293,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 	public function getRPCreate(): string {
 		return $this->RPCreate;
 	}
-
 
 	/**
 	 * @param string $RPDelete
@@ -328,7 +312,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		return $this->RPDelete;
 	}
 
-
 	/**
 	 * @param string $RPUpdate
 	 *
@@ -347,7 +330,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		return $this->RPUpdate;
 	}
 
-
 	/**
 	 * @param string $RPUpload
 	 *
@@ -365,7 +347,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 	public function getRPUpload(): string {
 		return $this->RPUpload;
 	}
-
 
 	/**
 	 * @return $this
@@ -400,7 +381,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		return $this->uid;
 	}
 
-
 	/**
 	 * @param string $authSigned
 	 *
@@ -418,7 +398,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 	public function getAuthSigned(): string {
 		return $this->authSigned;
 	}
-
 
 	/**
 	 * @param bool $identityAuthed
@@ -447,7 +426,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		}
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -462,7 +440,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		return $this;
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -472,15 +449,15 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		//		parent::importSignatory($data);
 
 		$this->setRoot($this->get(self::ROOT, $data))
-			 ->setRPList($this->get(self::RP_LIST, $data))
-			 ->setRPCreate($this->get(self::RP_CREATE, $data))
-			 ->setRPDelete($this->get(self::RP_DELETE, $data))
-			 ->setRPUpdate($this->get(self::RP_UPDATE, $data))
-			 ->setRPGet($this->get(self::RP_GET, $data))
-			 ->setRPHealth($this->get(self::RP_HEALTH, $data))
-			 ->setRPUpload($this->get(self::RP_UPLOAD, $data))
-			 ->setRPDownload($this->get(self::RP_DOWNLOAD, $data))
-			 ->setUid($this->get(self::UID, $data));
+			->setRPList($this->get(self::RP_LIST, $data))
+			->setRPCreate($this->get(self::RP_CREATE, $data))
+			->setRPDelete($this->get(self::RP_DELETE, $data))
+			->setRPUpdate($this->get(self::RP_UPDATE, $data))
+			->setRPGet($this->get(self::RP_GET, $data))
+			->setRPHealth($this->get(self::RP_HEALTH, $data))
+			->setRPUpload($this->get(self::RP_UPLOAD, $data))
+			->setRPDownload($this->get(self::RP_DOWNLOAD, $data))
+			->setUid($this->get(self::UID, $data));
 
 		$algo = '';
 		$authSigned = trim($this->get(self::AUTH_SIGNED, $data), ':');
@@ -489,11 +466,10 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		}
 
 		$this->setAuthSigned($authSigned)
-			 ->setAlgorithm($algo);
+			->setAlgorithm($algo);
 
 		return $this;
 	}
-
 
 	/**
 	 * @return array
@@ -502,8 +478,8 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 		$data = [
 			self::UID => $this->getUid(true),
 			self::ROOT => $this->getRoot(),
-			'restoringPoint' =>
-				[
+			'restoringPoint'
+				=> [
 					'list' => $this->getRPList(),
 					'create' => $this->getRPCreate(),
 					'delete' => $this->getRPDelete(),
@@ -530,7 +506,6 @@ class RemoteInstance extends NCSignatory implements IQueryRow, IDeserializable, 
 
 		return array_filter(array_merge($data, parent::jsonSerialize()));
 	}
-
 
 	/**
 	 * @param array $data

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -53,7 +51,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PointPack extends Base {
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -62,7 +59,6 @@ class PointPack extends Base {
 
 	/** @var OutputService */
 	private $outputService;
-
 
 	/**
 	 * PointPack constructor.
@@ -74,7 +70,7 @@ class PointPack extends Base {
 	public function __construct(
 		PointService $pointService,
 		PackService $packService,
-		OutputService $outputService
+		OutputService $outputService,
 	) {
 		parent::__construct();
 
@@ -83,7 +79,6 @@ class PointPack extends Base {
 		$this->outputService = $outputService;
 	}
 
-
 	/**
 	 *
 	 */
@@ -91,11 +86,10 @@ class PointPack extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:pack')
-			 ->setDescription('Increase compression of a restoring point and prepare for upload')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
-			 ->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file');
+			->setDescription('Increase compression of a restoring point and prepare for upload')
+			->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -115,7 +109,7 @@ class PointPack extends Base {
 		if ($input->getOption('generate-log')) {
 			try {
 				$this->outputService->openFile($point, 'occ backup:point:pack');
-			} catch (NotPermittedException | LockedException $e) {
+			} catch (NotPermittedException|LockedException $e) {
 			}
 		}
 

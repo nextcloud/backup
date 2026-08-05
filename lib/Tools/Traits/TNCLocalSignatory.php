@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use OC;
@@ -40,7 +38,6 @@ trait TNCLocalSignatory {
 	use TNCSignatory;
 
 	public static $SIGNATORIES_APP = 'signatories';
-
 
 	/**
 	 * @param NCSignatory $signatory
@@ -58,9 +55,9 @@ trait TNCLocalSignatory {
 		$sign = $this->getArray($signatory->getId(), $signatories);
 		if (!empty($sign)) {
 			$signatory->setKeyId($this->get('keyId', $sign))
-					  ->setKeyOwner($this->get('keyOwner', $sign))
-					  ->setPublicKey($this->get('publicKey', $sign))
-					  ->setPrivateKey($this->get('privateKey', $sign));
+				->setKeyOwner($this->get('keyOwner', $sign))
+				->setPublicKey($this->get('publicKey', $sign))
+				->setPrivateKey($this->get('privateKey', $sign));
 
 			return;
 		}
@@ -72,7 +69,6 @@ trait TNCLocalSignatory {
 		$this->createSimpleSignatory($signatory);
 	}
 
-
 	/**
 	 * @param NCSignatory $signatory
 	 */
@@ -82,8 +78,8 @@ trait TNCLocalSignatory {
 		$signatory->setKeyOwner($signatory->getId());
 		$this->generateKeys($signatory);
 
-		$signatories =
-			json_decode(OC::$server->get(IConfig::class)->getAppValue($app, 'key_pairs', '[]'), true);
+		$signatories
+			= json_decode(OC::$server->get(IConfig::class)->getAppValue($app, 'key_pairs', '[]'), true);
 		$signatories[$signatory->getId()] = [
 			'keyId' => $signatory->getKeyId(),
 			'keyOwner' => $signatory->getKeyOwner(),
@@ -93,7 +89,6 @@ trait TNCLocalSignatory {
 
 		OC::$server->get(IConfig::class)->setAppValue($app, 'key_pairs', json_encode($signatories));
 	}
-
 
 	/**
 	 * @param NCSignatory $signatory

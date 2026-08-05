@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -73,7 +71,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PointDownload extends Base {
 
-
 	/** @var PointRequest */
 	private $pointRequest;
 
@@ -104,7 +101,6 @@ class PointDownload extends Base {
 	/** @var MetadataService */
 	private $metadataService;
 
-
 	/**
 	 * PointDownload constructor.
 	 *
@@ -129,7 +125,7 @@ class PointDownload extends Base {
 		ExternalFolderService $externalFolderService,
 		OutputService $outputService,
 		ConfigService $configService,
-		MetadataService $metadataService
+		MetadataService $metadataService,
 	) {
 		parent::__construct();
 
@@ -145,21 +141,19 @@ class PointDownload extends Base {
 		$this->metadataService = $metadataService;
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:point:download')
-			 ->setDescription('Download restoring point from remote instance')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
-			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
-			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'storageId of the external storage')
-			 ->addOption(
-			 	'no-check', '', InputOption::VALUE_NONE, 'do not check integrity of restoring point'
-			 );
+			->setDescription('Download restoring point from remote instance')
+			->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
+			->addOption('external', '', InputOption::VALUE_REQUIRED, 'storageId of the external storage')
+			->addOption(
+				'no-check', '', InputOption::VALUE_NONE, 'do not check integrity of restoring point'
+			);
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -214,7 +208,7 @@ class PointDownload extends Base {
 			}
 
 			$point->setInstance()
-				  ->unsetHealth();
+				->unsetHealth();
 
 			$this->pointRequest->save($point);
 			$this->pointService->saveMetadata($point);
@@ -241,7 +235,6 @@ class PointDownload extends Base {
 		//		$this->downloadMissingFiles($instance, $point, $point->getHealth(), $output);
 
 		//		$point = $this->getRestoringPoint($remote, $external, $pointId);
-
 
 		//		echo json_encode($point->getHealth());
 
@@ -277,7 +270,6 @@ class PointDownload extends Base {
 		//		}
 	}
 
-
 	/**
 	 * @param OutputInterface $output
 	 * @param string|null $remote
@@ -301,7 +293,7 @@ class PointDownload extends Base {
 		OutputInterface $output,
 		?string $remote,
 		?int $external,
-		RestoringPoint $point
+		RestoringPoint $point,
 	): void {
 		$health = $point->getHealth();
 		foreach ($health->getParts() as $partHealth) {
@@ -310,8 +302,8 @@ class PointDownload extends Base {
 			}
 
 			$output->write(
-				'  * Downloading ' . $partHealth->getDataName() .
-				'/' . $partHealth->getChunkName() . '/' . $partHealth->getPartName() . ': '
+				'  * Downloading ' . $partHealth->getDataName()
+				. '/' . $partHealth->getChunkName() . '/' . $partHealth->getPartName() . ': '
 			);
 
 			$chunk = $this->chunkService->getChunkFromRP(
@@ -346,7 +338,6 @@ class PointDownload extends Base {
 		}
 	}
 
-
 	/**
 	 * @param string|null $remote
 	 * @param int|null $external
@@ -367,7 +358,7 @@ class PointDownload extends Base {
 	private function getRestoringPoint(
 		?string $remote,
 		?int $external,
-		string $pointId
+		string $pointId,
 	): RestoringPoint {
 		if (!is_null($remote)) {
 			return $this->remoteService->getRestoringPoint($remote, $pointId);

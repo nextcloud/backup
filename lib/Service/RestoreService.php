@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -64,7 +62,6 @@ class RestoreService {
 	use TStringTools;
 	use TFileTools;
 
-
 	/** @var IRootFolder */
 	private $rootFolder;
 
@@ -76,7 +73,6 @@ class RestoreService {
 
 	/** @var ConfigService */
 	private $configService;
-
 
 	/**
 	 * RestoreService constructor.
@@ -90,14 +86,13 @@ class RestoreService {
 		IRootFolder $rootFolder,
 		CoreRequestBuilder $coreRequestBuilder,
 		FilesService $filesService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->rootFolder = $rootFolder;
 		$this->coreRequestBuilder = $coreRequestBuilder;
 		$this->filesService = $filesService;
 		$this->configService = $configService;
 	}
-
 
 	/**
 	 *
@@ -107,7 +102,6 @@ class RestoreService {
 
 		$this->coreRequestBuilder->emptyTable(CoreRequestBuilder::TABLE_AUTHTOKEN);
 	}
-
 
 	/**
 	 * @param int $fileId
@@ -139,7 +133,6 @@ class RestoreService {
 
 		throw new RestoringPointException();
 	}
-
 
 	/**
 	 * @param Folder $folder
@@ -177,12 +170,12 @@ class RestoreService {
 		$data = $this->generateRestoringDataFromFolder($folder, $isPacked);
 		if ($isPacked) {
 			$point->addStatus(RestoringPoint::STATUS_UNKNOWN)
-				  ->addStatus(RestoringPoint::STATUS_PACKED)
-				  ->addStatus(RestoringPoint::STATUS_PACKING);
+				->addStatus(RestoringPoint::STATUS_PACKED)
+				->addStatus(RestoringPoint::STATUS_PACKING);
 		}
 
 		$point->setRestoringData($data)
-			  ->setArchive(true);
+			->setArchive(true);
 
 		/** @var File $metadata */
 		try {
@@ -198,7 +191,6 @@ class RestoreService {
 
 		return $point;
 	}
-
 
 	/**
 	 * @param Folder $folder
@@ -227,7 +219,6 @@ class RestoreService {
 
 		return $result;
 	}
-
 
 	/**
 	 * @param string $dataName
@@ -264,7 +255,6 @@ class RestoreService {
 		return $data;
 	}
 
-
 	/**
 	 * @param RestoringData $data
 	 * @param Folder $folder
@@ -278,7 +268,7 @@ class RestoreService {
 	private function generateChunkPartsFromFolder(
 		RestoringData $data,
 		Folder $folder,
-		bool &$isPacked
+		bool &$isPacked,
 	): void {
 		foreach ($folder->getDirectoryListing() as $node) {
 			/** @var Folder $node */
@@ -303,7 +293,7 @@ class RestoreService {
 
 			$chunk = new RestoringChunk();
 			$chunk->setName($chunkName)
-				  ->setPath('/' . $folder->getName() . '/' . $chunkName . '/');
+				->setPath('/' . $folder->getName() . '/' . $chunkName . '/');
 
 			try {
 				/** @var File $chunkFile */
@@ -320,7 +310,7 @@ class RestoreService {
 					/** @var File $chunkFile */
 					$chunkFile = $node->get($chunkName . '.zip.gz');
 					$chunk->setSize($chunkFile->getSize())
-						  ->setCompression(1);
+						->setCompression(1);
 
 					$read = $chunkFile->fopen('rb');
 					$chunk->setChecksum($this->getChecksumFromStream($read));

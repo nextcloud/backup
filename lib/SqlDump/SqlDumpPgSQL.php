@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\SqlDump;
 
 use OCA\Backup\Exceptions\SqlDumpException;
@@ -46,13 +44,11 @@ use Throwable;
 class SqlDumpPgSQL implements ISqlDump {
 	use TArrayTools;
 
-
 	/**
 	 * SqlDumpPgSQL constructor.
 	 */
 	public function __construct() {
 	}
-
 
 	/**
 	 * @param array $params
@@ -65,9 +61,9 @@ class SqlDumpPgSQL implements ISqlDump {
 		try {
 			$dump = PostgreSql::create();
 			$dump->setDbName($this->get(ISqlDump::DB_NAME, $params))
-				 ->setUserName($this->get(ISqlDump::DB_USER, $params))
-				 ->setPassword($this->get(ISqlDump::DB_PASS, $params))
-				 ->setHost($this->get(ISqlDump::DB_HOST, $params));
+				->setUserName($this->get(ISqlDump::DB_USER, $params))
+				->setPassword($this->get(ISqlDump::DB_PASS, $params))
+				->setHost($this->get(ISqlDump::DB_HOST, $params));
 
 			$port = $this->getInt(ISqlDump::DB_PORT, $params);
 			if ($port > 0) {
@@ -75,12 +71,11 @@ class SqlDumpPgSQL implements ISqlDump {
 			}
 
 			$dump->addExtraOption('--clean --inserts')
-				 ->dumpToFile($filename);
+				->dumpToFile($filename);
 		} catch (Throwable $t) {
 			throw new SqlDumpException($t->getMessage());
 		}
 	}
-
 
 	/**
 	 * @param array $params
@@ -98,10 +93,10 @@ class SqlDumpPgSQL implements ISqlDump {
 		}
 
 		$sql = pg_connect(
-			'host=' . $this->get(ISqlDump::DB_HOST, $params) .
-			' dbname=' . $this->get(ISqlDump::DB_NAME, $params) .
-			' user=' . $this->get(ISqlDump::DB_USER, $params) .
-			' password=' . $this->get(ISqlDump::DB_PASS, $params)
+			'host=' . $this->get(ISqlDump::DB_HOST, $params)
+			. ' dbname=' . $this->get(ISqlDump::DB_NAME, $params)
+			. ' user=' . $this->get(ISqlDump::DB_USER, $params)
+			. ' password=' . $this->get(ISqlDump::DB_PASS, $params)
 		);
 
 		if (is_bool($sql) || is_null($sql)) {
@@ -119,7 +114,6 @@ class SqlDumpPgSQL implements ISqlDump {
 		}
 	}
 
-
 	/**
 	 * @param array $params
 	 * @param resource $read
@@ -128,10 +122,10 @@ class SqlDumpPgSQL implements ISqlDump {
 	 */
 	public function import(array $params, $read): bool {
 		$sql = pg_connect(
-			'host=' . $this->get(ISqlDump::DB_HOST, $params) .
-			' dbname=' . $this->get(ISqlDump::DB_NAME, $params) .
-			' user=' . $this->get(ISqlDump::DB_USER, $params) .
-			' password=' . $this->get(ISqlDump::DB_PASS, $params)
+			'host=' . $this->get(ISqlDump::DB_HOST, $params)
+			. ' dbname=' . $this->get(ISqlDump::DB_NAME, $params)
+			. ' user=' . $this->get(ISqlDump::DB_USER, $params)
+			. ' password=' . $this->get(ISqlDump::DB_PASS, $params)
 		);
 
 		$request = '';

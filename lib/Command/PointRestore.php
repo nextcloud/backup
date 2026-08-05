@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -81,7 +79,6 @@ class PointRestore extends Base {
 	use TStringTools;
 	use TArrayTools;
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -103,13 +100,11 @@ class PointRestore extends Base {
 	/** @var OutputService */
 	private $outputService;
 
-
 	/** @var OutputInterface */
 	private $output;
 
 	/** @var InputInterface */
 	private $input;
-
 
 	/**
 	 * PointRestore constructor.
@@ -129,7 +124,7 @@ class PointRestore extends Base {
 		RestoreService $restoreService,
 		ActivityService $activityService,
 		ConfigService $configService,
-		OutputService $outputService
+		OutputService $outputService,
 	) {
 		parent::__construct();
 
@@ -142,22 +137,20 @@ class PointRestore extends Base {
 		$this->outputService = $outputService;
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:point:restore')
-			 ->setDescription('Restore a restoring point')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
-			 ->addOption('force', '', InputOption::VALUE_NONE, 'Force the restoring process')
-			 ->addOption('do-not-ask-data', '', InputOption::VALUE_NONE, 'Do not ask for path on data')
-			 ->addOption('do-not-ask-sql', '', InputOption::VALUE_NONE, 'Do not ask for params on sqldump')
-			 ->addOption('file', '', InputOption::VALUE_REQUIRED, 'restore only a specific file')
-			 ->addOption('chunk', '', InputOption::VALUE_REQUIRED, 'location of the file')
-			 ->addOption('data', '', InputOption::VALUE_REQUIRED, 'location of the file');
+			->setDescription('Restore a restoring point')
+			->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			->addOption('force', '', InputOption::VALUE_NONE, 'Force the restoring process')
+			->addOption('do-not-ask-data', '', InputOption::VALUE_NONE, 'Do not ask for path on data')
+			->addOption('do-not-ask-sql', '', InputOption::VALUE_NONE, 'Do not ask for params on sqldump')
+			->addOption('file', '', InputOption::VALUE_REQUIRED, 'restore only a specific file')
+			->addOption('chunk', '', InputOption::VALUE_REQUIRED, 'location of the file')
+			->addOption('data', '', InputOption::VALUE_REQUIRED, 'location of the file');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -190,8 +183,8 @@ class PointRestore extends Base {
 		if ($point->isStatus(RestoringPoint::STATUS_PACKING) && !$force) {
 			throw new RestoringPointNotFoundException(
 				'the restoring point does not seems to be fully unpacked, meaning not all data are available.'
-				. "\n" .
-				'Finish the unpacking process, or use --force to see how the restoring process goes and hope for the best'
+				. "\n"
+				. 'Finish the unpacking process, or use --force to see how the restoring process goes and hope for the best'
 			);
 		}
 
@@ -277,12 +270,10 @@ class PointRestore extends Base {
 			]
 		);
 
-
 		$this->displayResume($point);
 
 		return 0;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -312,7 +303,6 @@ class PointRestore extends Base {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringData $data
@@ -340,17 +330,16 @@ class PointRestore extends Base {
 				$this->output->writeln('<info>ok</info>');
 			} catch (
 				ArchiveCreateException
-				| ArchiveNotFoundException
-				| NotFoundException
-				| NotPermittedException
-				| RestoreChunkException $e) {
+				|ArchiveNotFoundException
+				|NotFoundException
+				|NotPermittedException
+				|RestoreChunkException $e) {
 					$this->output->writeln('<error>' . $e->getMessage() . '</error>');
 				}
 		}
 
 		$data->setRestoredRoot($root);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -397,7 +386,6 @@ class PointRestore extends Base {
 		$data->setRestoredRoot(json_encode($sqlParams));
 	}
 
-
 	/**
 	 * @param RestoringData $data
 	 *
@@ -443,7 +431,6 @@ class PointRestore extends Base {
 
 		return $root;
 	}
-
 
 	/**
 	 * @param string $type
@@ -595,7 +582,6 @@ class PointRestore extends Base {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 *
@@ -616,7 +602,6 @@ class PointRestore extends Base {
 			ISqlDump::DB_PASS => $this->get(ISqlDump::DB_PASS, $CONFIG)
 		];
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -675,7 +660,6 @@ class PointRestore extends Base {
 		);
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param string $configFile
@@ -729,8 +713,6 @@ class PointRestore extends Base {
 		}
 	}
 
-
-
 	//	private function getConfigSqlParams();
 
 	/**
@@ -772,7 +754,6 @@ class PointRestore extends Base {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -792,20 +773,19 @@ class PointRestore extends Base {
 				throw new RestoreChunkException('cannot open stream');
 			}
 		} catch (ArchiveCreateException
-		| ArchiveNotFoundException
-		| RestoreChunkException
-		| NotFoundException
-		| NotPermittedException $e) {
+		|ArchiveNotFoundException
+		|RestoreChunkException
+		|NotFoundException
+		|NotPermittedException $e) {
 			throw new SqlImportException($e->getMessage());
 		}
 
-//		$config = $this->extractDatabaseConfig();
+		//		$config = $this->extractDatabaseConfig();
 		$sqlDump = $this->pointService->getSqlDump($sqlParams);
 		$sqlDump->setup($sqlParams);
 
 		$sqlDump->import($sqlParams, $stream);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -825,7 +805,7 @@ class PointRestore extends Base {
 		RestoringPoint $point,
 		?string $filename,
 		?string $dataName,
-		?string $chunkName
+		?string $chunkName,
 	): void {
 		if (is_null($filename)) {
 			throw new InvalidOptionException('must specify --file option');
@@ -853,9 +833,9 @@ class PointRestore extends Base {
 		$root = $data->getAbsolutePath();
 		$chunk = $file->getRestoringChunk();
 		$this->output->write(
-			'   > restoring ' . $file->getName() . ' (' . $this->humanReadable($file->getFilesize()) .
-			') from <info>' . $chunk->getPath() . $chunk->getName() . '</info>' .
-			' (rewind: ' . $this->getDateDiff($point->getDate(), time()) . '): '
+			'   > restoring ' . $file->getName() . ' (' . $this->humanReadable($file->getFilesize())
+			. ') from <info>' . $chunk->getPath() . $chunk->getName() . '</info>'
+			. ' (rewind: ' . $this->getDateDiff($point->getDate(), time()) . '): '
 		);
 
 		// TODO: display $root and add a confirmation step
@@ -880,14 +860,13 @@ class PointRestore extends Base {
 
 			// TODO: files:scan file ?
 		} catch (ArchiveCreateException
-		| ArchiveNotFoundException
-		| NotFoundException
-		| NotPermittedException
-		| RestoreChunkException $e) {
+		|ArchiveNotFoundException
+		|NotFoundException
+		|NotPermittedException
+		|RestoreChunkException $e) {
 			$this->output->writeln('<error>' . $e->getMessage() . '</error>');
 		}
 	}
-
 
 	/**
 	 * ugly but it does it job.
@@ -915,7 +894,6 @@ class PointRestore extends Base {
 
 		return '';
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -960,7 +938,6 @@ class PointRestore extends Base {
 			);
 		}
 	}
-
 
 	/**
 	 *

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -43,12 +41,10 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class ChunkPartHealth implements IDeserializable, JsonSerializable {
 	use TArrayTools;
 
-
 	public const STATUS_UNKNOWN = 0;
 	public const STATUS_OK = 1;
 	public const STATUS_MISSING = 2;
 	public const STATUS_CHECKSUM = 3;
-
 
 	public static $DEF_STATUS = [
 		self::STATUS_UNKNOWN => 'unknown',
@@ -72,7 +68,6 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 	/** @var int */
 	private $status = 0;
 
-
 	/**
 	 * ChunkPartHealth constructor.
 	 *
@@ -81,7 +76,6 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 	public function __construct(bool $packed = false) {
 		$this->packed = $packed;
 	}
-
 
 	/**
 	 * @param bool $packed
@@ -101,7 +95,6 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 		return $this->packed;
 	}
 
-
 	/**
 	 * @param string $partName
 	 *
@@ -119,7 +112,6 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 	public function getPartName(): string {
 		return $this->partName;
 	}
-
 
 	/**
 	 * @param string $chunkName
@@ -139,7 +131,6 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 		return $this->chunkName;
 	}
 
-
 	/**
 	 * @param string $dataName
 	 *
@@ -157,7 +148,6 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 	public function getDataName(): string {
 		return $this->dataName;
 	}
-
 
 	/**
 	 * @param int $status
@@ -177,7 +167,6 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 		return $this->status;
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -185,14 +174,13 @@ class ChunkPartHealth implements IDeserializable, JsonSerializable {
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setStatus($this->getInt('status', $data))
-			 ->setPacked($this->getBool('packed', $data))
-			 ->setPartName($this->get('part', $data))
-			 ->setChunkName($this->get('chunk', $data))
-			 ->setDataName($this->get('data', $data));
+			->setPacked($this->getBool('packed', $data))
+			->setPartName($this->get('part', $data))
+			->setChunkName($this->get('chunk', $data))
+			->setDataName($this->get('data', $data));
 
 		return $this;
 	}
-
 
 	/**
 	 * @return array

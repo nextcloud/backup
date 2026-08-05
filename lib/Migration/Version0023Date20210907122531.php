@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Migration;
 
 use Closure;
@@ -45,13 +43,11 @@ use OCP\Migration\SimpleMigrationStep;
  */
 class Version0023Date20210907122531 extends SimpleMigrationStep {
 
-
 	/**
 	 * @param IDBConnection $connection
 	 */
 	public function __construct(IDBConnection $connection) {
 	}
-
 
 	/**
 	 * @param IOutput $output
@@ -64,7 +60,6 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
-
 
 		/**
 		 * BACKUP_CHANGE
@@ -93,7 +88,6 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 			$table->addUniqueIndex(['hash']);
 		}
-
 
 		/**
 		 * BACKUP_DATA
@@ -136,7 +130,6 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 
 			$table->setPrimaryKey(['id']);
 		}
-
 
 		/**
 		 * BACKUP_POINT
@@ -221,7 +214,6 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table->addIndex(['instance']);
 		}
 
-
 		/**
 		 * BACKUP_EXTERNAL
 		 */
@@ -256,7 +248,6 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['storage_id']);
 		}
-
 
 		/**
 		 * BACKUP_REMOTE
@@ -312,7 +303,6 @@ class Version0023Date20210907122531 extends SimpleMigrationStep {
 			$table->addIndex(['uid']);
 			$table->addIndex(['href']);
 		}
-
 
 		/**
 		 * BACKUP_EVENT

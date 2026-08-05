@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup;
 
 use Composer\Autoload\ClassLoader;
@@ -46,7 +44,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 use ZipArchive;
 
 echo "\n" . 'At this moment, this script will not works. Sorry.' . "\n";
-echo 'Please follow online documentation to restore your backup.'. "\n\n";
+echo 'Please follow online documentation to restore your backup.' . "\n\n";
 
 exit();
 
@@ -57,7 +55,6 @@ if (!extractAppFiles()) {
 	exit();
 }
 
-
 /**
  * init few stuff.
  */
@@ -65,7 +62,6 @@ $verbose = false;
 if (in_array('-v', $argv) || in_array('--verbose', $argv)) {
 	$verbose = true;
 }
-
 
 /**
  * loading libs.
@@ -112,7 +108,6 @@ $mockup = [
 
 loadClasses($classes, $mockup);
 
-
 /**
  * generate Container.
  */
@@ -123,7 +118,6 @@ $container = new DIContainer();
 
 $container->registerInterface(IConfig::class, Config::class);
 $container->registerInterface(ILogger::class, Logger::class);
-
 
 /**
  * init Services.
@@ -142,11 +136,9 @@ try {
 	exit();
 }
 
-
 if ($verbose) {
 	echo 'App is ready.' . "\n";
 }
-
 
 /**
  * init input/output
@@ -162,7 +154,6 @@ if ($verbose) {
 	$output->writeln('Switching to <info>better</info> console output!');
 	$output->writeln('');
 }
-
 
 /**
  * parsing backup.json
@@ -189,13 +180,11 @@ $options->setFixDataDir($input->getOption('fix-datadirectory'));
 
 $cliService->displayBackupResume($backup);
 
-
 /**
  * let's start based on Options
  */
 try {
 	switch ($input->getArgument('action')) {
-
 		case 'details':
 			$cliService->displayBackupDetails($backup);
 			break;
@@ -217,11 +206,9 @@ try {
 	exit();
 }
 
-
 /**
  * The End.
  */
-
 
 /**
  * @return bool
@@ -252,7 +239,6 @@ function extractAppFiles(): bool {
 	}
 }
 
-
 /**
  * @param array $classes
  * @param array $mockups
@@ -279,7 +265,6 @@ function loadClasses(array $classes, array $mockups): ClassLoader {
 
 	return $loader;
 }
-
 
 /**
  * @return InputDefinition

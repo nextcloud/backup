@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Service;
 
 use Exception;
@@ -46,7 +44,6 @@ use SodiumException;
 class EncryptService {
 	use TArrayTools;
 
-
 	public const BLOCK_SIZE = 500;
 	public const CUSTOM_CHUNK_SIZE = 1048576;
 	public const KEY_LENGTH = 32;
@@ -63,7 +60,6 @@ class EncryptService {
 	public const STRING = 'string';
 	public const STRING_NONCE = 'string-nonce';
 
-
 	public static $EXPORT = [
 		self::AES_GCM,
 		self::AES_GCM_NONCE,
@@ -72,10 +68,8 @@ class EncryptService {
 		self::CHACHA
 	];
 
-
 	/** @var ConfigService */
 	private $configService;
-
 
 	/**
 	 * EncryptService constructor.
@@ -83,7 +77,6 @@ class EncryptService {
 	public function __construct(ConfigService $configService) {
 		$this->configService = $configService;
 	}
-
 
 	/**
 	 * @param string $plain
@@ -113,7 +106,6 @@ class EncryptService {
 		return base64_encode($encrypted);
 	}
 
-
 	/**
 	 * @param string $encrypted
 	 * @param string $key
@@ -141,7 +133,6 @@ class EncryptService {
 		return $plain;
 	}
 
-
 	/**
 	 * @param string $input
 	 * @param string $output
@@ -163,7 +154,6 @@ class EncryptService {
 
 		return self::AES_GCM;
 	}
-
 
 	/**
 	 * @param string $input
@@ -190,7 +180,6 @@ class EncryptService {
 		fclose($write);
 		sodium_memzero($plain);
 	}
-
 
 	/**
 	 * @param string $input
@@ -223,7 +212,6 @@ class EncryptService {
 		fclose($write);
 	}
 
-
 	/**
 	 * @param string $input
 	 * @param string $output
@@ -250,7 +238,6 @@ class EncryptService {
 		fclose($read);
 		fclose($write);
 	}
-
 
 	/**
 	 * @param string $input
@@ -302,7 +289,6 @@ class EncryptService {
 		}
 	}
 
-
 	/**
 	 * @param string $input
 	 * @param string $output
@@ -333,7 +319,6 @@ class EncryptService {
 		sodium_memzero($plain);
 		fclose($write);
 	}
-
 
 	/**
 	 * @param string $input
@@ -366,7 +351,6 @@ class EncryptService {
 		fclose($write);
 	}
 
-
 	/**
 	 * @param string $input
 	 * @param string $output
@@ -394,7 +378,6 @@ class EncryptService {
 		fclose($write);
 	}
 
-
 	/**
 	 * @param string $input
 	 * @param string $output
@@ -408,7 +391,6 @@ class EncryptService {
 		fclose($read);
 		fclose($write);
 	}
-
 
 	/**
 	 * @param bool $generate
@@ -433,7 +415,6 @@ class EncryptService {
 		return $keys;
 	}
 
-
 	/**
 	 * @throws EncryptionKeyException
 	 */
@@ -457,7 +438,6 @@ class EncryptService {
 		return $key;
 	}
 
-
 	/**
 	 * @param string $type
 	 *
@@ -480,7 +460,6 @@ class EncryptService {
 
 		throw new EncryptionKeyException('unknown key type');
 	}
-
 
 	/**
 	 * @return bool

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Service;
 
 use OCA\Backup\Model\ChunkPartHealth;
@@ -46,7 +44,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class OutputService {
 
-
 	/** @var OutputInterface */
 	private $output;
 
@@ -55,7 +52,6 @@ class OutputService {
 
 	/** @var resource */
 	private $openedFile;
-
 
 	public function __construct() {
 	}
@@ -82,7 +78,6 @@ class OutputService {
 		}
 	}
 
-
 	/**
 	 * @param bool $debug
 	 */
@@ -96,7 +91,6 @@ class OutputService {
 	public function isDebug(): bool {
 		return $this->debug;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -126,7 +120,6 @@ class OutputService {
 		fputs($this->openedFile, date('Y-m-d H:i:s') . ' - Opening log session: ' . $reason . "\n");
 	}
 
-
 	/**
 	 * @return bool
 	 */
@@ -137,7 +130,6 @@ class OutputService {
 	public function setOutput(OutputInterface $output): void {
 		$this->output = $output;
 	}
-
 
 	/**
 	 * @param RestoringHealth $health

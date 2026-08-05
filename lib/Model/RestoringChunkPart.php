@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -44,7 +42,6 @@ use OCA\Backup\Tools\Traits\TStringTools;
 class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	use TArrayTools;
 	use TStringTools;
-
 
 	/** @var string */
 	private $name;
@@ -67,7 +64,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	/** @var string */
 	private $encryptedChecksum = '';
 
-
 	/**
 	 * RestoringChunkPart constructor.
 	 *
@@ -78,7 +74,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 		$this->name = $name;
 		$this->order = $order;
 	}
-
 
 	/**
 	 * @param string $ext
@@ -104,7 +99,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 		return $this;
 	}
 
-
 	/**
 	 * @param int $order
 	 *
@@ -122,7 +116,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	public function getOrder(): int {
 		return $this->order;
 	}
-
 
 	/**
 	 * @param bool $encrypted
@@ -143,7 +136,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 		return $this->encrypted;
 	}
 
-
 	/**
 	 * @param string $algorithm
 	 *
@@ -161,7 +153,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	public function getAlgorithm(): string {
 		return $this->algorithm;
 	}
-
 
 	/**
 	 * @return string
@@ -181,7 +172,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -200,7 +190,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -211,7 +200,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 
 		return $this->getChecksum();
 	}
-
 
 	/**
 	 * @param string $content
@@ -231,7 +219,6 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 		return $this->content;
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -239,16 +226,15 @@ class RestoringChunkPart implements JsonSerializable, IDeserializable {
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setName($this->get('name', $data))
-			 ->setOrder($this->getInt('order', $data))
-			 ->setContent($this->get('content', $data))
-			 ->setEncrypted($this->getBool('encrypted', $data))
-			 ->setAlgorithm($this->get('algorithm', $data))
-			 ->setChecksum($this->get('checksum', $data))
-			 ->setEncryptedChecksum($this->get('encryptedChecksum', $data));
+			->setOrder($this->getInt('order', $data))
+			->setContent($this->get('content', $data))
+			->setEncrypted($this->getBool('encrypted', $data))
+			->setAlgorithm($this->get('algorithm', $data))
+			->setChecksum($this->get('checksum', $data))
+			->setEncryptedChecksum($this->get('encryptedChecksum', $data));
 
 		return $this;
 	}
-
 
 	/**
 	 * @return array

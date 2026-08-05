@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\RemoteRequest;
 
@@ -56,7 +54,6 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 	use TDeserialize;
 	use TNCLogger;
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -65,7 +62,6 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 
 	/** @var PackService */
 	private $packService;
-
 
 	/**
 	 * UploadRestoringChunk constructor.
@@ -77,7 +73,7 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 	public function __construct(
 		PointService $pointService,
 		ChunkService $chunkService,
-		PackService $packService
+		PackService $packService,
 	) {
 		parent::__construct();
 
@@ -87,7 +83,6 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 
 		$this->setup('app', Application::APP_ID);
 	}
-
 
 	/**
 	 * @throws RestoringChunkNotFoundException
@@ -112,12 +107,11 @@ class UploadRestoringChunk extends CoreRequest implements IRemoteRequest {
 
 			$this->setOutcome($this->serialize($point));
 		} catch (RestoringPointNotFoundException
-		| InvalidItemException
-		| NotFoundException
-		| NotPermittedException $e) {
+		|InvalidItemException
+		|NotFoundException
+		|NotPermittedException $e) {
 		}
 	}
-
 
 	/**
 	 * @param array $data

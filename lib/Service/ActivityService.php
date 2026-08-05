@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Service;
 
 use OCA\Backup\AppInfo\Application;
@@ -50,13 +48,11 @@ class ActivityService {
 
 	public const LIMIT_TO_GROUP = 'admin';
 
-
 	/** @var IActivityManager */
 	private $activityManager;
 
 	/** @var IGroupManager */
 	private $groupManager;
-
 
 	/**
 	 * ActivityService constructor.
@@ -68,7 +64,6 @@ class ActivityService {
 		$this->activityManager = $activityManager;
 		$this->groupManager = $groupManager;
 	}
-
 
 	/**
 	 * @param string $subject
@@ -83,7 +78,6 @@ class ActivityService {
 		$this->publishActivity($activity, $adminGroup->getUsers());
 	}
 
-
 	/**
 	 * @param string $type
 	 *
@@ -92,11 +86,10 @@ class ActivityService {
 	private function generateActivity(string $type): IEvent {
 		$event = $this->activityManager->generateEvent();
 		$event->setApp(Application::APP_ID)
-			  ->setType($type);
+			->setType($type);
 
 		return $event;
 	}
-
 
 	/**
 	 * @param IEvent $event

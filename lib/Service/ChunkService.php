@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -69,11 +67,9 @@ class ChunkService {
 	use TFileTools;
 	use TDeserialize;
 
-
 	public const BACKUP_SCRIPT = 'restore.php';
 	public const APP_ZIP = 'app.zip';
 	public const PREFIX = '.backup.';
-
 
 	/** @var FilesService */
 	private $filesService;
@@ -90,7 +86,6 @@ class ChunkService {
 	/** @var ConfigService */
 	private $configService;
 
-
 	/**
 	 * ChunkService constructor.
 	 *
@@ -104,7 +99,7 @@ class ChunkService {
 		EncryptService $encryptService,
 		CronService $cronService,
 		OutputService $outputService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->filesService = $filesService;
 		$this->encryptService = $encryptService;
@@ -112,7 +107,6 @@ class ChunkService {
 		$this->outputService = $outputService;
 		$this->configService = $configService;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -149,7 +143,6 @@ class ChunkService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -167,7 +160,7 @@ class ChunkService {
 		RestoringPoint $point,
 		RestoringChunk $chunk,
 		string $root,
-		string $filename
+		string $filename,
 	): void {
 		if ($filename === '') {
 			throw new ArchiveFileNotFoundException();
@@ -175,7 +168,6 @@ class ChunkService {
 
 		$this->restoreChunk($point, $chunk, $root, $filename);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -194,7 +186,7 @@ class ChunkService {
 		RestoringPoint $point,
 		RestoringChunk $chunk,
 		string $root,
-		string $filename = ''
+		string $filename = '',
 	): void {
 		if (!is_dir($root)) {
 			if (!@mkdir($root, 0755, true)) {
@@ -208,7 +200,6 @@ class ChunkService {
 
 		unlink($root . self::PREFIX . $chunk->getName());
 	}
-
 
 	/**
 	 * Set $stream to true if the returned ZipArchive will have its method getStream() called
@@ -227,7 +218,7 @@ class ChunkService {
 	public function openZipArchive(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		bool $stream = false
+		bool $stream = false,
 	): ZipArchive {
 		$folder = $this->getChunkFolder($point, $chunk);
 		$file = $folder->getFile($chunk->getFilename());
@@ -265,7 +256,6 @@ class ChunkService {
 		$zip->close();
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -279,7 +269,6 @@ class ChunkService {
 		$zip = $this->openZipArchive($point, $chunk);
 		$this->listFilesFromZip($chunk, $zip);
 	}
-
 
 	/**
 	 * @param RestoringChunk $chunk
@@ -298,7 +287,6 @@ class ChunkService {
 		$chunk->setFiles($files);
 	}
 
-
 	/**
 	 * @param ZipArchive $zip
 	 * @param string $root
@@ -313,7 +301,6 @@ class ChunkService {
 
 		$zip->extractTo($root, $files);
 	}
-
 
 	//	/**
 	//	 * @param Backup $backup
@@ -358,7 +345,6 @@ class ChunkService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringData $data
@@ -376,7 +362,7 @@ class ChunkService {
 		RestoringData $data,
 		string $filename,
 		string $path,
-		string $type = ''
+		string $type = '',
 	): void {
 		$chunk = new RestoringChunk($data->getName());
 		$chunk->setCount(1);
@@ -389,7 +375,6 @@ class ChunkService {
 
 		$this->updateChecksum($point, $chunk);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -405,14 +390,13 @@ class ChunkService {
 		RestoringPoint $point,
 		RestoringChunk $chunk,
 		string $filename,
-		string $path
+		string $path,
 	): void {
 		$zip = $this->generateZip($point, $chunk);
 		$read = fopen($path, 'rb');
 		$zip->addFileFromStream($read, $filename);
 		$zip->finalize();
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -427,7 +411,7 @@ class ChunkService {
 	private function generateChunk(
 		RestoringPoint $point,
 		RestoringData $data,
-		array &$files
+		array &$files,
 	): RestoringChunk {
 		$chunk = new RestoringChunk($data->getName());
 		$chunkSize = $this->configService->getAppValueInt(ConfigService::CHUNK_SIZE) * 1024 * 1024;
@@ -467,7 +451,6 @@ class ChunkService {
 
 		return $chunk;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -512,7 +495,6 @@ class ChunkService {
 		$zip->finalize();
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -530,7 +512,6 @@ class ChunkService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -541,7 +522,6 @@ class ChunkService {
 		$sum = $this->getChecksum($point, $chunk);
 		$chunk->setChecksum($sum);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -574,7 +554,6 @@ class ChunkService {
 
 		return $this->getChecksumFromStream($stream);
 	}
-
 
 	//	/**
 	//	 * @param Backup $backup
@@ -674,7 +653,6 @@ class ChunkService {
 	//		$this->encryptService->decryptFile($stream, $write, $key);
 	//	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 *
@@ -718,7 +696,6 @@ class ChunkService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 *
@@ -742,7 +719,6 @@ class ChunkService {
 		$point->addRestoringData($data);
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param string $dataName
@@ -759,7 +735,6 @@ class ChunkService {
 
 		throw new RestoringDataNotFoundException();
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -781,7 +756,6 @@ class ChunkService {
 		throw new RestoringChunkNotFoundException();
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param string $chunk
@@ -793,7 +767,7 @@ class ChunkService {
 	public function getChunkFromRP(
 		RestoringPoint $point,
 		string $chunk,
-		string $dataName = ''
+		string $dataName = '',
 	): RestoringChunk {
 		foreach ($point->getRestoringData() as $restoringData) {
 			if ($dataName !== '' && $restoringData->getName() !== $dataName) {
@@ -810,7 +784,6 @@ class ChunkService {
 		throw new RestoringChunkNotFoundException();
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $restoringChunk
@@ -819,10 +792,9 @@ class ChunkService {
 		try {
 			$file = $this->getChunkResource($point, $restoringChunk);
 			$restoringChunk->setContent(base64_encode($file->getContent()));
-		} catch (NotFoundException | NotPermittedException $e) {
+		} catch (NotFoundException|NotPermittedException $e) {
 		}
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -838,7 +810,6 @@ class ChunkService {
 
 		return $folder->getFile($chunk->getFilename());
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -871,7 +842,6 @@ class ChunkService {
 		);
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringData $data
@@ -883,23 +853,22 @@ class ChunkService {
 	public function getArchiveFileFromData(
 		RestoringPoint $point,
 		RestoringData $data,
-		string $filename
+		string $filename,
 	): ArchiveFile {
 		foreach ($data->getChunks() as $chunk) {
 			try {
 				return $this->getArchiveFileFromChunk($point, $chunk, $filename);
 			} catch (
 				ArchiveCreateException
-				| ArchiveNotFoundException
-				| ArchiveFileNotFoundException
-				| NotFoundException
-				| NotPermittedException $e) {
+				|ArchiveNotFoundException
+				|ArchiveFileNotFoundException
+				|NotFoundException
+				|NotPermittedException $e) {
 				}
 		}
 
 		throw new ArchiveFileNotFoundException();
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -916,7 +885,7 @@ class ChunkService {
 	public function getArchiveFileFromChunk(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		string $filename
+		string $filename,
 	): ArchiveFile {
 		if (empty($chunk->getFiles())) {
 			$this->listFilesFromChunk($point, $chunk);
@@ -945,7 +914,6 @@ class ChunkService {
 		return $file;
 	}
 
-
 	/**
 	 * @throws RestoringPointNotInitiatedException
 	 * @throws NotPermittedException
@@ -956,7 +924,6 @@ class ChunkService {
 		$file = $folder->getFile($chunk->getFilename());
 		$file->delete();
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -969,7 +936,7 @@ class ChunkService {
 	public function getChunkFolder(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		string &$path = ''
+		string &$path = '',
 	): ISimpleFolder {
 		if (!$point->hasBaseFolder() || !$point->hasAppDataRootWrapper()) {
 			throw new RestoringPointNotInitiatedException('Restoring Point is not initiated');
@@ -988,7 +955,6 @@ class ChunkService {
 
 		return $folder;
 	}
-
 
 	/**
 	 * @param string $line

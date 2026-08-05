@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,13 +27,11 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Model;
 
 use OCP\Http\Client\IClient;
 
 class NCRequest extends Request {
-
 
 	/** @var IClient */
 	private $client;
@@ -50,7 +47,6 @@ class NCRequest extends Request {
 
 	/** @var NCRequestResult[] */
 	private $previousResults = [];
-
 
 	/**
 	 * @param IClient $client
@@ -70,7 +66,6 @@ class NCRequest extends Request {
 		return $this->client;
 	}
 
-
 	/**
 	 * @return array
 	 */
@@ -89,7 +84,6 @@ class NCRequest extends Request {
 		return $this;
 	}
 
-
 	/**
 	 * @return bool
 	 */
@@ -107,7 +101,6 @@ class NCRequest extends Request {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return bool
@@ -151,7 +144,6 @@ class NCRequest extends Request {
 	public function getAllResults(): array {
 		return array_values(array_merge([$this->getResult()], $this->previousResults));
 	}
-
 
 	/**
 	 * @return array

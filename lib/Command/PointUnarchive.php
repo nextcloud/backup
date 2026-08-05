@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -59,13 +57,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PointUnarchive extends Base {
 
-
 	/** @var OccService */
 	private $occService;
 
 	/** @var OutputService */
 	private $outputService;
-
 
 	/**
 	 * PointUnarchive constructor.
@@ -75,14 +71,13 @@ class PointUnarchive extends Base {
 	 */
 	public function __construct(
 		OccService $occService,
-		OutputService $outputService
+		OutputService $outputService,
 	) {
 		parent::__construct();
 
 		$this->occService = $occService;
 		$this->outputService = $outputService;
 	}
-
 
 	/**
 	 *
@@ -91,13 +86,12 @@ class PointUnarchive extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:unarchive')
-			 ->setDescription('Unarchive a restoring point')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to comment')
-			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
-			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder')
-			 ->addOption('all-storages', '', InputOption::VALUE_NONE, 'duplicate action on all storages');
+			->setDescription('Unarchive a restoring point')
+			->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to comment')
+			->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
+			->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder')
+			->addOption('all-storages', '', InputOption::VALUE_NONE, 'duplicate action on all storages');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -123,7 +117,7 @@ class PointUnarchive extends Base {
 		$point = $this->occService->getRestoringPointBasedOnParams($input);
 
 		$point->setInstance()
-			  ->setArchive(false);
+			->setArchive(false);
 
 		$this->occService->updatePointBasedOnParams($point, $input);
 

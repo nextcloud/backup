@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -54,7 +52,6 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 class OccService {
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -70,7 +67,6 @@ class OccService {
 	/** @var MetadataService */
 	private $metadataService;
 
-
 	/**
 	 * OccService constructor.
 	 *
@@ -85,7 +81,7 @@ class OccService {
 		RemoteService $remoteService,
 		RemoteStreamService $remoteStreamService,
 		ExternalFolderService $externalFolderService,
-		MetadataService $metadataService
+		MetadataService $metadataService,
 	) {
 		$this->pointService = $pointService;
 		$this->remoteService = $remoteService;
@@ -94,7 +90,6 @@ class OccService {
 		$this->remoteStreamService = $remoteStreamService;
 		$this->metadataService = $metadataService;
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -128,7 +123,6 @@ class OccService {
 
 		return $this->pointService->getLocalRestoringPoint($pointId);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point

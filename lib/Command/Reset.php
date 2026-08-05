@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -51,7 +49,6 @@ use Symfony\Component\Console\Question\Question;
  */
 class Reset extends Base {
 
-
 	/** @var CoreRequestBuilder */
 	private $coreRequestBuilder;
 
@@ -60,7 +57,6 @@ class Reset extends Base {
 
 	/** @var ConfigService */
 	private $configService;
-
 
 	/**
 	 * Reset constructor.
@@ -72,7 +68,7 @@ class Reset extends Base {
 	public function __construct(
 		CoreRequestBuilder $coreRequestBuilder,
 		PointService $pointService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		parent::__construct();
 
@@ -81,18 +77,16 @@ class Reset extends Base {
 		$this->configService = $configService;
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:reset')
-			 ->setDescription('Remove all data related to the Backup App')
-			 ->addOption(
-			 	'uninstall', '', InputOption::VALUE_NONE, 'Also uninstall the app from the instance'
-			 );
+			->setDescription('Remove all data related to the Backup App')
+			->addOption(
+				'uninstall', '', InputOption::VALUE_NONE, 'Also uninstall the app from the instance'
+			);
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -139,7 +133,7 @@ class Reset extends Base {
 		$this->coreRequestBuilder->cleanDatabase();
 		try {
 			$this->pointService->destroyBackupFS();
-		} catch (NotFoundException | NotPermittedException | ExternalFolderNotFoundException $e) {
+		} catch (NotFoundException|NotPermittedException|ExternalFolderNotFoundException $e) {
 		}
 
 		$this->configService->setAppValue(ConfigService::LAST_FULL_RP, '');

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -43,10 +41,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PointPurge extends Base {
 
-
 	/** @var PointService */
 	private $pointService;
-
 
 	/**
 	 * PointPurge constructor.
@@ -59,7 +55,6 @@ class PointPurge extends Base {
 		$this->pointService = $pointService;
 	}
 
-
 	/**
 	 *
 	 */
@@ -67,9 +62,8 @@ class PointPurge extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:purge')
-			 ->setDescription('Remove old restoring points, based on current settings');
+			->setDescription('Remove old restoring points, based on current settings');
 	}
-
 
 	/**
 	 * @param InputInterface $input

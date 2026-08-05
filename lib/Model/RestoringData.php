@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -46,7 +44,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	use TArrayTools;
 	use TStringTools;
 	use TDeserialize;
-
 
 	public const INTERNAL_DATA = 0;
 	public const ROOT_DISK = 1;
@@ -74,14 +71,12 @@ class RestoringData implements IDeserializable, JsonSerializable {
 		self::ROOT_APPS => 'apps'
 	];
 
-
 	// filtering folders from the 'core' data
 	public static $FILTER_FROM_NC = [
 		'apps/',
 		'data/',
 		'config/'
 	];
-
 
 	/** @var string */
 	private $name;
@@ -110,7 +105,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	/** @var bool */
 	private $locked = false;
 
-
 	/**
 	 * RestoringChunk constructor.
 	 *
@@ -127,7 +121,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 			$this->name = $this->uuid();
 		}
 	}
-
 
 	/**
 	 * @return string
@@ -147,7 +140,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return int
 	 */
@@ -165,7 +157,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return string
@@ -203,7 +194,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -220,7 +210,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 
 		return $path;
 	}
-
 
 	/**
 	 * @param string $restoredRoot
@@ -239,7 +228,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	public function getRestoredRoot(): string {
 		return $this->restoredRoot;
 	}
-
 
 	/**
 	 * @param string $path
@@ -270,7 +258,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 		return $this;
 	}
 
-
 	/**
 	 * @param bool $locked
 	 */
@@ -284,7 +271,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	public function isLocked(): bool {
 		return $this->locked;
 	}
-
 
 	/**
 	 * @return string
@@ -303,7 +289,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return RestoringChunk[]
@@ -334,7 +319,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 		return $this;
 	}
 
-
 	//	/**
 	//	 * @param RestoringChunk $chunk
 	//	 *
@@ -354,7 +338,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 	//		return $this;
 	//	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -372,7 +355,6 @@ class RestoringData implements IDeserializable, JsonSerializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return array

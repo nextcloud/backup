@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use Exception;
@@ -51,7 +49,6 @@ class CoreRequestBuilder {
 	public const TABLE_DATA = 'backup_data';
 
 	public const TABLE_AUTHTOKEN = 'authtoken';
-
 
 	/** @var array */
 	public static $tables = [
@@ -102,10 +99,8 @@ class CoreRequestBuilder {
 		]
 	];
 
-
 	/** @var ConfigService */
 	protected $configService;
-
 
 	/**
 	 * CoreQueryBuilder constructor.
@@ -116,14 +111,12 @@ class CoreRequestBuilder {
 		$this->configService = $configService;
 	}
 
-
 	/**
 	 * @return CoreQueryBuilder
 	 */
 	public function getQueryBuilder(): CoreQueryBuilder {
 		return new CoreQueryBuilder();
 	}
-
 
 	/**
 	 *
@@ -138,7 +131,6 @@ class CoreRequestBuilder {
 			}
 		}
 	}
-
 
 	public function uninstall(): void {
 		$this->uninstallAppTables();
@@ -163,7 +155,6 @@ class CoreRequestBuilder {
 		$schema->performDropTableCalls();
 	}
 
-
 	/**
 	 *
 	 */
@@ -184,7 +175,6 @@ class CoreRequestBuilder {
 		//		$qb->where($this->exprLimitToDBField($qb, 'class', 'OCA\Backup\', true, true));
 		//		$qb->execute();
 	}
-
 
 	/**
 	 * @param string $table

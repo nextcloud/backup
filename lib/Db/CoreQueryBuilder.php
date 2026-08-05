@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Tools\Db\ExtendedQueryBuilder;
@@ -40,14 +38,12 @@ use OCA\Backup\Tools\Db\ExtendedQueryBuilder;
  */
 class CoreQueryBuilder extends ExtendedQueryBuilder {
 
-
 	/**
 	 * CoreQueryBuilder constructor.
 	 */
 	public function __construct() {
 		parent::__construct();
 	}
-
 
 	/**
 	 * Limit the request to the Id
@@ -58,7 +54,6 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$this->limitInt('id', $id);
 	}
 
-
 	/**
 	 * @param string $uid
 	 */
@@ -66,14 +61,12 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$this->limit('uid', $uid);
 	}
 
-
 	/**
 	 * @param string $instance
 	 */
 	public function limitToInstance(string $instance): void {
 		$this->limit('instance', $instance, '', false);
 	}
-
 
 	/**
 	 * @param string $parent

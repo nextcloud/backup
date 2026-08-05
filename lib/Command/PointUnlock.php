@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -46,13 +44,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PointUnlock extends Base {
 
-
 	/** @var MetadataService */
 	private $metadataService;
 
 	/** @var PointService */
 	private $pointService;
-
 
 	/**
 	 * PointUnlock constructor.
@@ -62,14 +58,13 @@ class PointUnlock extends Base {
 	 */
 	public function __construct(
 		PointService $pointService,
-		MetadataService $metadataService
+		MetadataService $metadataService,
 	) {
 		parent::__construct();
 
 		$this->pointService = $pointService;
 		$this->metadataService = $metadataService;
 	}
-
 
 	/**
 	 *
@@ -78,10 +73,9 @@ class PointUnlock extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:unlock')
-			 ->setDescription('Unlock a restoring point')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to unlock');
+			->setDescription('Unlock a restoring point')
+			->addArgument('pointId', InputArgument::REQUIRED, 'id of the restoring point to unlock');
 	}
-
 
 	/**
 	 * @param InputInterface $input

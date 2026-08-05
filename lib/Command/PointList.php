@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -56,7 +54,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PointList extends Base {
 	use TStringTools;
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -65,7 +62,6 @@ class PointList extends Base {
 
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
-
 
 	/**
 	 * PointList constructor.
@@ -77,7 +73,7 @@ class PointList extends Base {
 	public function __construct(
 		OutputService $outputService,
 		PointService $pointService,
-		RemoteStreamService $remoteStreamService
+		RemoteStreamService $remoteStreamService,
 	) {
 		$this->outputService = $outputService;
 		$this->pointService = $pointService;
@@ -86,27 +82,25 @@ class PointList extends Base {
 		parent::__construct();
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:point:list')
-			 ->setDescription('List restoring point')
-			 ->addOption(
-			 	'local', '', InputOption::VALUE_NONE,
-			 	'list restoring point from local only'
-			 )
-			 ->addOption(
-			 	'remote', '', InputOption::VALUE_REQUIRED,
-			 	'list restoring point from a remote instance (or local)', ''
-			 )
-			 ->addOption(
-			 	'external', '', InputOption::VALUE_REQUIRED,
-			 	'list restoring point from an external folder', ''
-			 );
+			->setDescription('List restoring point')
+			->addOption(
+				'local', '', InputOption::VALUE_NONE,
+				'list restoring point from local only'
+			)
+			->addOption(
+				'remote', '', InputOption::VALUE_REQUIRED,
+				'list restoring point from a remote instance (or local)', ''
+			)
+			->addOption(
+				'external', '', InputOption::VALUE_REQUIRED,
+				'list restoring point from an external folder', ''
+			);
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -157,14 +151,14 @@ class PointList extends Base {
 				$comment = $point->getComment();
 				try {
 					$this->remoteStreamService->verifySubSign($point);
-				} catch (SignatoryException | SignatureException $e) {
+				} catch (SignatoryException|SignatureException $e) {
 					$comment = '';
 				}
 
 				$table->appendRow(
 					[
-						'<comment>' . (($point->isLocked()) ? 'L' : '') .
-						(($point->isArchive()) ? 'A' : '') . '</comment> '
+						'<comment>' . (($point->isLocked()) ? 'L' : '')
+						. (($point->isArchive()) ? 'A' : '') . '</comment> '
 						. (($fresh) ? $displayPointId : ''),
 						($fresh) ? date('Y-m-d H:i:s', $point->getDate()) : '',
 						($fresh) ? $point->getNCVersion() : '',
@@ -184,7 +178,6 @@ class PointList extends Base {
 
 		return 0;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -215,7 +208,6 @@ class PointList extends Base {
 
 		return '<' . $embed . '>' . $def . '</' . $embed . '>';
 	}
-
 
 	/**
 	 * @param RestoringPoint $point

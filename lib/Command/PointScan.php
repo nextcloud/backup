@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -53,7 +51,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PointScan extends Base {
 	use TStringTools;
 
-
 	/** @var PointRequest */
 	private $pointRequest;
 
@@ -66,13 +63,11 @@ class PointScan extends Base {
 	/** @var OutputService */
 	private $outputService;
 
-
 	/** @var OutputInterface */
 	private $output;
 
 	/** @var InputInterface */
 	private $input;
-
 
 	/**
 	 * PointScan constructor.
@@ -84,7 +79,7 @@ class PointScan extends Base {
 	public function __construct(
 		PointRequest $pointRequest,
 		PointService $pointService,
-		ChunkService $chunkService
+		ChunkService $chunkService,
 	) {
 		parent::__construct();
 
@@ -93,19 +88,17 @@ class PointScan extends Base {
 		$this->pointService = $pointService;
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:point:scan')
-			 ->setDescription(
-			 	'Scan a folder containing the data of a restoring point to add it in the list of available restoring point'
-			 )
-			 ->addOption('owner', '', InputOption::VALUE_REQUIRED, 'owner of the metadata file')
-			 ->addOption('file', '', InputOption::VALUE_REQUIRED, 'file_id of the metadata file');
+			->setDescription(
+				'Scan a folder containing the data of a restoring point to add it in the list of available restoring point'
+			)
+			->addOption('owner', '', InputOption::VALUE_REQUIRED, 'owner of the metadata file')
+			->addOption('file', '', InputOption::VALUE_REQUIRED, 'file_id of the metadata file');
 	}
-
 
 	/**
 	 * @param InputInterface $input

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -43,13 +41,11 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class ChangedFile implements IQueryRow, JsonSerializable {
 	use TArrayTools;
 
-
 	/** @var string */
 	private $path = '';
 
 	/** @var string */
 	private $hash = '';
-
 
 	/**
 	 * ChangedFile constructor.
@@ -61,7 +57,6 @@ class ChangedFile implements IQueryRow, JsonSerializable {
 			$this->setPath($path);
 		}
 	}
-
 
 	/**
 	 * @param string $path
@@ -82,7 +77,6 @@ class ChangedFile implements IQueryRow, JsonSerializable {
 		return $this->path;
 	}
 
-
 	/**
 	 * @param string $hash
 	 *
@@ -100,7 +94,6 @@ class ChangedFile implements IQueryRow, JsonSerializable {
 	public function getHash(): string {
 		return $this->hash;
 	}
-
 
 	/**
 	 * @param array $data

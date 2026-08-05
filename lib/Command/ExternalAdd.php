@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -49,10 +47,8 @@ use Symfony\Component\Console\Question\Question;
  */
 class ExternalAdd extends Base {
 
-
 	/** @var ExternalFolderService */
 	private $externalFolderService;
-
 
 	/**
 	 * ExternalAdd constructor.
@@ -65,15 +61,13 @@ class ExternalAdd extends Base {
 		$this->externalFolderService = $externalFolderService;
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:external:add')
-			 ->setDescription('Add external filesystem to store your backups');
+			->setDescription('Add external filesystem to store your backups');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -140,7 +134,6 @@ class ExternalAdd extends Base {
 		return 0;
 	}
 
-
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
@@ -155,8 +148,8 @@ class ExternalAdd extends Base {
 			if ($storage->getRoot() !== '') {
 				continue;
 			}
-			$availableStorage[$storage->getStorageId()] =
-				$storage->getStorage() . ' (id:' . $storage->getStorageId() . ')';
+			$availableStorage[$storage->getStorageId()]
+				= $storage->getStorage() . ' (id:' . $storage->getStorageId() . ')';
 		}
 
 		if (empty($availableStorage)) {
@@ -190,7 +183,6 @@ class ExternalAdd extends Base {
 
 		return 0;
 	}
-
 
 	/**
 	 * @param InputInterface $input

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use Exception;
@@ -46,10 +44,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class SetupExport extends Base {
 
-
 	/** @var ExportService */
 	private $exportService;
-
 
 	/**
 	 * SetupExport constructor.
@@ -62,16 +58,14 @@ class SetupExport extends Base {
 		$this->exportService = $exportService;
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:setup:export')
-			 ->setDescription('Export your setup for easier restoration')
-			 ->addOption('key', '', InputOption::VALUE_NONE, 'use a generated key to encrypt the data');
+			->setDescription('Export your setup for easier restoration')
+			->addOption('key', '', InputOption::VALUE_NONE, 'use a generated key to encrypt the data');
 	}
-
 
 	/**
 	 * @param InputInterface $input

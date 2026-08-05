@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Controller;
 
@@ -72,7 +70,6 @@ class LocalController extends OcsController {
 	use TNCLogger;
 	use TDeserialize;
 
-
 	/** @var IUserSession */
 	private $userSession;
 
@@ -103,7 +100,6 @@ class LocalController extends OcsController {
 	/** @var ConfigService */
 	private $configService;
 
-
 	/**
 	 * LocalController constructor.
 	 *
@@ -132,7 +128,7 @@ class LocalController extends OcsController {
 		ExternalFolderService $externalFolderService,
 		ExportService $exportService,
 		RestoreService $restoreService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		parent::__construct($appName, $request);
 
@@ -148,7 +144,6 @@ class LocalController extends OcsController {
 		$this->configService = $configService;
 	}
 
-
 	/**
 	 * @param string $type
 	 * @param string $param
@@ -160,7 +155,6 @@ class LocalController extends OcsController {
 		switch ($type) {
 			case 'scan':
 				return $this->initActionScanLocalFolder((int)$param);
-
 			case 'backup':
 				if ($param === 'full') {
 					return $this->initActionForceFullBackup();
@@ -172,7 +166,6 @@ class LocalController extends OcsController {
 		throw new OCSException('unknown action', Http::STATUS_BAD_REQUEST);
 	}
 
-
 	/**
 	 * @return DataResponse
 	 * @throws SignatureException
@@ -183,7 +176,6 @@ class LocalController extends OcsController {
 		return new DataResponse($points);
 	}
 
-
 	/**
 	 * @return DataResponse
 	 */
@@ -193,7 +185,6 @@ class LocalController extends OcsController {
 
 		return new DataResponse($settings);
 	}
-
 
 	/**
 	 * @param array $settings
@@ -215,7 +206,6 @@ class LocalController extends OcsController {
 
 		return new DataResponse(array_merge($settings, $this->cronService->nextBackups()));
 	}
-
 
 	/**
 	 * @param string $encrypted
@@ -239,7 +229,6 @@ class LocalController extends OcsController {
 		}
 	}
 
-
 	/**
 	 * @return DataResponse
 	 * @throws OCSException
@@ -253,7 +242,6 @@ class LocalController extends OcsController {
 			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		}
 	}
-
 
 	/**
 	 * @param int $storageId
@@ -276,7 +264,6 @@ class LocalController extends OcsController {
 		}
 	}
 
-
 	/**
 	 * @return DataResponse
 	 * @throws OCSException
@@ -288,7 +275,6 @@ class LocalController extends OcsController {
 			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		}
 	}
-
 
 	/**
 	 * @param int $storageId
@@ -322,7 +308,6 @@ class LocalController extends OcsController {
 		}
 	}
 
-
 	/**
 	 * @param int $storageId
 	 *
@@ -338,7 +323,6 @@ class LocalController extends OcsController {
 			throw new OcsException($e->getMessage(), Http::STATUS_BAD_REQUEST);
 		}
 	}
-
 
 	/**
 	 * @param int $fileId
@@ -388,7 +372,6 @@ class LocalController extends OcsController {
 		}
 	}
 
-
 	/**
 	 * @param int $fileId
 	 * @param string $owner
@@ -420,7 +403,6 @@ class LocalController extends OcsController {
 		throw new RestoringPointException();
 	}
 
-
 	/**
 	 * @return DataResponse
 	 * @throws OCSException
@@ -434,7 +416,6 @@ class LocalController extends OcsController {
 
 		return new DataResponse(['message' => 'full backup should be initiated in the next few minutes']);
 	}
-
 
 	/**
 	 * @return DataResponse

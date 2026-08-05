@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup;
 
 use OCA\Backup\Exceptions\SqlParamsException;
@@ -44,13 +42,11 @@ interface ISqlDump {
 	public const DB_USER = 'dbuser';
 	public const DB_PASS = 'dbpassword';
 
-
 	/**
 	 * @param array $params
 	 * @param string $filename
 	 */
 	public function export(array $params, string $filename): void;
-
 
 	/**
 	 * @param array $params
@@ -58,7 +54,6 @@ interface ISqlDump {
 	 * @throws SqlParamsException
 	 */
 	public function setup(array $params): void;
-
 
 	/**
 	 * @param array $params

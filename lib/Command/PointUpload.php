@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -55,7 +53,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PointUpload extends Base {
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -64,7 +61,6 @@ class PointUpload extends Base {
 
 	/** @var OutputService */
 	private $outputService;
-
 
 	/**
 	 * PointUpload constructor.
@@ -76,7 +72,7 @@ class PointUpload extends Base {
 	public function __construct(
 		PointService $pointService,
 		UploadService $uploadService,
-		OutputService $outputService
+		OutputService $outputService,
 	) {
 		parent::__construct();
 
@@ -85,19 +81,17 @@ class PointUpload extends Base {
 		$this->outputService = $outputService;
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:point:upload')
-			 ->setDescription('Upload a local restoring point on others instances')
-			 ->addArgument('point', InputArgument::REQUIRED, 'Id of the restoring point')
-			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance', '')
-			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder', '')
-			 ->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file');
+			->setDescription('Upload a local restoring point on others instances')
+			->addArgument('point', InputArgument::REQUIRED, 'Id of the restoring point')
+			->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance', '')
+			->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder', '')
+			->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -119,7 +113,7 @@ class PointUpload extends Base {
 			try {
 				$this->pointService->initBaseFolder($point);
 				$this->outputService->openFile($point, 'occ backup:point:upload');
-			} catch (NotPermittedException | LockedException $e) {
+			} catch (NotPermittedException|LockedException $e) {
 			}
 		}
 

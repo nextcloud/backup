@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -47,10 +45,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ExternalList extends Base {
 
-
 	/** @var ExternalFolderService */
 	private $externalFolderService;
-
 
 	/**
 	 * ExternalList constructor.
@@ -63,15 +59,13 @@ class ExternalList extends Base {
 		parent::__construct();
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:external:list')
-			 ->setDescription('Listing configured external filesystem');
+			->setDescription('Listing configured external filesystem');
 	}
-
 
 	/**
 	 * @param InputInterface $input

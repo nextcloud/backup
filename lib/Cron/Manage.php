@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Cron;
 
@@ -73,12 +71,11 @@ class Manage extends TimedJob {
 		private UploadService $uploadService,
 		private ExternalFolderService $externalFolderService,
 		private OutputService $outputService,
-		private ConfigService $configService
+		private ConfigService $configService,
 	) {
 		parent::__construct($time);
 		$this->setInterval(3600);
 	}
-
 
 	/**
 	 * @param $argument
@@ -95,7 +92,6 @@ class Manage extends TimedJob {
 		} catch (JobsTimeSlotException $e) {
 		}
 	}
-
 
 	/**
 	 * @throws JobsTimeSlotException

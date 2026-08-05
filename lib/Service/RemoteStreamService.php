@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -67,7 +65,6 @@ class RemoteStreamService extends NCSignature {
 	use TStringTools;
 	use TNCWellKnown;
 
-
 	/** @var IURLGenerator */
 	private $urlGenerator;
 
@@ -76,7 +73,6 @@ class RemoteStreamService extends NCSignature {
 
 	/** @var ConfigService */
 	private $configService;
-
 
 	/**
 	 * RemoteStreamService constructor.
@@ -88,7 +84,7 @@ class RemoteStreamService extends NCSignature {
 	public function __construct(
 		IURLGenerator $urlGenerator,
 		RemoteRequest $remoteRequest,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->urlGenerator = $urlGenerator;
 		$this->remoteRequest = $remoteRequest;
@@ -96,7 +92,6 @@ class RemoteStreamService extends NCSignature {
 
 		$this->setup('app', 'backup');
 	}
-
 
 	/**
 	 * Returns the Signatory model for the Backup app.
@@ -171,7 +166,6 @@ class RemoteStreamService extends NCSignature {
 		return $app;
 	}
 
-
 	/**
 	 *
 	 */
@@ -183,7 +177,6 @@ class RemoteStreamService extends NCSignature {
 		} catch (SignatoryException $e) {
 		}
 	}
-
 
 	/**
 	 * Add a remote instance, based on the address
@@ -205,7 +198,6 @@ class RemoteStreamService extends NCSignature {
 
 		return $remoteInstance;
 	}
-
 
 	/**
 	 * retrieve Signatory.
@@ -240,7 +232,6 @@ class RemoteStreamService extends NCSignature {
 		return $remoteInstance;
 	}
 
-
 	/**
 	 * shortcut to requestRemoteInstance that return result if available, or exception.
 	 *
@@ -262,10 +253,10 @@ class RemoteStreamService extends NCSignature {
 		int $type = Request::TYPE_GET,
 		?JsonSerializable $object = null,
 		array $params = [],
-		bool $longTimeout = false
+		bool $longTimeout = false,
 	): array {
-		$signedRequest =
-			$this->requestRemoteInstance($instance, $item, $type, $object, $params, $longTimeout);
+		$signedRequest
+			= $this->requestRemoteInstance($instance, $item, $type, $object, $params, $longTimeout);
 
 		if (!$signedRequest->getOutgoingRequest()->hasResult()) {
 			throw new RemoteInstanceException();
@@ -278,7 +269,6 @@ class RemoteStreamService extends NCSignature {
 
 		throw new RemoteInstanceException($this->get('message', $result->getAsArray()));
 	}
-
 
 	/**
 	 * Send a request to a remote instance, based on:
@@ -305,7 +295,7 @@ class RemoteStreamService extends NCSignature {
 		int $type = Request::TYPE_GET,
 		?JsonSerializable $object = null,
 		array $params = [],
-		bool $longTimeout = false
+		bool $longTimeout = false,
 	): NCSignedRequest {
 		$request = new NCRequest('', $type);
 		$this->configService->configureRequest($request, $longTimeout);
@@ -326,13 +316,12 @@ class RemoteStreamService extends NCSignature {
 			//		$app->setAlgorithm(NC22Signatory::SHA512);
 			$signedRequest = $this->signOutgoingRequest($request, $app);
 			$this->doRequest($signedRequest->getOutgoingRequest(), false);
-		} catch (RequestNetworkException | SignatoryException $e) {
+		} catch (RequestNetworkException|SignatoryException $e) {
 			throw new RemoteInstanceException($e->getMessage());
 		}
 
 		return $signedRequest;
 	}
-
 
 	/**
 	 * get the value of an entry from the Signatory of the RemoteInstance.
@@ -355,7 +344,6 @@ class RemoteStreamService extends NCSignature {
 
 		return $this->feedStringWithParams($value, $params);
 	}
-
 
 	/**
 	 * Confirm the Auth of a RemoteInstance, based on the result from a request
@@ -382,7 +370,6 @@ class RemoteStreamService extends NCSignature {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 *
@@ -402,7 +389,6 @@ class RemoteStreamService extends NCSignature {
 	public function verifyPoint(RestoringPoint $point) {
 		$this->verifyModel($point, $this->getAppSignatory()->getPublicKey());
 	}
-
 
 	/**
 	 * @param RestoringPoint $point

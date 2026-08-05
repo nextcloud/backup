@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\AppInfo;
 
 use OCA\Backup\Handlers\WebfingerHandler;
@@ -45,7 +43,6 @@ use OCP\Files\Events\Node\NodeWrittenEvent;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-
 /**
  * Class Application
  *
@@ -57,7 +54,6 @@ class Application extends App implements IBootstrap {
 	public const APP_SUBJECT = 'http://nextcloud.com/';
 	public const APP_REL = 'https://apps.nextcloud.com/apps/backup';
 
-
 	/**
 	 * Application constructor.
 	 *
@@ -66,7 +62,6 @@ class Application extends App implements IBootstrap {
 	public function __construct(array $params = []) {
 		parent::__construct(self::APP_ID, $params);
 	}
-
 
 	/**
 	 * @param IRegistrationContext $context
@@ -80,7 +75,6 @@ class Application extends App implements IBootstrap {
 
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesAdditionalScripts::class);
 	}
-
 
 	/**
 	 * @param IBootContext $context

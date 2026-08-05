@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Handlers;
 
 use OC\URLGenerator;
@@ -51,7 +49,6 @@ use OCP\IURLGenerator;
 class WebfingerHandler implements IHandler {
 	use TArrayTools;
 
-
 	/** @var URLGenerator */
 	private $urlGenerator;
 
@@ -60,7 +57,6 @@ class WebfingerHandler implements IHandler {
 
 	/** @var ConfigService */
 	private $configService;
-
 
 	/**
 	 * WebfingerHandler constructor.
@@ -72,13 +68,12 @@ class WebfingerHandler implements IHandler {
 	public function __construct(
 		IURLGenerator $urlGenerator,
 		RemoteStreamService $remoteStreamService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->urlGenerator = $urlGenerator;
 		$this->remoteStreamService = $remoteStreamService;
 		$this->configService = $configService;
 	}
-
 
 	/**
 	 * @param string $service

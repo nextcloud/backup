@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
@@ -45,7 +43,6 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class RemoteRequestBuilder extends CoreRequestBuilder {
 	use TArrayTools;
 
-
 	/**
 	 * @return CoreQueryBuilder
 	 */
@@ -56,7 +53,6 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 		return $qb;
 	}
 
-
 	/**
 	 * @return CoreQueryBuilder
 	 */
@@ -66,7 +62,6 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 
 		return $qb;
 	}
-
 
 	/**
 	 * @return CoreQueryBuilder
@@ -82,7 +77,6 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 		return $qb;
 	}
 
-
 	/**
 	 * @return CoreQueryBuilder
 	 */
@@ -92,7 +86,6 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 
 		return $qb;
 	}
-
 
 	/**
 	 * @param CoreQueryBuilder $qb
@@ -104,7 +97,7 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 		/** @var RemoteInstance $remote */
 		try {
 			$remote = $qb->asItem(RemoteInstance::class);
-		} catch (RowNotFoundException | InvalidItemException $e) {
+		} catch (RowNotFoundException|InvalidItemException $e) {
 			throw new RemoteInstanceNotFoundException();
 		}
 
@@ -119,7 +112,7 @@ class RemoteRequestBuilder extends CoreRequestBuilder {
 	 */
 	public function getItemsFromRequest(
 		CoreQueryBuilder $qb,
-		bool $includeExtraDataOnSerialize = false
+		bool $includeExtraDataOnSerialize = false,
 	): array {
 		/** @var RemoteInstance[] $result */
 		return $qb->asItems(

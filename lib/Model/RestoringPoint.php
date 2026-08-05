@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Model;
 
@@ -54,7 +52,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	use TDeserialize;
 	use TNCLogger;
 
-
 	public const STATUS_UNPACKED = 0;
 	public const STATUS_PACKED = 1;
 	public const STATUS_COMPRESSED = 2;
@@ -64,8 +61,8 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 
 	public const LOCK_TIMEOUT = 1800;
 
-	public static $DEF_STATUS =
-		[
+	public static $DEF_STATUS
+		= [
 			self::STATUS_PACKED => 'packed',
 			self::STATUS_COMPRESSED => 'compressed',
 			self::STATUS_ENCRYPTED => 'encrypted',
@@ -74,7 +71,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		];
 
 	public const STATUS_ISSUE = 32;
-
 
 	/** @var string */
 	private $id = '';
@@ -130,14 +126,12 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	/** @var bool */
 	private $package = false;
 
-
 	/**
 	 * RestoringPoint constructor.
 	 */
 	public function __construct() {
 		$this->notes = new SimpleDataStore();
 	}
-
 
 	/**
 	 * @param string $id
@@ -157,7 +151,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $this->id;
 	}
 
-
 	/**
 	 * @param string $instance
 	 *
@@ -176,7 +169,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $this->instance;
 	}
 
-
 	/**
 	 * @param string $parent
 	 *
@@ -194,7 +186,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	public function getParent(): string {
 		return $this->parent;
 	}
-
 
 	/**
 	 * @param int $status
@@ -246,7 +237,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return (($this->getStatus() & $flag) !== 0);
 	}
 
-
 	/**
 	 * @param int $duration
 	 *
@@ -265,7 +255,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $this->duration;
 	}
 
-
 	/**
 	 * @param bool $archive
 	 *
@@ -283,7 +272,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	public function isArchive(): bool {
 		return $this->archive;
 	}
-
 
 	/**
 	 * @param int $lock
@@ -309,7 +297,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	public function isLocked(): bool {
 		return ($this->getLock() > (time() - self::LOCK_TIMEOUT));
 	}
-
 
 	/**
 	 * @param SimpleDataStore $notes
@@ -337,7 +324,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	public function getNotes(): SimpleDataStore {
 		return $this->notes;
 	}
-
 
 	/**
 	 * @param int $date
@@ -391,7 +377,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return 1 * $nc[3] + 100 * $nc[2] + 10000 * $nc[1] + 1000000 * $nc[0];
 	}
 
-
 	/**
 	 * @param string $comment
 	 *
@@ -409,7 +394,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	public function getComment(): string {
 		return $this->comment;
 	}
-
 
 	/**
 	 * @return bool
@@ -436,7 +420,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $this->baseFolder;
 	}
 
-
 	/**
 	 * @return bool
 	 */
@@ -461,7 +444,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	public function getAppDataRootWrapper(): AppDataRootWrapper {
 		return $this->appDataRootWrapper;
 	}
-
 
 	/**
 	 * @return RestoringData[]
@@ -508,7 +490,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		throw new RestoringDataNotFoundException();
 	}
 
-
 	/**
 	 * @return bool
 	 */
@@ -543,7 +524,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $this;
 	}
 
-
 	/**
 	 * @param string $signature
 	 *
@@ -561,7 +541,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	public function getSignature(): string {
 		return $this->signature;
 	}
-
 
 	/**
 	 * @param string $subSignature
@@ -581,7 +560,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $this->subSignature;
 	}
 
-
 	/**
 	 * @param bool $package
 	 *
@@ -600,7 +578,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $this->package;
 	}
 
-
 	/**
 	 * @return array
 	 */
@@ -611,7 +588,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $arr;
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -620,13 +596,13 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	 */
 	public function importFromDatabase(array $data): IQueryRow {
 		$this->setId($this->get('uid', $data))
-			 ->setInstance($this->get('instance', $data))
-			 ->setParent($this->get('parent', $data))
-			 ->setArchive($this->getBool('archive', $data))
-			 ->setLock($this->getInt('lock', $data))
-			 ->setStatus($this->getInt('status', $data))
-			 ->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
-			 ->setDate($this->getInt('date', $data));
+			->setInstance($this->get('instance', $data))
+			->setParent($this->get('parent', $data))
+			->setArchive($this->getBool('archive', $data))
+			->setLock($this->getInt('lock', $data))
+			->setStatus($this->getInt('status', $data))
+			->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
+			->setDate($this->getInt('date', $data));
 
 		if ($this->getId() === '') {
 			throw new InvalidItemException();
@@ -634,10 +610,10 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 
 		$metadata = new SimpleDataStore($this->getArray('metadata', $data));
 		$this->setNc($metadata->gArray('nc'))
-			 ->setSignature($metadata->g('signature'))
-			 ->setSubSignature($metadata->g('subSignature'))
-			 ->setComment($metadata->g('comment'))
-			 ->setDuration($metadata->gInt('duration'));
+			->setSignature($metadata->g('signature'))
+			->setSubSignature($metadata->g('subSignature'))
+			->setComment($metadata->g('comment'))
+			->setDuration($metadata->gInt('duration'));
 
 		try {
 			/** @var RestoringHealth $health */
@@ -653,7 +629,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $this;
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -662,17 +637,17 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setId($this->get('id', $data))
-			 ->setInstance($this->get('instance', $data))
-			 ->setParent($this->get('parent', $data))
-			 ->setArchive($this->getBool('archive', $data))
-			 ->setStatus($this->getInt('status', $data, -1))
-			 ->setDuration($this->getInt('duration', $data))
-			 ->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
-			 ->setDate($this->getInt('date', $data))
-			 ->setSignature($this->get('signature', $data))
-			 ->setSubSignature($this->get('subSignature', $data))
-			 ->setComment($this->get('comment', $data))
-			 ->setNc($this->getArray('nc', $data));
+			->setInstance($this->get('instance', $data))
+			->setParent($this->get('parent', $data))
+			->setArchive($this->getBool('archive', $data))
+			->setStatus($this->getInt('status', $data, -1))
+			->setDuration($this->getInt('duration', $data))
+			->setNotes(new SimpleDataStore($this->getArray('notes', $data)))
+			->setDate($this->getInt('date', $data))
+			->setSignature($this->get('signature', $data))
+			->setSubSignature($this->get('subSignature', $data))
+			->setComment($this->get('comment', $data))
+			->setNc($this->getArray('nc', $data));
 
 		if ($this->getId() === '' || $this->getStatus() === -1) {
 			throw new InvalidItemException();
@@ -692,7 +667,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		return $this;
 	}
 
-
 	/**
 	 * @return array
 	 */
@@ -707,7 +681,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 		];
 	}
 
-
 	/**
 	 * @return array
 	 */
@@ -720,7 +693,6 @@ class RestoringPoint implements IDeserializable, IQueryRow, ISignedModel, JsonSe
 			'archive' => $this->isArchive()
 		];
 	}
-
 
 	/**
 	 * @return array

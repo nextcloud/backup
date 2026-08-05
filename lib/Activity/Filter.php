@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore Later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Activity;
 
 use OCA\Backup\AppInfo\Application;
@@ -44,13 +42,11 @@ use OCP\IURLGenerator;
  */
 class Filter implements IFilter {
 
-
 	/** @var IL10N */
 	protected $l10n;
 
 	/** @var IURLGenerator */
 	protected $urlGenerator;
-
 
 	/**
 	 * Filter constructor.
@@ -63,14 +59,12 @@ class Filter implements IFilter {
 		$this->urlGenerator = $urlGenerator;
 	}
 
-
 	/**
 	 * @return string
 	 */
 	public function getIdentifier(): string {
 		return Application::APP_ID;
 	}
-
 
 	/**
 	 * @return string
@@ -79,14 +73,12 @@ class Filter implements IFilter {
 		return $this->l10n->t('Backup');
 	}
 
-
 	/**
 	 * @return int
 	 */
 	public function getPriority(): int {
 		return 70;
 	}
-
 
 	/**
 	 * @param string[] $types
@@ -96,7 +88,6 @@ class Filter implements IFilter {
 	public function filterTypes(array $types): array {
 		return array_merge($types, [ActivityService::TYPE_GLOBAL]);
 	}
-
 
 	/**
 	 * @return string
@@ -109,7 +100,6 @@ class Filter implements IFilter {
 			)
 		);
 	}
-
 
 	/**
 	 * @return string[]

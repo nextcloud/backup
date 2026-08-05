@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,14 +27,12 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Exceptions\ChangedFileNotFoundException;
 use OCA\Backup\Model\ChangedFile;
 
 class ChangesRequest extends ChangesRequestBuilder {
-
 
 	/**
 	 * @param ChangedFile $file
@@ -48,7 +45,6 @@ class ChangesRequest extends ChangesRequestBuilder {
 		$qb->execute();
 	}
 
-
 	/**
 	 * @return ChangedFile[]
 	 */
@@ -57,7 +53,6 @@ class ChangesRequest extends ChangesRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
-
 
 	/**
 	 * @param string $hash
@@ -72,7 +67,6 @@ class ChangesRequest extends ChangesRequestBuilder {
 		return $this->getItemFromRequest($qb);
 	}
 
-
 	/**
 	 * @param ChangedFile $file
 	 */
@@ -83,7 +77,6 @@ class ChangesRequest extends ChangesRequestBuilder {
 			$this->insert($file);
 		}
 	}
-
 
 	/**
 	 *

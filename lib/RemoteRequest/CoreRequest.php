@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\RemoteRequest;
 
 use OCA\Backup\Tools\Model\NCSignedRequest;
@@ -41,7 +39,6 @@ use OCA\Backup\Tools\Model\SimpleDataStore;
  */
 class CoreRequest {
 
-
 	/** @var NCSignedRequest */
 	private $signedRequest;
 
@@ -51,14 +48,12 @@ class CoreRequest {
 	/** @var array */
 	private $outcome = [];
 
-
 	/**
 	 * CoreRequest constructor.
 	 */
 	public function __construct() {
 		$this->config = new SimpleDataStore();
 	}
-
 
 	/**
 	 * @param NCSignedRequest $signedRequest
@@ -74,14 +69,12 @@ class CoreRequest {
 		return $this->signedRequest;
 	}
 
-
 	/**
 	 * @param SimpleDataStore $config
 	 */
 	public function config(SimpleDataStore $config): void {
 		$this->config = $config;
 	}
-
 
 	/**
 	 * @param array $outcome

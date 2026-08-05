@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,14 +27,12 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use OCA\Backup\Tools\Model\TreeNode;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 trait TConsoleTree {
-
 
 	/**
 	 * @param TreeNode $root
@@ -49,7 +46,7 @@ trait TConsoleTree {
 			'height' => 1,
 			'node-spacing' => 0,
 			'item-spacing' => 0,
-		]
+		],
 	): void {
 		$config = array_merge(
 			[

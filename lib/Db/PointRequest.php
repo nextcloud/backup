@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
@@ -41,7 +39,6 @@ use OCA\Backup\Model\RestoringPoint;
  */
 class PointRequest extends PointRequestBuilder {
 
-
 	/**
 	 * @param RestoringPoint $point
 	 *
@@ -51,14 +48,14 @@ class PointRequest extends PointRequestBuilder {
 		$qb = $this->getPointInsertSql();
 
 		$qb->setValue('uid', $qb->createNamedParameter($point->getId()))
-		   ->setValue('instance', $qb->createNamedParameter($point->getInstance()))
-		   ->setValue('parent', $qb->createNamedParameter($point->getParent()))
-		   ->setValue('status', $qb->createNamedParameter($point->getStatus()))
-		   ->setValue('archive', $qb->createNamedParameter(($point->isArchive()) ? 1 : 0))
-		   ->setValue('lock', $qb->createNamedParameter($point->getLock()))
-		   ->setValue('notes', $qb->createNamedParameter(json_encode($point->getNotes())))
-		   ->setValue('metadata', $qb->createNamedParameter(json_encode($point->getMetadata())))
-		   ->setValue('date', $qb->createNamedParameter($point->getDate()));
+			->setValue('instance', $qb->createNamedParameter($point->getInstance()))
+			->setValue('parent', $qb->createNamedParameter($point->getParent()))
+			->setValue('status', $qb->createNamedParameter($point->getStatus()))
+			->setValue('archive', $qb->createNamedParameter(($point->isArchive()) ? 1 : 0))
+			->setValue('lock', $qb->createNamedParameter($point->getLock()))
+			->setValue('notes', $qb->createNamedParameter(json_encode($point->getNotes())))
+			->setValue('metadata', $qb->createNamedParameter(json_encode($point->getMetadata())))
+			->setValue('date', $qb->createNamedParameter($point->getDate()));
 
 		if ($point->hasHealth()) {
 			$qb->setValue('health', $qb->createNamedParameter(json_encode($point->getHealth())));
@@ -66,7 +63,6 @@ class PointRequest extends PointRequestBuilder {
 
 		return $qb->execute();
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -93,7 +89,6 @@ class PointRequest extends PointRequestBuilder {
 		$qb->execute();
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 */
@@ -105,7 +100,6 @@ class PointRequest extends PointRequestBuilder {
 
 		$qb->execute();
 	}
-
 
 	/**
 	 *
@@ -132,7 +126,6 @@ class PointRequest extends PointRequestBuilder {
 		$qb->execute();
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 */
@@ -143,7 +136,6 @@ class PointRequest extends PointRequestBuilder {
 		$qb->limit('instance', $point->getInstance());
 		$qb->execute();
 	}
-
 
 	/**
 	 * @param int $since
@@ -172,7 +164,6 @@ class PointRequest extends PointRequestBuilder {
 		return $this->getItemsFromRequest($qb);
 	}
 
-
 	/**
 	 * @param string $pointId
 	 *
@@ -186,7 +177,6 @@ class PointRequest extends PointRequestBuilder {
 
 		return $this->getItemFromRequest($qb);
 	}
-
 
 	/**
 	 * @param string $pointId
@@ -204,7 +194,6 @@ class PointRequest extends PointRequestBuilder {
 
 		return $this->getItemFromRequest($qb);
 	}
-
 
 	/**
 	 * @param string $instance

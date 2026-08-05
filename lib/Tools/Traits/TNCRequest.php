@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use Exception;
@@ -44,13 +42,11 @@ use OCP\Http\Client\IResponse;
 trait TNCRequest {
 	use TNCLogger;
 
-
 	/**
 	 * @param int $size
 	 */
 	public function setMaxDownloadSize(int $size) {
 	}
-
 
 	/**
 	 * @param NCRequest $request
@@ -65,7 +61,6 @@ trait TNCRequest {
 		return $requestResult->getAsArray();
 	}
 
-
 	/**
 	 * @param NCRequest $request
 	 * @param bool $exceptionOnIssue
@@ -75,7 +70,7 @@ trait TNCRequest {
 	public function doRequest(NCRequest $request, bool $exceptionOnIssue = true): void {
 		$request->setClient(
 			$this->clientService()
-				 ->newClient()
+				->newClient()
 		);
 
 		$this->generationClientOptions($request);
@@ -101,7 +96,6 @@ trait TNCRequest {
 		}
 	}
 
-
 	/**
 	 * @return IClientService
 	 */
@@ -112,7 +106,6 @@ trait TNCRequest {
 			return OC::$server->get(IClientService::class);
 		}
 	}
-
 
 	/**
 	 * @param NCRequest $request
@@ -150,7 +143,6 @@ trait TNCRequest {
 
 		$request->setClientOptions($options);
 	}
-
 
 	/**
 	 * @param NCRequest $request

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Some tools for myself.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools;
 
 interface ISignedModel {
@@ -44,7 +42,6 @@ interface ISignedModel {
 	 * @return string
 	 */
 	public function getSignature(): string;
-
 
 	/**
 	 * returns array/data to be signed to identify the model

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\RemoteRequest;
 
 use OCA\Backup\AppInfo\Application;
@@ -46,10 +44,8 @@ use OCA\Backup\Tools\Traits\TNCLogger;
 class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
 	use TNCLogger;
 
-
 	/** @var PointRequest */
 	private $pointRequest;
-
 
 	/**
 	 * ListRestoringPoint constructor.
@@ -63,7 +59,6 @@ class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
 		$this->setup('app', Application::APP_ID);
 	}
 
-
 	/**
 	 *
 	 */
@@ -74,7 +69,6 @@ class ListRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 		$this->setOutcome($points);
 	}
-
 
 	public function import(array $data): IDeserializable {
 		return $this;

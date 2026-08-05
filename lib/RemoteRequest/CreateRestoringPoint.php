@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\RemoteRequest;
 
@@ -54,13 +52,11 @@ class CreateRestoringPoint extends CoreRequest implements IRemoteRequest {
 	use TDeserialize;
 	use TNCLogger;
 
-
 	/** @var PointRequest */
 	private $pointRequest;
 
 	/** @var PointService */
 	private $pointService;
-
 
 	/**
 	 * ListRestoringPoint constructor.
@@ -76,7 +72,6 @@ class CreateRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 		$this->setup('app', Application::APP_ID);
 	}
-
 
 	/**
 	 *
@@ -109,7 +104,6 @@ class CreateRestoringPoint extends CoreRequest implements IRemoteRequest {
 
 		$this->setOutcome($this->serialize($stored));
 	}
-
 
 	/**
 	 * @param array $data

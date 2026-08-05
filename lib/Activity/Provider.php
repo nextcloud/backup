@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore Later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Activity;
 
 use Exception;
@@ -52,7 +50,6 @@ class Provider implements IProvider {
 	use TStringTools;
 	use TArrayTools;
 
-
 	/** @var IL10N */
 	private $l10n;
 
@@ -61,7 +58,6 @@ class Provider implements IProvider {
 
 	/** @var IURLGenerator */
 	private $urlGenerator;
-
 
 	/**
 	 * Provider constructor.
@@ -73,13 +69,12 @@ class Provider implements IProvider {
 	public function __construct(
 		IL10N $l10n,
 		IManager $activityManager,
-		IURLGenerator $urlGenerator
+		IURLGenerator $urlGenerator,
 	) {
 		$this->l10n = $l10n;
 		$this->activityManager = $activityManager;
 		$this->urlGenerator = $urlGenerator;
 	}
-
 
 	/**
 	 * @param string $lang
@@ -88,7 +83,7 @@ class Provider implements IProvider {
 	 *
 	 * @return IEvent
 	 */
-	public function parse($lang, IEvent $event, IEvent $previousEvent = null): IEvent {
+	public function parse($lang, IEvent $event, ?IEvent $previousEvent = null): IEvent {
 		$params = $event->getSubjectParameters();
 		$this->initActivityParser($event, $params);
 		$this->setIcon($event);
@@ -115,7 +110,6 @@ class Provider implements IProvider {
 		return $event;
 	}
 
-
 	/**
 	 * @param IEvent $event
 	 * @param array $params
@@ -129,7 +123,6 @@ class Provider implements IProvider {
 			throw new InvalidArgumentException();
 		}
 	}
-
 
 	/**
 	 * @param IEvent $event
@@ -145,15 +138,14 @@ class Provider implements IProvider {
 		);
 	}
 
-
 	/**
 	 * @param IEvent $activity
 	 * @param array $params
 	 */
 	private function parseCreate(IEvent $activity, array $params): void {
-		$params['type'] = ($this->getBool('complete', $params)) ?
-			$this->l10n->t('complete') :
-			$this->l10n->t('partial');
+		$params['type'] = ($this->getBool('complete', $params))
+			? $this->l10n->t('complete')
+			: $this->l10n->t('partial');
 
 		try {
 			$params['downtime'] = $this->getDateDiff(
@@ -179,7 +171,6 @@ class Provider implements IProvider {
 		);
 	}
 
-
 	/**
 	 * @param IEvent $activity
 	 * @param array $params
@@ -195,7 +186,6 @@ class Provider implements IProvider {
 			$params
 		);
 	}
-
 
 	/**
 	 * @param IEvent $activity
@@ -213,7 +203,6 @@ class Provider implements IProvider {
 		);
 	}
 
-
 	/**
 	 * @param IEvent $activity
 	 * @param string $global
@@ -222,14 +211,13 @@ class Provider implements IProvider {
 	protected function parseSimpleEvent(
 		IEvent $activity,
 		string $global,
-		array $params
+		array $params,
 	): void {
 		$line = $this->l10n->t($global, $params);
 		$line = $this->feedStringWithParams($line, $params);
 
 		$this->setSubject($activity, $line);
 	}
-
 
 	/**
 	 * @param IEvent $event
@@ -239,7 +227,6 @@ class Provider implements IProvider {
 		$event->setParsedSubject($line);
 		$event->setRichSubject($line);
 	}
-
 
 	/**
 	 * @param array $params

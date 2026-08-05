@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use Exception;
@@ -52,13 +50,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class FileHistory extends Base {
 
-
 	/** @var PointService */
 	private $pointService;
 
 	/** @var ChunkService */
 	private $chunkService;
-
 
 	/**
 	 * PointHistory constructor.
@@ -73,7 +69,6 @@ class FileHistory extends Base {
 		$this->chunkService = $chunkService;
 	}
 
-
 	/**
 	 *
 	 */
@@ -81,13 +76,12 @@ class FileHistory extends Base {
 		parent::configure();
 
 		$this->setName('backup:file:history')
-			 ->setDescription('Get the history of a file')
-			 ->addArgument('data', InputArgument::REQUIRED, 'name of the data pack')
-			 ->addArgument('filename', InputArgument::REQUIRED, 'full path of the file')
-			 ->addOption('since', '', InputOption::VALUE_REQUIRED, 'start at a specific date')
-			 ->addOption('until', '', InputOption::VALUE_REQUIRED, 'end at a specific date');
+			->setDescription('Get the history of a file')
+			->addArgument('data', InputArgument::REQUIRED, 'name of the data pack')
+			->addArgument('filename', InputArgument::REQUIRED, 'full path of the file')
+			->addOption('since', '', InputOption::VALUE_REQUIRED, 'start at a specific date')
+			->addOption('until', '', InputOption::VALUE_REQUIRED, 'end at a specific date');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -113,7 +107,7 @@ class FileHistory extends Base {
 		foreach ($points as $point) {
 			try {
 				$this->pointService->initBaseFolder($point);
-			} catch (NotFoundException | NotPermittedException $e) {
+			} catch (NotFoundException|NotPermittedException $e) {
 				continue;
 			}
 

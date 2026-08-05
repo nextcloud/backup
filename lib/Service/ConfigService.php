@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Service;
 
 use Exception;
@@ -42,7 +40,6 @@ use OCP\IConfig;
 
 class ConfigService {
 	use TArrayTools;
-
 
 	public const MAINTENANCE = 'maintenance';
 	public const DATA_DIRECTORY = 'datadirectory';
@@ -82,7 +79,6 @@ class ConfigService {
 	public const CHUNK_SIZE = 'chunk_size';
 	public const CHUNK_PART_SIZE = 'chunk_part_size';
 
-
 	/** @var array */
 	public $defaults = [
 		self::CRON_ENABLED => 0,
@@ -118,13 +114,11 @@ class ConfigService {
 		self::CHUNK_PART_SIZE => 100
 	];
 
-
 	/** @var IConfig */
 	private $config;
 
 	/** @var int */
 	private $externalEnabled = -1;
-
 
 	/**
 	 * ConfigService constructor.
@@ -134,7 +128,6 @@ class ConfigService {
 	public function __construct(IConfig $config) {
 		$this->config = $config;
 	}
-
 
 	/**
 	 * @param string $key
@@ -196,7 +189,6 @@ class ConfigService {
 		return json_decode($this->getAppValue($key), true);
 	}
 
-
 	/**
 	 * @param string $key
 	 */
@@ -242,14 +234,12 @@ class ConfigService {
 		$this->config->setAppValue(Application::APP_ID, $key, json_encode($value));
 	}
 
-
 	/**
 	 *
 	 */
 	public function unsetAppConfig(): void {
 		$this->config->deleteAppValues(Application::APP_ID);
 	}
-
 
 	/**
 	 * @param string $key
@@ -259,7 +249,6 @@ class ConfigService {
 	public function getSystemValue(string $key): string {
 		return $this->config->getSystemValue($key);
 	}
-
 
 	/**
 	 * @param string $key
@@ -274,7 +263,6 @@ class ConfigService {
 
 		return $result;
 	}
-
 
 	/**
 	 * @param string $key
@@ -310,7 +298,6 @@ class ConfigService {
 		$this->config->setSystemValue($key, $value);
 	}
 
-
 	/**
 	 * @param bool $maintenance
 	 */
@@ -333,7 +320,6 @@ class ConfigService {
 		}
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -345,14 +331,12 @@ class ConfigService {
 		return $tmpPath;
 	}
 
-
 	/**
 	 * @return bool
 	 */
 	public function isRemoteEnabled(): bool {
 		return $this->getAppValueBool(self::REMOTE_ENABLED);
 	}
-
 
 	/**
 	 * @return bool
@@ -369,7 +353,6 @@ class ConfigService {
 
 		return ($this->externalEnabled === 1);
 	}
-
 
 	/**
 	 * @return array
@@ -391,7 +374,6 @@ class ConfigService {
 			self::MOCKUP_DATE => $this->getAppValueInt(self::MOCKUP_DATE)
 		];
 	}
-
 
 	/**
 	 * @param array $settings
