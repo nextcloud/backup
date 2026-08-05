@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -81,7 +79,6 @@ class ExternalFolderService {
 	use TNCLogger;
 	use TFileTools;
 
-
 	/** @var GlobalStoragesService */
 	private $globalStoragesService;
 
@@ -94,7 +91,6 @@ class ExternalFolderService {
 	/** @var ConfigService */
 	private $configService;
 
-
 	/**
 	 * ExternalFolderService constructor.
 	 *
@@ -105,7 +101,7 @@ class ExternalFolderService {
 	public function __construct(
 		ExternalFolderRequest $externalFolderRequest,
 		OutputService $outputService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		try {
 			$this->globalStoragesService = OC::$server->get(GlobalStoragesService::class);
@@ -118,7 +114,6 @@ class ExternalFolderService {
 
 		$this->setup('app', 'backup');
 	}
-
 
 	/**
 	 * @return ExternalFolder[]
@@ -147,7 +142,6 @@ class ExternalFolderService {
 		return $this->externalFolderRequest->getByStorageId($storageId);
 	}
 
-
 	/**
 	 * @param ExternalFolder $external
 	 *
@@ -173,19 +167,18 @@ class ExternalFolderService {
 			try {
 				$points[] = $this->getRestoringPoint($external, $node->getName());
 			} catch (
-				ExternalFolderNotFoundException |
-				RestoringChunkPartNotFoundException |
-				RestoringPointException |
-				RestoringPointNotFoundException |
-				RestoringPointPackException |
-				GenericFileException |
+				ExternalFolderNotFoundException|
+				RestoringChunkPartNotFoundException|
+				RestoringPointException|
+				RestoringPointNotFoundException|
+				RestoringPointPackException|
+				GenericFileException|
 				NotPermittedException $e) {
 				}
 		}
 
 		return $points;
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -204,7 +197,7 @@ class ExternalFolderService {
 	public function getRestoringPoint(
 		ExternalFolder $external,
 		string $pointId,
-		bool $current = false
+		bool $current = false,
 	): RestoringPoint {
 		$folder = $this->getExternalPointFolder($external, $pointId, false);
 
@@ -225,15 +218,14 @@ class ExternalFolderService {
 
 			return $point;
 		} catch (
-			InvalidItemException |
-			NotFoundException |
-			NotPermittedException |
+			InvalidItemException|
+			NotFoundException|
+			NotPermittedException|
 			LockedException $e) {
 			}
 
 		throw new RestoringPointNotFoundException();
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -256,13 +248,12 @@ class ExternalFolderService {
 		RestoringPoint $point,
 		RestoringHealth $health,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): void {
 		$folder = $this->getExternalChunkFolder($external, $point, $chunk, true);
 		$folder->newFile($part->getName(), base64_decode($part->getContent()));
 		$this->updateChunkPartHealth($external, $point, $health, $chunk, $part);
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -283,7 +274,7 @@ class ExternalFolderService {
 		ExternalFolder $external,
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): void {
 		$folder = $this->getExternalChunkFolder($external, $point, $chunk, true);
 
@@ -295,7 +286,6 @@ class ExternalFolderService {
 
 		$part->setContent(base64_encode($file->getContent()));
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -354,7 +344,6 @@ class ExternalFolderService {
 		throw new ExternalFolderNotFoundException();
 	}
 
-
 	/**
 	 * @param ExternalFolder $folder
 	 * @param RestoringPoint $point
@@ -366,7 +355,7 @@ class ExternalFolderService {
 	 */
 	public function confirmPoint(
 		ExternalFolder $folder,
-		RestoringPoint $point
+		RestoringPoint $point,
 	): RestoringPoint {
 		try {
 			$stored = $this->getRestoringPoint($folder, $point->getId(), true);
@@ -395,7 +384,6 @@ class ExternalFolderService {
 		return $stored;
 	}
 
-
 	/**
 	 * @param string $pointId
 	 */
@@ -407,7 +395,6 @@ class ExternalFolderService {
 			}
 		}
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -430,7 +417,6 @@ class ExternalFolderService {
 		$folder = $this->getExternalPointFolder($external, $pointId);
 		$folder->delete();
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -458,7 +444,7 @@ class ExternalFolderService {
 				throw new RestoringPointNotFoundException('restoring point not created');
 			}
 		} catch (NotPermittedException
-		| RestoringPointNotFoundException $e) {
+		|RestoringPointNotFoundException $e) {
 			$this->o('<error>' . $e->getMessage() . '</error>');
 			throw $e;
 		}
@@ -467,7 +453,6 @@ class ExternalFolderService {
 
 		return $stored;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -495,7 +480,6 @@ class ExternalFolderService {
 		}
 	}
 
-
 	/**
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
@@ -514,7 +498,7 @@ class ExternalFolderService {
 	public function updateMetadataFile(
 		ExternalFolder $external,
 		RestoringPoint $point,
-		bool $create = true
+		bool $create = true,
 	): File {
 		$folder = $this->getExternalPointFolder($external, $point->getId());
 		try {
@@ -534,8 +518,8 @@ class ExternalFolderService {
 			/** @var RestoringPoint $stored */
 			$stored = $this->deserializeJson($metadataFile->getContent(), RestoringPoint::class);
 			$stored->setComment($point->getComment())
-				   ->setArchive($point->isArchive())
-				   ->setSubSignature($point->getSubSignature());
+				->setArchive($point->isArchive())
+				->setSubSignature($point->getSubSignature());
 		} catch (Exception $e) {
 			$stored = $point;
 		}
@@ -544,7 +528,6 @@ class ExternalFolderService {
 
 		return $metadataFile;
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -568,7 +551,6 @@ class ExternalFolderService {
 
 		return $stored->getHealth();
 	}
-
 
 	/**
 	 * Update $point with it, but also returns the generated RestoringHealth
@@ -602,9 +584,9 @@ class ExternalFolderService {
 					}
 
 					$partHealth->setDataName($data->getName())
-							   ->setChunkName($chunk->getName())
-							   ->setPartName($part->getName())
-							   ->setStatus($status);
+						->setChunkName($chunk->getName())
+						->setPartName($part->getName())
+						->setStatus($status);
 					$health->addPart($partHealth);
 				}
 			}
@@ -619,12 +601,11 @@ class ExternalFolderService {
 		}
 
 		$health->setChecked(time())
-			   ->setStatus($globalStatus);
+			->setStatus($globalStatus);
 		$point->setHealth($health);
 
 		return $health;
 	}
-
 
 	/**
 	 * Update $point with it, but also returns the generated RestoringHealth
@@ -643,13 +624,12 @@ class ExternalFolderService {
 		RestoringPoint $point,
 		RestoringHealth $health,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): void {
 		$partHealth = $health->getPart($chunk->getName(), $part->getName());
 		$status = $this->generatePartHealthStatus($external, $point, $chunk, $part);
 		$partHealth->setStatus($status);
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -663,7 +643,7 @@ class ExternalFolderService {
 		ExternalFolder $external,
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): int {
 		try {
 			$checksum = $this->getChecksum($external, $point, $chunk, $part);
@@ -676,7 +656,6 @@ class ExternalFolderService {
 			return ChunkPartHealth::STATUS_MISSING;
 		}
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -691,7 +670,7 @@ class ExternalFolderService {
 		ExternalFolder $external,
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): string {
 		try {
 			$path = '';
@@ -716,7 +695,6 @@ class ExternalFolderService {
 		return $this->getChecksumFromStream($stream);
 	}
 
-
 	/**
 	 * @param ExternalFolder $external
 	 * @param string $pointId
@@ -731,7 +709,7 @@ class ExternalFolderService {
 	public function getExternalPointFolder(
 		ExternalFolder $external,
 		string $pointId,
-		bool $create = true
+		bool $create = true,
 	): Folder {
 		$this->initRootFolder($external);
 		$folder = $external->getRootFolder();
@@ -755,7 +733,6 @@ class ExternalFolderService {
 		return $node;
 	}
 
-
 	/**
 	 * @param ExternalFolder $external
 	 * @param RestoringPoint $point
@@ -772,7 +749,7 @@ class ExternalFolderService {
 		ExternalFolder $external,
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		bool $pack = false
+		bool $pack = false,
 	): Folder {
 		$folder = $this->getExternalPointFolder($external, $point->getId());
 
@@ -790,9 +767,7 @@ class ExternalFolderService {
 			$folder = $sub;
 		}
 
-
 		return $folder;
-
 		// not sure this is useful in the end.
 		if (!$pack) {
 			return $folder;
@@ -809,7 +784,6 @@ class ExternalFolderService {
 
 		return $sub;
 	}
-
 
 	/**
 	 * @return ExternalFolder[]
@@ -876,7 +850,6 @@ class ExternalFolderService {
 		throw new ExternalFolderNotFoundException('storage not found');
 	}
 
-
 	/**
 	 * Process storage ready for mounting
 	 * based on apps/files_external/lib/Config/ConfigAdapter.php
@@ -923,7 +896,6 @@ class ExternalFolderService {
 		return $storageConfig->getAuthMechanism()->wrapStorage($storage);
 	}
 
-
 	/**
 	 * @param string $line
 	 * @param bool $ln
@@ -932,14 +904,12 @@ class ExternalFolderService {
 		$this->outputService->o($line, $ln);
 	}
 
-
 	/**
 	 * @param ExternalFolder $storage
 	 */
 	public function save(ExternalFolder $storage) {
 		$this->externalFolderRequest->save($storage);
 	}
-
 
 	/**
 	 * @param int $storageId

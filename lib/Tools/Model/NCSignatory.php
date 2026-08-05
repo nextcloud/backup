@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Model;
 
 use JsonSerializable;
@@ -38,10 +36,8 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class NCSignatory implements IDeserializable, JsonSerializable {
 	use TArrayTools;
 
-
 	public const SHA256 = 'sha256';
 	public const SHA512 = 'sha512';
-
 
 	/** @var string */
 	private $instance = '';
@@ -67,7 +63,6 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 	/** @var string */
 	private $algorithm = self::SHA256;
 
-
 	/**
 	 * NC22Signatory constructor.
 	 *
@@ -76,7 +71,6 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 	public function __construct(string $id = '') {
 		$this->id = self::removeFragment($id);
 	}
-
 
 	/**
 	 * @param string $instance
@@ -95,7 +89,6 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 	public function getInstance(): string {
 		return $this->instance;
 	}
-
 
 	/**
 	 * @return array
@@ -116,7 +109,6 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -134,7 +126,6 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @param string $keyId
@@ -154,7 +145,6 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 		return $this->keyId;
 	}
 
-
 	/**
 	 * @param string $keyOwner
 	 *
@@ -172,7 +162,6 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 	public function getKeyOwner(): string {
 		return $this->keyOwner;
 	}
-
 
 	/**
 	 * @param string $publicKey
@@ -224,7 +213,6 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 		return ($this->privateKey !== '');
 	}
 
-
 	/**
 	 * @param string $algorithm
 	 *
@@ -243,7 +231,6 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 		return $this->algorithm;
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -261,22 +248,20 @@ class NCSignatory implements IDeserializable, JsonSerializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return array
 	 */
 	public function jsonSerialize(): array {
 		return [
 			'id' => $this->getId(),
-			'publicKey' =>
-				[
+			'publicKey'
+				=> [
 					'id' => $this->getKeyId(),
 					'owner' => $this->getKeyOwner(),
 					'publicKeyPem' => $this->getPublicKey()
 				]
 		];
 	}
-
 
 	/**
 	 * @param string $id

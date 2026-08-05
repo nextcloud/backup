@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -55,13 +53,11 @@ use Throwable;
  */
 class PointCreate extends Base {
 
-
 	/** @var PointService */
 	private $pointService;
 
 	/** @var OutputService */
 	private $outputService;
-
 
 	/**
 	 * PointCreate constructor.
@@ -76,7 +72,6 @@ class PointCreate extends Base {
 		$this->outputService = $outputService;
 	}
 
-
 	/**
 	 *
 	 */
@@ -84,14 +79,13 @@ class PointCreate extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:create')
-			 ->setDescription('Generate a restoring point of the instance (complete or incremental)')
-			 ->addArgument('comment', InputArgument::OPTIONAL, 'set a comment to the restoring point', '')
-			 ->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file')
-			 ->addOption(
-			 	'differential', '', InputOption::VALUE_NONE, 'create an differential restoring point'
-			 );
+			->setDescription('Generate a restoring point of the instance (complete or incremental)')
+			->addArgument('comment', InputArgument::OPTIONAL, 'set a comment to the restoring point', '')
+			->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file')
+			->addOption(
+				'differential', '', InputOption::VALUE_NONE, 'create an differential restoring point'
+			);
 	}
-
 
 	/**
 	 * @param InputInterface $input

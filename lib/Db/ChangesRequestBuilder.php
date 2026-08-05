@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Exceptions\ChangedFileNotFoundException;
@@ -45,7 +43,6 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class ChangesRequestBuilder extends CoreRequestBuilder {
 	use TArrayTools;
 
-
 	/**
 	 * @return CoreQueryBuilder
 	 */
@@ -56,7 +53,6 @@ class ChangesRequestBuilder extends CoreRequestBuilder {
 		return $qb;
 	}
 
-
 	/**
 	 * @return CoreQueryBuilder
 	 */
@@ -66,7 +62,6 @@ class ChangesRequestBuilder extends CoreRequestBuilder {
 
 		return $qb;
 	}
-
 
 	/**
 	 * @return CoreQueryBuilder
@@ -82,7 +77,6 @@ class ChangesRequestBuilder extends CoreRequestBuilder {
 		return $qb;
 	}
 
-
 	/**
 	 * @return CoreQueryBuilder
 	 */
@@ -92,7 +86,6 @@ class ChangesRequestBuilder extends CoreRequestBuilder {
 
 		return $qb;
 	}
-
 
 	/**
 	 * @param CoreQueryBuilder $qb
@@ -104,7 +97,7 @@ class ChangesRequestBuilder extends CoreRequestBuilder {
 		/** @var ChangedFile $changed */
 		try {
 			$changed = $qb->asItem(ChangedFile::class);
-		} catch (RowNotFoundException | InvalidItemException $e) {
+		} catch (RowNotFoundException|InvalidItemException $e) {
 			throw new ChangedFileNotFoundException();
 		}
 

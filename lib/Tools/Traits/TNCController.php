@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Tools\Traits;
 
@@ -54,14 +52,13 @@ trait TNCController {
 	public function publicPageJsonLimited(): void {
 		if (!$this->jsonRequested()) {
 			if (!OC::$server->get(IUserSession::class)
-							->isLoggedIn()) {
+				->isLoggedIn()) {
 				throw new NotLoggedInException();
 			}
 
 			throw new JsonNotRequestedException();
 		}
 	}
-
 
 	/**
 	 * @return bool
@@ -75,7 +72,6 @@ trait TNCController {
 			]
 		));
 	}
-
 
 	/**
 	 * @param array $needles
@@ -94,7 +90,6 @@ trait TNCController {
 
 		return false;
 	}
-
 
 	/**
 	 * @param string $header

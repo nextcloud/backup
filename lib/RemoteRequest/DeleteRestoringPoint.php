@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\RemoteRequest;
 
 use OCA\Backup\AppInfo\Application;
@@ -52,13 +50,11 @@ class DeleteRestoringPoint extends CoreRequest implements IRemoteRequest {
 	use TNCLogger;
 	use TDeserialize;
 
-
 	/** @var PointRequest */
 	private $pointRequest;
 
 	/** @var PointService */
 	private $pointService;
-
 
 	/**
 	 * DeleteRestoringPoint constructor.
@@ -74,7 +70,6 @@ class DeleteRestoringPoint extends CoreRequest implements IRemoteRequest {
 		$this->setup('app', Application::APP_ID);
 	}
 
-
 	/**
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
@@ -89,9 +84,8 @@ class DeleteRestoringPoint extends CoreRequest implements IRemoteRequest {
 			$this->pointService->delete($point);
 		} catch (RestoringPointNotFoundException $e) {
 		}
-//		$this->setOutcome($this->serialize($point));
+		//		$this->setOutcome($this->serialize($point));
 	}
-
 
 	/**
 	 * @param array $data

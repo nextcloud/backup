@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -55,7 +53,6 @@ use Symfony\Component\Console\Question\Question;
 class ExternalAppData extends Base {
 	use TDeserialize;
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -64,7 +61,6 @@ class ExternalAppData extends Base {
 
 	/** @var ConfigService */
 	private $configService;
-
 
 	/**
 	 * ExternalAppData constructor.
@@ -76,7 +72,7 @@ class ExternalAppData extends Base {
 	public function __construct(
 		PointService $pointService,
 		ExternalFolderService $externalFolderService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		parent::__construct();
 
@@ -85,16 +81,14 @@ class ExternalAppData extends Base {
 		$this->configService = $configService;
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:external:appdata')
-			 ->setDescription('Add external filesystem to store the app\'s data')
-			 ->addOption('unset', '', InputOption::VALUE_NONE, 'Unset the current external appdata');
+			->setDescription('Add external filesystem to store the app\'s data')
+			->addOption('unset', '', InputOption::VALUE_NONE, 'Unset the current external appdata');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -157,7 +151,6 @@ class ExternalAppData extends Base {
 			return 0;
 		}
 
-
 		$storageId = $this->selectStorage($input, $output);
 
 		$output->writeln('');
@@ -206,7 +199,6 @@ class ExternalAppData extends Base {
 		return 0;
 	}
 
-
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
@@ -218,8 +210,8 @@ class ExternalAppData extends Base {
 	private function selectStorage(InputInterface $input, OutputInterface $output): int {
 		$availableStorage = [];
 		foreach ($this->externalFolderService->getStorages() as $storage) {
-			$availableStorage[$storage->getStorageId()] =
-				$storage->getStorage() . ' (id:' . $storage->getStorageId() . ')';
+			$availableStorage[$storage->getStorageId()]
+				= $storage->getStorage() . ' (id:' . $storage->getStorageId() . ')';
 		}
 
 		if (empty($availableStorage)) {
@@ -250,7 +242,6 @@ class ExternalAppData extends Base {
 
 		return 0;
 	}
-
 
 	/**
 	 * @param InputInterface $input

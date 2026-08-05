@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Settings;
 
 use OCA\Backup\AppInfo\Application;
@@ -43,13 +41,11 @@ use OCP\Settings\IIconSection;
  */
 class AdminSection implements IIconSection {
 
-
 	/** @var IL10N */
 	private $l10n;
 
 	/** @var IURLGenerator */
 	private $urlGenerator;
-
 
 	/**
 	 * @param IL10N $l10n

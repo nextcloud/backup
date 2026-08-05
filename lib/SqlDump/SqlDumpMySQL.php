@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\SqlDump;
 
 use Ifsnop\Mysqldump\Mysqldump;
@@ -47,17 +45,14 @@ use Throwable;
 class SqlDumpMySQL implements ISqlDump {
 	use TArrayTools;
 
-
 	/** @var ConfigService */
 	private $configService;
-
 
 	/**
 	 * SqlDumpMySQL constructor.
 	 */
 	public function __construct() {
 	}
-
 
 	/**
 	 * @param array $params
@@ -68,7 +63,7 @@ class SqlDumpMySQL implements ISqlDump {
 	 */
 	public function export(array $params, string $filename): void {
 		$connect = sprintf('mysql:host=%s;dbname=%s', $params[ISqlDump::DB_HOST], $params[ISqlDump::DB_NAME]);
-		if (false === empty($params[ISqlDump::DB_PORT])) {
+		if (empty($params[ISqlDump::DB_PORT]) === false) {
 			$connect .= sprintf(';port=%u', $params[ISqlDump::DB_PORT]);
 		}
 		$settings = [
@@ -94,7 +89,6 @@ class SqlDumpMySQL implements ISqlDump {
 			throw new SqlDumpException($t->getMessage());
 		}
 	}
-
 
 	/**
 	 * @param array $params
@@ -131,7 +125,6 @@ class SqlDumpMySQL implements ISqlDump {
 			}
 		}
 	}
-
 
 	/**
 	 * @param array $params

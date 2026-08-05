@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use JsonSerializable;
@@ -36,7 +34,6 @@ use OCA\Backup\Tools\Exceptions\InvalidItemException;
 use OCA\Backup\Tools\IDeserializable;
 
 trait TDeserialize {
-
 
 	/**
 	 * @param JsonSerializable $model
@@ -56,7 +53,6 @@ trait TDeserialize {
 		return json_decode(json_encode($data), true);
 	}
 
-
 	/**
 	 * @param array $data
 	 * @param string $class
@@ -75,7 +71,6 @@ trait TDeserialize {
 
 		return $item;
 	}
-
 
 	/**
 	 * @param array $data
@@ -104,7 +99,6 @@ trait TDeserialize {
 		return $arr;
 	}
 
-
 	/**
 	 * @param string $json
 	 * @param string $class
@@ -125,7 +119,6 @@ trait TDeserialize {
 
 		return $arr;
 	}
-
 
 	/**
 	 * @param string $json

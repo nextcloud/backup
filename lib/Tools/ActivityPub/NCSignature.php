@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Nextcloud - Backup now. Restore later.
  *
@@ -26,7 +27,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -52,7 +52,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\ActivityPub;
 
 use DateTime;
@@ -76,14 +75,11 @@ class NCSignature {
 
 	public const DATE_TTL = 300;
 
-
 	use TNCSignatory;
-
 
 	/** @var int */
 	private $ttl = self::DATE_TTL;
 	private $dateHeader = self::DATE_HEADER;
-
 
 	/**
 	 * @param string $body
@@ -114,7 +110,6 @@ class NCSignature {
 		return $signedRequest;
 	}
 
-
 	/**
 	 * @param NCRequest $request
 	 * @param NCSignatory $signatory
@@ -125,7 +120,7 @@ class NCSignature {
 	public function signOutgoingRequest(NCRequest $request, NCSignatory $signatory): NCSignedRequest {
 		$signedRequest = new NCSignedRequest($request->getDataBody());
 		$signedRequest->setOutgoingRequest($request)
-					  ->setSignatory($signatory);
+			->setSignatory($signatory);
 
 		$this->setOutgoingSignatureHeader($signedRequest);
 		$this->setOutgoingClearSignature($signedRequest);
@@ -134,7 +129,6 @@ class NCSignature {
 
 		return $signedRequest;
 	}
-
 
 	/**
 	 * @param NCSignedRequest $signedRequest
@@ -156,7 +150,6 @@ class NCSignature {
 			throw new SignatureException('object is too old');
 		}
 	}
-
 
 	/**
 	 * @param NCSignedRequest $signedRequest
@@ -198,7 +191,6 @@ class NCSignature {
 		$signedRequest->setSignatureHeader(new SimpleDataStore($sign));
 	}
 
-
 	/**
 	 * @param NCSignedRequest $signedRequest
 	 *
@@ -216,7 +208,7 @@ class NCSignature {
 			throw new SignatureException('missing elements in \'headers\'');
 		}
 
-		$target = strtolower($request->getMethod()) . " " . $request->getRequestUri();
+		$target = strtolower($request->getMethod()) . ' ' . $request->getRequestUri();
 		$estimated = ['(request-target): ' . $target];
 
 		foreach ($headers as $key) {
@@ -233,7 +225,6 @@ class NCSignature {
 		$signedRequest->setClearSignature(implode("\n", $estimated));
 	}
 
-
 	/**
 	 * @param NCSignedRequest $signedRequest
 	 *
@@ -247,7 +238,6 @@ class NCSignature {
 		$signedRequest->setOrigin($this->getKeyOrigin($data->g('keyId')));
 		$signedRequest->setSignedSignature($data->g('signature'));
 	}
-
 
 	/**
 	 * @param NCSignedRequest $signedRequest
@@ -266,7 +256,6 @@ class NCSignature {
 			$this->verifySignedRequest($signedRequest);
 		}
 	}
-
 
 	/**
 	 * @param NCSignedRequest $signedRequest
@@ -292,7 +281,6 @@ class NCSignature {
 		}
 	}
 
-
 	/**
 	 * @param NCSignedRequest $signedRequest
 	 */
@@ -301,14 +289,13 @@ class NCSignature {
 
 		$data = new SimpleDataStore();
 		$data->s('(request-target)', NCRequest::method($request->getType()) . ' ' . $request->getPath())
-			 ->sInt('content-length', strlen($signedRequest->getBody()))
-			 ->s('date', gmdate($this->dateHeader))
-			 ->s('digest', $signedRequest->getDigest())
-			 ->s('host', $request->getHost());
+			->sInt('content-length', strlen($signedRequest->getBody()))
+			->s('date', gmdate($this->dateHeader))
+			->s('digest', $signedRequest->getDigest())
+			->s('host', $request->getHost());
 
 		$signedRequest->setSignatureHeader($data);
 	}
-
 
 	/**
 	 * @param NCSignedRequest $signedRequest
@@ -330,7 +317,6 @@ class NCSignature {
 		$signedRequest->setClearSignature(implode("\n", $signing));
 	}
 
-
 	/**
 	 * @param NCSignedRequest $signedRequest
 	 *
@@ -341,7 +327,6 @@ class NCSignature {
 		$signed = $this->signString($clear, $signedRequest->getSignatory());
 		$signedRequest->setSignedSignature($signed);
 	}
-
 
 	/**
 	 * @param NCSignedRequest $signedRequest
@@ -361,7 +346,6 @@ class NCSignature {
 		$signedRequest->getOutgoingRequest()->addHeader('Signature', implode(',', $signatureElements));
 	}
 
-
 	/**
 	 * @param NCSignedRequest $signedRequest
 	 *
@@ -371,7 +355,6 @@ class NCSignature {
 		switch ($signedRequest->getSignatureHeader()->g('algorithm')) {
 			case 'rsa-sha512':
 				return NCSignatory::SHA512;
-
 			case 'rsa-sha256':
 			default:
 				return NCSignatory::SHA256;
@@ -387,13 +370,11 @@ class NCSignature {
 		switch ($signatory->getAlgorithm()) {
 			case NCSignatory::SHA512:
 				return 'ras-sha512';
-
 			case NCSignatory::SHA256:
 			default:
 				return 'ras-sha256';
 		}
 	}
-
 
 	/**
 	 * @param NCSignatory $signatory
@@ -404,7 +385,6 @@ class NCSignature {
 		switch ($signatory->getAlgorithm()) {
 			case NCSignatory::SHA512:
 				return OPENSSL_ALGO_SHA512;
-
 			case NCSignatory::SHA256:
 			default:
 				return OPENSSL_ALGO_SHA256;

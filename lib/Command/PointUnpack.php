@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -54,7 +52,6 @@ use Throwable;
  */
 class PointUnpack extends Base {
 
-
 	/** @var PointService */
 	private $pointService;
 
@@ -66,7 +63,6 @@ class PointUnpack extends Base {
 
 	/** @var OutputService */
 	private $outputService;
-
 
 	/**
 	 * PointUnpack constructor.
@@ -80,7 +76,7 @@ class PointUnpack extends Base {
 		PointService $pointService,
 		PackService $packService,
 		RemoteStreamService $remoteStreamService,
-		OutputService $outputService
+		OutputService $outputService,
 	) {
 		parent::__construct();
 
@@ -90,7 +86,6 @@ class PointUnpack extends Base {
 		$this->outputService = $outputService;
 	}
 
-
 	/**
 	 *
 	 */
@@ -98,11 +93,10 @@ class PointUnpack extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:unpack')
-			 ->setDescription('Increase compression of a restoring point and prepare for upload')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
-			 ->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file');
+			->setDescription('Increase compression of a restoring point and prepare for upload')
+			->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			->addOption('generate-log', '', InputOption::VALUE_NONE, 'generate a log file');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -123,12 +117,11 @@ class PointUnpack extends Base {
 		if ($input->getOption('generate-log')) {
 			try {
 				$this->outputService->openFile($point, 'occ backup:point:unpack');
-			} catch (NotPermittedException | LockedException $e) {
+			} catch (NotPermittedException|LockedException $e) {
 			}
 		}
 
 		$this->packService->unpackPoint($point);
-
 
 		// set Archive flag up after unpack
 		$point->setArchive(true);

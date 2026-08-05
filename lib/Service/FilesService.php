@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -66,7 +64,6 @@ class FilesService {
 
 	public const APP_ROOT = __DIR__ . '/../../';
 
-
 	/** @var IRootFolder */
 	private $rootFolder;
 
@@ -75,7 +72,6 @@ class FilesService {
 
 	/** @var ConfigService */
 	private $configService;
-
 
 	/**
 	 * FilesService constructor.
@@ -87,7 +83,7 @@ class FilesService {
 	public function __construct(
 		IRootFolder $rootFolder,
 		ChangesRequest $changesRequest,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->rootFolder = $rootFolder;
 		$this->changesRequest = $changesRequest;
@@ -95,7 +91,6 @@ class FilesService {
 
 		$this->setup('app', Application::APP_ID);
 	}
-
 
 	/**
 	 * @param RestoringData $data
@@ -140,7 +135,6 @@ class FilesService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringData $data
 	 */
@@ -176,7 +170,6 @@ class FilesService {
 		}
 	}
 
-
 	/**
 	 * @param string $path
 	 *
@@ -205,14 +198,12 @@ class FilesService {
 		return $files;
 	}
 
-
 	/**
 	 * @param ChangedFile $file
 	 */
 	public function changedFile(ChangedFile $file): void {
 		$this->changesRequest->insertIfNotFound($file);
 	}
-
 
 	/**
 	 * @param int $fileId
@@ -242,15 +233,14 @@ class FilesService {
 
 				return $point;
 			} catch (InvalidItemException
-			| NotPermittedException
-			| LockedException $e) {
+			|NotPermittedException
+			|LockedException $e) {
 				continue;
 			}
 		}
 
 		throw new RestoringPointNotFoundException();
 	}
-
 
 	/**
 	 * @param Folder $node
@@ -282,7 +272,6 @@ class FilesService {
 		return $node;
 	}
 
-
 	/**
 	 * @param Folder $input
 	 * @param ISimpleFolder $output
@@ -295,7 +284,7 @@ class FilesService {
 	public function copyFileToAppData(
 		Folder $input,
 		ISimpleFolder $output,
-		string $filename
+		string $filename,
 	): void {
 		/** @var File $orig */
 		$orig = $input->get($filename);

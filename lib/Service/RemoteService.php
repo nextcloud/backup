@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -60,7 +58,6 @@ class RemoteService {
 	use TNCLogger;
 	use TDeserialize;
 
-
 	/** @var RemoteRequest */
 	private $remoteRequest;
 
@@ -76,7 +73,6 @@ class RemoteService {
 	/** @var ConfigService */
 	private $configService;
 
-
 	/**
 	 * RemoteService constructor.
 	 *
@@ -91,7 +87,7 @@ class RemoteService {
 		RemoteStreamService $remoteStreamService,
 		ChunkService $chunkService,
 		OutputService $outputService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->remoteRequest = $remoteRequest;
 		$this->remoteStreamService = $remoteStreamService;
@@ -101,7 +97,6 @@ class RemoteService {
 
 		$this->setup('app', Application::APP_ID);
 	}
-
 
 	/**
 	 * @return RemoteInstance[]
@@ -126,7 +121,6 @@ class RemoteService {
 
 		return $this->remoteRequest->getAll($includeExtraDataOnSerialize);
 	}
-
 
 	/**
 	 * @param string $instance
@@ -156,7 +150,7 @@ class RemoteService {
 	public function getRestoringPoint(
 		string $instance,
 		string $pointId,
-		bool $current = false
+		bool $current = false,
 	): RestoringPoint {
 		if (!$this->configService->isRemoteEnabled()) {
 			throw new RemoteInstanceNotFoundException();
@@ -181,7 +175,6 @@ class RemoteService {
 		throw new RestoringPointNotFoundException();
 	}
 
-
 	/**
 	 * @param string $instance
 	 *
@@ -202,7 +195,6 @@ class RemoteService {
 
 		return $this->deserializeArray($result, RestoringPoint::class);
 	}
-
 
 	/**
 	 * @param RemoteInstance $remote
@@ -238,10 +230,10 @@ class RemoteService {
 				throw new RestoringPointNotFoundException('restoring point not created');
 			}
 		} catch (RemoteInstanceException
-		| RemoteResourceNotFoundException
-		| RestoringPointNotFoundException
-		| SignatoryException
-		| RemoteInstanceNotFoundException $e) {
+		|RemoteResourceNotFoundException
+		|RestoringPointNotFoundException
+		|SignatoryException
+		|RemoteInstanceNotFoundException $e) {
 			$this->o('<error>' . $e->getMessage() . '</error>');
 			throw $e;
 		}
@@ -250,7 +242,6 @@ class RemoteService {
 
 		return $stored;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -278,7 +269,6 @@ class RemoteService {
 		}
 	}
 
-
 	/**
 	 * @param string $pointId
 	 */
@@ -294,7 +284,6 @@ class RemoteService {
 			}
 		}
 	}
-
 
 	/**
 	 * @param RemoteInstance $remote
@@ -330,9 +319,9 @@ class RemoteService {
 			//				throw new RestoringPointNotFoundException('');
 			//			}
 		} catch (RemoteInstanceException
-		| RemoteResourceNotFoundException
-		| RestoringPointNotFoundException
-		| RemoteInstanceNotFoundException $e) {
+		|RemoteResourceNotFoundException
+		|RestoringPointNotFoundException
+		|RemoteInstanceNotFoundException $e) {
 			throw $e;
 		}
 	}
@@ -369,9 +358,9 @@ class RemoteService {
 				throw new RestoringPointNotFoundException('restoring point not updated');
 			}
 		} catch (RemoteInstanceException
-		| RemoteResourceNotFoundException
-		| RestoringPointNotFoundException
-		| RemoteInstanceNotFoundException $e) {
+		|RemoteResourceNotFoundException
+		|RestoringPointNotFoundException
+		|RemoteInstanceNotFoundException $e) {
 			throw $e;
 		}
 	}
@@ -391,7 +380,7 @@ class RemoteService {
 		string $instance,
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): void {
 		if (!$this->configService->isRemoteEnabled()) {
 			return;
@@ -414,7 +403,6 @@ class RemoteService {
 		return;
 	}
 
-
 	/**
 	 * @param string $instance
 	 * @param RestoringPoint $point
@@ -431,7 +419,7 @@ class RemoteService {
 		string $instance,
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): void {
 		if (!$this->configService->isRemoteEnabled()) {
 			return;
@@ -455,7 +443,6 @@ class RemoteService {
 		}
 	}
 
-
 	/**
 	 * @param RemoteInstance $remote
 	 *
@@ -469,7 +456,7 @@ class RemoteService {
 	 */
 	public function confirmPoint(
 		RemoteInstance $remote,
-		RestoringPoint $point
+		RestoringPoint $point,
 	): RestoringPoint {
 		if (!$this->configService->isRemoteEnabled()) {
 			throw new RestoringPointNotFoundException();
@@ -483,7 +470,7 @@ class RemoteService {
 			throw $e;
 		} catch (
 			RemoteInstanceNotFoundException
-			| RemoteResourceNotFoundException $e) {
+			|RemoteResourceNotFoundException $e) {
 				$this->o('  ! <error>cannot communicate with remote instance</error>');
 				throw $e;
 			} catch (RestoringPointNotFoundException $e) {
@@ -500,7 +487,6 @@ class RemoteService {
 		return $stored;
 	}
 
-
 	/**
 	 * @param RemoteInstance $remote
 	 * @param RestoringPoint $point
@@ -514,7 +500,7 @@ class RemoteService {
 	 */
 	public function getCurrentHealth(
 		RemoteInstance $remote,
-		RestoringPoint $point
+		RestoringPoint $point,
 	): RestoringHealth {
 		if (!$this->configService->isRemoteEnabled()) {
 			throw new RestoringPointNotFoundException();
@@ -527,7 +513,6 @@ class RemoteService {
 
 		return $stored->getHealth();
 	}
-
 
 	/**
 	 * @param string $line

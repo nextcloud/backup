@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use OC;
@@ -37,10 +35,8 @@ use OCP\IConfig;
 trait TNCSetup {
 	use TArrayTools;
 
-
 	/** @var array */
 	private $_setup = [];
-
 
 	/**
 	 * @param string $key

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Wrappers;
 
@@ -55,20 +53,17 @@ use RuntimeException;
  */
 class AppDataRootWrapper {
 
-
 	/** @var ISimpleRoot */
 	private $simpleRoot;
 
 	/** @var ExternalFolder */
 	private $externalFolder;
 
-
 	/**
 	 *
 	 */
 	public function __construct() {
 	}
-
 
 	/**
 	 * @param ISimpleRoot $simpleRoot
@@ -88,7 +83,6 @@ class AppDataRootWrapper {
 		return $this->simpleRoot;
 	}
 
-
 	/**
 	 * @param ExternalFolder $externalFolder
 	 *
@@ -107,14 +101,12 @@ class AppDataRootWrapper {
 		return $this->externalFolder;
 	}
 
-
 	/**
 	 * @return bool
 	 */
 	public function isSimpleRoot(): bool {
 		return !is_null($this->simpleRoot);
 	}
-
 
 	/**
 	 * @return array
@@ -152,7 +144,6 @@ class AppDataRootWrapper {
 		}
 	}
 
-
 	/**
 	 * @return Folder
 	 * @throws NotFoundException
@@ -183,7 +174,6 @@ class AppDataRootWrapper {
 		return $this->getRoot()->get($path);
 	}
 
-
 	/**
 	 * @param string $path
 	 *
@@ -193,7 +183,6 @@ class AppDataRootWrapper {
 	public function newFile(string $path): File {
 		return $this->getRoot()->newFile($path, '');
 	}
-
 
 	/**
 	 * @param string $path
@@ -223,7 +212,6 @@ class AppDataRootWrapper {
 
 		return new SimpleFolder($folder);
 	}
-
 
 	/**
 	 * @param string $path
@@ -258,7 +246,6 @@ class AppDataRootWrapper {
 
 		return new SimpleFolder($folder);
 	}
-
 
 	/**
 	 * based on OC\Files\AppData\AppData::getAppDataFolderName() which is private.

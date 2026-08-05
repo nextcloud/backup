@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Service;
 
 use OCA\Backup\Exceptions\JobsTimeSlotException;
@@ -43,11 +41,9 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class CronService {
 	use TArrayTools;
 
-
 	public const MARGIN = 1800;
 	public const HOURS_FOR_NEXT = 4000;
 	public const LOCK_TIMEOUT = 3600;
-
 
 	/** @var RemoteStreamService */
 	private $remoteStreamService;
@@ -61,10 +57,8 @@ class CronService {
 	/** @var ConfigService */
 	private $configService;
 
-
 	/** @var bool */
 	private $ranFromCron = false;
-
 
 	/**
 	 * CronService constructor.
@@ -78,14 +72,13 @@ class CronService {
 		RemoteStreamService $remoteStreamService,
 		ExternalFolderService $externalFolderService,
 		OutputService $outputService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->remoteStreamService = $remoteStreamService;
 		$this->externalFolderService = $externalFolderService;
 		$this->outputService = $outputService;
 		$this->configService = $configService;
 	}
-
 
 	/**
 	 * @return int[]
@@ -131,7 +124,6 @@ class CronService {
 		];
 	}
 
-
 	/**
 	 * @return array
 	 * @throws SettingsException
@@ -145,7 +137,6 @@ class CronService {
 
 		return [$st, $end];
 	}
-
 
 	/**
 	 * @param int $time
@@ -189,7 +180,6 @@ class CronService {
 		return ($timeStart < $time && $time < $timeEnd);
 	}
 
-
 	/**
 	 * @param int $time
 	 *
@@ -208,7 +198,6 @@ class CronService {
 
 		return ($last + $delay - self::MARGIN < $time);
 	}
-
 
 	/**
 	 * @param int $time
@@ -236,7 +225,6 @@ class CronService {
 		return ((int)date('N', $time) >= 6);
 	}
 
-
 	/**
 	 * @param string $line
 	 * @param bool $ln
@@ -244,7 +232,6 @@ class CronService {
 	private function o(string $line, bool $ln = true): void {
 		$this->outputService->o($line, $ln);
 	}
-
 
 	/**
 	 * we assume that calling this method indicate the process was initiated from BackgroundJobs
@@ -266,7 +253,6 @@ class CronService {
 
 		return ($this->configService->getAppValueInt(ConfigService::CRON_LOCK) < time() - self::LOCK_TIMEOUT);
 	}
-
 
 	/**
 	 * @param bool $verifyTime

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Nextcloud - Backup now. Restore later.
  *
@@ -26,7 +27,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -52,7 +52,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Model;
 
 use JsonSerializable;
@@ -60,7 +59,6 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 
 class NCWellKnownLink implements JsonSerializable {
 	use TArrayTools;
-
 
 	/** @var string */
 	private $rel = '';
@@ -77,7 +75,6 @@ class NCWellKnownLink implements JsonSerializable {
 	/** @var array */
 	private $properties = [];
 
-
 	/**
 	 * NC22WellKnownLink constructor.
 	 *
@@ -90,7 +87,6 @@ class NCWellKnownLink implements JsonSerializable {
 		$this->setTitles($this->getArray('titles', $json));
 		$this->setProperties($this->getArray('properties', $json));
 	}
-
 
 	/**
 	 * @return string
@@ -110,7 +106,6 @@ class NCWellKnownLink implements JsonSerializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -129,7 +124,6 @@ class NCWellKnownLink implements JsonSerializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -147,7 +141,6 @@ class NCWellKnownLink implements JsonSerializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return array
@@ -176,7 +169,6 @@ class NCWellKnownLink implements JsonSerializable {
 		return $this->get($key, $this->properties);
 	}
 
-
 	/**
 	 * @return array
 	 */
@@ -203,7 +195,6 @@ class NCWellKnownLink implements JsonSerializable {
 	public function getProperty(string $key): string {
 		return $this->get($key, $this->properties);
 	}
-
 
 	/**
 	 * @return array

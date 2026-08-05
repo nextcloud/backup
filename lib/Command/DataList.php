@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -45,8 +43,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DataList extends Base {
 
-
-
 	/**
 	 * DataList constructor.
 	 */
@@ -54,15 +50,13 @@ class DataList extends Base {
 		parent::__construct();
 	}
 
-
 	/**
 	 *
 	 */
 	protected function configure() {
 		$this->setName('backup:data:list')
-			 ->setDescription('Listing configured data pack');
+			->setDescription('Listing configured data pack');
 	}
-
 
 	/**
 	 * @param InputInterface $input

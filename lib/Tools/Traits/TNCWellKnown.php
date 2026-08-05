@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use OCA\Backup\Tools\Exceptions\RequestNetworkException;
@@ -42,7 +40,6 @@ trait TNCWellKnown {
 	use TNCRequest;
 
 	public static $WEBFINGER = '/.well-known/webfinger';
-
 
 	/**
 	 * @param string $host
@@ -67,7 +64,6 @@ trait TNCWellKnown {
 		return new SimpleDataStore($data);
 	}
 
-
 	/**
 	 * @param string $host
 	 * @param string $subject
@@ -80,7 +76,6 @@ trait TNCWellKnown {
 	public function getLink(string $host, string $subject, string $rel): NCWellKnownLink {
 		return $this->extractLink($rel, $this->getWebfinger($host, $subject));
 	}
-
 
 	/**
 	 * @param string $host
@@ -107,7 +102,6 @@ trait TNCWellKnown {
 
 		return new NCWebfinger($result);
 	}
-
 
 	/**
 	 * @param string $rel

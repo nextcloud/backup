@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,16 +27,15 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Cron;
 
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\TimedJob;
 use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Tools\Traits\TNCLogger;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\TimedJob;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -63,12 +61,11 @@ class Backup extends TimedJob {
 		private PointService $pointService,
 		private CronService $cronService,
 		private ConfigService $configService,
-		private LoggerInterface $loggerInterface
+		private LoggerInterface $loggerInterface,
 	) {
 		parent::__construct($time);
 		$this->setInterval(900);
 	}
-
 
 	/**
 	 * @param $argument
@@ -87,7 +84,6 @@ class Backup extends TimedJob {
 		}
 	}
 
-
 	/**
 	 *
 	 */
@@ -101,7 +97,6 @@ class Backup extends TimedJob {
 		$this->runBackup($time);
 	}
 
-
 	/**
 	 * @param int $time
 	 */
@@ -112,7 +107,6 @@ class Backup extends TimedJob {
 			$this->runDifferentialBackup();
 		}
 	}
-
 
 	private function runFullBackup(): void {
 		try {
@@ -128,7 +122,6 @@ class Backup extends TimedJob {
 			);
 		}
 	}
-
 
 	/**
 	 *

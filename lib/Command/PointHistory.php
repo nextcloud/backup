@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Command;
 
 use OC\Core\Command\Base;
@@ -46,13 +44,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PointHistory extends Base {
 	use TNCLogger;
 
-
 	/** @var PointService */
 	private $pointService;
 
 	/** @var ChunkService */
 	private $chunkService;
-
 
 	/**
 	 * PointHistory constructor.
@@ -67,7 +63,6 @@ class PointHistory extends Base {
 		$this->chunkService = $chunkService;
 	}
 
-
 	/**
 	 *
 	 */
@@ -75,9 +70,8 @@ class PointHistory extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:history')
-			 ->setDescription('Get the history of your restoring point');
+			->setDescription('Get the history of your restoring point');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -90,7 +84,6 @@ class PointHistory extends Base {
 		$output->writeln(
 			'visit the Activity App or use ./occ backup:point:list to get available restoring point'
 		);
-
 
 		return 0;
 	}

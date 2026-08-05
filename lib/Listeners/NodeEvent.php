@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Listeners;
 
 use OCA\Backup\AppInfo\Application;
@@ -51,13 +49,11 @@ use OCP\Files\NotFoundException;
 class NodeEvent implements IEventListener {
 	use TNCLogger;
 
-
 	/** @var FilesService */
 	private $filesService;
 
 	/** @var ConfigService */
 	private $configService;
-
 
 	/**
 	 * NodeEvent constructor.
@@ -71,7 +67,6 @@ class NodeEvent implements IEventListener {
 
 		$this->setup('app', Application::APP_ID);
 	}
-
 
 	/**
 	 * @param Event $event

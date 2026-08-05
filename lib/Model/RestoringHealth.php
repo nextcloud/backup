@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -50,18 +48,15 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	use TDeserialize;
 	use TNCLogger;
 
-
 	public const STATUS_ISSUE = 0;
 	public const STATUS_ORPHAN = 1;
 	public const STATUS_OK = 9;
-
 
 	public static $DEF = [
 		self::STATUS_ISSUE => 'not complete',
 		self::STATUS_ORPHAN => 'without parent',
 		self::STATUS_OK => 'ok'
 	];
-
 
 	/** @var int */
 	private $status = 0;
@@ -72,14 +67,12 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	/** @var int */
 	private $checked = 0;
 
-
 	/**
 	 * RestoringHealth constructor.
 	 */
 	public function __construct() {
 		$this->setup('app', Application::APP_ID);
 	}
-
 
 	/**
 	 * @param int $status
@@ -99,7 +92,6 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 		return $this->status;
 	}
 
-
 	/**
 	 * @param int $checked
 	 *
@@ -117,7 +109,6 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 	public function getChecked(): int {
 		return $this->checked;
 	}
-
 
 	/**
 	 * @param ChunkPartHealth[] $parts
@@ -163,7 +154,6 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 		return $this->parts[$chunkName . '-' . $partName];
 	}
 
-
 	/**
 	 * @param string $chunkName
 	 * @param string $partName
@@ -178,7 +168,6 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 
 		return $k;
 	}
-
 
 	/**
 	 * @param array $data
@@ -205,7 +194,6 @@ class RestoringHealth implements IDeserializable, JsonSerializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return array

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -46,7 +44,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	use TArrayTools;
 	use TStringTools;
 	use TDeserialize;
-
 
 	/** @var string */
 	private $name = '';
@@ -84,7 +81,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	/** @var bool */
 	private $staticName;
 
-
 	/**
 	 * RestoringChunk constructor.
 	 */
@@ -109,7 +105,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		}
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -127,7 +122,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @param bool $staticName
@@ -147,7 +141,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this->staticName;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -165,7 +158,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @param string $type
@@ -185,7 +177,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this->type;
 	}
 
-
 	/**
 	 * @param int $compression
 	 *
@@ -204,7 +195,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this->compression;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -219,7 +209,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 		return $this->getName() . '.zip';
 	}
-
 
 	/**
 	 * @return int
@@ -242,7 +231,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return ArchiveFile[]
@@ -273,7 +261,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return RestoringChunkPart[]
 	 */
@@ -299,7 +286,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return !empty($this->parts);
 	}
 
-
 	/**
 	 * @param RestoringChunkPart $part
 	 *
@@ -310,7 +296,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return int
@@ -330,7 +315,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this;
 	}
 
-
 	/**
 	 * @return string
 	 */
@@ -348,7 +332,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @param string $content
@@ -368,7 +351,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 		return $this->content;
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -376,24 +358,22 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setName($this->get('name', $data))
-			 ->setPath($this->get('path', $data))
-			 ->setType($this->get('type', $data))
-			 ->setCompression($this->getInt('compression', $data))
+			->setPath($this->get('path', $data))
+			->setType($this->get('type', $data))
+			->setCompression($this->getInt('compression', $data))
 //			 ->setFiles($this->getArray('files', $data, []))
-			 ->setCount($this->getInt('count', $data))
-			 ->setSize($this->getInt('size', $data))
-			 ->setContent($this->get('content', $data))
-			 ->setStaticName($this->getBool('staticName', $data))
-			 ->setChecksum($this->get('checksum', $data));
+			->setCount($this->getInt('count', $data))
+			->setSize($this->getInt('size', $data))
+			->setContent($this->get('content', $data))
+			->setStaticName($this->getBool('staticName', $data))
+			->setChecksum($this->get('checksum', $data));
 
 		/** @var RestoringChunkPart[] $parts */
 		$parts = $this->deserializeArray($this->getArray('parts', $data), RestoringChunkPart::class);
 		$this->setParts($parts);
 
-
 		return $this;
 	}
-
 
 	/**
 	 * @return array
@@ -403,7 +383,6 @@ class RestoringChunk implements JsonSerializable, IDeserializable {
 			'files' => $this->getFiles()
 		];
 	}
-
 
 	/**
 	 * @return array

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -49,7 +47,6 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 	public const STATUS_QUEUE = 0;
 	public const STATUS_DONE = 1;
 
-
 	/** @var int */
 	private $id = 0;
 
@@ -68,13 +65,11 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 	/** @var array */
 	private $result = [];
 
-
 	/**
 	 * BackupEvent constructor.
 	 */
 	public function __construct() {
 	}
-
 
 	/**
 	 * @param int $id
@@ -94,7 +89,6 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 		return $this->id;
 	}
 
-
 	/**
 	 * @param string $author
 	 *
@@ -112,7 +106,6 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 	public function getAuthor(): string {
 		return $this->author;
 	}
-
 
 	/**
 	 * @param string $type
@@ -132,7 +125,6 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 		return $this->type;
 	}
 
-
 	/**
 	 * @param int $status
 	 *
@@ -150,7 +142,6 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 	public function getStatus(): int {
 		return $this->status;
 	}
-
 
 	/**
 	 * @param array $data
@@ -170,7 +161,6 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 		return $this->data;
 	}
 
-
 	/**
 	 * @param array $result
 	 *
@@ -189,7 +179,6 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 		return $this->result;
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -197,15 +186,14 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 	 */
 	public function importFromDatabase(array $data): IQueryRow {
 		$this->setId($this->getInt('id', $data))
-			 ->setAuthor($this->get('author', $data))
-			 ->setType($this->get('type', $data))
-			 ->setStatus($this->getInt('status', $data))
-			 ->setData($this->getArray('data', $data))
-			 ->setResult($this->getArray('result', $data));
+			->setAuthor($this->get('author', $data))
+			->setType($this->get('type', $data))
+			->setStatus($this->getInt('status', $data))
+			->setData($this->getArray('data', $data))
+			->setResult($this->getArray('result', $data));
 
 		return $this;
 	}
-
 
 	/**
 	 * @param array $data
@@ -214,15 +202,14 @@ class BackupEvent implements JsonSerializable, IQueryRow, IDeserializable {
 	 */
 	public function import(array $data): IDeserializable {
 		$this->setId($this->getInt('id', $data))
-			 ->setAuthor($this->get('author', $data))
-			 ->setType($this->get('type', $data))
-			 ->setStatus($this->getInt('status', $data))
-			 ->setData($this->getArray('data', $data))
-			 ->setResult($this->getArray('result', $data));
+			->setAuthor($this->get('author', $data))
+			->setType($this->get('type', $data))
+			->setStatus($this->getInt('status', $data))
+			->setData($this->getArray('data', $data))
+			->setResult($this->getArray('result', $data));
 
 		return $this;
 	}
-
 
 	/**
 	 * @return array

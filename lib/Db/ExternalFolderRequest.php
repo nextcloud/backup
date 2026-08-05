@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
@@ -41,18 +39,16 @@ use OCA\Backup\Model\ExternalFolder;
  */
 class ExternalFolderRequest extends ExternalFolderRequestBuilder {
 
-
 	/**
 	 * @param ExternalFolder $folder
 	 */
 	public function save(ExternalFolder $folder): void {
 		$qb = $this->getExternalFolderInsertSql();
 		$qb->setValue('storage_id', $qb->createNamedParameter($folder->getStorageId()))
-		   ->setValue('root', $qb->createNamedParameter($folder->getRoot()));
+			->setValue('root', $qb->createNamedParameter($folder->getRoot()));
 
 		$qb->execute();
 	}
-
 
 	/**
 	 * @param int $storageId
@@ -64,7 +60,6 @@ class ExternalFolderRequest extends ExternalFolderRequestBuilder {
 		$qb->execute();
 	}
 
-
 	/**
 	 * @return ExternalFolder[]
 	 */
@@ -73,7 +68,6 @@ class ExternalFolderRequest extends ExternalFolderRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
-
 
 	/**
 	 * @param int $mountId
@@ -87,7 +81,6 @@ class ExternalFolderRequest extends ExternalFolderRequestBuilder {
 
 		return $this->getItemFromRequest($qb);
 	}
-
 
 	/**
 	 * @param int $storageId

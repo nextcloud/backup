@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -63,13 +61,11 @@ class FileSearch extends Base {
 	use TStringTools;
 	use TDeserialize;
 
-
 	/** @var PointService */
 	private $pointService;
 
 	/** @var ChunkService */
 	private $chunkService;
-
 
 	/**
 	 * NodeSearch constructor.
@@ -84,7 +80,6 @@ class FileSearch extends Base {
 		$this->chunkService = $chunkService;
 	}
 
-
 	/**
 	 *
 	 */
@@ -92,15 +87,14 @@ class FileSearch extends Base {
 		parent::configure();
 
 		$this->setName('backup:file:search')
-			 ->setDescription('Search a specific file in your restoring points')
-			 ->addArgument('search', InputArgument::REQUIRED, 'path/name to search')
-			 ->addOption(
-			 	'point', '', InputOption::VALUE_REQUIRED, 'Id of a restoring point for targeted search'
-			 )
-			 ->addOption('since', '', InputOption::VALUE_REQUIRED, 'search in a specific timeline')
-			 ->addOption('until', '', InputOption::VALUE_REQUIRED, 'search in a specific timeline');
+			->setDescription('Search a specific file in your restoring points')
+			->addArgument('search', InputArgument::REQUIRED, 'path/name to search')
+			->addOption(
+				'point', '', InputOption::VALUE_REQUIRED, 'Id of a restoring point for targeted search'
+			)
+			->addOption('since', '', InputOption::VALUE_REQUIRED, 'search in a specific timeline')
+			->addOption('until', '', InputOption::VALUE_REQUIRED, 'search in a specific timeline');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -148,7 +142,7 @@ class FileSearch extends Base {
 					try {
 						try {
 							$files = $this->searchFilesInChunkFolder($point, $chunk, $search);
-						} catch (NotFoundException | NotPermittedException $e) {
+						} catch (NotFoundException|NotPermittedException $e) {
 							$files = $this->chunkService->searchFilesInChunk($point, $chunk, $search);
 						}
 
@@ -168,9 +162,9 @@ class FileSearch extends Base {
 						}
 						$output->writeln('');
 					} catch (ArchiveCreateException
-					| ArchiveNotFoundException
-					| NotFoundException
-					| NotPermittedException $e) {
+					|ArchiveNotFoundException
+					|NotFoundException
+					|NotPermittedException $e) {
 					}
 				}
 
@@ -190,7 +184,6 @@ class FileSearch extends Base {
 		return 0;
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -204,7 +197,7 @@ class FileSearch extends Base {
 	private function searchFilesInChunkFolder(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		string $search
+		string $search,
 	): array {
 		$folder = $this->chunkService->getChunkFolder($point, $chunk);
 

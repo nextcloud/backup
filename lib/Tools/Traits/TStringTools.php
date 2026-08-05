@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use DateTime;
@@ -36,7 +34,6 @@ use Exception;
 
 trait TStringTools {
 	use TArrayTools;
-
 
 	/**
 	 * @param int $length
@@ -57,7 +54,6 @@ trait TStringTools {
 
 		return $str;
 	}
-
 
 	/**
 	 * Generate uuid: 2b5a7a87-8db1-445f-a17b-405790f91c80
@@ -83,7 +79,6 @@ trait TStringTools {
 
 		return $uuid;
 	}
-
 
 	/**
 	 * @param string $line
@@ -124,7 +119,6 @@ trait TStringTools {
 		return substr($str1, 0, $i);
 	}
 
-
 	/**
 	 * @param string $line
 	 * @param array $params
@@ -140,7 +134,6 @@ trait TStringTools {
 		return $line;
 	}
 
-
 	/**
 	 * @param int $words
 	 *
@@ -154,7 +147,6 @@ trait TStringTools {
 
 		return implode(' ', $sentence);
 	}
-
 
 	/**
 	 * @param int $length
@@ -174,7 +166,6 @@ trait TStringTools {
 		return implode('', $word);
 	}
 
-
 	/**
 	 * @param int $bytes
 	 *
@@ -191,7 +182,6 @@ trait TStringTools {
 		return round($bytes / pow(1024, $e), 2) . ' ' . $s[$e];
 	}
 
-
 	/**
 	 * @param int $first
 	 * @param int $second
@@ -204,7 +194,7 @@ trait TStringTools {
 		int $first,
 		int $second = 0,
 		bool $short = false,
-		array $words = []
+		array $words = [],
 	): string {
 		if ($second === 0) {
 			$first = time() - $first;
@@ -249,10 +239,10 @@ trait TStringTools {
 		}
 
 		return $f->diff($s)->format(
-			'%a ' . $days .
-			', %h ' . $hours .
-			', %i ' . $minutes .
-			' and %s ' . $seconds
+			'%a ' . $days
+			. ', %h ' . $hours
+			. ', %i ' . $minutes
+			. ' and %s ' . $seconds
 		);
 	}
 }

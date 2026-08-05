@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Service;
 
 use OCA\Backup\Db\PointRequest;
@@ -46,7 +44,6 @@ use OCP\Files\NotPermittedException;
 class MetadataService {
 	public const METADATA_FILE = 'restoring-point.data';
 
-
 	/** @var PointRequest */
 	private $pointRequest;
 
@@ -55,7 +52,6 @@ class MetadataService {
 
 	/** @var ExternalFolderService */
 	private $externalFolderService;
-
 
 	/**
 	 * MetadataService constructor.
@@ -67,13 +63,12 @@ class MetadataService {
 	public function __construct(
 		PointRequest $pointRequest,
 		RemoteService $remoteService,
-		ExternalFolderService $externalFolderService
+		ExternalFolderService $externalFolderService,
 	) {
 		$this->pointRequest = $pointRequest;
 		$this->remoteService = $remoteService;
 		$this->externalFolderService = $externalFolderService;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -93,7 +88,6 @@ class MetadataService {
 		$file->putContent(json_encode($point, JSON_PRETTY_PRINT));
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 */
@@ -101,7 +95,6 @@ class MetadataService {
 		$this->externalFolderService->updateMetadata($point);
 		$this->remoteService->updateMetadata($point);
 	}
-
 
 	/**
 	 * @throws NotPermittedException

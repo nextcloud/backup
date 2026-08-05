@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Exceptions\RestoringPointNotFoundException;
@@ -45,7 +43,6 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class PointRequestBuilder extends CoreRequestBuilder {
 	use TArrayTools;
 
-
 	/**
 	 * @return CoreQueryBuilder
 	 */
@@ -55,7 +52,6 @@ class PointRequestBuilder extends CoreRequestBuilder {
 
 		return $qb;
 	}
-
 
 	/**
 	 * Base of the Sql Update request
@@ -68,7 +64,6 @@ class PointRequestBuilder extends CoreRequestBuilder {
 
 		return $qb;
 	}
-
 
 	/**
 	 * Base of the Sql Select request for Shares
@@ -86,7 +81,6 @@ class PointRequestBuilder extends CoreRequestBuilder {
 		return $qb;
 	}
 
-
 	/**
 	 * Base of the Sql Delete request
 	 *
@@ -99,7 +93,6 @@ class PointRequestBuilder extends CoreRequestBuilder {
 		return $qb;
 	}
 
-
 	/**
 	 * @param CoreQueryBuilder $qb
 	 *
@@ -110,7 +103,7 @@ class PointRequestBuilder extends CoreRequestBuilder {
 		/** @var RestoringPoint $restoringPoint */
 		try {
 			$restoringPoint = $qb->asItem(RestoringPoint::class);
-		} catch (RowNotFoundException | InvalidItemException $e) {
+		} catch (RowNotFoundException|InvalidItemException $e) {
 			throw new RestoringPointNotFoundException();
 		}
 

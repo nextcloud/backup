@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Exceptions\RemoteInstanceNotFoundException;
@@ -41,7 +39,6 @@ use OCA\Backup\Model\RemoteInstance;
  * @package OCA\Backup\Db
  */
 class RemoteRequest extends RemoteRequestBuilder {
-
 
 	/**
 	 * create a new Person in the database.
@@ -58,14 +55,13 @@ class RemoteRequest extends RemoteRequestBuilder {
 		}
 		$qb = $this->getRemoteInsertSql();
 		$qb->setValue('uid', $qb->createNamedParameter($remote->getUid(true)))
-		   ->setValue('instance', $qb->createNamedParameter($remote->getInstance()))
-		   ->setValue('href', $qb->createNamedParameter($remote->getId()))
-		   ->setValue('exchange', $qb->createNamedParameter($remote->getExchange()))
-		   ->setValue('item', $qb->createNamedParameter(json_encode($remote->getOrigData())));
+			->setValue('instance', $qb->createNamedParameter($remote->getInstance()))
+			->setValue('href', $qb->createNamedParameter($remote->getId()))
+			->setValue('exchange', $qb->createNamedParameter($remote->getExchange()))
+			->setValue('item', $qb->createNamedParameter(json_encode($remote->getOrigData())));
 
 		return $qb->execute();
 	}
-
 
 	/**
 	 * @param RemoteInstance $remote
@@ -80,15 +76,14 @@ class RemoteRequest extends RemoteRequestBuilder {
 
 		$qb = $this->getRemoteUpdateSql();
 		$qb->set('uid', $qb->createNamedParameter($remote->getUid(true)))
-		   ->set('href', $qb->createNamedParameter($remote->getId()))
-		   ->set('exchange', $qb->createNamedParameter($remote->getExchange()))
-		   ->set('item', $qb->createNamedParameter(json_encode($remote->getOrigData())));
+			->set('href', $qb->createNamedParameter($remote->getId()))
+			->set('exchange', $qb->createNamedParameter($remote->getExchange()))
+			->set('item', $qb->createNamedParameter(json_encode($remote->getOrigData())));
 
 		$qb->limitToInstance($remote->getInstance());
 
 		$qb->execute();
 	}
-
 
 	/**
 	 * @return RemoteInstance[]
@@ -108,7 +103,6 @@ class RemoteRequest extends RemoteRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
-
 
 	/**
 	 * @return RemoteInstance
@@ -134,7 +128,6 @@ class RemoteRequest extends RemoteRequestBuilder {
 		return $this->getItemFromRequest($qb);
 	}
 
-
 	/**
 	 * @param RemoteInstance $remoteInstance
 	 * @param bool $force
@@ -149,7 +142,6 @@ class RemoteRequest extends RemoteRequestBuilder {
 			$this->save($remoteInstance, $force);
 		}
 	}
-
 
 	/**
 	 * @param string $address

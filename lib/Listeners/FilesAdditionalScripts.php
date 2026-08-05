@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Listeners;
 
 use OCA\Backup\AppInfo\Application;
@@ -41,13 +39,11 @@ use OCP\Util;
 
 class FilesAdditionalScripts implements IEventListener {
 
-
 	/** @var IUserSession */
 	private $userSession;
 
 	/** @var IGroupManager */
 	private $groupManager;
-
 
 	/**
 	 * FilesAdditionalScripts constructor.
@@ -57,12 +53,11 @@ class FilesAdditionalScripts implements IEventListener {
 	 */
 	public function __construct(
 		IUserSession $userSession,
-		IGroupManager $groupManager
+		IGroupManager $groupManager,
 	) {
 		$this->userSession = $userSession;
 		$this->groupManager = $groupManager;
 	}
-
 
 	/**
 	 * @param Event $event

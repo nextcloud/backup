@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Db;
 
 use OCA\Backup\Model\RestoringData;
@@ -43,13 +41,12 @@ class RestoringDataRequest extends RestoringDataRequestBuilder {
 		$qb = $this->getRestoringDataInsertSql();
 
 		$qb->setValue('name', $qb->createNamedParameter($data->getName()))
-		   ->setValue('type', $qb->createNamedParameter($data->getType()))
-		   ->setValue('root', $qb->createNamedParameter($data->getRoot()))
-		   ->setValue('path', $qb->createNamedParameter($data->getPath()));
+			->setValue('type', $qb->createNamedParameter($data->getType()))
+			->setValue('root', $qb->createNamedParameter($data->getRoot()))
+			->setValue('path', $qb->createNamedParameter($data->getPath()));
 		//		   ->setValue('static', $qb->createNamedParameter(($data->isStatic() ? '1' : '0')));
 		$qb->execute();
 	}
-
 
 	/**
 	 * @return RestoringData[]

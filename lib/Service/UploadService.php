@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -65,8 +63,6 @@ class UploadService {
 	use TStringTools;
 	use TNCLogger;
 
-
-
 	/** @var PointService */
 	private $pointService;
 
@@ -94,7 +90,6 @@ class UploadService {
 	/** @var ConfigService */
 	private $configService;
 
-
 	/**
 	 * UploadService constructor.
 	 *
@@ -117,7 +112,7 @@ class UploadService {
 		MetadataService $metadataService,
 		CronService $cronService,
 		OutputService $outputService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->pointService = $pointService;
 		$this->chunkService = $chunkService;
@@ -131,7 +126,6 @@ class UploadService {
 
 		$this->setup('app', Application::APP_ID);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -152,14 +146,12 @@ class UploadService {
 		$this->pointService->initBaseFolder($point);
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 */
 	public function closeUpload(RestoringPoint $point): void {
 		$this->metadataService->unlock($point);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -178,7 +170,6 @@ class UploadService {
 		$this->uploadToExternalFolder($point);
 		$this->closeUpload($point);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -233,7 +224,6 @@ class UploadService {
 		}
 	}
 
-
 	/**
 	 * @param string $instance
 	 * @param RestoringPoint $point
@@ -244,7 +234,7 @@ class UploadService {
 	private function uploadMissingFilesToRemoteInstance(
 		string $instance,
 		RestoringPoint $point,
-		RestoringHealth $health
+		RestoringHealth $health,
 	): void {
 		foreach ($health->getParts() as $partHealth) {
 			if ($partHealth->getStatus() === ChunkPartHealth::STATUS_OK) {
@@ -281,16 +271,15 @@ class UploadService {
 				$this->o('<info>ok</info>');
 			} catch (
 				RestoringChunkNotFoundException
-				| RemoteInstanceException
-				| RemoteInstanceNotFoundException
-				| RestoringChunkPartNotFoundException
-				| RestoringPointNotInitiatedException
-				| RemoteResourceNotFoundException $e) {
+				|RemoteInstanceException
+				|RemoteInstanceNotFoundException
+				|RestoringChunkPartNotFoundException
+				|RestoringPointNotInitiatedException
+				|RemoteResourceNotFoundException $e) {
 					$this->o('<error>' . get_class($e) . $e->getMessage() . '</error>');
 				}
 		}
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -311,8 +300,8 @@ class UploadService {
 		foreach ($externals as $external) {
 			try {
 				$this->o(
-					' - checking external folder <info>' . $external->getStorageId() .
-					'</info>:<info>' . $external->getRoot() . '</info>'
+					' - checking external folder <info>' . $external->getStorageId()
+					. '</info>:<info>' . $external->getRoot() . '</info>'
 				);
 
 				$stored = $this->externalFolderService->confirmPoint($external, $point);
@@ -358,14 +347,13 @@ class UploadService {
 				throw $e;
 			} catch (Exception $e) {
 				$this->o(
-					' ! issue while checking external folder: <error>' . get_class($e) .
-					' ' . $e->getMessage() . '</error>'
+					' ! issue while checking external folder: <error>' . get_class($e)
+					. ' ' . $e->getMessage() . '</error>'
 				);
 				continue;
 			}
 		}
 	}
-
 
 	/**
 	 * @param ExternalFolder $external
@@ -380,7 +368,7 @@ class UploadService {
 	private function uploadMissingFilesToExternalFolder(
 		ExternalFolder $external,
 		RestoringPoint $point,
-		RestoringHealth $health
+		RestoringHealth $health,
 	): void {
 		$this->pointService->initBaseFolder($point);
 		foreach ($health->getParts() as $partHealth) {
@@ -417,20 +405,19 @@ class UploadService {
 				$this->externalFolderService->uploadPart($external, $point, $health, $chunk, $part);
 				$this->o('<info>ok</info>');
 			} catch (
-				RestoringChunkNotFoundException |
-				RestoringPointNotInitiatedException |
-				RestoringPointException |
-				RestoringPointNotFoundException |
-				ExternalFolderNotFoundException |
-				GenericFileException |
-				NotPermittedException |
+				RestoringChunkNotFoundException|
+				RestoringPointNotInitiatedException|
+				RestoringPointException|
+				RestoringPointNotFoundException|
+				ExternalFolderNotFoundException|
+				GenericFileException|
+				NotPermittedException|
 				LockedException $e) {
 					$this->o('<error>' . get_class($e) . ' ' . $e->getMessage() . '</error>');
 					$this->e($e);
 				}
 		}
 	}
-
 
 	/**
 	 * @param string $line

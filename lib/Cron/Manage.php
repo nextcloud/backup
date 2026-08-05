@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,11 +27,8 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Cron;
 
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\TimedJob;
 use OCA\Backup\Exceptions\ExternalFolderNotFoundException;
 use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Model\RestoringPoint;
@@ -43,6 +39,8 @@ use OCA\Backup\Service\OutputService;
 use OCA\Backup\Service\PackService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Service\UploadService;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\TimedJob;
 use Throwable;
 
 /**
@@ -73,12 +71,11 @@ class Manage extends TimedJob {
 		private UploadService $uploadService,
 		private ExternalFolderService $externalFolderService,
 		private OutputService $outputService,
-		private ConfigService $configService
+		private ConfigService $configService,
 	) {
 		parent::__construct($time);
 		$this->setInterval(3600);
 	}
-
 
 	/**
 	 * @param $argument
@@ -95,7 +92,6 @@ class Manage extends TimedJob {
 		} catch (JobsTimeSlotException $e) {
 		}
 	}
-
 
 	/**
 	 * @throws JobsTimeSlotException

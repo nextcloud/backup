@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,11 +27,9 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Model;
 
 class TreeNode {
-
 
 	/** @var self[] */
 	private $children = [];
@@ -43,7 +40,6 @@ class TreeNode {
 	/** @var SimpleDataStore */
 	private $item;
 
-
 	/** @var self */
 	private $currentChild;
 
@@ -52,7 +48,6 @@ class TreeNode {
 
 	/** @var bool */
 	private $splited = false;
-
 
 	/**
 	 * NC22TreeNode constructor.
@@ -76,7 +71,6 @@ class TreeNode {
 		return (is_null($this->parent));
 	}
 
-
 	/**
 	 * @param array $children
 	 *
@@ -99,7 +93,6 @@ class TreeNode {
 		return $this;
 	}
 
-
 	/**
 	 * @return SimpleDataStore
 	 */
@@ -109,14 +102,12 @@ class TreeNode {
 		return $this->item;
 	}
 
-
 	/**
 	 * @return TreeNode
 	 */
 	public function getParent(): TreeNode {
 		return $this->parent;
 	}
-
 
 	/**
 	 * @return $this
@@ -129,7 +120,6 @@ class TreeNode {
 		return $this->getParent()->getRoot();
 	}
 
-
 	/**
 	 * @return TreeNode[]
 	 */
@@ -141,7 +131,6 @@ class TreeNode {
 		return array_merge($this->parent->getPath(), [$this]);
 	}
 
-
 	/**
 	 * @return int
 	 */
@@ -152,7 +141,6 @@ class TreeNode {
 
 		return $this->getParent()->getLevel() + 1;
 	}
-
 
 	/**
 	 * @return TreeNode|null
@@ -177,7 +165,6 @@ class TreeNode {
 		return $this->next();
 	}
 
-
 	/**
 	 * @return TreeNode
 	 */
@@ -193,7 +180,6 @@ class TreeNode {
 	public function haveNext(): bool {
 		return !empty($this->children);
 	}
-
 
 	/**
 	 * @return bool

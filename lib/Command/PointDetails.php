@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Command;
 
@@ -72,7 +70,6 @@ class PointDetails extends Base {
 	use TArrayTools;
 	use TStringTools;
 
-
 	/** @var RemoteService */
 	private $remoteService;
 
@@ -88,7 +85,6 @@ class PointDetails extends Base {
 	/** @var PackService */
 	private $packService;
 
-
 	/**
 	 * PointDetails constructor.
 	 *
@@ -99,11 +95,11 @@ class PointDetails extends Base {
 	 * @param PackService $packService
 	 */
 	public function __construct(
-		RemoteService         $remoteService,
-		PointService          $pointService,
+		RemoteService $remoteService,
+		PointService $pointService,
 		ExternalFolderService $externalFolderService,
-		ChunkService          $chunkService,
-		PackService           $packService
+		ChunkService $chunkService,
+		PackService $packService,
 	) {
 		parent::__construct();
 
@@ -114,7 +110,6 @@ class PointDetails extends Base {
 		$this->packService = $packService;
 	}
 
-
 	/**
 	 *
 	 */
@@ -122,12 +117,11 @@ class PointDetails extends Base {
 		parent::configure();
 
 		$this->setName('backup:point:details')
-			 ->setDescription('Details on a restoring point')
-			 ->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
-			 ->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
-			 ->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder');
+			->setDescription('Details on a restoring point')
+			->addArgument('pointId', InputArgument::REQUIRED, 'Id of the restoring point')
+			->addOption('remote', '', InputOption::VALUE_REQUIRED, 'address of the remote instance')
+			->addOption('external', '', InputOption::VALUE_REQUIRED, 'id of the external folder');
 	}
-
 
 	/**
 	 * @param InputInterface $input
@@ -206,8 +200,8 @@ class PointDetails extends Base {
 					$checked = '<error>missing chunk</error>';
 				}
 
-				$checked =
-					($checked === $chunk->getChecksum()) ? '<info>ok</info>' : '<error>checksum</error>';
+				$checked
+					= ($checked === $chunk->getChecksum()) ? '<info>ok</info>' : '<error>checksum</error>';
 
 				$table->appendRow(
 					[
@@ -227,8 +221,8 @@ class PointDetails extends Base {
 		if ($remote) {
 			$source = ' on <info>' . $remote . '</info>';
 		} elseif ($external) {
-			$source = ' at <info>' . $externalFolder->getStorageId() . '</info>:<info>' .
-					  $externalFolder->getRoot() . '</info>';
+			$source = ' at <info>' . $externalFolder->getStorageId() . '</info>:<info>'
+					  . $externalFolder->getRoot() . '</info>';
 		}
 		$output->writeln('');
 
@@ -238,14 +232,12 @@ class PointDetails extends Base {
 		}
 
 		$output->writeln(
-			'Status of the restoring point ' . $source . ': <' . $color . '>' .
-			RestoringHealth::$DEF[$point->getHealth()->getStatus()] . '</' . $color . '>'
+			'Status of the restoring point ' . $source . ': <' . $color . '>'
+			. RestoringHealth::$DEF[$point->getHealth()->getStatus()] . '</' . $color . '>'
 		);
-
 
 		return 0;
 	}
-
 
 	/**
 	 * @param Table $table
@@ -253,9 +245,9 @@ class PointDetails extends Base {
 	 * @param RestoringChunk $chunk
 	 */
 	private function displayDetailsPacked(
-		Table          $table,
+		Table $table,
 		RestoringPoint $point,
-		RestoringChunk $chunk
+		RestoringChunk $chunk,
 	): void {
 		$fresh = true;
 		$health = $point->getHealth();

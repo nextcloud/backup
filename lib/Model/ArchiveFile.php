@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Model;
 
 use JsonSerializable;
@@ -43,17 +41,14 @@ use OCA\Backup\Tools\Traits\TArrayTools;
 class ArchiveFile implements JsonSerializable, IDeserializable {
 	use TArrayTools;
 
-
 	/** @var string */
 	private $name;
 
 	/** @var int */
 	private $filesize;
 
-
 	/** @var RestoringChunk */
 	private $restoringChunk;
-
 
 	/**
 	 * ArchiveFile constructor.
@@ -65,7 +60,6 @@ class ArchiveFile implements JsonSerializable, IDeserializable {
 		$this->name = $name;
 		$this->filesize = $filesize;
 	}
-
 
 	/**
 	 * @return string
@@ -121,7 +115,6 @@ class ArchiveFile implements JsonSerializable, IDeserializable {
 		return $this->restoringChunk;
 	}
 
-
 	/**
 	 * @param array $data
 	 *
@@ -133,7 +126,6 @@ class ArchiveFile implements JsonSerializable, IDeserializable {
 
 		return $this;
 	}
-
 
 	/**
 	 * @return array

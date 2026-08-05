@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use OCA\Backup\Tools\Exceptions\InvalidOriginException;
@@ -41,7 +39,6 @@ use OCA\Backup\Tools\Model\NCSignatory;
 
 trait TNCSignatory {
 	use TNCRequest;
-
 
 	/**
 	 * return Signatory by its Id from cache or from direct request.
@@ -64,7 +61,6 @@ trait TNCSignatory {
 		return $signatory;
 	}
 
-
 	/**
 	 * @param NCSignatory $signatory
 	 * @param string $keyId
@@ -77,7 +73,7 @@ trait TNCSignatory {
 		NCSignatory $signatory,
 		string $keyId = '',
 		array $params = [],
-		?NCRequest $request = null
+		?NCRequest $request = null,
 	): void {
 		if (is_null($request)) {
 			$request = new NCRequest();
@@ -97,7 +93,6 @@ trait TNCSignatory {
 		}
 	}
 
-
 	/**
 	 * @param NCSignatory $signatory
 	 * @param array $json
@@ -107,7 +102,7 @@ trait TNCSignatory {
 	 */
 	public function updateSignatory(NCSignatory $signatory, array $json, string $keyId = ''): void {
 		$signatory->setOrigData($json)
-				  ->import($json);
+			->import($json);
 
 		if ($keyId === '') {
 			$keyId = $signatory->getKeyId();
@@ -126,7 +121,6 @@ trait TNCSignatory {
 		}
 	}
 
-
 	/**
 	 * @param string $keyId
 	 *
@@ -142,7 +136,6 @@ trait TNCSignatory {
 		throw new InvalidOriginException('cannot retrieve origin from ' . $keyId);
 	}
 
-
 	/**
 	 * @param NCSignatory $signatory
 	 * @param string $digest
@@ -153,7 +146,7 @@ trait TNCSignatory {
 		NCSignatory $signatory,
 		string $digest = 'rsa',
 		int $bits = 2048,
-		int $type = OPENSSL_KEYTYPE_RSA
+		int $type = OPENSSL_KEYTYPE_RSA,
 	) {
 		$res = openssl_pkey_new(
 			[
@@ -169,7 +162,6 @@ trait TNCSignatory {
 		$signatory->setPublicKey($publicKey);
 		$signatory->setPrivateKey($privateKey);
 	}
-
 
 	/**
 	 * @param string $clear
@@ -189,7 +181,6 @@ trait TNCSignatory {
 		return base64_encode($signed);
 	}
 
-
 	/**
 	 * @param ISignedModel $model
 	 * @param NCSignatory $signatory
@@ -201,7 +192,6 @@ trait TNCSignatory {
 		$signature = $this->signString($string, $signatory);
 		$model->setSignature($signature);
 	}
-
 
 	/**
 	 * @param string $clear
@@ -215,7 +205,7 @@ trait TNCSignatory {
 		string $clear,
 		string $signed,
 		string $publicKey,
-		string $algo = NCSignatory::SHA256
+		string $algo = NCSignatory::SHA256,
 	) {
 		if (openssl_verify($clear, base64_decode($signed), $publicKey, $algo) !== 1) {
 			throw new SignatureException('signature issue');
@@ -232,7 +222,7 @@ trait TNCSignatory {
 	public function verifyModel(
 		ISignedModel $model,
 		string $publicKey,
-		string $algo = NCSignatory::SHA256
+		string $algo = NCSignatory::SHA256,
 	): void {
 		$string = json_encode($model->signedData());
 		$this->verifyString($string, $model->getSignature(), $publicKey, $algo);

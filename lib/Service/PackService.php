@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -27,7 +26,6 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 
 namespace OCA\Backup\Service;
 
@@ -70,10 +68,8 @@ class PackService {
 	use TNCLogger;
 	use TFileTools;
 
-
 	public const CHUNK_ENTRY = 'pack';
 	public const GZ_CHUNK_ENTRY = 'gz_pack';
-
 
 	/** @var PointRequest */
 	private $pointRequest;
@@ -99,7 +95,6 @@ class PackService {
 	/** @var ConfigService */
 	private $configService;
 
-
 	/**
 	 * PackService constructor.
 	 *
@@ -120,7 +115,7 @@ class PackService {
 		EncryptService $encryptService,
 		CronService $cronService,
 		OutputService $outputService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->pointRequest = $pointRequest;
 		$this->metadataService = $metadataService;
@@ -131,7 +126,6 @@ class PackService {
 		$this->outputService = $outputService;
 		$this->configService = $configService;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -201,9 +195,9 @@ class PackService {
 					}
 				} catch (Throwable $t) {
 					$point->setStatus(RestoringPoint::STATUS_ISSUE)
-						  ->getNotes()
-						  ->s('pack_error', $t->getMessage())
-						  ->sInt('pack_date', time());
+						->getNotes()
+						->s('pack_error', $t->getMessage())
+						->sInt('pack_date', time());
 
 					//					$this->pointRequest->update($point);
 					$this->metadataService->unlock($point);
@@ -218,10 +212,10 @@ class PackService {
 
 		$this->o(' > removing status <info>processing</info>, adding status <info>packed</info>');
 		$point->removeStatus(RestoringPoint::STATUS_PACKING)
-			  ->addStatus(RestoringPoint::STATUS_PACKED)
-			  ->getNotes()
-			  ->u('pack_error')
-			  ->u('pack_date');
+			->addStatus(RestoringPoint::STATUS_PACKED)
+			->getNotes()
+			->u('pack_error')
+			->u('pack_date');
 
 		try {
 			$this->remoteStreamService->signPoint($point);
@@ -231,7 +225,7 @@ class PackService {
 		$this->pointRequest->update($point, true);
 		try {
 			$this->metadataService->saveMetadata($point);
-		} catch (NotFoundException | NotPermittedException $e) {
+		} catch (NotFoundException|NotPermittedException $e) {
 			$this->e(
 				$e,
 				[
@@ -244,7 +238,6 @@ class PackService {
 		$this->o(' > unlocking restoring point');
 		$this->metadataService->unlock($point);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -265,7 +258,6 @@ class PackService {
 
 		$this->wrapStoreParts($point, $chunk, $parts);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -301,7 +293,6 @@ class PackService {
 
 		return $tmpPath;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -348,7 +339,6 @@ class PackService {
 
 		return $tmpPath;
 	}
-
 
 	/**
 	 * @param string $filename
@@ -419,7 +409,6 @@ class PackService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -486,7 +475,6 @@ class PackService {
 		return $encrypted;
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -548,7 +536,6 @@ class PackService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param string $partName
@@ -563,13 +550,12 @@ class PackService {
 		RestoringPoint $point,
 		string $partName,
 		string $chunkName,
-		string $dataName
+		string $dataName,
 	): RestoringChunkPart {
 		$chunk = $this->chunkService->getChunkFromRP($point, $chunkName, $dataName);
 
 		return $this->getPartFromChunk($chunk, $partName);
 	}
-
 
 	/**
 	 * @param RestoringChunk $chunk
@@ -588,7 +574,6 @@ class PackService {
 		throw new RestoringChunkPartNotFoundException();
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -599,15 +584,14 @@ class PackService {
 	public function getChunkPartContent(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): void {
 		try {
 			$file = $this->getPartResource($point, $chunk, $part);
 			$part->setContent(base64_encode($file->getContent()));
-		} catch (NotFoundException | NotPermittedException $e) {
+		} catch (NotFoundException|NotPermittedException $e) {
 		}
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -622,13 +606,12 @@ class PackService {
 	public function getPartResource(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): ISimpleFile {
 		$folder = $this->getPackFolder($point, $chunk);
 
 		return $folder->getFile($part->getName());
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -684,7 +667,7 @@ class PackService {
 					try {
 						$this->o('     * removing old chunk parts');
 						$this->removeOldChunkPartFiles($point, $oldChunk);
-					} catch (RestoringPointNotInitiatedException | NotPermittedException $e) {
+					} catch (RestoringPointNotInitiatedException|NotPermittedException $e) {
 					}
 				} catch (Throwable $t) {
 					$completed = false;
@@ -695,23 +678,22 @@ class PackService {
 		if ($completed) {
 			$this->o(' > removing status <info>packed</info>');
 			$point->setStatus(RestoringPoint::STATUS_UNPACKED)
-				  ->removeStatus(RestoringPoint::STATUS_PACKING)
-				  ->removeStatus(RestoringPoint::STATUS_COMPRESSED)
-				  ->removeStatus(RestoringPoint::STATUS_ENCRYPTED)
-				  ->unsetNotes();
+				->removeStatus(RestoringPoint::STATUS_PACKING)
+				->removeStatus(RestoringPoint::STATUS_COMPRESSED)
+				->removeStatus(RestoringPoint::STATUS_ENCRYPTED)
+				->unsetNotes();
 
 			try {
 				$this->remoteStreamService->signPoint($point);
 				$this->pointRequest->update($point, true);
 				$this->metadataService->saveMetadata($point);
-			} catch (SignatoryException | NotFoundException | NotPermittedException $e) {
+			} catch (SignatoryException|NotFoundException|NotPermittedException $e) {
 			}
 		}
 
 		$this->o(' > unlocking restoring point');
 		$this->metadataService->unlock($point);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -740,7 +722,6 @@ class PackService {
 
 		$chunk->setParts([]);
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -781,7 +762,6 @@ class PackService {
 		return $temp;
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -813,7 +793,6 @@ class PackService {
 
 		return $parts;
 	}
-
 
 	/**
 	 * @param RestoringChunkPart[] $parts
@@ -847,8 +826,8 @@ class PackService {
 				// TODO checksums
 				//				echo '-checksum: ' . $this->getTempChecksum($new->getName()) . "\n";
 			} catch (PackDecryptException
-			| SodiumException
-			| EncryptionKeyException $e) {
+			|SodiumException
+			|EncryptionKeyException $e) {
 				$this->o('<error>' . $e->getMessage() . '</error>');
 			}
 
@@ -857,7 +836,6 @@ class PackService {
 
 		return $decrypted;
 	}
-
 
 	/**
 	 * @param RestoringChunkPart[] $parts
@@ -892,7 +870,6 @@ class PackService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringChunkPart[] $parts
 	 *
@@ -913,7 +890,6 @@ class PackService {
 
 		return $tmpPath;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -979,7 +955,6 @@ class PackService {
 		return $tmp;
 	}
 
-
 	/**
 	 * @param string $zipName
 	 * @param string $type
@@ -999,7 +974,6 @@ class PackService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -1014,7 +988,7 @@ class PackService {
 		RestoringPoint $point,
 		RestoringChunk $chunk,
 		string &$path = '',
-		string &$sub = ''
+		string &$sub = '',
 	): ISimpleFolder {
 		if (!$point->hasBaseFolder() || !$point->hasAppDataRootWrapper()) {
 			throw new RestoringPointNotInitiatedException('Restoring Point is not initiated');
@@ -1034,7 +1008,6 @@ class PackService {
 
 		return $folder;
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -1057,7 +1030,6 @@ class PackService {
 			throw $t;
 		}
 	}
-
 
 	/**
 	 * @param RestoringPoint $point
@@ -1085,7 +1057,6 @@ class PackService {
 		fclose($read);
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -1104,7 +1075,6 @@ class PackService {
 		}
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk[] $chunks
@@ -1118,7 +1088,6 @@ class PackService {
 			}
 		}
 	}
-
 
 	/**
 	 * @param string $tmpPath
@@ -1135,7 +1104,6 @@ class PackService {
 		return $this->getChecksumFromStream($stream);
 	}
 
-
 	/**
 	 * @param RestoringPoint $point
 	 * @param RestoringChunk $chunk
@@ -1147,7 +1115,7 @@ class PackService {
 	public function getChecksum(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	): string {
 		try {
 			$path = '';
@@ -1172,7 +1140,6 @@ class PackService {
 		return $this->getChecksumFromStream($stream);
 	}
 
-
 	/**
 	 * @throws NotPermittedException
 	 * @throws RestoringPointNotInitiatedException
@@ -1180,7 +1147,7 @@ class PackService {
 	public function saveChunkPartContent(
 		RestoringPoint $point,
 		RestoringChunk $chunk,
-		RestoringChunkPart $part
+		RestoringChunkPart $part,
 	) {
 		if ($part->getContent() === '') {
 			return;
@@ -1195,10 +1162,9 @@ class PackService {
 			}
 
 			$file->putContent(base64_decode($part->getContent()));
-		} catch (NotPermittedException | NotFoundException $e) {
+		} catch (NotPermittedException|NotFoundException $e) {
 		}
 	}
-
 
 	/**
 	 * @param string $line

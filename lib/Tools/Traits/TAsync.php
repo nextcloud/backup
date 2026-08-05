@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Tools\Traits;
 
 use JsonSerializable;
@@ -36,10 +34,8 @@ use JsonSerializable;
 trait TAsync {
 	use TNCSetup;
 
-
 	/** @var string */
 	public static $SETUP_TIME_LIMIT = 'async_time_limit';
-
 
 	/**
 	 * Hacky way to async the rest of the process without keeping client on hold.

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Nextcloud - Backup now. Restore later.
  *
@@ -28,7 +27,6 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Backup\Settings;
 
 use Exception;
@@ -43,13 +41,11 @@ use OCP\Settings\ISettings;
  */
 class Admin implements ISettings {
 
-
 	/**
 	 * Admin constructor.
 	 */
 	public function __construct() {
 	}
-
 
 	/**
 	 * @return TemplateResponse
@@ -59,14 +55,12 @@ class Admin implements ISettings {
 		return new TemplateResponse(Application::APP_ID, 'settings.admin', []);
 	}
 
-
 	/**
 	 * @return string
 	 */
 	public function getSection(): string {
 		return Application::APP_ID;
 	}
-
 
 	/**
 	 * @return int
