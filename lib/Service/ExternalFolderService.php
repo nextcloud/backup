@@ -60,7 +60,6 @@ use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCA\Files_External\Lib\StorageConfig;
 use OCA\Files_External\MountConfig;
 use OCA\Files_External\Service\GlobalStoragesService;
-use OCP\AppFramework\QueryException;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\FileInfo;
 use OCP\Files\GenericFileException;
@@ -70,6 +69,7 @@ use OCP\Files\NotPermittedException;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\StorageNotAvailableException;
 use OCP\Lock\LockedException;
+use Psr\Container\ContainerExceptionInterface;
 
 /**
  * Class ExternalFolderService
@@ -885,7 +885,7 @@ class ExternalFolderService {
 	 *
 	 * @throws InsufficientDataForMeaningfulAnswerException
 	 * @throws StorageNotAvailableException
-	 * @throws QueryException
+	 * @throws ContainerExceptionInterface
 	 */
 	private function prepareStorageConfig(StorageConfig &$storage) {
 		foreach ($storage->getBackendOptions() as $option => $value) {

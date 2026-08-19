@@ -31,13 +31,13 @@ declare(strict_types=1);
 
 namespace OCA\Backup\Cron;
 
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\TimedJob;
 use OCA\Backup\Exceptions\JobsTimeSlotException;
 use OCA\Backup\Service\ConfigService;
 use OCA\Backup\Service\CronService;
 use OCA\Backup\Service\PointService;
 use OCA\Backup\Tools\Traits\TNCLogger;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\TimedJob;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
